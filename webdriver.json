@@ -1,0 +1,22 @@
+{
+  "capabilities": {
+    "browserName": "chrome",
+    "goog:chromeOptions": {
+      "args": [
+        "--headless",
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "prefs": {
+        "profile": {
+          "password_manager_enabled": false
+        }
+      },
+      "extensions": [],
+      "detach": false
+    },
+    "goog:loggingPrefs": {
+      "browser": "ALL"
+    }
+  }
+}

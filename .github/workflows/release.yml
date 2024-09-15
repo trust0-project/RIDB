@@ -1,0 +1,75 @@
+name: Release
+permissions:
+  contents: write # to be able to publish a GitHub release
+  issues: write # to be able to comment on released issues
+  pull-requests: write # to be able to comment on released pull requests
+  id-token: write # to enable use of OIDC for npm provenance
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Select the branch to release from'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - main
+          - develop
+          # Add more branches if necessary
+      rc:
+        description: 'Publish as a release candidate (RC)?'
+        required: true
+        default: 'false'
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ts  # Set default working directory to ./ts
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          token: ${{ secrets.GH_TOKEN }}
+          fetch-depth: 0  # Ensure full Git history is available
+
+      # Removed the redundant 'Change directory' step
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org/'
+          cache: 'npm'
+          cache-dependency-path: ./ts/package-lock.json  # Specify the correct path
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Configure NPM authentication
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ./.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          RELEASE_BRANCH: ${{ github.event.inputs.branch }}
+          RC: ${{ github.event.inputs.rc }}
+        run: npx semantic-release

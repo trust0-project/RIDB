@@ -1,0 +1,28 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": ["./src/index.ts"],
+    "readme": "none",
+    "out": "..",
+    "plugin": [
+        "typedoc-plugin-markdown",
+        "typedoc-plugin-rename-defaults"
+
+    ],
+    "navigationLinks": {
+        "Docs": "https://github.com/elribonazo/RIDB.git",
+        "GitHub": "https://github.com/elribonazo/RIDB.git"
+    },
+    "useTsLinkResolution": true,
+    "hideGenerator": true,
+    "entryPointStrategy": "expand",
+    "excludePrivate": true,
+    "excludeReferences": true,
+    "excludeProtected": true,
+    "excludeInternal": true,
+    "excludeNotDocumented": true,
+    "excludeNotDocumentedKinds": [
+        "Variable"
+    ],
+    "theme": "default",
+    "excludeExternals": true
+}

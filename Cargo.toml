@@ -1,0 +1,34 @@
+[package]
+name = "ridb-rust"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+log = "0.4.20"
+wasm-bindgen = { version = "0.2.90", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.40"
+console_error_panic_hook = { version = "0.1.1", optional = true }
+wee_alloc = { version = "0.4.2", optional = true }
+js-sys = {version="0.3.69", features = []}
+serde = { version = "1.0.195", features = ["derive"] }
+serde-wasm-bindgen = "0.6.3"
+console = "0.15.8"
+serde_json = "1.0.111"
+web-sys = { version = "0.3.69", features = ["console", "Window","Request", "Response"] }
+wasm-bindgen-test = {version="^0.3.42"}
+
+[package.metadata.wasm-bindgen]
+typescript = true
+
+[package.metadata.wasm-pack.profile.dev]
+wasm-opt = false
+
+[features]
+default = ["console_error_panic_hook"]
+browser = []
+node = []
+

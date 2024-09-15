@@ -1,0 +1,6 @@
+
+pkg
+.idea
+/target
+node_modules
+build
