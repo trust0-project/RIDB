@@ -1,3 +1,11 @@
+## [0.0.1](https://github.com/atala-community-projects/RIDB/compare/v0.0.0...v0.0.1) (2024-09-16)
+
+
+### Bug Fixes
+
+* find, update, findOne, create and delete	83fadb1	Javier Ribó <elribonazo@gmail.com>	15 sept 2024, 16:32 ([559f191](https://github.com/atala-community-projects/RIDB/commit/559f19146c3ce71314a278e8ad74ad327f0f377a))
+* pipeline improvement ([95f7b0b](https://github.com/atala-community-projects/RIDB/commit/95f7b0bb954a19f8a09226b8eeaa41b1a897580f))
+
 ## [0.0.1-rc.1](https://github.com/atala-community-projects/RIDB/compare/v0.0.0...v0.0.1-rc.1) (2024-09-16)
 
 
