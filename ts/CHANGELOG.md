@@ -1,3 +1,10 @@
+## [0.0.2-rc.1](https://github.com/atala-community-projects/RIDB/compare/v0.0.1...v0.0.2-rc.1) (2024-09-16)
+
+
+### Bug Fixes
+
+* typings ([3648b42](https://github.com/atala-community-projects/RIDB/commit/3648b42af4cf7bbbd1da0177549767bef8e1fefc))
+
 ## [0.0.1](https://github.com/atala-community-projects/RIDB/compare/v0.0.0...v0.0.1) (2024-09-16)
 
 
