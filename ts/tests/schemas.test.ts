@@ -71,6 +71,7 @@ describe(`[${platform}] Testing`, () => {
                         }
                     }
                 )
+                
                 await db.start(storage);
 
                 expect(db).to.not.be.undefined;

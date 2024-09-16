@@ -1,6 +1,6 @@
 {
   "name": "@elribonazo/ridb",
-  "version": "0.0.0",
+  "version": "0.0.1-rc.1",
   "description": "RIDB ES Module",
   "main": "./build/cjs/index.cjs",
   "module": "./build/esm/index.mjs",
@@ -35,14 +35,14 @@
     "postpublish": "rm ./README.MD"
   },
   "devDependencies": {
-    "semantic-release": "^24.1.1",
+    "@esbuild-plugins/node-resolve": "^0.2.2",
     "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^10.3.3",
     "@semantic-release/npm": "^12.0.1",
-    "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/release-notes-generator": "^14.0.1",
-    "@esbuild-plugins/node-resolve": "^0.2.2",
     "@types/node": "^20.14.2",
     "@vitest/browser": "^1.6.0",
     "@vitest/coverage-istanbul": "^1.6.0",
@@ -51,6 +51,7 @@
     "esbuild-plugin-wasm": "^1.1.0",
     "esbuild-plugin-wasm-pack": "^1.1.0",
     "jsdom": "^24.1.0",
+    "semantic-release": "^24.1.1",
     "ts-node": "^10.9.2",
     "typedoc": "^0.26.1",
     "typedoc-plugin-external-module-map": "^2.0.1",
