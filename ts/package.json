@@ -8,14 +8,17 @@
     ".": {
       "import": "./build/esm/index.mjs",
       "require": "./build/cjs/index.cjs",
-      "default": "./build/esm/index.mjs"
+      "default": "./build/esm/index.mjs",
+      "types": "./build/index.d.ts"
     }
   },
   "author": "elribonazo@gmail.com",
+  "types": "./index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/atala-community-projects/RIDB.git"
   },
+  "typings": "",
   "license": "Apache-2.0",
   "files": [
     "build",

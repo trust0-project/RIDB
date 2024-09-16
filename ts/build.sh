@@ -22,6 +22,5 @@ fi
 
 cd ts
 rm -rf build && node esbuild.config.mjs
-npx dts-bundle-generator src/index.ts  --no-check -o ./build/esm/index.d.ts
-npx dts-bundle-generator src/index.ts  --no-check -o ./build/cjs/index.d.ts
+npx dts-bundle-generator src/index.ts  --no-check -o ./build/index.d.ts
 
