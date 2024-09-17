@@ -16,12 +16,12 @@
 
 ### $and?
 
-> `optional` **$and**: [`QueryType`](QueryType.md)\<`T`\>[]
+> `optional` **$and**: `Partial`\<[`QueryType`](QueryType.md)\<`T`\>\>[]
 
 ### $or?
 
-> `optional` **$or**: [`QueryType`](QueryType.md)\<`T`\>[]
+> `optional` **$or**: `Partial`\<[`QueryType`](QueryType.md)\<`T`\>\>[]
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:225
+pkg/ridb\_rust.d.ts:189

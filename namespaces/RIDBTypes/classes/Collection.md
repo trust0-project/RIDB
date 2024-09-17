@@ -38,7 +38,7 @@ The schema defining the structure of the documents in the collection.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:293
+pkg/ridb\_rust.d.ts:562
 
 ## Properties
 
@@ -48,7 +48,7 @@ pkg/ridb\_rust.d.ts:293
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:285
+pkg/ridb\_rust.d.ts:554
 
 ## Methods
 
@@ -70,7 +70,7 @@ A promise that resolves to an array of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:307
+pkg/ridb\_rust.d.ts:576
 
 ***
 
@@ -94,7 +94,7 @@ A promise that resolves to the created document.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:332
+pkg/ridb\_rust.d.ts:601
 
 ***
 
@@ -118,7 +118,7 @@ A promise that resolves when the deletion is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:340
+pkg/ridb\_rust.d.ts:609
 
 ***
 
@@ -140,7 +140,7 @@ A promise that resolves to an array of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:300
+pkg/ridb\_rust.d.ts:569
 
 ***
 
@@ -164,7 +164,7 @@ A promise that resolves to the found document.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:315
+pkg/ridb\_rust.d.ts:584
 
 ***
 
@@ -188,7 +188,7 @@ A promise that resolves when the update is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:324
+pkg/ridb\_rust.d.ts:593
 
 ***
 
@@ -222,4 +222,4 @@ A new Collection instance.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:281
+pkg/ridb\_rust.d.ts:550

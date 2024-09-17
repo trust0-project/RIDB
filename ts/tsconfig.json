@@ -18,7 +18,8 @@
 
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "../pkg"
   ],
   "exclude": ["node_modules", "dist"]
 }

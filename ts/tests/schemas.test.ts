@@ -1,18 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import type { RIDBTypes } from "../build/esm/index";
+import { SchemaFieldType, RIDB, RIDBTypes, BaseStorage } from "@elribonazo/ridb";
 
-import {
-    SchemaFieldType,
-    RIDB,
-} from "../build/esm/index";
-
+export class InMemory<T extends RIDBTypes.SchemaType> extends BaseStorage<T>   {
+ 
+}
 
 const storages: (typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>|undefined)[] = [
     undefined
 ]
 
 export default (platform: string) =>
-
 
 describe(`[${platform}] Testing`, () => {
 

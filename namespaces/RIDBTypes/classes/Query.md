@@ -4,36 +4,28 @@
 
 [@elribonazo/ridb](../../../README.md) / [RIDBTypes](../README.md) / Query
 
-# Class: Query
+# Class: Query\<T\>
+
+## Type Parameters
+
+• **T** *extends* [`SchemaType`](../type-aliases/SchemaType.md)
 
 ## Constructors
 
 ### new Query()
 
-> **new Query**(`query`): [`Query`](Query.md)
-
-#### Parameters
-
-• **query**: `any`
+> **new Query**\<`T`\>(): [`Query`](Query.md)\<`T`\>
 
 #### Returns
 
-[`Query`](Query.md)
+[`Query`](Query.md)\<`T`\>
+
+## Properties
+
+### query
+
+> `readonly` **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:646
-
-## Methods
-
-### free()
-
-> **free**(): `void`
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-pkg/ridb\_rust.d.ts:642
+pkg/ridb\_rust.d.ts:201

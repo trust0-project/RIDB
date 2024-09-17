@@ -28,7 +28,7 @@ An optional array of nested properties for array-type properties.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:567
+pkg/ridb\_rust.d.ts:228
 
 ***
 
@@ -40,7 +40,7 @@ The maximum number of items for array-type properties, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:572
+pkg/ridb\_rust.d.ts:233
 
 ***
 
@@ -52,7 +52,7 @@ The maximum length for string-type properties, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:582
+pkg/ridb\_rust.d.ts:243
 
 ***
 
@@ -64,7 +64,7 @@ The minimum number of items for array-type properties, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:577
+pkg/ridb\_rust.d.ts:238
 
 ***
 
@@ -76,7 +76,7 @@ The minimum length for string-type properties, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:587
+pkg/ridb\_rust.d.ts:248
 
 ***
 
@@ -88,7 +88,7 @@ The primary key of the property, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:562
+pkg/ridb\_rust.d.ts:223
 
 ***
 
@@ -104,7 +104,7 @@ An optional map of nested properties for object-type properties.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:597
+pkg/ridb\_rust.d.ts:258
 
 ***
 
@@ -116,7 +116,7 @@ An optional array of required fields for object-type properties.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:592
+pkg/ridb\_rust.d.ts:253
 
 ***
 
@@ -128,7 +128,7 @@ The type of the property.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:552
+pkg/ridb\_rust.d.ts:213
 
 ***
 
@@ -140,4 +140,4 @@ The version of the property, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:557
+pkg/ridb\_rust.d.ts:218

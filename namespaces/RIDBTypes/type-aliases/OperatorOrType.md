@@ -6,7 +6,7 @@
 
 # Type Alias: OperatorOrType\<T\>
 
-> **OperatorOrType**\<`T`\>: `T` *extends* `number` ? `T` \| [`Operators`](Operators.md) \| [`InOperator`](InOperator.md)\<`T`\> : `T`
+> **OperatorOrType**\<`T`\>: `T` *extends* `number` ? `T` \| [`Operators`](Operators.md) \| [`InOperator`](InOperator.md)\<`T`\> : `T` \| [`InOperator`](InOperator.md)\<`T`\>
 
 ## Type Parameters
 
@@ -14,4 +14,4 @@
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:224
+pkg/ridb\_rust.d.ts:188

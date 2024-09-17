@@ -1,7 +1,6 @@
-use std::format;
 use wasm_bindgen::JsValue;
 use crate::query::{Query};
-use js_sys::{Array, Object, Reflect};
+use js_sys::{ Object};
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::operation::Operation;
 
@@ -11,8 +10,6 @@ pub trait StorageBase {
     async fn find_document_by_id(&self, primary_key:JsValue) -> Result<JsValue, JsValue>;
     async fn count(&self, query: Query) -> Result<JsValue, JsValue>;
     async fn close(&self) -> Result<JsValue, JsValue>;
-
-
 }
 
 #[wasm_bindgen]

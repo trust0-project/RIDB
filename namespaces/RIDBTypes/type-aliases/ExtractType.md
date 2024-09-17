@@ -28,4 +28,4 @@ A string literal type representing the basic data type ('string', 'number', 'boo
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:249
+pkg/ridb\_rust.d.ts:518

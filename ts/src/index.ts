@@ -155,11 +155,12 @@
  *
  *
  */
-import wasmBuffer from "../../pkg/ridb_rust_bg.wasm"
+import wasmBuffer from "../../pkg/ridb_rust_bg.wasm";
+
 import type * as RIDBTypes from "ridb-rust";
 export type * as RIDBTypes from "ridb-rust";
 
-export { OpType, BaseStorage } from 'ridb-rust';
+export {BaseStorage} from 'ridb-rust';
 
 export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
     private schemas: T;
@@ -210,9 +211,6 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
         }), {} as RIDBTypes.InternalsRecord);
     }
 }
-
-
-
 
 export const SchemaFieldType = {
     "string": 'string' as const,

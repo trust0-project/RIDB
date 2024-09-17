@@ -17,7 +17,7 @@ The inMemory storage is used by default and is currently supporting the followin
 1. Schemas: Creation of declararive schemas with required fields
 2. Schemas: Implement validation across all the flows extracting properties and required fields when needed
 3. Schemas: Manage Primary keys
-4. Internal Storage: write operation, create, update, fetch one, remove
+4. Internal Storage: write operation, create, update, fetch one, remove, find and count
 5. Internal Storage: Rust inMemory implementation
 6. Database default InMemory plugged in
 

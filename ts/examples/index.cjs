@@ -2,8 +2,12 @@ const {
     RIDB,
     SchemaFieldType
 } = require('../build/cjs/index.cjs');
+const SDK = require("@hyperledger/identus-edge-agent-sdk");
+
+
 
 (async () => {
+
     const db =  new RIDB(
         {
             demo: {

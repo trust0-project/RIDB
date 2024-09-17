@@ -28,4 +28,4 @@
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:217
+pkg/ridb\_rust.d.ts:181

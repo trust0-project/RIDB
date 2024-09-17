@@ -6,7 +6,7 @@
 
 # Type Alias: QueryType\<T\>
 
-> **QueryType**\<`T`\>: `{ [K in keyof T["properties"]]: OperatorOrType<ExtractType<T["properties"][K]["type"]>> }` & [`LogicalOperators`](LogicalOperators.md)\<`T`\> \| [`LogicalOperators`](LogicalOperators.md)\<`T`\>[]
+> **QueryType**\<`T`\>: `Partial`\<`{ [K in keyof T["properties"]]: OperatorOrType<ExtractType<T["properties"][K]["type"]>> }`\> & [`LogicalOperators`](LogicalOperators.md)\<`T`\> \| [`LogicalOperators`](LogicalOperators.md)\<`T`\>[]
 
 ## Type Parameters
 
@@ -14,4 +14,4 @@
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:229
+pkg/ridb\_rust.d.ts:193

@@ -50,7 +50,7 @@ The schema type of the storage.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:415
+pkg/ridb\_rust.d.ts:334
 
 ## Properties
 
@@ -62,7 +62,7 @@ The name of the storage.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:420
+pkg/ridb\_rust.d.ts:339
 
 ***
 
@@ -74,7 +74,7 @@ The schema associated with the storage.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:425
+pkg/ridb\_rust.d.ts:344
 
 ## Methods
 
@@ -96,7 +96,7 @@ A promise that resolves when the storage is closed.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:432
+pkg/ridb\_rust.d.ts:351
 
 ***
 
@@ -122,13 +122,13 @@ A promise that resolves to the number of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:439
+pkg/ridb\_rust.d.ts:358
 
 ***
 
 ### find()
 
-> **find**(`query`): `Promise`\<`void`\>
+> **find**(`query`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>[]\>
 
 Queries the storage.
 
@@ -138,7 +138,7 @@ Queries the storage.
 
 #### Returns
 
-`Promise`\<`void`\>
+`Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>[]\>
 
 A promise that resolves when the query is complete.
 
@@ -148,13 +148,13 @@ A promise that resolves when the query is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:454
+pkg/ridb\_rust.d.ts:373
 
 ***
 
 ### findDocumentById()
 
-> **findDocumentById**(`id`): `Promise`\<`null`\>
+> **findDocumentById**(`id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\>\>
 
 Finds a document by its ID.
 
@@ -166,7 +166,7 @@ The ID of the document to find.
 
 #### Returns
 
-`Promise`\<`null`\>
+`Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\>\>
 
 A promise that resolves to the found document or null.
 
@@ -176,7 +176,7 @@ A promise that resolves to the found document or null.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:447
+pkg/ridb\_rust.d.ts:366
 
 ***
 
@@ -192,7 +192,7 @@ Frees the resources used by the base storage.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:407
+pkg/ridb\_rust.d.ts:326
 
 ***
 
@@ -220,7 +220,7 @@ A promise that resolves when the document is removed.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:462
+pkg/ridb\_rust.d.ts:381
 
 ***
 
@@ -248,4 +248,4 @@ A promise that resolves to the document written.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:470
+pkg/ridb\_rust.d.ts:389

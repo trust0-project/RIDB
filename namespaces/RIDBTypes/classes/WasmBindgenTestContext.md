@@ -29,7 +29,7 @@ tests.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:663
+pkg/ridb\_rust.d.ts:661
 
 ## Methods
 
@@ -50,7 +50,7 @@ harness.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:669
+pkg/ridb\_rust.d.ts:667
 
 ***
 
@@ -64,7 +64,7 @@ pkg/ridb\_rust.d.ts:669
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:655
+pkg/ridb\_rust.d.ts:653
 
 ***
 
@@ -92,4 +92,4 @@ The promise returned resolves to either `true` if all tests passed or
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:683
+pkg/ridb\_rust.d.ts:681

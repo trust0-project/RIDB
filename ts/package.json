@@ -1,19 +1,19 @@
 {
   "name": "@elribonazo/ridb",
-  "version": "0.0.1",
+  "version": "0.0.2-rc.1",
   "description": "RIDB ES Module",
-  "main": "./build/cjs/index.cjs",
-  "module": "./build/esm/index.mjs",
+  "main": "./build/cjs/index.js",
+  "module": "./build/esm/index.js",
   "exports": {
     ".": {
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs",
-      "default": "./build/esm/index.mjs",
+      "import": "./build/esm/index.js",
+      "require": "./build/cjs/index.js",
+      "default": "./build/esm/index.js",
       "types": "./build/index.d.ts"
     }
   },
   "author": "elribonazo@gmail.com",
-  "types": "./index.d.ts",
+  "types": "./build/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/atala-community-projects/RIDB.git"
@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@esbuild-plugins/node-resolve": "^0.2.2",
+    "@hyperledger/identus-edge-agent-sdk": "^6.1.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/exec": "^6.0.3",

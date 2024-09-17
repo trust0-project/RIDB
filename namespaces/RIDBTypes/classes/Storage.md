@@ -36,7 +36,7 @@ This is a read-only property where the key is the name of the internal and the v
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:633
+pkg/ridb\_rust.d.ts:423
 
 ## Methods
 
@@ -66,4 +66,4 @@ The created `Storage` instance.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:624
+pkg/ridb\_rust.d.ts:414

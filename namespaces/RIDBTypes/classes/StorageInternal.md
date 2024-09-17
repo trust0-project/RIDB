@@ -44,7 +44,7 @@ A promise that resolves when the storage is closed.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:395
+pkg/ridb\_rust.d.ts:314
 
 ***
 
@@ -66,13 +66,13 @@ A promise that resolves to the number of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:380
+pkg/ridb\_rust.d.ts:299
 
 ***
 
 ### find()
 
-> `abstract` **find**(`query`): `Promise`\<`void`\>
+> `abstract` **find**(`query`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>[]\>
 
 Queries the storage.
 
@@ -82,19 +82,19 @@ Queries the storage.
 
 #### Returns
 
-`Promise`\<`void`\>
+`Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>[]\>
 
 A promise that resolves when the query is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:365
+pkg/ridb\_rust.d.ts:284
 
 ***
 
 ### findDocumentById()
 
-> `abstract` **findDocumentById**(`id`): `Promise`\<`null`\>
+> `abstract` **findDocumentById**(`id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\>\>
 
 Finds a document by its ID.
 
@@ -106,13 +106,13 @@ The ID of the document to find.
 
 #### Returns
 
-`Promise`\<`null`\>
+`Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\>\>
 
 A promise that resolves to the found document or null.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:373
+pkg/ridb\_rust.d.ts:292
 
 ***
 
@@ -136,7 +136,7 @@ A promise that resolves when the document is removed.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:388
+pkg/ridb\_rust.d.ts:307
 
 ***
 
@@ -160,4 +160,4 @@ A promise that resolves to the document written.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:358
+pkg/ridb\_rust.d.ts:277

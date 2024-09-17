@@ -34,7 +34,7 @@ The base storage instance.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:490
+pkg/ridb\_rust.d.ts:172
 
 ## Properties
 
@@ -46,7 +46,7 @@ The base storage instance.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:484
+pkg/ridb\_rust.d.ts:166
 
 ***
 
@@ -58,4 +58,4 @@ The schema associated with the storage.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:494
+pkg/ridb\_rust.d.ts:176

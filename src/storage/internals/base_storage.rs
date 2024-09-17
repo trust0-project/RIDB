@@ -24,7 +24,7 @@ export abstract class StorageInternal<T extends SchemaType> {
      *
      * @returns {Promise<void>} A promise that resolves when the query is complete.
      */
-    abstract find(query: QueryType<T>): Promise<void>;
+    abstract find(query: QueryType<T>): Promise<Doc<T>[]>;
 
     /**
      * Finds a document by its ID.
@@ -32,7 +32,7 @@ export abstract class StorageInternal<T extends SchemaType> {
      * @param {string} id - The ID of the document to find.
      * @returns {Promise<null>} A promise that resolves to the found document or null.
      */
-    abstract findDocumentById(id: string): Promise<null>;
+    abstract findDocumentById(id: string): Promise<Doc<T> | null>;
 
     /**
      * Counts the number of documents in the storage.
@@ -106,14 +106,14 @@ export class BaseStorage<T extends SchemaType> extends StorageInternal<T> {
      * @param {string} id - The ID of the document to find.
      * @returns {Promise<null>} A promise that resolves to the found document or null.
      */
-    findDocumentById(id: string): Promise<null>;
+    findDocumentById(id: string): Promise<Doc<T> | null>;
 
     /**
      * Queries the storage.
      *
      * @returns {Promise<void>} A promise that resolves when the query is complete.
      */
-    find(query: QueryType<T>): Promise<void>;
+    find(query: QueryType<T>): Promise<Doc<T>[]>;
 
     /**
      * Removes a document by its ID.
