@@ -1,14 +1,14 @@
 {
   "name": "@elribonazo/ridb",
-  "version": "0.1.0",
+  "version": "0.1.0-rc.2",
   "description": "RIDB ES Module",
   "main": "./build/cjs/index.js",
   "module": "./build/esm/index.js",
   "exports": {
     ".": {
-      "import": "./build/esm/index.js",
-      "require": "./build/cjs/index.js",
-      "default": "./build/esm/index.js",
+      "import": "./build/esm/index.mjs",
+      "require": "./build/cjs/index.cjs",
+      "default": "./build/esm/index.mjs",
       "types": "./build/index.d.ts"
     }
   },
@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@esbuild-plugins/node-resolve": "^0.2.2",
-    "@hyperledger/identus-edge-agent-sdk": "^6.1.0",
+    "@hyperledger/identus-edge-agent-sdk": "file:../../../iohk/atala-prism-wallet-sdk-ts",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/exec": "^6.0.3",

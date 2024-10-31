@@ -1,26 +1,15 @@
+/// <reference types="@hyperledger/identus-edge-agent-sdk" />
+
 const {
     RIDB,
-    SchemaFieldType
-} = require('../build/cjs/index.cjs');
+} = require('../build/cjs/index.js');
+
 const SDK = require("@hyperledger/identus-edge-agent-sdk");
 
-
-
 (async () => {
-
     const db =  new RIDB(
         {
-            demo: {
-                version: 0,
-                primaryKey: 'id',
-                type:SchemaFieldType.object,
-                properties: {
-                    id: {
-                        type:SchemaFieldType.string,
-                        maxLength: 60
-                    }
-                }
-            }
+            credential: SDK.default.Models.CredentialSchema
 
         }
     )
