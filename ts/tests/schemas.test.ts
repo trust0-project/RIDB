@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { SchemaFieldType, RIDB, RIDBTypes, BaseStorage } from "@elribonazo/ridb";
+import { SchemaFieldType, RIDB, BaseStorage } from "@elribonazo/ridb";
+
+
+import type { RIDBTypes } from '../build/esm';
 
 export class InMemory<T extends RIDBTypes.SchemaType> extends BaseStorage<T>   {
     constructor(
@@ -164,6 +167,7 @@ describe(`[${platform}] Testing`, () => {
                 expect(result).to.haveOwnProperty("name");
                 expect(result.id).to.eq("12345")
                 expect(result.name).to.eq("demo2")
+            
 
             })
             it("Should be able to create a default database with a valid schema", async () => {

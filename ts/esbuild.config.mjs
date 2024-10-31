@@ -48,7 +48,7 @@ const generic = {
 // Build ES module
 esbuild.build({
     ...generic,
-    outfile:"build/esm/index.js",
+    outfile:"build/esm/index.mjs",
     splitting: false,
     platform: 'neutral',
     target: ['esnext'],
@@ -61,8 +61,8 @@ esbuild.build({
 }).then(() => {
     esbuild.build({
         ...generic,
-        entryPoints: ['./build/esm/index.js'],
-        outfile:"build/cjs/index.js",
+        entryPoints: ['./build/esm/index.mjs'],
+        outfile:"build/cjs/index.cjs",
 
         splitting: false,
         platform: 'neutral',
