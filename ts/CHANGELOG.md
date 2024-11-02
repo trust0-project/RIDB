@@ -1,3 +1,17 @@
+# [0.2.0](https://github.com/atala-community-projects/RIDB/compare/v0.1.0...v0.2.0) (2024-11-02)
+
+
+### Bug Fixes
+
+* code improvement ([dc32887](https://github.com/atala-community-projects/RIDB/commit/dc328870a605da499087ae4e45d3b84c640dc579))
+* readme update ([cd3a4e4](https://github.com/atala-community-projects/RIDB/commit/cd3a4e430df8a3d77df6c04ac8bb6432547f8c6e))
+* start integrating with edge agent ([9183ede](https://github.com/atala-community-projects/RIDB/commit/9183ede47289d887c42e8721be133c7aa77edd75))
+
+
+### Features
+
+* basic encryption and identus integration example ([28241ea](https://github.com/atala-community-projects/RIDB/commit/28241ea2269e62b2121291829e72f5c8b7efe89f))
+
 # [0.1.0](https://github.com/atala-community-projects/RIDB/compare/v0.0.1...v0.1.0) (2024-09-17)
 
 
