@@ -9,6 +9,7 @@ mod storage;
 mod database;
 mod query;
 mod operation;
+mod plugin;
 
 #[wasm_bindgen(start)]
 pub fn main_js() -> Result<(), JsValue> {

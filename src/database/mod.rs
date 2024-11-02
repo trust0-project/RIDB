@@ -1,10 +1,10 @@
 use std::collections::HashMap;
-use js_sys::{Object, Reflect};
-use wasm_bindgen::JsValue;
+use js_sys::{Array, Object, Reflect};
+use wasm_bindgen::{ JsCast, JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::collection::Collection;
 use crate::error::RIDBError;
-use crate::storage::internals::storage_internal::StorageModule;
+use crate::plugin::BasePlugin;
 use crate::storage::Storage;
 
 #[wasm_bindgen(typescript_custom_section)]
@@ -21,13 +21,10 @@ export class Database<T extends SchemaTypeRecord> {
      *
      * @template TS - A record of schema types.
      * @param {TS} schemas - The schemas to use for the collections.
-     * @param {StorageModule} storage - The storage module to use.
+     * @param {RIDBModule} storage - The storage module to use.
      * @returns {Promise<Database<TS>>} A promise that resolves to the created `Database` instance.
      */
-    static create<TS extends SchemaTypeRecord>(
-        schemas: TS,
-        storage: StorageModule
-    ): Promise<Database<TS>>;
+    static create<TS extends SchemaTypeRecord>(schemas: TS, plugins:Array<typeof BasePlugin>, options: RIDBModule): Promise<Database<TS>>;
 
     /**
      * The collections in the database.
@@ -39,7 +36,37 @@ export class Database<T extends SchemaTypeRecord> {
     }
 }
 
+/**
+ * Represents a storage module with a method for creating storage.
+ */
+export type RIDBModule = {
+    /**
+     * Creates storage with the provided schema type records.
+     *
+     * @type {CreateStorage}
+     */
+    createStorage: CreateStorage,
+
+    /**
+     * Plugin constructors array
+     */
+    apply: (plugins:Array<typeof BasePlugin>) => Array<BasePlugin>;
+};
 "#;
+
+#[wasm_bindgen]
+extern "C" {
+
+    #[derive(Clone, Default)]
+    pub type RIDBModule;
+
+    #[wasm_bindgen(method, catch, js_name = "createStorage")]
+    pub fn create_storage(this: &RIDBModule, records: &Object) -> Result<JsValue, JsValue>;
+
+    #[wasm_bindgen(method, catch, js_name = "apply")]
+    pub fn apply(this: &RIDBModule, plugins: Array) -> Result<Vec<JsValue>, JsValue>;
+
+}
 
 
 #[wasm_bindgen(skip_typescript)]
@@ -49,6 +76,7 @@ pub struct Database {
     /// The storage mechanism for the database.
     pub(crate) storage: Storage
 }
+
 
 #[wasm_bindgen]
 impl Database {
@@ -62,7 +90,6 @@ impl Database {
     /// * `Result<Object, JsValue>` - A result containing an `Object` with the collections or an error.
     #[wasm_bindgen(getter)]
     pub fn collections(&self) -> Result<Object, JsValue> {
-        // Create a HashMap to store the collections
         let  collections: HashMap<String, Collection> =
             self.storage.internals
                 .iter()
@@ -70,53 +97,40 @@ impl Database {
                     (key.clone(), Collection::from(key.clone(), internals.clone()))
                 })
                 .collect();
-
-        // Create a new JavaScript Object
         let object = Object::new();
         for (key, collection) in collections {
-            // Set each collection in the JavaScript Object
             Reflect::set(
                 &object,
                 &JsValue::from_str(key.as_str()),
                 &JsValue::from(collection)
             ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
         }
-
         Ok(object)
     }
 
-    /// Creates a new `Database` instance.
-    ///
-    /// This function initializes the database with the given schemas and storage module.
-    ///
-    /// # Arguments
-    ///
-    /// * `schemas_map_js` - A JavaScript `Object` containing the schemas.
-    /// * `module` - The storage module to use for the database.
-    ///
-    /// # Returns
-    ///
-    /// * `Result<Database, JsValue>` - A result containing the new `Database` instance or an error.
     #[wasm_bindgen]
     pub async fn create(
         schemas_map_js: Object,
-        module: StorageModule
+        plugins: Array,
+        module: RIDBModule,
     ) -> Result<Database, JsValue> {
-
         if !schemas_map_js.is_object() {
             return Err(JsValue::from(RIDBError::from("Unexpected object")));
         }
         let storage_internal_map_js = module.create_storage(&schemas_map_js.clone())?;
-        let storage =
-            Storage::create(storage_internal_map_js.clone().into())
-                .map_err(|e| {
-                    JsValue::from(RIDBError::from(e))
-                })?;
+        let vec_plugins_js: Vec<JsValue> =  module.apply(plugins)?;
+        let vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
+        .map(|plugin| plugin.unchecked_into::<BasePlugin>())
+        .collect();
+            let storage = Storage::create(
+            storage_internal_map_js.into(),
+            vec_plugins
+        ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
-        Ok(
-            Database {
-                storage
-            }
-        )
+        let db = Database {
+            storage,
+        };
+
+        Ok(db)
     }
 }
