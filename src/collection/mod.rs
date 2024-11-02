@@ -2,10 +2,13 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::schema::Schema;
-use crate::storage::internals::Internals;
+use crate::storage::internals::{HookType, Internals};
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
+export type InternalsRecord = {
+    [name: string]: BaseStorage<SchemaType>
+};
 /**
  * ExtractType is a utility type that maps a string representing a basic data type to the actual TypeScript type.
  *
@@ -154,8 +157,11 @@ impl Collection {
     /// This function is asynchronous and returns a `Schema` representing
     /// the documents found in the collection.
     #[wasm_bindgen]
-    pub async fn find(&self, query: JsValue) -> Result<JsValue, JsValue> {
-        self.internals.find(query).await
+    pub async fn find(&mut self, query: JsValue) -> Result<JsValue, JsValue> {
+        self.internals.call(
+            HookType::Recover,
+            self.internals.find(query).await?
+        )
     }
 
     /// counts and returns all documents in the collection.
@@ -183,8 +189,16 @@ impl Collection {
     ///
     /// * `document` - A `JsValue` representing the partial document to update.
     #[wasm_bindgen]
-    pub async fn update(&self, document: JsValue) -> Result<JsValue, JsValue> {
-        self.internals.write( document ).await
+    pub async fn update(&mut self, document: JsValue) -> Result<JsValue, JsValue> {
+        let res = self.internals.call(
+            HookType::Create,
+            self.internals.write(document).await?
+        )?;
+
+        self.internals.call(
+            HookType::Recover,
+            res
+        )
     }
 
     /// Creates a new document in the collection.
@@ -195,8 +209,16 @@ impl Collection {
     ///
     /// * `document` - A `JsValue` representing the document to create.
     #[wasm_bindgen]
-    pub async fn create(&self, document: JsValue) -> Result<JsValue, JsValue> {
-        self.internals.write( document  ).await
+    pub async fn create(&mut self, document: JsValue) -> Result<JsValue, JsValue> {
+        let res = self.internals.call(
+            HookType::Create,
+            self.internals.write(document).await?
+        )?;
+
+        self.internals.call(
+            HookType::Recover,
+            res
+        )
     }
 
     /// Deletes a document from the collection by its ID.

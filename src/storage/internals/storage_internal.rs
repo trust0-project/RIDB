@@ -12,7 +12,57 @@ const TS_APPEND_CONTENT: &'static str = r#"
 export type SchemaTypeRecord = {
     [name: string]: SchemaType
 };
+/**
+ * Represents the internal storage interface with abstract methods for various storage operations.
+ *
+ * @template T - The schema type.
+ */
+export abstract class StorageInternal<T extends SchemaType> {
+    /**
+     * Writes an operation to the storage.
+     *
+     * @param {Operation<T>} op - The operation to write.
+     * @returns {Promise<Doc<T>>} A promise that resolves to the document written.
+     */
+    abstract write(op: Operation<T>): Promise<Doc<T>>;
 
+    /**
+     * Queries the storage.
+     *
+     * @returns {Promise<void>} A promise that resolves when the query is complete.
+     */
+    abstract find(query: QueryType<T>): Promise<Doc<T>[]>;
+
+    /**
+     * Finds a document by its ID.
+     *
+     * @param {string} id - The ID of the document to find.
+     * @returns {Promise<null>} A promise that resolves to the found document or null.
+     */
+    abstract findDocumentById(id: string): Promise<Doc<T> | null>;
+
+    /**
+     * Counts the number of documents in the storage.
+     *
+     * @returns {Promise<number>} A promise that resolves to the number of documents.
+     */
+    abstract count(query: QueryType<T>): Promise<number>;
+
+    /**
+     * Removes a document by its ID.
+     *
+     * @param {string} id - The ID of the document to remove.
+     * @returns {Promise<void>} A promise that resolves when the document is removed.
+     */
+    abstract remove(id: string): Promise<void>;
+
+    /**
+     * Closes the storage.
+     *
+     * @returns {Promise<void>} A promise that resolves when the storage is closed.
+     */
+    abstract close(): Promise<void>;
+}
 /**
  * Represents a function type for creating storage with the provided schema type records.
  *
@@ -24,29 +74,12 @@ export type CreateStorage = <T extends SchemaTypeRecord = SchemaTypeRecord>(
     records: T
 ) => InternalsRecord;
 
-/**
- * Represents a storage module with a method for creating storage.
- */
-export type StorageModule = {
-    /**
-     * Creates storage with the provided schema type records.
-     *
-     * @type {CreateStorage}
-     */
-    createStorage: CreateStorage
-};
 "#;
 
 #[wasm_bindgen]
 extern "C" {
     #[derive(Clone, Default)]
     pub type StorageInternal;
-
-    #[derive(Clone, Default)]
-    pub type StorageModule;
-
-    #[wasm_bindgen(method, catch, js_name="createStorage")]
-    pub fn create_storage(this: &StorageModule, records: &Object) -> Result<JsValue, JsValue>;
 
     #[wasm_bindgen(constructor)]
     pub fn new(name: &JsValue, schema: &JsValue) -> StorageInternal;

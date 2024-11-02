@@ -1,11 +1,14 @@
 pub mod storage_internal;
 pub mod base_storage;
 
-use js_sys::Reflect;
-use wasm_bindgen::{JsCast, JsValue};
+use js_sys::{Reflect, JSON};
+use serde_wasm_bindgen::to_value;
+use wasm_bindgen::{JsCast,  JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
+use web_sys::console::log_1;
 use crate::error::RIDBError;
 use crate::operation::{OpType, Operation};
+use crate::plugin::BasePlugin;
 use crate::schema::property_type::PropertyType;
 use crate::schema::Schema;
 use crate::storage::internals::storage_internal::StorageInternal;
@@ -44,6 +47,22 @@ pub struct Internals {
     pub(crate) schema: Schema,
     /// The internal storage mechanism.
     pub(crate) internal: StorageInternal,
+    pub(crate) plugins: Vec<BasePlugin>
+}
+
+#[derive(Debug)]
+pub(crate) enum HookType {
+    Create,
+    Recover,
+}
+
+impl HookType {
+    fn as_str(&self) -> &'static str {
+        match self {
+            HookType::Create => "create",
+            HookType::Recover => "recover",
+        }
+    }
 }
 
 #[wasm_bindgen]
@@ -58,12 +77,40 @@ impl Internals {
     ///
     /// * `Internals` - A new instance of `Internals`.
     #[wasm_bindgen(constructor)]
-    pub fn new(internal: StorageInternal) -> Result<Internals, JsValue> {
+    pub fn new(
+        internal: StorageInternal,
+        plugins: Vec<BasePlugin>
+    ) -> Result<Internals, JsValue> {
         let schema = internal.schema().clone();
         match schema.is_valid() {
-            Ok(_) => Ok(Internals { schema, internal }),
+            Ok(_) => Ok(Internals { schema, internal, plugins }),
             Err(e) => Err(JsValue::from(e))
         }
+    }
+
+    pub(crate) fn call(&self, hook_type: HookType, mut doc: JsValue) -> Result<JsValue, JsValue> {
+        let plugins = &self.plugins;
+        for plugin in plugins {
+            let hook = match hook_type {
+                HookType::Create => plugin.get_doc_create_hook(),
+                HookType::Recover => plugin.get_doc_recover_hook(),
+            };
+            doc = self.compute_hook(doc, &hook)?;
+        }
+        Ok(doc)
+    }
+
+    fn compute_hook(&self, doc: JsValue, hook: &JsValue) -> Result<JsValue, JsValue> {
+        if hook.is_function() {
+            let hook_fn = hook.dyn_ref::<js_sys::Function>()
+                .ok_or_else(|| JsValue::from(RIDBError::error("Hook is not a function")))?;
+
+            hook_fn.call2(&JsValue::NULL, &to_value(&self.schema).unwrap(), &doc)
+                .map_err(|e| JsValue::from(RIDBError::error(&format!("Error executing plugin hook: {:?}", e))))?;
+        } else {
+            log_1(&JsValue::from(format!("InValid Hook type: {:?}", hook.js_typeof())));
+        }
+        Ok(doc)
     }
 
     /// Ensures that the document has a primary key, generating one if necessary.
@@ -117,18 +164,14 @@ impl Internals {
     pub fn validate_schema(&self, document_without_pk: JsValue) -> Result<JsValue, JsValue> {
         let document = self.ensure_primary_key(document_without_pk)?;
         let properties = self.schema.properties.clone();
-
+        let required = self.schema.required.clone().unwrap_or(Vec::new());
         for (key, prop) in properties {
             let value = Reflect::get(&document, &JsValue::from_str(&key))?;
-
             if value.is_undefined() {
-                // Check if the field is required by safely handling the Option
-                if let Some(is_required) = prop.required {
-                    if is_required {
-                        return Err(JsValue::from(RIDBError::error(
-                            &format!("Field {} is required", key),
-                        )));
-                    }
+                if required.contains(&key) {
+                    return Err(JsValue::from(RIDBError::error(
+                        &format!("Field {} is required", key),
+                    )));
                 }
             } else {
                 if !self.is_type_correct(&value, prop.property_type) {

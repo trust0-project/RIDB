@@ -160,16 +160,26 @@ import wasmBuffer from "../../pkg/ridb_rust_bg.wasm";
 import  * as RIDBTypes from "ridb-rust";
 export  * as RIDBTypes from "ridb-rust";
 
-export {BaseStorage } from 'ridb-rust';
+export { BaseStorage } from 'ridb-rust';
+
+class MySimplePlugin extends RIDBTypes.BasePlugin {
+    constructor() {
+        super();
+        this.docCreateHook = (schema, docs) => docs;
+        this.docRecoverHook = (schema, docs) => docs;
+    }
+}
 
 export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
     private schemas: T;
+    private plugins : Array<typeof RIDBTypes.BasePlugin> = []
 
     private _internal: typeof import("ridb-rust") | undefined;
     private _db: RIDBTypes.Database<T> | undefined;
 
-    constructor(schemas: T) {
+    constructor(schemas: T, plugins: Array<typeof RIDBTypes.BasePlugin> = [RIDBTypes.EncryptionPlugin] ) {
         this.schemas = schemas;
+        this.plugins = plugins;
     }
 
     private get db() {
@@ -192,11 +202,20 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
         return this._internal!;
     }
 
+    private getRIDBModule(storageType?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>) {
+        return {
+            createStorage: (schemas:RIDBTypes.SchemaTypeRecord) => this.createStorage(schemas, storageType),
+            apply: (plugins:Array<typeof RIDBTypes.BasePlugin> = []) => plugins.map((Plugin) => new Plugin())
+        }
+    }
+
     async start(storageType?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>) {
         const {Database} = await this.load();
-        this._db ??= await Database.create(this.schemas, {
-            createStorage: (schemas) => this.createStorage(schemas, storageType)
-        });
+        this._db ??= await Database.create(
+            this.schemas, 
+            this.plugins,
+            this.getRIDBModule(storageType) 
+        )
         return this.db;
     }
 
@@ -208,7 +227,7 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
         return Object.keys(schemas).reduce((storages, name) => ({
             ...storages,
             [name]: new Storage(name, schemas[name])
-        }), {} as RIDBTypes.InternalsRecord);
+        }), {});
     }
 }
 

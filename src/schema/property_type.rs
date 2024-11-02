@@ -1,6 +1,7 @@
 use std::fmt;
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
-use serde::de::{ Visitor};
+use serde::de::{Error, Visitor};
+use serde::ser::Error as SerError;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(skip_typescript)]
@@ -15,7 +16,7 @@ pub enum PropertyType {
 
 
 impl Serialize for PropertyType {
-    /// Serializes a `PropertyType` into an integer value.
+    /// Serializes a `PropertyType` into a string value.
     ///
     /// # Arguments
     ///
@@ -26,29 +27,25 @@ impl Serialize for PropertyType {
     /// * `Result<S::Ok, S::Error>` - A result indicating success or failure.
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
-            S: Serializer,
+            S: Serializer
     {
-        let value = match self {
-            PropertyType::String => Ok(0),
-            PropertyType::Number => Ok(1),
-            PropertyType::Boolean =>Ok(2),
-            PropertyType::Array => Ok(3),
-            PropertyType::Object => Ok(4),
-            _ => Err(serde::ser::Error::custom("unknown PropertyType")),
-        };
-        match value {
-            Ok(val) => serializer.serialize_i64(val),
-            Err(e) => Err(e)
+        match self {
+            PropertyType::String => serializer.serialize_str("string"),
+            PropertyType::Number => serializer.serialize_str("number"),
+            PropertyType::Boolean => serializer.serialize_str("boolean"),
+            PropertyType::Array => serializer.serialize_str("array"),
+            PropertyType::Object => serializer.serialize_str("object"),
+            _ => Err(SerError::custom("Wrong key")),
         }
     }
 }
 
 impl<'de> Deserialize<'de> for PropertyType {
-    /// Deserializes an integer value into a `PropertyType`.
+    /// Deserializes a string value into a `PropertyType`.
     ///
     /// # Arguments
     ///
-    /// * `deserializer` - The deserializer to use for converting the integer value.
+    /// * `deserializer` - The deserializer to use for converting the string value.
     ///
     /// # Returns
     ///
@@ -78,6 +75,20 @@ impl<'de> Visitor<'de> for PropertyTypeVisitor {
     /// * `fmt::Result` - A result indicating success or failure.
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("an PropertyType (String, Number, Boolean, Object or Array)")
+    }
+
+    fn visit_i32<E>(self, value: i32) -> Result<Self::Value, E>
+    where
+        E: Error,
+    {
+        match  value {
+            0 =>  Ok(PropertyType::String),
+            1 => Ok(PropertyType::Number),
+            2 => Ok(PropertyType::Boolean),
+            3 => Ok(PropertyType::Array),
+            4 => Ok(PropertyType::Object),
+            _ => Err(E::invalid_value(de::Unexpected::Str("Wrong key"), &self)),
+        }
     }
 
     /// Visits a string value and attempts to convert it into a `PropertyType`.
