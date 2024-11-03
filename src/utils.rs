@@ -1,6 +1,6 @@
 
 use serde_wasm_bindgen::from_value;
-use wasm_bindgen::{ JsValue};
+use wasm_bindgen::JsValue;
 
 pub fn extract_property<T>(js_value: &JsValue, key: &str) -> Result<T, JsValue>
     where
