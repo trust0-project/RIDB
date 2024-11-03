@@ -2,6 +2,7 @@
   "name": "@trust0/ridb",
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   "version": "0.3.2",
 =======
   "version": "0.3.1-rc.1",
@@ -9,6 +10,9 @@
 =======
   "version": "0.3.1-rc.2",
 >>>>>>> ca1fd75 (chore(release): 0.3.1-rc.2 [skip ci])
+=======
+  "version": "0.3.1-rc.3",
+>>>>>>> 2651f59 (chore(release): 0.3.1-rc.3 [skip ci])
   "description": "Dependency free wasm database encrypted and secure database wrapper for web and node",
   "main": "./build/cjs/index.js",
   "publishConfig": {
