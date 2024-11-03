@@ -30,7 +30,7 @@ export default (platform: string) => {
                             } as const
                         }
                     )
-                    await db.start(storage);
+                    await db.start({storageType: storage});
                     expect(db).to.not.be.undefined;
                     expect(db.collections).to.not.be.undefined;
                     expect(db.collections).to.haveOwnProperty("demo");
@@ -69,7 +69,7 @@ export default (platform: string) => {
                         }
                     )
 
-                    await db.start(storage);
+                    await db.start({storageType: storage});
 
                     expect(db).to.not.be.undefined;
                     expect(db.collections).to.not.be.undefined;
@@ -111,7 +111,7 @@ export default (platform: string) => {
                         }
                     )
 
-                    await db.start(storage);
+                    await db.start({storageType: storage});
 
                     expect(db).to.not.be.undefined;
                     expect(db.collections).to.not.be.undefined;
@@ -162,7 +162,7 @@ export default (platform: string) => {
                             } as const
                         }
                     )
-                    await db.start(storage)
+                    await db.start({storageType: storage})
                     expect(db).to.not.be.undefined;
                 });
                 it("Should be able to find a created schema entry", async () => {
@@ -186,7 +186,7 @@ export default (platform: string) => {
                             } as const
                         }
                     )
-                    await db.start(storage)
+                    await db.start({storageType: storage})
                     expect(db).to.not.be.undefined;
 
                     const created = await db.collections.demo.create({
@@ -235,7 +235,7 @@ export default (platform: string) => {
                             } as const
                         }
                     )
-                    await db.start(storage)
+                    await db.start({storageType: storage})
                     expect(db).to.not.be.undefined;
 
                     const created = await db.collections.demo.create({
@@ -276,7 +276,7 @@ export default (platform: string) => {
                             } as const
                         }
                     )
-                    await expect(async () => db.start(storage)).to.rejects.toThrowError("Validation Error: Schema type is invalid (\"wrong\")")
+                    await expect(async () => db.start({storageType: storage})).to.rejects.toThrowError("Validation Error: Schema type is invalid (\"wrong\")")
                 })
                 it("Should throw an error when schema properties type is invalid", async () => {
                     const db = new RIDB(
@@ -296,7 +296,7 @@ export default (platform: string) => {
                             } as const
                         }
                     )
-                    await expect(async () => db.start(storage)).to.rejects.toThrowError("Serialization Error: invalid value: string \"....\", expected an PropertyType (String, Number, Boolean, Object or Array)")
+                    await expect(async () => db.start({storageType: storage})).to.rejects.toThrowError("Serialization Error: invalid value: string \"....\", expected an PropertyType (String, Number, Boolean, Object or Array)")
                 })
                 it("Should throw an error when the minLength is lower than 0", async () => {
                     const db = new RIDB(
@@ -316,7 +316,7 @@ export default (platform: string) => {
                             } as const
                         }
                     )
-                    await expect(async () => db.start(storage)).to.rejects.toThrowError("Validation Error: Min property not valid")
+                    await expect(async () => db.start({storageType: storage})).to.rejects.toThrowError("Validation Error: Min property not valid")
                 })
                 it("Should throw an error when schemaType with a property that has min higher than max", async () => {
                     const db = new RIDB(
@@ -337,7 +337,7 @@ export default (platform: string) => {
                             } as const
                         }
                     )
-                    await expect(async () => db.start(storage)).to.rejects.toThrowError("Validation Error: Min higher than max")
+                    await expect(async () => db.start({storageType: storage})).to.rejects.toThrowError("Validation Error: Min higher than max")
                 });
             })
         })
