@@ -1,3 +1,11 @@
+## [0.3.5](https://github.com/trust0-project/RIDB/compare/v0.3.4...v0.3.5) (2024-11-03)
+
+
+### Bug Fixes
+
+* pkg description ([066807d](https://github.com/trust0-project/RIDB/commit/066807d00d9ae167613f767c52b1832147eecb07))
+* pkg description ([#13](https://github.com/trust0-project/RIDB/issues/13)) ([10960b3](https://github.com/trust0-project/RIDB/commit/10960b3e1260e0269cda133696ebe4116e6384c7))
+
 ## [0.3.5-rc.1](https://github.com/trust0-project/RIDB/compare/v0.3.4...v0.3.5-rc.1) (2024-11-03)
 
 
