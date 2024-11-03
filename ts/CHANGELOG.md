@@ -1,3 +1,10 @@
+## [0.3.2](https://github.com/trust0-project/RIDB/compare/v0.3.1...v0.3.2) (2024-11-03)
+
+
+### Bug Fixes
+
+* port improvements ([#10](https://github.com/trust0-project/RIDB/issues/10)) ([f6bce9c](https://github.com/trust0-project/RIDB/commit/f6bce9c437858974df0d76bbcc9a5a8e7e86ff66)), closes [#6](https://github.com/trust0-project/RIDB/issues/6) [#9](https://github.com/trust0-project/RIDB/issues/9) [#9](https://github.com/trust0-project/RIDB/issues/9)
+
 ## [0.3.1-rc.3](https://github.com/trust0-project/RIDB/compare/v0.3.1-rc.2...v0.3.1-rc.3) (2024-11-03)
 
 
