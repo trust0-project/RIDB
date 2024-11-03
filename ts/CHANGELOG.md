@@ -1,3 +1,17 @@
+# [0.3.0-rc.1](https://github.com/trust0-project/RIDB/compare/v0.2.0...v0.3.0-rc.1) (2024-11-03)
+
+
+### Bug Fixes
+
+* change tests ([6f4a3e9](https://github.com/trust0-project/RIDB/commit/6f4a3e9e445f4bd3560febae30ede49f86fd7e05))
+
+
+### Features
+
+* encryption, migration plugins and database improvements ([b488150](https://github.com/trust0-project/RIDB/commit/b48815093aa13c1706f9767766d5d5ac24ea20d6))
+* fix pipeline ([54d494e](https://github.com/trust0-project/RIDB/commit/54d494ecd3595efd4cf95ce77d8eb378c1a920b4))
+* loading default plugins + create one for password ([b65d0b0](https://github.com/trust0-project/RIDB/commit/b65d0b03d0825ac65e6075bcd7d159939e6270fc))
+
 # [0.2.0](https://github.com/atala-community-projects/RIDB/compare/v0.1.0...v0.2.0) (2024-11-02)
 
 
