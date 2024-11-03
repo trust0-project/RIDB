@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb",
-  "version": "0.3.0-rc.1",
+  "version": "0.3.0",
   "description": "RIDB ES Module",
   "main": "./build/cjs/index.js",
   "publishConfig": {
