@@ -1,19 +1,15 @@
 ## [0.3.2](https://github.com/trust0-project/RIDB/compare/v0.3.1...v0.3.2) (2024-11-03)
 
-
 ### Bug Fixes
 
 * port improvements ([#10](https://github.com/trust0-project/RIDB/issues/10)) ([f6bce9c](https://github.com/trust0-project/RIDB/commit/f6bce9c437858974df0d76bbcc9a5a8e7e86ff66)), closes [#6](https://github.com/trust0-project/RIDB/issues/6) [#9](https://github.com/trust0-project/RIDB/issues/9) [#9](https://github.com/trust0-project/RIDB/issues/9)
 
 ## [0.3.1-rc.3](https://github.com/trust0-project/RIDB/compare/v0.3.1-rc.2...v0.3.1-rc.3) (2024-11-03)
 
-
 ### Bug Fixes
 
-=======
 * remove space ([#9](https://github.com/trust0-project/RIDB/issues/9)) ([1346ef4](https://github.com/trust0-project/RIDB/commit/1346ef46734b4e02a302f63d8b76bdaf4dbbf745))
 
->>>>>>> 322730b (chore(release): 0.3.1-rc.3 [skip ci])
 ## [0.3.1-rc.2](https://github.com/trust0-project/RIDB/compare/v0.3.1-rc.1...v0.3.1-rc.2) (2024-11-03)
 
 
@@ -21,11 +17,6 @@
 
 * small improvement ([#6](https://github.com/trust0-project/RIDB/issues/6)) ([80c4ce6](https://github.com/trust0-project/RIDB/commit/80c4ce6f845cebcaa7bda21f8fc96200599100e2))
 
-
-=======
->>>>>>> 167be21 (chore(release): 0.3.1-rc.1 [skip ci])
-=======
->>>>>>> ecfaf8c (chore(release): 0.3.1-rc.2 [skip ci])
 ## [0.3.1-rc.1](https://github.com/trust0-project/RIDB/compare/v0.3.0...v0.3.1-rc.1) (2024-11-03)
 
 
