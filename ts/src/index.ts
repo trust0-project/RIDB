@@ -237,15 +237,15 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
 
     /**
      * Starts the database.
-     * @param {typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>} [storageType] - The storage type to use.
      * @returns {Promise<RIDBTypes.Database<T>>} A promise that resolves to the database instance.
+     * @param options
      */
     async start(
         options?: {
             storageType?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>,
             password?: string
         }
-    ) {
+    ): Promise<RIDBTypes.Database<T>> {
         const {storageType, password} = options ?? {};
         const { Database } = await this.load();
         this._db ??= await Database.create(

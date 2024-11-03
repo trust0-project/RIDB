@@ -120,22 +120,26 @@ impl Database {
         if !schemas_map_js.is_object() {
             return Err(JsValue::from(RIDBError::from("Unexpected object")));
         }
-        let storage_internal_map_js = module.create_storage(&schemas_map_js.clone())?;
+        let storage_internal_map_js = module.create_storage(
+            &schemas_map_js.clone()
+        )?;
         let vec_plugins_js: Vec<JsValue> =  module.apply(plugins)?;
 
         let mut vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
         .map(|plugin| plugin.unchecked_into::<BasePlugin>())
         .collect();
 
-        let migration = MigrationPlugin::new()?;
-        let encryption = EncryptionPlugin::new(password)?;
+        if password.is_some() {
+            let encryption = EncryptionPlugin::new(password)?;
+            vec_plugins.push(encryption.base);
+        }
 
-        vec_plugins.push(encryption.base);
+        let migration = MigrationPlugin::new()?;
         vec_plugins.push(migration.base);
 
         let storage = Storage::create(
             storage_internal_map_js.into(),
-            vec_plugins
+            vec_plugins,
         ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
         let db = Database {
