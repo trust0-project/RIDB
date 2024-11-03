@@ -1,3 +1,10 @@
+## [0.3.3-rc.1](https://github.com/trust0-project/RIDB/compare/v0.3.2...v0.3.3-rc.1) (2024-11-03)
+
+
+### Bug Fixes
+
+* package json fix ([408db20](https://github.com/trust0-project/RIDB/commit/408db2016601e85b8f27cdbf21223dafd6dade07))
+
 ## [0.3.2](https://github.com/trust0-project/RIDB/compare/v0.3.1...v0.3.2) (2024-11-03)
 
 ### Bug Fixes
