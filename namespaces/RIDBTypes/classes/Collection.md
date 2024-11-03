@@ -14,42 +14,6 @@ Collection is a class that represents a collection of documents in a database.
 
 A schema type defining the structure of the documents in the collection.
 
-## Constructors
-
-### new Collection()
-
-> **new Collection**\<`T`\>(`name`, `schema`): [`Collection`](Collection.md)\<`T`\>
-
-Constructs a new Collection instance.
-
-#### Parameters
-
-• **name**: `string`
-
-The name of the collection.
-
-• **schema**: `T`
-
-The schema defining the structure of the documents in the collection.
-
-#### Returns
-
-[`Collection`](Collection.md)\<`T`\>
-
-#### Defined in
-
-pkg/ridb\_rust.d.ts:562
-
-## Properties
-
-### schema
-
-> **schema**: `T`
-
-#### Defined in
-
-pkg/ridb\_rust.d.ts:554
-
 ## Methods
 
 ### count()
@@ -60,7 +24,7 @@ count all documents in the collection.
 
 #### Parameters
 
-• **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
+• **query**: `QueryType`\<`T`\>
 
 #### Returns
 
@@ -70,7 +34,7 @@ A promise that resolves to an array of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:576
+pkg/ridb\_rust.d.ts:356
 
 ***
 
@@ -94,7 +58,7 @@ A promise that resolves to the created document.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:601
+pkg/ridb\_rust.d.ts:381
 
 ***
 
@@ -118,7 +82,7 @@ A promise that resolves when the deletion is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:609
+pkg/ridb\_rust.d.ts:389
 
 ***
 
@@ -130,7 +94,7 @@ Finds all documents in the collection.
 
 #### Parameters
 
-• **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
+• **query**: `QueryType`\<`T`\>
 
 #### Returns
 
@@ -140,7 +104,7 @@ A promise that resolves to an array of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:569
+pkg/ridb\_rust.d.ts:349
 
 ***
 
@@ -164,7 +128,7 @@ A promise that resolves to the found document.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:584
+pkg/ridb\_rust.d.ts:364
 
 ***
 
@@ -188,38 +152,4 @@ A promise that resolves when the update is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:593
-
-***
-
-### from()
-
-> `static` **from**\<`TS`\>(`name`, `schema`): [`Collection`](Collection.md)\<`TS`\>
-
-Creates a new Collection instance from a given schema.
-
-#### Type Parameters
-
-• **TS** *extends* [`SchemaType`](../type-aliases/SchemaType.md) = [`SchemaType`](../type-aliases/SchemaType.md)
-
-A schema type. Defaults to SchemaType.
-
-#### Parameters
-
-• **name**: `string`
-
-The name of the collection.
-
-• **schema**: `TS`
-
-The schema defining the structure of the documents in the collection.
-
-#### Returns
-
-[`Collection`](Collection.md)\<`TS`\>
-
-A new Collection instance.
-
-#### Defined in
-
-pkg/ridb\_rust.d.ts:550
+pkg/ridb\_rust.d.ts:373

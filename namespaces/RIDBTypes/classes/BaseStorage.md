@@ -46,11 +46,11 @@ The schema type of the storage.
 
 #### Overrides
 
-[`StorageInternal`](StorageInternal.md).[`constructor`](StorageInternal.md#constructors)
+`StorageInternal<T>.constructor`
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:334
+pkg/ridb\_rust.d.ts:412
 
 ## Properties
 
@@ -62,7 +62,7 @@ The name of the storage.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:339
+pkg/ridb\_rust.d.ts:417
 
 ***
 
@@ -74,7 +74,7 @@ The schema associated with the storage.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:344
+pkg/ridb\_rust.d.ts:422
 
 ## Methods
 
@@ -96,7 +96,7 @@ A promise that resolves when the storage is closed.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:351
+pkg/ridb\_rust.d.ts:429
 
 ***
 
@@ -108,7 +108,7 @@ Counts the number of documents in the storage.
 
 #### Parameters
 
-• **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
+• **query**: `QueryType`\<`T`\>
 
 #### Returns
 
@@ -122,7 +122,7 @@ A promise that resolves to the number of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:358
+pkg/ridb\_rust.d.ts:436
 
 ***
 
@@ -134,7 +134,7 @@ Queries the storage.
 
 #### Parameters
 
-• **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
+• **query**: `QueryType`\<`T`\>
 
 #### Returns
 
@@ -148,7 +148,7 @@ A promise that resolves when the query is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:373
+pkg/ridb\_rust.d.ts:451
 
 ***
 
@@ -176,7 +176,7 @@ A promise that resolves to the found document or null.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:366
+pkg/ridb\_rust.d.ts:444
 
 ***
 
@@ -192,7 +192,7 @@ Frees the resources used by the base storage.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:326
+pkg/ridb\_rust.d.ts:404
 
 ***
 
@@ -220,7 +220,7 @@ A promise that resolves when the document is removed.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:381
+pkg/ridb\_rust.d.ts:459
 
 ***
 
@@ -248,4 +248,4 @@ A promise that resolves to the document written.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:389
+pkg/ridb\_rust.d.ts:467

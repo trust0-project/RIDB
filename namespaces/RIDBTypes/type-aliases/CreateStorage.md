@@ -6,7 +6,9 @@
 
 # Type Alias: CreateStorage()
 
-> **CreateStorage**: \<`T`\>(`records`) => [`InternalsRecord`](InternalsRecord.md)
+> **CreateStorage**: \<`T`\>(`records`) => `InternalsRecord`
+
+Represents a function type for creating storage with the provided schema type records.
 
 ## Type Parameters
 
@@ -22,10 +24,10 @@ The schema type records.
 
 ## Returns
 
-[`InternalsRecord`](InternalsRecord.md)
+`InternalsRecord`
 
 A promise that resolves to the created internals record.
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:629
+pkg/ridb\_rust.d.ts:126

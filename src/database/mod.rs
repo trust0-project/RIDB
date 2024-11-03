@@ -5,6 +5,8 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use crate::collection::Collection;
 use crate::error::RIDBError;
 use crate::plugin::BasePlugin;
+use crate::plugin::encryption::EncryptionPlugin;
+use crate::plugin::migration::MigrationPlugin;
 use crate::storage::Storage;
 
 #[wasm_bindgen(typescript_custom_section)]
@@ -24,7 +26,7 @@ export class Database<T extends SchemaTypeRecord> {
      * @param {RIDBModule} storage - The storage module to use.
      * @returns {Promise<Database<TS>>} A promise that resolves to the created `Database` instance.
      */
-    static create<TS extends SchemaTypeRecord>(schemas: TS, plugins:Array<typeof BasePlugin>, options: RIDBModule): Promise<Database<TS>>;
+    static create<TS extends SchemaTypeRecord>(schemas: TS, plugins:Array<typeof BasePlugin>, options: RIDBModule, password?:string): Promise<Database<TS>>;
 
     /**
      * The collections in the database.
@@ -113,16 +115,25 @@ impl Database {
         schemas_map_js: Object,
         plugins: Array,
         module: RIDBModule,
+        password: Option<String>
     ) -> Result<Database, JsValue> {
         if !schemas_map_js.is_object() {
             return Err(JsValue::from(RIDBError::from("Unexpected object")));
         }
         let storage_internal_map_js = module.create_storage(&schemas_map_js.clone())?;
         let vec_plugins_js: Vec<JsValue> =  module.apply(plugins)?;
-        let vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
+
+        let mut vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
         .map(|plugin| plugin.unchecked_into::<BasePlugin>())
         .collect();
-            let storage = Storage::create(
+
+        let migration = MigrationPlugin::new()?;
+        let encryption = EncryptionPlugin::new(password)?;
+
+        vec_plugins.push(encryption.base);
+        vec_plugins.push(migration.base);
+
+        let storage = Storage::create(
             storage_internal_map_js.into(),
             vec_plugins
         ).map_err(|e| JsValue::from(RIDBError::from(e)))?;

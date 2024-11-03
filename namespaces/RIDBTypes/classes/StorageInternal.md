@@ -18,16 +18,6 @@ Represents the internal storage interface with abstract methods for various stor
 
 The schema type.
 
-## Constructors
-
-### new StorageInternal()
-
-> **new StorageInternal**\<`T`\>(): [`StorageInternal`](StorageInternal.md)\<`T`\>
-
-#### Returns
-
-[`StorageInternal`](StorageInternal.md)\<`T`\>
-
 ## Methods
 
 ### close()
@@ -44,7 +34,7 @@ A promise that resolves when the storage is closed.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:314
+pkg/ridb\_rust.d.ts:117
 
 ***
 
@@ -56,7 +46,7 @@ Counts the number of documents in the storage.
 
 #### Parameters
 
-• **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
+• **query**: `QueryType`\<`T`\>
 
 #### Returns
 
@@ -66,7 +56,7 @@ A promise that resolves to the number of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:299
+pkg/ridb\_rust.d.ts:102
 
 ***
 
@@ -78,7 +68,7 @@ Queries the storage.
 
 #### Parameters
 
-• **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
+• **query**: `QueryType`\<`T`\>
 
 #### Returns
 
@@ -88,7 +78,7 @@ A promise that resolves when the query is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:284
+pkg/ridb\_rust.d.ts:87
 
 ***
 
@@ -112,7 +102,7 @@ A promise that resolves to the found document or null.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:292
+pkg/ridb\_rust.d.ts:95
 
 ***
 
@@ -136,7 +126,7 @@ A promise that resolves when the document is removed.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:307
+pkg/ridb\_rust.d.ts:110
 
 ***
 
@@ -160,4 +150,4 @@ A promise that resolves to the document written.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:277
+pkg/ridb\_rust.d.ts:80

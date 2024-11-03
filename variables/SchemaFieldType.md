@@ -8,6 +8,8 @@
 
 > `const` **SchemaFieldType**: `object`
 
+An enumeration of schema field types.
+
 ## Type declaration
 
 ### array
@@ -30,6 +32,6 @@
 
 > **string**: `"string"`
 
-## Source
+## Defined in
 
-[../src/schema/types.ts:2](https://github.com/elribonazo/RIDB/blob/e7a589ed88e5f8a1cf6a9f63844d534653394964/ts/src/schema/types.ts#L2)
+[ts/src/index.ts:269](https://github.com/elribonazo/RIDB/blob/5c94388e8704c364967b97b7becd481bd32e5b69/ts/src/index.ts#L269)

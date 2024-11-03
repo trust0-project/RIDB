@@ -6,19 +6,19 @@
 
 # Function: initSync()
 
-> **initSync**(`module`): [`InitOutput`](../interfaces/InitOutput.md)
+> **initSync**(`module`): `InitOutput`
 
 Instantiates the given `module`, which can either be bytes or
 a precompiled `WebAssembly.Module`.
 
 ## Parameters
 
-• **module**: [`SyncInitInput`](../type-aliases/SyncInitInput.md)
+• **module**: `SyncInitInput`
 
 ## Returns
 
-[`InitOutput`](../interfaces/InitOutput.md)
+`InitOutput`
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:813
+pkg/ridb\_rust.d.ts:803

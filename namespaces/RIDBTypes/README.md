@@ -20,33 +20,19 @@
 - [InMemory](classes/InMemory.md)
 - [Internals](classes/Internals.md)
 - [Property](classes/Property.md)
-- [Query](classes/Query.md)
 - [Schema](classes/Schema.md)
-- [Storage](classes/Storage.md)
 - [StorageInternal](classes/StorageInternal.md)
 - [WasmBindgenTestContext](classes/WasmBindgenTestContext.md)
-
-### Interfaces
-
-- [InitOutput](interfaces/InitOutput.md)
 
 ### Type Aliases
 
 - [CreateStorage](type-aliases/CreateStorage.md)
 - [Doc](type-aliases/Doc.md)
 - [ExtractType](type-aliases/ExtractType.md)
-- [InOperator](type-aliases/InOperator.md)
-- [InitInput](type-aliases/InitInput.md)
-- [InternalsRecord](type-aliases/InternalsRecord.md)
-- [LogicalOperators](type-aliases/LogicalOperators.md)
 - [Operation](type-aliases/Operation.md)
-- [OperatorOrType](type-aliases/OperatorOrType.md)
-- [Operators](type-aliases/Operators.md)
-- [QueryType](type-aliases/QueryType.md)
+- [RIDBModule](type-aliases/RIDBModule.md)
 - [SchemaType](type-aliases/SchemaType.md)
 - [SchemaTypeRecord](type-aliases/SchemaTypeRecord.md)
-- [StorageModule](type-aliases/StorageModule.md)
-- [SyncInitInput](type-aliases/SyncInitInput.md)
 
 ### Functions
 

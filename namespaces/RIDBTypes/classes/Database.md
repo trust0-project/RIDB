@@ -14,16 +14,6 @@ Represents a database containing collections of documents.
 
 A record of schema types.
 
-## Constructors
-
-### new Database()
-
-> **new Database**\<`T`\>(): [`Database`](Database.md)\<`T`\>
-
-#### Returns
-
-[`Database`](Database.md)\<`T`\>
-
 ## Properties
 
 ### collections
@@ -36,13 +26,13 @@ This is a read-only property where the key is the name of the collection and the
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:484
+pkg/ridb\_rust.d.ts:576
 
 ## Methods
 
 ### create()
 
-> `static` **create**\<`TS`\>(`schemas`, `storage`): `Promise`\<[`Database`](Database.md)\<`TS`\>\>
+> `static` **create**\<`TS`\>(`schemas`, `plugins`, `options`): `Promise`\<[`Database`](Database.md)\<`TS`\>\>
 
 Creates a new `Database` instance with the provided schemas and storage module.
 
@@ -58,9 +48,9 @@ A record of schema types.
 
 The schemas to use for the collections.
 
-• **storage**: [`StorageModule`](../type-aliases/StorageModule.md)
+• **plugins**: *typeof* `BasePlugin`[]
 
-The storage module to use.
+• **options**: [`RIDBModule`](../type-aliases/RIDBModule.md)
 
 #### Returns
 
@@ -70,4 +60,4 @@ A promise that resolves to the created `Database` instance.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:474
+pkg/ridb\_rust.d.ts:569

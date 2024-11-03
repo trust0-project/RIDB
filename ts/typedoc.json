@@ -1,5 +1,5 @@
 {
-    "$schema": "https://typedoc.org/schema.json",
+    "$schema": "https://typedoc-plugin-markdown.org/schema.json",
     "entryPoints": ["./src/index.ts"],
     "readme": "none",
     "out": "..",
@@ -20,9 +20,6 @@
     "excludeProtected": true,
     "excludeInternal": true,
     "excludeNotDocumented": true,
-    "excludeNotDocumentedKinds": [
-        "Variable"
-    ],
     "theme": "default",
     "excludeExternals": true
 }

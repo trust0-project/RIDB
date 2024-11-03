@@ -1,4 +1,5 @@
-mod encryption;
+pub mod encryption;
+pub mod migration;
 
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::*;
@@ -7,21 +8,16 @@ use js_sys::Object;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
-
 type Hook = (schema: Schema<SchemaType>, doc: Doc<SchemaType>) => Doc<SchemaType>
-
 type BasePluginOptions = {
     schemeCreateHook?: Hook,
     schemaRecoverHook?: Hook
 }
-
 export  class BasePlugin {
-
     /**
      * Frees the resources used by the plugin.
      */
     free(): void;
-
     docCreateHook?:(schema: Schema<SchemaType>, doc: Doc<SchemaType>) => Doc<SchemaType>;
     docRecoverHook?:(schema: Schema<SchemaType>, doc: Doc<SchemaType>) => Doc<SchemaType>;
 }

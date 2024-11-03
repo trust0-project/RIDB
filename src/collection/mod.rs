@@ -37,36 +37,13 @@ export type ExtractType<T extends string> = T extends 'string' ? string :
  */
 export type Doc<T extends SchemaType> = {
     [name in keyof T['properties']]: ExtractType<T['properties'][name]['type']>
-}
+};
 
 /**
  * Collection is a class that represents a collection of documents in a database.
- *
  * @template T - A schema type defining the structure of the documents in the collection.
  */
 export class Collection<T extends SchemaType> {
-    /**
-     * Creates a new Collection instance from a given schema.
-     *
-     * @template TS - A schema type. Defaults to SchemaType.
-     * @param name - The name of the collection.
-     * @param schema - The schema defining the structure of the documents in the collection.
-     * @returns A new Collection instance.
-     */
-    static from<
-        TS extends SchemaType = SchemaType
-    >(name: string, schema: TS): Collection<TS>
-
-    schema: T;
-
-    /**
-     * Constructs a new Collection instance.
-     *
-     * @param name - The name of the collection.
-     * @param schema - The schema defining the structure of the documents in the collection.
-     */
-    constructor(name: string, schema: T);
-
     /**
      * Finds all documents in the collection.
      *

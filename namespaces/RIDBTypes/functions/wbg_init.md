@@ -6,19 +6,19 @@
 
 # Function: \_\_wbg\_init()
 
-> **\_\_wbg\_init**(`module_or_path`?): `Promise`\<[`InitOutput`](../interfaces/InitOutput.md)\>
+> **\_\_wbg\_init**(`module_or_path`?): `Promise`\<`InitOutput`\>
 
 If `module_or_path` is {RequestInfo} or {URL}, makes a request and
 for everything else, calls `WebAssembly.instantiate` directly.
 
 ## Parameters
 
-• **module\_or\_path?**: [`InitInput`](../type-aliases/InitInput.md) \| `Promise`\<[`InitInput`](../type-aliases/InitInput.md)\>
+• **module\_or\_path?**: `InitInput` \| `Promise`\<`InitInput`\>
 
 ## Returns
 
-`Promise`\<[`InitOutput`](../interfaces/InitOutput.md)\>
+`Promise`\<`InitOutput`\>
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:823
+pkg/ridb\_rust.d.ts:813

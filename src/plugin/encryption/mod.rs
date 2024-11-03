@@ -11,21 +11,6 @@ use chacha20poly1305::{
 };
 use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
 
-#[wasm_bindgen(typescript_custom_section)]
-const TS_APPEND_CONTENT: &'static str = r#"
-export class EncryptionPlugin extends BasePlugin {
-    /**
-     * Creates a new EncryptionPlugin instance
-     * @param password
-     * Frees the resources used by the plugin.
-     */
-    free(): void;
-    docCreateHook?:(schema: Schema<SchemaType>, doc: Doc<SchemaType>) => Doc<SchemaType>;
-    docRecoverHook?:(schema: Schema<SchemaType>, doc: Doc<SchemaType>) => Doc<SchemaType>;
-}
-"#;
-
-#[wasm_bindgen(skip_typescript)]
 #[derive(Clone)]
 pub struct EncryptionPlugin {
     pub(crate) base: BasePlugin,
@@ -43,9 +28,7 @@ fn derive_key(password: &str) -> [u8; 32] {
 }
 
 
-#[wasm_bindgen]
 impl EncryptionPlugin {
-    #[wasm_bindgen(constructor)]
     pub fn new(password: Option<String>) -> Result<EncryptionPlugin, JsValue> {
         let base = BasePlugin::new()?;
         
@@ -190,16 +173,5 @@ impl EncryptionPlugin {
         }
 
         Ok(decrypted_content.into())
-    }
-    
-
-    #[wasm_bindgen( getter = docCreateHook)]
-    pub fn get_doc_create_hook(&self) -> JsValue {
-        self.base.clone().doc_create_hook
-    }
-
-    #[wasm_bindgen( getter = docRecoverHook)]
-    pub fn get_doc_recover_hook(&self) -> JsValue {
-        self.base.clone().doc_recover_hook
     }
 }

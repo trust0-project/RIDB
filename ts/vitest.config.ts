@@ -8,7 +8,15 @@ const isCI = process.env.CI === "true";
 export default defineConfig({
     build: {
         minify: 'terser',
-        terserOptions: { format: { comments: 'all' } },
+
+        terserOptions: {
+            format: {
+                comments: 'all',
+                preserve_annotations: true,
+            },
+
+        },
+
     },
     test: {
         setupFiles: ['./tests/setup.ts'],
