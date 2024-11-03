@@ -1,3 +1,10 @@
+## [0.3.1-rc.3](https://github.com/trust0-project/RIDB/compare/v0.3.1-rc.2...v0.3.1-rc.3) (2024-11-03)
+
+
+### Bug Fixes
+
+* remove space ([#9](https://github.com/trust0-project/RIDB/issues/9)) ([1346ef4](https://github.com/trust0-project/RIDB/commit/1346ef46734b4e02a302f63d8b76bdaf4dbbf745))
+
 ## [0.3.1-rc.2](https://github.com/trust0-project/RIDB/compare/v0.3.1-rc.1...v0.3.1-rc.2) (2024-11-03)
 
 
