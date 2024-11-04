@@ -1,3 +1,10 @@
+## [0.3.6-rc.3](https://github.com/trust0-project/RIDB/compare/v0.3.6-rc.2...v0.3.6-rc.3) (2024-11-04)
+
+
+### Bug Fixes
+
+* improve migration tests ([5a66dcf](https://github.com/trust0-project/RIDB/commit/5a66dcf99254c05acc4a87be5430b358a3e87f0c))
+
 ## [0.3.6-rc.2](https://github.com/trust0-project/RIDB/compare/v0.3.6-rc.1...v0.3.6-rc.2) (2024-11-04)
 
 
