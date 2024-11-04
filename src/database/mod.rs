@@ -23,10 +23,19 @@ export class Database<T extends SchemaTypeRecord> {
      *
      * @template TS - A record of schema types.
      * @param {TS} schemas - The schemas to use for the collections.
-     * @param {RIDBModule} storage - The storage module to use.
+     * @param migrations
+     * @param plugins
+     * @param options
+     * @param password
      * @returns {Promise<Database<TS>>} A promise that resolves to the created `Database` instance.
      */
-    static create<TS extends SchemaTypeRecord>(schemas: TS, plugins:Array<typeof BasePlugin>, options: RIDBModule, password?:string): Promise<Database<TS>>;
+    static create<TS extends SchemaTypeRecord>(
+        schemas: TS,
+        migrations: MigrationPathsForSchemas<TS> | MigrationPathsForSchema<TS[string]>,
+        plugins:Array<typeof BasePlugin>,
+        options: RIDBModule,
+        password?:string
+    ): Promise<Database<TS>>;
 
     /**
      * The collections in the database.
@@ -113,6 +122,7 @@ impl Database {
     #[wasm_bindgen]
     pub async fn create(
         schemas_map_js: Object,
+        migrations_js: Object,
         plugins: Array,
         module: RIDBModule,
         password: Option<String>
@@ -139,6 +149,7 @@ impl Database {
 
         let storage = Storage::create(
             storage_internal_map_js.into(),
+            migrations_js,
             vec_plugins,
         ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
 

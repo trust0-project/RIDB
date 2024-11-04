@@ -5,6 +5,7 @@ mod base;
 use std::collections::HashMap;
 use js_sys::{ Object, Reflect};
 use wasm_bindgen::{JsValue};
+use wasm_bindgen::__rt::IntoJsResult;
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::error::RIDBError;
 use crate::plugin::BasePlugin;
@@ -29,7 +30,7 @@ impl Storage {
     /// # Returns
     ///
     /// * `Result<Storage, JsValue>` - A result containing the new `Storage` instance or an error.
-    pub fn create(storages_map_js: Object, plugins: Vec<BasePlugin>) -> Result<Storage, JsValue> {
+    pub fn create(storages_map_js: Object, migrations_map_js: Object, plugins: Vec<BasePlugin>) -> Result<Storage, JsValue> {
         if !storages_map_js.is_object() {
             return Err(JsValue::from(RIDBError::from("Unexpected object")));
         }
@@ -50,8 +51,13 @@ impl Storage {
         let storages_mounted: HashMap<String, Internals> = storages
             .iter()
             .map(|(name, storage_internal)| {
+                let migration = Reflect::get(
+                    &migrations_map_js,
+                    &JsValue::from(name)
+                ).map_err(|e| JsValue::from(RIDBError::from(e))).unwrap();
                 (name.clone(), Internals::new(
                     storage_internal.clone(),
+                    migration,
                     plugins.clone()
                 ).unwrap())
             })

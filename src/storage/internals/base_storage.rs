@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::schema::Schema;
@@ -21,8 +22,9 @@ export class BaseStorage<T extends SchemaType> extends StorageInternal<T> {
      *
      * @param {string} name - The name of the storage.
      * @param {any} schema_type - The schema type of the storage.
+     * @param migration
      */
-    constructor(name: string, schema_type: any);
+    constructor(name: string, schema_type: T, migration: MigrationPathsForSchema<T>);
 
     /**
      * The name of the storage.
@@ -89,6 +91,8 @@ pub struct BaseStorage {
     pub(crate) name: String,
     /// The schema associated with the storage.
     pub(crate) schema: Schema,
+    /// The associated schema migration.
+    pub(crate) migration: JsValue
 }
 
 #[wasm_bindgen]
@@ -104,12 +108,17 @@ impl BaseStorage {
     ///
     /// * `Result<BaseStorage, JsValue>` - A result containing the new `BaseStorage` instance or an error.
     #[wasm_bindgen(constructor)]
-    pub fn new(name: String, schema_type: JsValue) -> Result<BaseStorage, JsValue> {
+    pub fn new(name: String, schema_type: JsValue, migration: JsValue) -> Result<BaseStorage, JsValue> {
         match Schema::create(schema_type) {
             Ok(schema) => {
                 match schema.is_valid() {
                     Ok(_) => {
-                        Ok(BaseStorage { name, schema })
+                        Ok(
+                            BaseStorage {
+                                name,
+                                schema,
+                                migration
+                            })
                     },
                     Err(e) => {
                         Err(JsValue::from(e))
@@ -138,5 +147,10 @@ impl BaseStorage {
     #[wasm_bindgen(getter)]
     pub fn name(&self) -> String {
         self.name.clone()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn migration(&self) -> JsValue {
+        self.migration.clone()
     }
 }

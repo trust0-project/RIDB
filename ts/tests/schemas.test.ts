@@ -17,7 +17,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     properties: {
@@ -50,7 +50,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     properties: {
@@ -92,7 +92,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     encrypted: ['name'],
@@ -149,7 +149,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     properties: {
@@ -170,7 +170,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     properties: {
@@ -219,7 +219,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 2,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     properties: {
@@ -232,7 +232,14 @@ export default (platform: string) => {
                                         }
                                     }
                                 }
-                            } as const
+                            } as const,
+                            migrations: {
+                                demo: {
+                                    2: function (doc) {
+                                        return doc
+                                    }
+                                }
+                            }
                         }
                     )
                     await db.start({storageType: storage})
@@ -240,7 +247,8 @@ export default (platform: string) => {
 
                     const created = await db.collections.demo.create({
                         id: "12345",
-                        age: 18
+                        age: 18,
+                        __version: 1
                     })
                     expect(created).to.not.be.undefined;
                     expect(created).to.haveOwnProperty("id");
@@ -268,7 +276,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: "wrong",
                                     properties: {}
@@ -283,7 +291,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: "obiect",
                                     properties: {
@@ -323,7 +331,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: "object",
                                     properties: {

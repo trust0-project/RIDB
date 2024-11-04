@@ -1,5 +1,3 @@
-
-
 pub mod property_type;
 pub mod property;
 
@@ -67,7 +65,7 @@ export class Schema<T extends SchemaType> {
      * Creates a new `Schema` instance from the provided definition.
      *
      * @template TS - The schema type.
-     * @param {TS} definition - The schema definition.
+     * @param {TS} defi, Debugnition - The schema definition.
      * @returns {Schema<TS>} The created `Schema` instance.
      */
     static create<TS extends SchemaType>(definition: TS): Schema<TS>;
@@ -133,12 +131,13 @@ pub struct Schema {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) required: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) encrypted: Option<Vec<String>>,
+    pub(crate) encrypted: Option<Vec<String>>
 }
 
 
 #[wasm_bindgen]
 impl Schema {
+
     pub fn validate_schema(&self, document: JsValue) -> Result<(), JsValue> {
         let required = self.required.clone().unwrap_or(Vec::new());
         let properties = self.properties.clone();
@@ -192,12 +191,19 @@ impl Schema {
                 format!("Schema type is invalid (\"{}\")", schema_type).as_str(),
             ));
         }
+
+        // Validate schema version
+        if self.version <= 0 {
+            return Err(RIDBError::validation(
+                format!("Schema version must be greater than 0, got {}", "0").as_str(),
+            ));
+        }
+
         // Validate all properties
         for property in self.properties.values() {
-            // Directly propagate the specific error from the property's validation
-            property.is_valid()?; // This will automatically return Err if is_valid() returns an Err
+            property.is_valid()?;
         }
-        // If all properties are valid and the schema type is "object"
+
         Ok(true)
     }
 

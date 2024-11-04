@@ -138,8 +138,16 @@ export { BaseStorage } from 'ridb-rust';
 class MySimplePlugin extends RIDBTypes.BasePlugin {
     constructor() {
         super();
-        this.docCreateHook = (schema, docs) => docs;
-        this.docRecoverHook = (schema, docs) => docs;
+        this.docCreateHook = (
+            schema,
+            migration,
+            docs
+        ) => docs;
+        this.docRecoverHook = (
+            schema,
+            migration,
+            docs
+        ) => docs;
     }
 }
 
@@ -153,7 +161,9 @@ class MySimplePlugin extends RIDBTypes.BasePlugin {
  */
 export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
     private schemas: T;
+    private migrations: RIDBTypes.MigrationPathsForSchemas<T>
     private plugins: Array<typeof RIDBTypes.BasePlugin> = [];
+
 
     private _internal: typeof import("ridb-rust") | undefined;
     private _db: RIDBTypes.Database<T> | undefined;
@@ -170,11 +180,13 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
     ) {
         const {
             schemas,
+            migrations = {} as RIDBTypes.MigrationPathsForSchemas<T>,
             plugins= this.defaultPlugins
         } = options;
 
         this.schemas = schemas;
         this.plugins = plugins;
+        this.migrations = migrations;
     }
 
     get defaultPlugins() {
@@ -243,13 +255,16 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
     async start(
         options?: {
             storageType?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>,
-            password?: string
+            password?: string,
+            //Extra properties
+            [name:string]: any
         }
     ): Promise<RIDBTypes.Database<T>> {
         const {storageType, password} = options ?? {};
         const { Database } = await this.load();
         this._db ??= await Database.create(
             this.schemas,
+            this.migrations,
             this.plugins,
             this.getRIDBModule(storageType),
             password
@@ -274,10 +289,16 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
         }
         const Storage = storageConstructor ?? this._internal.InMemory;
         return Object.keys(schemas).reduce(
-            (storages, name) => ({
-                ...storages,
-                [name]: new Storage(name, schemas[name]),
-            }),
+            (storages, name) => {
+                return {
+                    ...storages,
+                    [name]: new Storage(
+                        name,
+                        schemas[name],
+                        this.migrations[name]
+                    ),
+                }
+            },
             {}
         );
     }

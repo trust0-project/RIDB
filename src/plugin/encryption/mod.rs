@@ -42,13 +42,13 @@ impl EncryptionPlugin {
         let plugin_clone1 = plugin.clone();
         let plugin_clone2 = plugin.clone();
         
-        let create_hook = Closure::wrap(Box::new(move |schema, content| {
-            plugin_clone1.encrypt(schema, content)
-        }) as Box<dyn Fn(JsValue, JsValue) -> Result<JsValue, JsValue>>);
+        let create_hook = Closure::wrap(Box::new(move |schema,migration, content| {
+            plugin_clone1.encrypt(schema,migration,  content)
+        }) as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, JsValue>>);
 
-        let recover_hook = Closure::wrap(Box::new(move |schema, content| {
-            plugin_clone2.decrypt(schema, content)
-        }) as Box<dyn Fn(JsValue, JsValue) -> Result<JsValue, JsValue>>);
+        let recover_hook = Closure::wrap(Box::new(move |schema,migration, content| {
+            plugin_clone2.decrypt(schema, migration, content)
+        }) as Box<dyn Fn(JsValue,JsValue,  JsValue) -> Result<JsValue, JsValue>>);
 
         let mut plugin = plugin;
         plugin.base.doc_create_hook = create_hook.into_js_value();
@@ -57,7 +57,7 @@ impl EncryptionPlugin {
         Ok(plugin)
     }
 
-    pub(crate) fn encrypt(&self, schema_js: JsValue, content: JsValue) -> Result<JsValue, JsValue> {
+    pub(crate) fn encrypt(&self, schema_js: JsValue, migration:JsValue, content: JsValue) -> Result<JsValue, JsValue> {
         let schema = Schema::create(schema_js)?;
         let encrypted = schema.encrypted.unwrap_or(Vec::new());
         
@@ -114,7 +114,7 @@ impl EncryptionPlugin {
         Ok(content)
     }
     
-    pub(crate)fn decrypt(&self, schema_js: JsValue, content: JsValue) -> Result<JsValue, JsValue> {
+    pub(crate)fn decrypt(&self, schema_js: JsValue,migration:JsValue,  content: JsValue) -> Result<JsValue, JsValue> {
         let encrypted_data = Reflect::get(&content, &JsValue::from_str("encrypted"))?;
         if encrypted_data.is_undefined() {
             return Ok(content);

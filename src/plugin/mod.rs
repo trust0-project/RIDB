@@ -8,18 +8,20 @@ use js_sys::Object;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
-type Hook = (schema: Schema<SchemaType>, doc: Doc<SchemaType>) => Doc<SchemaType>
+type Hook = (
+    schema: Schema<SchemaType>,
+    migration: MigrationPathsForSchema<SchemaType>,
+    doc: Doc<SchemaType>
+) => Doc<SchemaType>
+
 type BasePluginOptions = {
-    schemeCreateHook?: Hook,
-    schemaRecoverHook?: Hook
+    docCreateHook?: Hook,
+    docRecoverHook?: Hook
 }
-export  class BasePlugin {
-    /**
-     * Frees the resources used by the plugin.
-     */
-    free(): void;
-    docCreateHook?:(schema: Schema<SchemaType>, doc: Doc<SchemaType>) => Doc<SchemaType>;
-    docRecoverHook?:(schema: Schema<SchemaType>, doc: Doc<SchemaType>) => Doc<SchemaType>;
+
+export class BasePlugin implements BasePluginOptions {
+     docCreateHook?:Hook;
+     docRecoverHook?:Hook;
 }
 "#;
 

@@ -366,8 +366,12 @@ impl StorageBase for InMemory {
 #[wasm_bindgen]
 impl InMemory {
     #[wasm_bindgen(constructor)]
-    pub fn new(name: &str, schema_type: JsValue) -> Result<InMemory, JsValue> {
-        let base_res = BaseStorage::new(name.to_string(), schema_type);
+    pub fn new(name: &str, schema_type: JsValue, migrations: JsValue) -> Result<InMemory, JsValue> {
+        let base_res = BaseStorage::new(
+            name.to_string(),
+            schema_type,
+            migrations
+        );
         match base_res {
             Ok(base) => {
                 Ok(InMemory {
@@ -497,10 +501,11 @@ fn value_to_js_value(value: &Value) -> JsValue {
 
 #[wasm_bindgen_test(async)]
 async fn test_empty_inmemory_storage() {
-    let schema_str = "{ \"version\": 0, \"primaryKey\": \"id\", \"type\": \"object\", \"properties\": {  \"id\": { \"type\": \"string\", \"maxLength\": 60 }  } }";
+    let schema_str = "{ \"version\": 1, \"primaryKey\": \"id\", \"type\": \"object\", \"properties\": {  \"id\": { \"type\": \"string\", \"maxLength\": 60 }  } }";
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
-    let inmem = InMemory::new(schema_name.clone().as_str(), schema);
+    let migrations = json_str_to_js_value("{}").unwrap();
+    let inmem = InMemory::new(schema_name.clone().as_str(), schema, migrations);
     assert!(inmem.is_ok());
 }
 
@@ -508,7 +513,7 @@ async fn test_empty_inmemory_storage() {
 async fn test_empty_inmemory_storage_write() {
     let schema_str = r#"
     {
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -519,7 +524,9 @@ async fn test_empty_inmemory_storage_write() {
     "#;
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
-    let mut inmem = InMemory::new(&schema_name, schema).unwrap();
+    let migrations = json_str_to_js_value("{}").unwrap();
+
+    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
 
     // Create a new item
     let new_item = Object::new();
@@ -555,7 +562,7 @@ async fn test_empty_inmemory_storage_write() {
 async fn test_inmemory_storage_create_operation() {
     let schema_str = r#"
     {
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "required":["id", "name"],
@@ -567,7 +574,9 @@ async fn test_inmemory_storage_create_operation() {
     "#;
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
-    let mut inmem = InMemory::new(&schema_name, schema).unwrap();
+    let migrations = json_str_to_js_value("{}").unwrap();
+
+    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
 
     // Create a new item
     let new_item = Object::new();
@@ -641,7 +650,7 @@ async fn test_inmemory_storage_create_operation() {
 async fn test_inmemory_storage_update_operation() {
     let schema_str = r#"
     {
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -652,7 +661,9 @@ async fn test_inmemory_storage_update_operation() {
     "#;
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
-    let mut inmem = InMemory::new(&schema_name, schema).unwrap();
+    let migrations = json_str_to_js_value("{}").unwrap();
+
+    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
 
     // Create a new item
     let new_item = Object::new();
@@ -732,7 +743,7 @@ async fn test_inmemory_storage_update_operation() {
 async fn test_inmemory_storage_delete_operation() {
     let schema_str = r#"
     {
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -743,7 +754,9 @@ async fn test_inmemory_storage_delete_operation() {
     "#;
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
-    let mut inmem = InMemory::new(&schema_name, schema).unwrap();
+    let migrations = json_str_to_js_value("{}").unwrap();
+
+    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
 
     // Create a new item
     let new_item = Object::new();
@@ -800,7 +813,7 @@ async fn test_inmemory_storage_delete_operation() {
 #[wasm_bindgen_test(async)]
 async fn test_inmemory_storage_find() {
     let schema_str = r#"{
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -812,7 +825,8 @@ async fn test_inmemory_storage_find() {
     }"#;
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
-    let mut inmem = InMemory::new(&schema_name, schema).unwrap();
+    let migrations = json_str_to_js_value("{}").unwrap();
+    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
 
     // Create items
     let items = vec![
@@ -871,7 +885,7 @@ async fn test_inmemory_storage_find() {
 #[wasm_bindgen_test(async)]
 async fn test_inmemory_storage_count() {
     let schema_str = r#"{
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -883,7 +897,8 @@ async fn test_inmemory_storage_count() {
     }"#;
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
-    let mut inmem = InMemory::new(&schema_name, schema).unwrap();
+    let migrations = json_str_to_js_value("{}").unwrap();
+    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
 
     // Create items
     let items = vec![
@@ -935,7 +950,7 @@ async fn test_inmemory_storage_count() {
 #[wasm_bindgen_test(async)]
 async fn test_inmemory_storage_find_with_logical_operators() {
     let schema_str = r#"{
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -947,7 +962,8 @@ async fn test_inmemory_storage_find_with_logical_operators() {
     }"#;
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
-    let mut inmem = InMemory::new(&schema_name, schema).unwrap();
+    let migrations = json_str_to_js_value("{}").unwrap();
+    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
 
     // Create items
     let items = vec![

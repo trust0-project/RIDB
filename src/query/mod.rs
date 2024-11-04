@@ -256,7 +256,7 @@ impl Query {
 #[wasm_bindgen_test]
 fn test_query_parse_valid() {
     let schema_str = r#"{
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -287,7 +287,7 @@ fn test_query_parse_valid() {
 fn test_query_parse_invalid_property() {
     let schema_str = r#"
     {
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -318,7 +318,7 @@ fn test_query_parse_invalid_property() {
 fn test_query_parse_invalid_type() {
     let schema_str = r#"
     {
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -347,7 +347,7 @@ fn test_query_parse_invalid_type() {
 fn test_query_parse_logical_operators() {
     let schema_str = r#"
     {
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -376,7 +376,7 @@ fn test_query_parse_logical_operators() {
 fn test_query_parse_invalid_operator() {
     let schema_str = r#"
     {
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -405,7 +405,7 @@ fn test_query_parse_invalid_operator() {
 fn test_query_parse_operator_wrong_type() {
     let schema_str = r#"
     {
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -434,7 +434,7 @@ fn test_query_parse_operator_wrong_type() {
 fn test_query_parse_in_operator() {
     let schema_str = r#"
     {
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -459,7 +459,7 @@ fn test_query_parse_in_operator() {
 fn test_query_parse_in_operator_wrong_type() {
     let schema_str = r#"
     {
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -487,7 +487,7 @@ fn test_query_parse_in_operator_wrong_type() {
 #[wasm_bindgen_test]
 fn test_query_get_query_normalization_simple_attributes() {
     let schema_str = r#"{
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -522,7 +522,7 @@ fn test_query_get_query_normalization_simple_attributes() {
 #[wasm_bindgen_test]
 fn test_query_get_query_normalization_with_logical_operator() {
     let schema_str = r#"{
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -565,7 +565,7 @@ fn test_query_get_query_normalization_with_logical_operator() {
 #[wasm_bindgen_test]
 fn test_query_get_query_normalization_nested_logical_operators() {
     let schema_str = r#"{
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -613,7 +613,7 @@ fn test_query_get_query_normalization_nested_logical_operators() {
 #[wasm_bindgen_test]
 fn test_query_get_query_normalization_only_logical_operator() {
     let schema_str = r#"{
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
@@ -650,7 +650,7 @@ fn test_query_get_query_normalization_only_logical_operator() {
 #[wasm_bindgen_test]
 fn test_query_get_query_normalization_complex_mixed() {
     let schema_str = r#"{
-        "version": 0,
+        "version": 1,
         "primaryKey": "id",
         "type": "object",
         "properties": {
