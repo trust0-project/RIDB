@@ -1,3 +1,11 @@
+## [0.4.2](https://github.com/trust0-project/RIDB/compare/v0.4.1...v0.4.2) (2024-11-04)
+
+
+### Bug Fixes
+
+* docs ([#17](https://github.com/trust0-project/RIDB/issues/17)) ([e995bae](https://github.com/trust0-project/RIDB/commit/e995bae40018afc7e6a067f271b70d569fa56403))
+* documentation improvement ([baa77a0](https://github.com/trust0-project/RIDB/commit/baa77a0084d56770d52058113de94b1414c3e79a))
+
 ## [0.4.2-rc.1](https://github.com/trust0-project/RIDB/compare/v0.4.1...v0.4.2-rc.1) (2024-11-04)
 
 
