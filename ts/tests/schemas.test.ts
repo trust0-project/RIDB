@@ -379,6 +379,7 @@ export default (platform: string) => {
                                     version: 2,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
+                                    required:['id', 'age'],
                                     properties: {
                                         id: {
                                             type: SchemaFieldType.string,
@@ -408,10 +409,12 @@ export default (platform: string) => {
                         age: 18,
                         __version:1
                     })
+
                     expect(created).to.not.be.undefined;
                     expect(created).to.haveOwnProperty("id");
                     expect(created).to.haveOwnProperty("age");
                     expect(created).to.haveOwnProperty("__version");
+
                     expect(created.__version).to.eq(2);
                 })
             })

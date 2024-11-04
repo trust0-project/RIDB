@@ -6,7 +6,6 @@ use std::collections::HashMap;
 use js_sys::{ Object, Reflect};
 use wasm_bindgen::{JsValue};
 use wasm_bindgen::__rt::IntoJsResult;
-use web_sys::console::log_1;
 use crate::error::RIDBError;
 use crate::plugin::BasePlugin;
 use crate::storage::internals::{Internals};
