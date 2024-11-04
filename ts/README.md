@@ -63,7 +63,7 @@ import {
 ## Specification
 
 ### Storage
-A valid storage must extend [BaseStorage class](https://github.com/atala-community-projects/RIDB/blob/main/namespaces/RIDBTypes/classes/BaseStorage.md)
+A valid storage must extend [BaseStorage class](https://github.com/trust0-project/RIDB/blob/main/docsnamespaces/RIDBTypes/classes/BaseStorage.md)
 here's some example:
 
 ```typescript
