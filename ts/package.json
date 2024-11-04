@@ -37,8 +37,7 @@
     "test": "npm run test:node && npm run test:browser",
     "test:node": "sh test.sh -e node",
     "test:browser": "sh test.sh -e browser",
-    "prepublishOnly": "cp ../README.MD ./README.MD && npm run build",
-    "postpublish": "rm ./README.MD"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@esbuild-plugins/node-resolve": "^0.2.2",
