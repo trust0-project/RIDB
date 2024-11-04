@@ -1,10 +1,25 @@
-**@elribonazo/ridb** • **Docs**
+<p align="center">
+  <a href="https://rxdb.info/">
+    <img src="./docs/logo.svg" alt="JavaScript Database" />
+  </a>
+  <br />
+  <br />
+  <h3 align="center">A secure light-weight and dependency free database wrapper for the web.</h3>
+</p>
 
-***
 
-# @elribonazo/ridb
+<p align="center">
+    <a href="https://github.com/trust0-project/RIDB/releases"><img src="https://img.shields.io/github/v/release/pubkey/rxdb?color=%23ff00a0&include_prereleases&label=version&sort=semver&style=flat-square"></a>
+    &nbsp;
+    <a href="https://rxdb.info/tutorials/typescript.html"><img src="https://img.shields.io/npm/types/rxdb?style=flat-square"></a>
+    &nbsp;
+    <a href="https://raw.githubusercontent.com/trust0-project/RIDB/refs/heads/main/LICENSE"><img src="https://img.shields.io/github/license/pubkey/rxdb?style=flat-square"></a>
+    &nbsp;
+    <a href="https://www.npmjs.com/package/@trust0/ridb"><img src="https://img.shields.io/npm/dm/@trust0/ridb?color=c63a3b&style=flat-square"></a>   
+</p>
 
 # Documentation
+
 ## Package Description
 RIDB secure database wrapper for the web with multiple storage engines, written in rust.
 The project started after years of experience working with web projects in both browser and nodejs platforms, the project was born with some rules / objectives:
@@ -25,81 +40,6 @@ The inMemory storage is used by default and is currently supporting the followin
 7. Plugin engine
 8. Encryption
 
-## Install
-In order to install simply run the following command
-npm: 
-``` 
-npm i @elribonazo/ridb --save
-```
-
-yarn:
-
-``` 
-yarn add @elribonazo/ridb
-```
-
-## Usage
-Creating your own database is pretty straight forward.
-
-```javascript
-import {
-    RIDB,
-    SchemaFieldType
-} from '@elribonazo/ridb';
-
-(async () => {
-    const db =  new RIDB({
-        demo: {
-            version: 0,
-            primaryKey: 'id',
-            type: SchemaFieldType.object,
-            properties: {
-                id: {
-                    type: SchemaFieldType.string,
-                    maxLength: 60
-                }
-            }
-        }
-    });
-    console.log("Starting the database");
-    await db.start();
-    console.log("Ok :)");
-})()
-```
-
-## Specification
-
-### Storage
-A valid storage must extend [BaseStorage class](https://github.com/atala-community-projects/RIDB/blob/main/namespaces/RIDBTypes/classes/BaseStorage.md)
-here's some example:
-
-```typescript
-export class InMemory<T extends SchemaType> extends BaseStorage<T>   {
-    async write(operation:Operation<T>): Promise<Doc<T>> {
-        if (operation.opType === OpType.CREATE) {
-            return operation.data;
-        }
-        throw new Error("Method not implemented.");
-    }
-
-    query(): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-
-    findDocumentById(id: string): Promise<null> {
-        throw new Error("Method not implemented.");
-    }
-
-    count(): Promise<number> {
-        throw new Error("Method not implemented.");
-    }
-
-    close(): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-
-}
-```
 
 ## Build & Testing
 
@@ -124,17 +64,3 @@ cd ts
 npm i
 npm run test
 ```
-
-# SDK Rerefence
-
-## Namespaces
-
-- [RIDBTypes](namespaces/RIDBTypes/README.md)
-
-## Classes
-
-- [RIDB](classes/RIDB.md)
-
-## Variables
-
-- [SchemaFieldType](variables/SchemaFieldType.md)

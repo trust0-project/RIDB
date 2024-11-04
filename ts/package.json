@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb",
-  "version": "0.4.1",
+  "version": "0.4.2-rc.1",
   "description": "Dependency free wasm db encrypted and secure database wrapper for web and node.",
   "main": "./build/cjs/index.js",
   "publishConfig": {
@@ -37,8 +37,7 @@
     "test": "npm run test:node && npm run test:browser",
     "test:node": "sh test.sh -e node",
     "test:browser": "sh test.sh -e browser",
-    "prepublishOnly": "cp ../README.MD ./README.MD && npm run build",
-    "postpublish": "rm ./README.MD"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@esbuild-plugins/node-resolve": "^0.2.2",
