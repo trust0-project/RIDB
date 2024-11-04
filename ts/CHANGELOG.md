@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/trust0-project/RIDB/compare/v0.3.5...v0.4.0) (2024-11-04)
+
+
+### Features
+
+* implementing database migrations ([#15](https://github.com/trust0-project/RIDB/issues/15)) ([0aea0d7](https://github.com/trust0-project/RIDB/commit/0aea0d7456c0d6c0f888a6f46b33e97a3505a102))
+
 ## [0.3.6-rc.3](https://github.com/trust0-project/RIDB/compare/v0.3.6-rc.2...v0.3.6-rc.3) (2024-11-04)
 
 
