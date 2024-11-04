@@ -42,7 +42,8 @@ impl InMemory {
 
         for i in 0..keys.length() {
             let key = keys.get(i).as_string().unwrap_or_default();
-            let value = Reflect::get(query, &JsValue::from_str(&key))?;
+            let value = Reflect::get(query, &JsValue::from_str(&key))
+                .map_err(|e| JsValue::from(format!("Failed to get the query value")))?;
 
             if key == "$and" {
                 // $and operator: all conditions must be true
@@ -74,7 +75,9 @@ impl InMemory {
                 return Ok(false);
             } else {
                 // Attribute condition
-                let doc_value = Reflect::get(document, &JsValue::from_str(&key))?;
+                let doc_value = Reflect::get(document, &JsValue::from_str(&key))
+                    .map_err(|e| JsValue::from(format!("Failed to get the document key")))?;
+
                 let matches = self.evaluate_condition(&doc_value, &value)?;
                 if !matches {
                     return Ok(false);

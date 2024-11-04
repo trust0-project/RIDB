@@ -19,27 +19,27 @@ export type EnumerateUpTo<
     Acc[number]:
     EnumerateUpTo<N, [...Acc, Acc['length']]> ;
 
-export type EnumerateFrom2To<
+export type EnumerateFrom1To<
     N extends number
-> = Exclude < EnumerateUpTo < N > , 0 | 1 > | (N extends 0 | 1 ? never : N);
+> = Exclude<EnumerateUpTo<N>,0> | (N extends 0 ? never : N);
 
-export type IsVersionGreaterThan1<
+export type IsVersionGreaterThan0<
     V extends number
-> = V extends 0 | 1 ? false : true;
+> = V extends 0 ? false : true;
 
 export type AnyVersionGreaterThan1<
     T extends Record<string, SchemaType>
 > = true extends {
-    [K in keyof T]: IsVersionGreaterThan1<T[K]['version']>;
+    [K in keyof T]: IsVersionGreaterThan0<T[K]['version']>;
 } [keyof T] ? true : false;
 
 export type MigrationFunction<T extends SchemaType> = (doc: Doc <T> ) => Doc <T>
 
 export type MigrationPathsForSchema<
     T extends SchemaType
-> = T['version'] extends 1 ? {}: // No migrations needed for version 1
+> = T['version'] extends 0 ? {}: // No migrations needed for version 1
     {
-        [K in EnumerateFrom2To < T['version'] > ]: MigrationFunction<T> ;
+        [K in EnumerateFrom1To < T['version'] > ]: MigrationFunction<T> ;
     };
 
 export type MigrationPathsForSchemas<
@@ -73,12 +73,12 @@ impl MigrationPlugin {
         };
 
         let plugin_clone1 = plugin.clone();
-        let create_hook = Closure::wrap(Box::new(move |schema, migration: JsValue, content| {
+        let create_hook = Closure::wrap(Box::new(move |schema, migration, content| {
             plugin_clone1.create_hook(schema, migration, content)
         }) as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, JsValue>>);
 
         let plugin_clone2 = plugin.clone();
-        let recover_hook = Closure::wrap(Box::new(move |schema, migration: JsValue, content| {
+        let recover_hook = Closure::wrap(Box::new(move |schema, migration, content| {
             plugin_clone2.recover_hook(schema, migration, content)
         }) as Box<dyn Fn(JsValue,JsValue,JsValue) -> Result<JsValue, JsValue>>);
 
@@ -97,7 +97,9 @@ impl MigrationPlugin {
         let doc_version_key = JsValue::from("__version");
         let schema = Schema::create(schema_js)?;
         let version = schema.version;
-        let doc_version = Reflect::get(&content, &doc_version_key)?;
+        let doc_version = Reflect::get(&content, &doc_version_key)
+            .map_err(|e| JsValue::from(format!("Error")))?;
+
         if doc_version.is_undefined() {
             Reflect::set(&content, &doc_version_key, &JsValue::from(version.to_owned()))?;
         }
@@ -121,7 +123,7 @@ impl MigrationPlugin {
         let doc_version_js = Reflect::get(
             &content,
             &doc_version_key
-        )?;
+        ).map_err(|e| JsValue::from(format!("Error")))?;
 
         let doc_version = if doc_version_js.is_undefined() {
             version
@@ -131,19 +133,21 @@ impl MigrationPlugin {
         };
 
         if doc_version < version {
-            let pending_versions = version - doc_version;
-
             // Iterate through each version that needs migration
-            for current_version in doc_version..doc_version + pending_versions {
+            for current_version in doc_version..version {
                 // Get the next version's migration function
-                let next_version = current_version + 1;
+                let next_version = current_version+1;
+
+                if migration_js.is_undefined() {
+                    return Err(JsValue::from("Migration Object is undefined".to_string()))
+                }
 
                 let function = Reflect::get(
                     &migration_js, &JsValue::from(next_version)
-                )?;
+                ).map_err(|e| JsValue::from(format!("Error")))?;
 
                 if function.is_undefined() {
-                    return Err(JsValue::from(format!("Migrating function to schema version {} not found", next_version)))
+                    return Err(JsValue::from(format!("Migrating function {} to schema version not found", next_version)))
                 }
 
                 let upgraded = Reflect::apply(
