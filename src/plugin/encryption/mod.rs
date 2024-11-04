@@ -29,11 +29,8 @@ fn derive_key(password: &str) -> [u8; 32] {
 
 
 impl EncryptionPlugin {
-    pub fn new(password: Option<String>) -> Result<EncryptionPlugin, JsValue> {
+    pub fn new(password: String) -> Result<EncryptionPlugin, JsValue> {
         let base = BasePlugin::new()?;
-        
-        let password = password.unwrap_or_else(|| "21313".to_string());
-        
         let plugin = EncryptionPlugin {
             base,
             password,

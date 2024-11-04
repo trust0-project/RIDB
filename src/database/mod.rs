@@ -108,6 +108,7 @@ impl Database {
                     (key.clone(), Collection::from(key.clone(), internals.clone()))
                 })
                 .collect();
+
         let object = Object::new();
         for (key, collection) in collections {
             Reflect::set(
@@ -139,8 +140,8 @@ impl Database {
         .map(|plugin| plugin.unchecked_into::<BasePlugin>())
         .collect();
 
-        if password.is_some() {
-            let encryption = EncryptionPlugin::new(password)?;
+        if let Some(pass) = password {
+            let encryption = EncryptionPlugin::new(pass)?;
             vec_plugins.push(encryption.base);
         }
 

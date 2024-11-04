@@ -16,13 +16,15 @@ import {RIDB} from '../build/esm/index.mjs';
         async start() {
             const db = new RIDB(
                 {
-                    'credentials': SDK.Models.CredentialSchema,
-                    'credentialMetadata': SDK.Models.CredentialMetadataSchema,
-                    'didkeyLink': SDK.Models.DIDKeyLinkSchema,
-                    'didLink': SDK.Models.DIDLinkSchema,
-                    'dids': SDK.Models.DIDSchema,
-                    'keys': SDK.Models.KeySchema,
-                    'messages': SDK.Models.MessageSchema
+                    schemas:{
+                        'credentials': SDK.Models.CredentialSchema,
+                        'credentialMetadata': SDK.Models.CredentialMetadataSchema,
+                        'didkeyLink': SDK.Models.DIDKeyLinkSchema,
+                        'didLink': SDK.Models.DIDLinkSchema,
+                        'dids': SDK.Models.DIDSchema,
+                        'keys': SDK.Models.KeySchema,
+                        'messages': SDK.Models.MessageSchema
+                    }
                 }
             )
             await db.start()

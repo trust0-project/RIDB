@@ -110,12 +110,14 @@ impl Internals {
         let key = self.schema.primary_key.clone();
         let doc_property = Reflect::get(&document, &JsValue::from(&key))
             .map_err(|e| JsValue::from(RIDBError::from(e)))?;
+
         let properties = self.schema.properties.clone();
         let primary_key_property = properties
             .get(&key)
-            .ok_or(RIDBError::from("Invalid Schema cannot find primaryKey field"))
-            .map_err(|e| JsValue::from(e))?;
+            .ok_or(JsValue::from("Invalid Schema cannot find primaryKey field"))?;
+
         let primary_key_type = primary_key_property.property_type();
+
         if doc_property.is_null() || doc_property.is_undefined() {
             if primary_key_type == PropertyType::String {
                 Reflect::set(&document, &JsValue::from(&key), &JsValue::from("12345"))
@@ -125,8 +127,10 @@ impl Internals {
                     .map_err(|e| JsValue::from(RIDBError::from(e)))?;
             }
         }
+
         let doc_property = Reflect::get(&document, &JsValue::from(&key))
             .map_err(|e| JsValue::from(RIDBError::from(e)))?;
+
         if primary_key_type == PropertyType::String && !doc_property.is_string() {
             Err(JsValue::from(RIDBError::from("Unexpected primary key should be a string")))
         } else if primary_key_type == PropertyType::Number && !doc_property.is_bigint() {

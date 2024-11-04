@@ -1,0 +1,15 @@
+{
+  "name": "examples",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@trust0/ridb": "../",
+    "@hyperledger/identus-edge-agent-sdk": "file:../../../iohk/atala-prism-wallet-sdk-ts"
+  }
+}

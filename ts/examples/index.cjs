@@ -1,8 +1,9 @@
 /// <reference types="@hyperledger/identus-edge-agent-sdk" />
+/// <reference types="@trust0/ridb" />
 
 const {
     RIDB,
-} = require('../build/cjs/index.cjs');
+} = require('@trust0/ridb');
 
 const SDK = require("@hyperledger/identus-edge-agent-sdk");
 
@@ -13,6 +14,7 @@ const mediatorDID = SDK.Domain.DID.fromString(
 (async () => {
 
     class RIDBStore  {
+        /** @type {RIDB} */
         _db = null
 
         get collections() {
@@ -22,13 +24,15 @@ const mediatorDID = SDK.Domain.DID.fromString(
         async start() {
             const db = new RIDB(
                 {
-                    'credentials': SDK.Models.CredentialSchema,
-                    'credentialMetadata': SDK.Models.CredentialMetadataSchema,
-                    'didkeyLink': SDK.Models.DIDKeyLinkSchema,
-                    'didLink': SDK.Models.DIDLinkSchema,
-                    'dids': SDK.Models.DIDSchema,
-                    'keys': SDK.Models.KeySchema,
-                    'messages': SDK.Models.MessageSchema
+                    schemas:{
+                        'credentials': SDK.Models.CredentialSchema,
+                        'credentialMetadata': SDK.Models.CredentialMetadataSchema,
+                        'didkeyLink': SDK.Models.DIDKeyLinkSchema,
+                        'didLink': SDK.Models.DIDLinkSchema,
+                        'dids': SDK.Models.DIDSchema,
+                        'keys': SDK.Models.KeySchema,
+                        'messages': SDK.Models.MessageSchema
+                    }
                 }
             )
             await db.start()
@@ -45,7 +49,7 @@ const mediatorDID = SDK.Domain.DID.fromString(
             await collection.remove(uuid)
         }
 
-        async query(name, query) {
+        async query(name, query) {
             const collection = this.collections[name]
             const queryResponse = await collection.find(query.selector)
             return queryResponse

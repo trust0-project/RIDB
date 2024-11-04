@@ -4,7 +4,7 @@ pub mod migration;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::convert::{FromWasmAbi, IntoWasmAbi, WasmAbi};
-use js_sys::Object;
+use js_sys::{Object, Reflect};
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -84,9 +84,9 @@ impl JsCast for BasePlugin {
 
     fn unchecked_from_js(val: JsValue) -> Self {
         BasePlugin {
-            doc_create_hook: js_sys::Reflect::get(&val, &JsValue::from_str("docCreateHook"))
+            doc_create_hook: Reflect::get(&val, &JsValue::from_str("docCreateHook"))
                 .unwrap_or(JsValue::undefined()),
-            doc_recover_hook: js_sys::Reflect::get(&val, &JsValue::from_str("docRecoverHook"))
+            doc_recover_hook: Reflect::get(&val, &JsValue::from_str("docRecoverHook"))
                 .unwrap_or(JsValue::undefined()),
         }
     }
