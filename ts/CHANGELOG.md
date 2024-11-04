@@ -1,3 +1,10 @@
+## [0.4.5-rc.1](https://github.com/trust0-project/RIDB/compare/v0.4.4...v0.4.5-rc.1) (2024-11-04)
+
+
+### Bug Fixes
+
+* correct example [skip-ci] ([176db1e](https://github.com/trust0-project/RIDB/commit/176db1ecc9834ba4ce9f8366e9c74f47582315d3))
+
 ## [0.4.4](https://github.com/trust0-project/RIDB/compare/v0.4.3...v0.4.4) (2024-11-04)
 
 
