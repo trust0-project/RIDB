@@ -1,3 +1,10 @@
+## [0.3.6-rc.1](https://github.com/trust0-project/RIDB/compare/v0.3.5...v0.3.6-rc.1) (2024-11-04)
+
+
+### Bug Fixes
+
+* complete migration plugin ([bef2f8b](https://github.com/trust0-project/RIDB/commit/bef2f8b6398123daf06bf1470f84b49cd5240b4c))
+
 ## [0.3.5](https://github.com/trust0-project/RIDB/compare/v0.3.4...v0.3.5) (2024-11-03)
 
 
