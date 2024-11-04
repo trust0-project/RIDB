@@ -6,13 +6,12 @@ use std::collections::HashMap;
 use js_sys::{ Object, Reflect};
 use wasm_bindgen::{JsValue};
 use wasm_bindgen::__rt::IntoJsResult;
-use wasm_bindgen::prelude::wasm_bindgen;
+use web_sys::console::log_1;
 use crate::error::RIDBError;
 use crate::plugin::BasePlugin;
 use crate::storage::internals::{Internals};
 use crate::storage::internals::storage_internal::StorageInternal;
 
-#[wasm_bindgen(skip_typescript)]
 #[derive(Clone)]
 /// Represents the storage system containing a map of internal storages.
 pub struct Storage {
@@ -54,14 +53,31 @@ impl Storage {
                 let migration = Reflect::get(
                     &migrations_map_js,
                     &JsValue::from(name)
-                ).map_err(|e| JsValue::from(RIDBError::from(e))).unwrap();
-                (name.clone(), Internals::new(
+                ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
+
+                let version = storage_internal.schema().get_version();
+                if version > 1 {
+                    let function = Reflect::get(&migration, &JsValue::from(version))
+                        .map_err(|e| JsValue::from(RIDBError::from(e)))?;
+
+                    if function.is_undefined() {
+                        return Err(
+                            JsValue::from(format!("Required Schema {} migration path {} to not be undefined", name, version).as_str())
+                        )
+                    }
+                }
+
+                let internals = Internals::new(
                     storage_internal.clone(),
                     migration,
                     plugins.clone()
-                ).unwrap())
-            })
-            .collect::<HashMap<String, Internals>>();
+                ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
+
+                Ok(
+                    (name.clone(), internals)
+                )
+
+            }).collect::<Result<HashMap<String, Internals>, JsValue>>()?;
 
         let storage = Storage {
             internals: storages_mounted,
@@ -69,4 +85,5 @@ impl Storage {
 
         Ok(storage)
     }
+
 }

@@ -1,6 +1,5 @@
 pub mod storage_internal;
 pub mod base_storage;
-
 use js_sys::{Reflect};
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast,  JsValue};
@@ -11,9 +10,6 @@ use crate::plugin::BasePlugin;
 use crate::schema::property_type::PropertyType;
 use crate::schema::Schema;
 use crate::storage::internals::storage_internal::StorageInternal;
-
-
-
 
 #[derive(Clone, Default)]
 /// Represents the internals of a storage system, including schema and storage internal components.
