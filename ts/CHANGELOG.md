@@ -1,3 +1,11 @@
+## [0.4.4](https://github.com/trust0-project/RIDB/compare/v0.4.3...v0.4.4) (2024-11-04)
+
+
+### Bug Fixes
+
+* improve npm package ([#19](https://github.com/trust0-project/RIDB/issues/19)) ([e2a4160](https://github.com/trust0-project/RIDB/commit/e2a4160f5e7140a984fb3c5e8cb3c9185f1a9865))
+* readme and npm package docs ([4a4ad5f](https://github.com/trust0-project/RIDB/commit/4a4ad5f7e092fa79a9126bf900cc940620a30404))
+
 ## [0.4.4-rc.1](https://github.com/trust0-project/RIDB/compare/v0.4.3...v0.4.4-rc.1) (2024-11-04)
 
 
