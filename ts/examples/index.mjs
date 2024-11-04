@@ -2,7 +2,7 @@
 
 /** @type {SDK} */
 import SDK from '@hyperledger/identus-edge-agent-sdk'
-import {RIDB} from '../build/esm/index.mjs';
+import {RIDB} from '@trust0/ridb';
 
 (async () => {
 
