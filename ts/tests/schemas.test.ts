@@ -17,7 +17,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     properties: {
@@ -50,7 +50,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     properties: {
@@ -92,7 +92,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     encrypted: ['name'],
@@ -149,7 +149,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     properties: {
@@ -170,7 +170,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     properties: {
@@ -219,7 +219,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: SchemaFieldType.object,
                                     properties: {
@@ -232,7 +232,7 @@ export default (platform: string) => {
                                         }
                                     }
                                 }
-                            } as const
+                            } as const,
                         }
                     )
                     await db.start({storageType: storage})
@@ -245,6 +245,9 @@ export default (platform: string) => {
                     expect(created).to.not.be.undefined;
                     expect(created).to.haveOwnProperty("id");
                     expect(created).to.haveOwnProperty("age");
+
+                    expect(created).to.haveOwnProperty("__version");
+                    expect(created.__version).to.eq(1);
 
                     const found = await db.collections.demo.count({
                         age: {
@@ -268,7 +271,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: "wrong",
                                     properties: {}
@@ -283,7 +286,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: "obiect",
                                     properties: {
@@ -323,7 +326,7 @@ export default (platform: string) => {
                         {
                             schemas: {
                                 demo: {
-                                    version: 0,
+                                    version: 1,
                                     primaryKey: 'id',
                                     type: "object",
                                     properties: {
@@ -339,6 +342,81 @@ export default (platform: string) => {
                     )
                     await expect(async () => db.start({storageType: storage})).to.rejects.toThrowError("Validation Error: Min higher than max")
                 });
+                it("Should throw an error if migrations are declared wrong", () => {
+                    const db = new RIDB(
+                        {
+                            schemas: {
+                                demo: {
+                                    version: 2,
+                                    primaryKey: 'id',
+                                    type: SchemaFieldType.object,
+                                    properties: {
+                                        id: {
+                                            type: SchemaFieldType.string,
+                                            maxLength: 60
+                                        },
+                                        age: {
+                                            type: SchemaFieldType.number,
+                                        }
+                                    }
+                                }
+                            } as const,
+                            migrations: {
+                                demo: {
+                                } as any
+                            }
+                        }
+                    )
+                    expect(
+                        async () => db.start({storageType: storage})
+                    ).to.rejects.toThrowError("Required Schema demo migration path 2 to not be undefined")
+                })
+                it("Should be able to create and migrate a schema from v1 to v2", async () => {
+                    const db = new RIDB(
+                        {
+                            schemas: {
+                                demo: {
+                                    version: 2,
+                                    primaryKey: 'id',
+                                    type: SchemaFieldType.object,
+                                    required:['id', 'age'],
+                                    properties: {
+                                        id: {
+                                            type: SchemaFieldType.string,
+                                            maxLength: 60
+                                        },
+                                        age: {
+                                            type: SchemaFieldType.number,
+                                        }
+                                    }
+                                }
+                            } as const,
+                            migrations: {
+                                demo: {
+                                    2: function (doc) {
+                                        return doc
+                                    }
+                                }
+                            }
+                        }
+                    )
+
+                    await db.start({storageType: storage})
+                    expect(db).to.not.be.undefined;
+
+                    const created = await db.collections.demo.create({
+                        id: "12345",
+                        age: 18,
+                        __version:1
+                    })
+
+                    expect(created).to.not.be.undefined;
+                    expect(created).to.haveOwnProperty("id");
+                    expect(created).to.haveOwnProperty("age");
+                    expect(created).to.haveOwnProperty("__version");
+
+                    expect(created.__version).to.eq(2);
+                })
             })
         })
     });

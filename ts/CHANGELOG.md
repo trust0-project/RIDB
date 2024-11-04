@@ -1,3 +1,24 @@
+## [0.3.6-rc.3](https://github.com/trust0-project/RIDB/compare/v0.3.6-rc.2...v0.3.6-rc.3) (2024-11-04)
+
+
+### Bug Fixes
+
+* improve migration tests ([5a66dcf](https://github.com/trust0-project/RIDB/commit/5a66dcf99254c05acc4a87be5430b358a3e87f0c))
+
+## [0.3.6-rc.2](https://github.com/trust0-project/RIDB/compare/v0.3.6-rc.1...v0.3.6-rc.2) (2024-11-04)
+
+
+### Bug Fixes
+
+* improve migration testing ([768293f](https://github.com/trust0-project/RIDB/commit/768293ffd402045e7dc902f293a5f4c61e3f5611))
+
+## [0.3.6-rc.1](https://github.com/trust0-project/RIDB/compare/v0.3.5...v0.3.6-rc.1) (2024-11-04)
+
+
+### Bug Fixes
+
+* complete migration plugin ([bef2f8b](https://github.com/trust0-project/RIDB/commit/bef2f8b6398123daf06bf1470f84b49cd5240b4c))
+
 ## [0.3.5](https://github.com/trust0-project/RIDB/compare/v0.3.4...v0.3.5) (2024-11-03)
 
 

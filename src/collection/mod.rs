@@ -37,7 +37,7 @@ export type ExtractType<T extends string> = T extends 'string' ? string :
  */
 export type Doc<T extends SchemaType> = {
     [name in keyof T['properties']]: ExtractType<T['properties'][name]['type']>
-};
+} & {__version?: number };
 
 /**
  * Collection is a class that represents a collection of documents in a database.
@@ -95,11 +95,9 @@ export class Collection<T extends SchemaType> {
 "#;
 
 #[wasm_bindgen(skip_typescript)]
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone)]
 pub struct Collection {
-    #[serde(skip_serializing, skip_deserializing)]
     pub(crate) name: String,
-    #[serde(skip_serializing, skip_deserializing)]
     pub(crate) internals: Internals
 }
 
@@ -112,7 +110,7 @@ impl Collection {
     ///
     /// * `name` - A string representing the name of the collection.
     /// * `internals` - Internal storage mechanisms for the collection.
-    pub fn from(name: String, internals: Internals) -> Collection {
+    pub(crate) fn from(name: String, internals: Internals) -> Collection {
         Collection {
             name,
             internals

@@ -1,10 +1,8 @@
 pub mod storage_internal;
 pub mod base_storage;
-
-use js_sys::{Reflect, JSON};
+use js_sys::{Reflect};
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast,  JsValue};
-use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::console::log_1;
 use crate::error::RIDBError;
 use crate::operation::{OpType, Operation};
@@ -13,33 +11,6 @@ use crate::schema::property_type::PropertyType;
 use crate::schema::Schema;
 use crate::storage::internals::storage_internal::StorageInternal;
 
-#[wasm_bindgen(typescript_custom_section)]
-const TS_APPEND_CONTENT: &'static str = r#"
-/**
- * Represents the internals of a storage system, including the base storage and schema.
- *
- * @template T - The schema type.
- */
-export class Internals<T extends SchemaType> {
-    /**
-     * The base storage instance.
-     */
-    readonly internal: BaseStorage<T>;
-    /**
-     * Creates a new `Internals` instance with the provided base storage.
-     *
-     * @param {BaseStorage<T>} internal - The base storage instance.
-     */
-    constructor(internal: BaseStorage<T>);
-    /**
-     * The schema associated with the storage.
-     */
-    readonly schema: T;
-}
-"#;
-
-
-#[wasm_bindgen(skip_typescript)]
 #[derive(Clone, Default)]
 /// Represents the internals of a storage system, including schema and storage internal components.
 pub struct Internals {
@@ -47,6 +18,7 @@ pub struct Internals {
     pub(crate) schema: Schema,
     /// The internal storage mechanism.
     pub(crate) internal: StorageInternal,
+    pub(crate) migration: JsValue,
     pub(crate) plugins: Vec<BasePlugin>
 }
 
@@ -65,7 +37,6 @@ impl HookType {
     }
 }
 
-#[wasm_bindgen]
 impl Internals {
     /// Creates a new `Internals` instance with the provided internal storage.
     ///
@@ -76,14 +47,21 @@ impl Internals {
     /// # Returns
     ///
     /// * `Internals` - A new instance of `Internals`.
-    #[wasm_bindgen(constructor)]
-    pub fn new(
+    pub(crate) fn new(
         internal: StorageInternal,
+        migration: JsValue,
         plugins: Vec<BasePlugin>
     ) -> Result<Internals, JsValue> {
         let schema = internal.schema().clone();
         match schema.is_valid() {
-            Ok(_) => Ok(Internals { schema, internal, plugins }),
+            Ok(_) => Ok(
+                Internals {
+                    schema,
+                    internal,
+                    migration,
+                    plugins
+                }
+            ),
             Err(e) => Err(JsValue::from(e))
         }
     }
@@ -105,8 +83,14 @@ impl Internals {
             let hook_fn = hook.dyn_ref::<js_sys::Function>()
                 .ok_or_else(|| JsValue::from(RIDBError::error("Hook is not a function")))?;
 
-            hook_fn.call2(&JsValue::NULL, &to_value(&self.schema).unwrap(), &doc)
-                .map_err(|e| JsValue::from(RIDBError::error(&format!("Error executing plugin hook: {:?}", e))))?;
+            let call = hook_fn.call3(
+                &JsValue::NULL,
+                &to_value(&self.schema)?,
+                &self.migration,
+                &doc
+            );
+
+            call.map_err(|e| JsValue::from(RIDBError::error(&format!("Error executing plugin hook: {:?}", e))))?;
         } else {
             log_1(&JsValue::from(format!("InValid Hook type: {:?}", hook.js_typeof())));
         }
@@ -220,8 +204,7 @@ impl Internals {
     /// # Returns
     ///
     /// * `Result<JsValue, JsValue>` - A result containing the written document or an error.
-    #[wasm_bindgen]
-    pub async fn write(&self, document_without_pk: JsValue) -> Result<JsValue, JsValue> {
+    pub(crate) async fn write(&self, document_without_pk: JsValue) -> Result<JsValue, JsValue> {
         let primary_key = self.schema.primary_key.clone();
         let document = self.validate_schema(document_without_pk)
             .map_err(|e| JsValue::from(RIDBError::from(e)))?;
@@ -268,14 +251,12 @@ impl Internals {
     }
 
     /// Placeholder for querying the storage system.
-    #[wasm_bindgen]
-    pub async fn find(&self, query: JsValue) -> Result<JsValue, JsValue> {
+    pub(crate) async fn find(&self, query: JsValue) -> Result<JsValue, JsValue> {
         self.internal.find(query).await
     }
 
     /// Placeholder for finding a document by its ID.
-    #[wasm_bindgen]
-    pub async fn find_document_by_id(&self, primary_key: JsValue) -> Result<JsValue, JsValue>{
+    pub(crate) async fn find_document_by_id(&self, primary_key: JsValue) -> Result<JsValue, JsValue>{
         match self.internal.findDocument_by_id(primary_key).await {
             Ok(document) => Ok(document),
             Err(_) => Ok(JsValue::NULL),
@@ -284,14 +265,12 @@ impl Internals {
     }
 
     /// Placeholder for counting documents in the storage system.
-    #[wasm_bindgen]
-    pub async fn count(&self, query: JsValue) -> Result<JsValue, JsValue> {
+    pub(crate) async fn count(&self, query: JsValue) -> Result<JsValue, JsValue> {
         self.internal.count(query).await
     }
 
     /// Placeholder for removing a document from the storage system.
-    #[wasm_bindgen]
-    pub async fn remove(&self, primary_key: JsValue) -> Result<JsValue, JsValue> {
+    pub(crate) async fn remove(&self, primary_key: JsValue) -> Result<JsValue, JsValue> {
         let result = self.find_document_by_id(primary_key.clone()).await?;
         if result.is_null() {
             Err(JsValue::from_str("Invalid primary key value"))
@@ -308,8 +287,7 @@ impl Internals {
     }
 
     /// Placeholder for closing the storage system.
-    #[wasm_bindgen]
-    pub async fn close(&self) -> Result<JsValue, JsValue> {
+    pub(crate) async fn close(&self) -> Result<JsValue, JsValue> {
         self.internal.close().await
     }
 }

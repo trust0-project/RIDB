@@ -5,13 +5,12 @@ mod base;
 use std::collections::HashMap;
 use js_sys::{ Object, Reflect};
 use wasm_bindgen::{JsValue};
-use wasm_bindgen::prelude::wasm_bindgen;
+use wasm_bindgen::__rt::IntoJsResult;
 use crate::error::RIDBError;
 use crate::plugin::BasePlugin;
 use crate::storage::internals::{Internals};
 use crate::storage::internals::storage_internal::StorageInternal;
 
-#[wasm_bindgen(skip_typescript)]
 #[derive(Clone)]
 /// Represents the storage system containing a map of internal storages.
 pub struct Storage {
@@ -29,7 +28,7 @@ impl Storage {
     /// # Returns
     ///
     /// * `Result<Storage, JsValue>` - A result containing the new `Storage` instance or an error.
-    pub fn create(storages_map_js: Object, plugins: Vec<BasePlugin>) -> Result<Storage, JsValue> {
+    pub fn create(storages_map_js: Object, migrations_map_js: Object, plugins: Vec<BasePlugin>) -> Result<Storage, JsValue> {
         if !storages_map_js.is_object() {
             return Err(JsValue::from(RIDBError::from("Unexpected object")));
         }
@@ -50,12 +49,34 @@ impl Storage {
         let storages_mounted: HashMap<String, Internals> = storages
             .iter()
             .map(|(name, storage_internal)| {
-                (name.clone(), Internals::new(
+                let migration = Reflect::get(
+                    &migrations_map_js,
+                    &JsValue::from(name)
+                ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
+
+                let version = storage_internal.schema().get_version();
+                if version > 1 {
+                    let function = Reflect::get(&migration, &JsValue::from(version))
+                        .map_err(|e| JsValue::from(RIDBError::from(e)))?;
+
+                    if function.is_undefined() {
+                        return Err(
+                            JsValue::from(format!("Required Schema {} migration path {} to not be undefined", name, version).as_str())
+                        )
+                    }
+                }
+
+                let internals = Internals::new(
                     storage_internal.clone(),
+                    migration,
                     plugins.clone()
-                ).unwrap())
-            })
-            .collect::<HashMap<String, Internals>>();
+                ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
+
+                Ok(
+                    (name.clone(), internals)
+                )
+
+            }).collect::<Result<HashMap<String, Internals>, JsValue>>()?;
 
         let storage = Storage {
             internals: storages_mounted,
@@ -63,4 +84,5 @@ impl Storage {
 
         Ok(storage)
     }
+
 }
