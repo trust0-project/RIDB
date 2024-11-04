@@ -1,3 +1,11 @@
+## [0.4.3](https://github.com/trust0-project/RIDB/compare/v0.4.2...v0.4.3) (2024-11-04)
+
+
+### Bug Fixes
+
+* add docs ([5251308](https://github.com/trust0-project/RIDB/commit/5251308f680b7b399168e455b4ba7781294fb456))
+* package branding ([#18](https://github.com/trust0-project/RIDB/issues/18)) ([a9e67e9](https://github.com/trust0-project/RIDB/commit/a9e67e9bb820ac2d35de4862892340a8cc11a416))
+
 ## [0.4.3-rc.1](https://github.com/trust0-project/RIDB/compare/v0.4.2...v0.4.3-rc.1) (2024-11-04)
 
 
