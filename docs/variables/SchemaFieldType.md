@@ -34,4 +34,4 @@ An enumeration of schema field types.
 
 ## Defined in
 
-[ts/src/index.ts:281](https://github.com/elribonazo/RIDB/blob/b338356f29436de6c6994d2e281d605a10f29517/ts/src/index.ts#L281)
+[ts/src/index.ts:280](https://github.com/elribonazo/RIDB/blob/72b425f6219aae20e99e4ee3c2f3723a02ea6440/ts/src/index.ts#L280)

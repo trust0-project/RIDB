@@ -7,6 +7,80 @@
 # Class: RIDB\<T\>
 
 Represents a RIDB (Rust IndexedDB) instance.
+This is the main class exposed by the RIDB Storage sdk and is used to create a database instance.
+
+### Usage:
+
+```typescript
+const db = new RIDB(
+    {
+        schemas: {
+            demo: {
+                version: 0,
+                primaryKey: 'id',
+                type: SchemaFieldType.object,
+                properties: {
+                    id: {
+                        type: SchemaFieldType.string,
+                        maxLength: 60
+                    }
+                }
+            }
+        } as const
+    }
+)
+```
+
+### Starting the database
+```typescript    
+await db.start()
+```
+
+### Using with encryption plugin
+You can also optionally specify storageType with a compatible storage of your choice and an optional password to enable encryption plugin
+```typescript
+await db.start({
+    password: "my-password"
+})
+```
+
+A compatible storage should be a class implementing BaseStorage<RIDBTypes.SchemaType> and its methods.
+
+### Using with migration plugin
+The migration plugin will automatically migrate your documents for you as you upgrade and change your schemas over the time. 
+
+```typescript
+const db = new RIDB(
+    {
+        schemas: {
+            demo: {
+                version: 1,
+                primaryKey: 'id',
+                type: SchemaFieldType.object,
+                required:['id', 'age'],
+                properties: {
+                    id: {
+                        type: SchemaFieldType.string,
+                        maxLength: 60
+                    },
+                    age: {
+                        type: SchemaFieldType.number,
+                    }
+                }
+            }
+        } as const,
+        migrations: {
+            demo: {
+                1: function (doc) {
+                    return doc
+                }
+            }
+        }
+    }
+)
+
+await db.start({storageType: storage})
+```
 
 ## Type Parameters
 
@@ -32,7 +106,7 @@ Creates an instance of RIDB.
 
 #### Defined in
 
-[ts/src/index.ts:70](https://github.com/elribonazo/RIDB/blob/1c63aad9f4ff19e9fbbdb4c1cc728eac5263e72c/ts/src/index.ts#L70)
+[ts/src/index.ts:145](https://github.com/elribonazo/RIDB/blob/72b425f6219aae20e99e4ee3c2f3723a02ea6440/ts/src/index.ts#L145)
 
 ## Accessors
 
@@ -52,7 +126,7 @@ The collections object.
 
 #### Defined in
 
-[ts/src/index.ts:109](https://github.com/elribonazo/RIDB/blob/1c63aad9f4ff19e9fbbdb4c1cc728eac5263e72c/ts/src/index.ts#L109)
+[ts/src/index.ts:184](https://github.com/elribonazo/RIDB/blob/72b425f6219aae20e99e4ee3c2f3723a02ea6440/ts/src/index.ts#L184)
 
 ## Methods
 
@@ -78,4 +152,4 @@ A promise that resolves to the database instance.
 
 #### Defined in
 
-[ts/src/index.ts:150](https://github.com/elribonazo/RIDB/blob/1c63aad9f4ff19e9fbbdb4c1cc728eac5263e72c/ts/src/index.ts#L150)
+[ts/src/index.ts:225](https://github.com/elribonazo/RIDB/blob/72b425f6219aae20e99e4ee3c2f3723a02ea6440/ts/src/index.ts#L225)
