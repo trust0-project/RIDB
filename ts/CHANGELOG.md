@@ -1,3 +1,14 @@
+## [0.4.5](https://github.com/trust0-project/RIDB/compare/v0.4.4...v0.4.5) (2024-11-05)
+
+
+### Bug Fixes
+
+* code suggestions ([2cb7b48](https://github.com/trust0-project/RIDB/commit/2cb7b487d36d411ac4812dc3f94a4e7a03a45cb0))
+* correct example [skip-ci] ([176db1e](https://github.com/trust0-project/RIDB/commit/176db1ecc9834ba4ce9f8366e9c74f47582315d3))
+* improve docs ([349f96a](https://github.com/trust0-project/RIDB/commit/349f96a7189f07845de489afb6523849ae196660))
+* move docs improvements and small changes ([#20](https://github.com/trust0-project/RIDB/issues/20)) ([defee3d](https://github.com/trust0-project/RIDB/commit/defee3d79dc273f962b81c71bdcd92242cb0aa0b))
+* tests ([831d41d](https://github.com/trust0-project/RIDB/commit/831d41dc258d2d0272c7aea2dbba731e387ec3a3))
+
 ## [0.4.5-rc.4](https://github.com/trust0-project/RIDB/compare/v0.4.5-rc.3...v0.4.5-rc.4) (2024-11-05)
 
 
