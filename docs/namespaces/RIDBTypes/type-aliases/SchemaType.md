@@ -58,4 +58,4 @@ The version of the schema.
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:397
+pkg/ridb\_rust.d.ts:419

@@ -24,7 +24,7 @@ An optional array of indexes.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:469
+pkg/ridb\_rust.d.ts:491
 
 ***
 
@@ -36,7 +36,7 @@ The primary key of the schema.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:459
+pkg/ridb\_rust.d.ts:481
 
 ***
 
@@ -48,7 +48,7 @@ The properties defined in the schema.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:478
+pkg/ridb\_rust.d.ts:500
 
 ***
 
@@ -60,7 +60,7 @@ The schema definition.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:440
+pkg/ridb\_rust.d.ts:462
 
 ***
 
@@ -72,7 +72,7 @@ The type of the schema.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:464
+pkg/ridb\_rust.d.ts:486
 
 ***
 
@@ -84,7 +84,7 @@ The version of the schema.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:454
+pkg/ridb\_rust.d.ts:476
 
 ## Methods
 
@@ -102,7 +102,7 @@ The JSON representation of the schema.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:488
+pkg/ridb\_rust.d.ts:510
 
 ***
 
@@ -130,4 +130,4 @@ The created `Schema` instance.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:449
+pkg/ridb\_rust.d.ts:471

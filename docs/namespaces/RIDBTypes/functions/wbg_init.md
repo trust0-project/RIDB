@@ -21,4 +21,4 @@ for everything else, calls `WebAssembly.instantiate` directly.
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:820
+pkg/ridb\_rust.d.ts:849

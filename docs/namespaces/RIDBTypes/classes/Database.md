@@ -7,6 +7,30 @@
 # Class: Database\<T\>
 
 Represents a database containing collections of documents.
+RIDB extends from this class and is used to expose collections.
+
+So if you specify:
+```typescript
+const db = new RIDB(
+    {
+        schemas: {
+            demo: {
+                version: 0,
+                primaryKey: 'id',
+                type: SchemaFieldType.object,
+                properties: {
+                    id: {
+                        type: SchemaFieldType.string,
+                        maxLength: 60
+                    }
+                }
+            }
+        } as const
+    }
+)
+```
+
+The collection will be available as `db.collections.demo` and all the methods for the collection (find, count, findById, update, create, delete) will be available.
 
 ## Type Parameters
 
@@ -26,7 +50,7 @@ This is a read-only property where the key is the name of the collection and the
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:370
+pkg/ridb\_rust.d.ts:570
 
 ## Methods
 
@@ -64,4 +88,4 @@ A promise that resolves to the created `Database` instance.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:357
+pkg/ridb\_rust.d.ts:557

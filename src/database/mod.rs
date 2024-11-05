@@ -13,6 +13,30 @@ use crate::storage::Storage;
 const TS_APPEND_CONTENT: &'static str = r#"
 /**
  * Represents a database containing collections of documents.
+ * RIDB extends from this class and is used to expose collections.
+ * 
+ * So if you specify:
+ * ```typescript
+ * const db = new RIDB(
+ *     {
+ *         schemas: {
+ *             demo: {
+ *                 version: 0,
+ *                 primaryKey: 'id',
+ *                 type: SchemaFieldType.object,
+ *                 properties: {
+ *                     id: {
+ *                         type: SchemaFieldType.string,
+ *                         maxLength: 60
+ *                     }
+ *                 }
+ *             }
+ *         } as const
+ *     }
+ * )
+ * ```
+ * 
+ * The collection will be available as `db.collections.demo` and all the methods for the collection (find, count, findById, update, create, delete) will be available.
  *
  * @template T - A record of schema types.
  */

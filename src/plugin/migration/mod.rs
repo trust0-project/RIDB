@@ -95,8 +95,7 @@ impl MigrationPlugin {
         let doc_version_key = JsValue::from("__version");
         let schema = Schema::create(schema_js)?;
         let version = schema.version;
-        let doc_version = Reflect::get(&content, &doc_version_key)
-            .map_err(|e| JsValue::from(format!("Error")))?;
+        let doc_version = Reflect::get(&content, &doc_version_key)?;
 
         if doc_version.is_undefined() {
             Reflect::set(&content, &doc_version_key, &JsValue::from(version.to_owned()))?;

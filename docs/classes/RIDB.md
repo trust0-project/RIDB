@@ -32,7 +32,7 @@ Creates an instance of RIDB.
 
 #### Defined in
 
-[ts/src/index.ts:72](https://github.com/elribonazo/RIDB/blob/b1246ca157be0a40d26393279e346bf837bc3355/ts/src/index.ts#L72)
+[ts/src/index.ts:70](https://github.com/elribonazo/RIDB/blob/1c63aad9f4ff19e9fbbdb4c1cc728eac5263e72c/ts/src/index.ts#L70)
 
 ## Accessors
 
@@ -52,7 +52,7 @@ The collections object.
 
 #### Defined in
 
-[ts/src/index.ts:111](https://github.com/elribonazo/RIDB/blob/b1246ca157be0a40d26393279e346bf837bc3355/ts/src/index.ts#L111)
+[ts/src/index.ts:109](https://github.com/elribonazo/RIDB/blob/1c63aad9f4ff19e9fbbdb4c1cc728eac5263e72c/ts/src/index.ts#L109)
 
 ## Methods
 
@@ -78,4 +78,4 @@ A promise that resolves to the database instance.
 
 #### Defined in
 
-[ts/src/index.ts:152](https://github.com/elribonazo/RIDB/blob/b1246ca157be0a40d26393279e346bf837bc3355/ts/src/index.ts#L152)
+[ts/src/index.ts:150](https://github.com/elribonazo/RIDB/blob/1c63aad9f4ff19e9fbbdb4c1cc728eac5263e72c/ts/src/index.ts#L150)
