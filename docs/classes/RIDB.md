@@ -44,7 +44,7 @@ await db.start({
 })
 ```
 
-A compatible storage should be a class implementing BaseStorage<RIDBTypes.SchemaType> and its methods.
+A compatible storage should be a class implementing [BaseStorage<RIDBTypes.SchemaType> ](../namespaces/RIDBTypes/classes/BaseStorage.md) and its methods.
 
 ### Using with migration plugin
 The migration plugin will automatically migrate your documents for you as you upgrade and change your schemas over the time. 
@@ -106,7 +106,7 @@ Creates an instance of RIDB.
 
 #### Defined in
 
-[ts/src/index.ts:145](https://github.com/elribonazo/RIDB/blob/72b425f6219aae20e99e4ee3c2f3723a02ea6440/ts/src/index.ts#L145)
+[ts/src/index.ts:145](https://github.com/elribonazo/RIDB/blob/b30a45c415053519344afdb368cd44f51be96bb3/ts/src/index.ts#L145)
 
 ## Accessors
 
@@ -126,7 +126,7 @@ The collections object.
 
 #### Defined in
 
-[ts/src/index.ts:184](https://github.com/elribonazo/RIDB/blob/72b425f6219aae20e99e4ee3c2f3723a02ea6440/ts/src/index.ts#L184)
+[ts/src/index.ts:184](https://github.com/elribonazo/RIDB/blob/b30a45c415053519344afdb368cd44f51be96bb3/ts/src/index.ts#L184)
 
 ## Methods
 
@@ -152,4 +152,4 @@ A promise that resolves to the database instance.
 
 #### Defined in
 
-[ts/src/index.ts:225](https://github.com/elribonazo/RIDB/blob/72b425f6219aae20e99e4ee3c2f3723a02ea6440/ts/src/index.ts#L225)
+[ts/src/index.ts:225](https://github.com/elribonazo/RIDB/blob/b30a45c415053519344afdb368cd44f51be96bb3/ts/src/index.ts#L225)

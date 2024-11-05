@@ -1,3 +1,10 @@
+## [0.4.5-rc.4](https://github.com/trust0-project/RIDB/compare/v0.4.5-rc.3...v0.4.5-rc.4) (2024-11-05)
+
+
+### Bug Fixes
+
+* adding storage doc class reference ([cae907c](https://github.com/trust0-project/RIDB/commit/cae907c632b51f172a4ebe25b8d604e48b642c1f))
+
 ## [0.4.5-rc.3](https://github.com/trust0-project/RIDB/compare/v0.4.5-rc.2...v0.4.5-rc.3) (2024-11-05)
 
 
