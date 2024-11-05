@@ -1,10 +1,8 @@
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsValue;
-use wasm_bindgen::prelude::wasm_bindgen;
 use crate::plugin::BasePlugin;
 use crate::schema::Schema;
 use js_sys::{Object, Reflect};
-use wasm_bindgen::__rt::IntoJsResult;
 use chacha20poly1305::{
     aead::{Aead, KeyInit},
     ChaCha20Poly1305, Nonce,

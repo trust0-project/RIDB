@@ -62,7 +62,7 @@ impl Query {
         // Separate attributes and logical operators
         let obj = Object::from(query.clone());
         let keys = Object::keys(&obj);
-        let mut conditions = Array::new();
+        let conditions = Array::new();
 
         for i in 0..keys.length() {
             let key = keys.get(i).as_string().unwrap_or_default();

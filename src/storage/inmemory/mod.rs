@@ -293,7 +293,7 @@ impl StorageBase for InMemory {
         let normalized_query = query.parse()?;
 
         // Collect matching documents
-        let mut results = Array::new();
+        let results = Array::new();
 
         // Get all documents from the primary key index
         let primary_key = self.base.schema.primary_key.clone();

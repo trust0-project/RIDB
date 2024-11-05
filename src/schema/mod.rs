@@ -4,7 +4,7 @@ pub mod property;
 use std::collections::HashMap;
 use js_sys::{Object, Reflect, JSON};
 use serde::{Deserialize, Serialize};
-use serde_wasm_bindgen::{from_value, to_value};
+use serde_wasm_bindgen::from_value;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen_test::{ wasm_bindgen_test};

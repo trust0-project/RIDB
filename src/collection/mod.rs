@@ -1,5 +1,3 @@
-use js_sys::JsString;
-use serde::{Deserialize, Serialize};
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::schema::Schema;
