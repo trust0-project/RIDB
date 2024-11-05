@@ -1,3 +1,11 @@
+## [0.4.5-rc.2](https://github.com/trust0-project/RIDB/compare/v0.4.5-rc.1...v0.4.5-rc.2) (2024-11-05)
+
+
+### Bug Fixes
+
+* code suggestions ([2cb7b48](https://github.com/trust0-project/RIDB/commit/2cb7b487d36d411ac4812dc3f94a4e7a03a45cb0))
+* tests ([831d41d](https://github.com/trust0-project/RIDB/commit/831d41dc258d2d0272c7aea2dbba731e387ec3a3))
+
 ## [0.4.5-rc.1](https://github.com/trust0-project/RIDB/compare/v0.4.4...v0.4.5-rc.1) (2024-11-04)
 
 
