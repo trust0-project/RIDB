@@ -34,4 +34,4 @@ Creates storage with the provided schema type records.
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:378
+pkg/ridb\_rust.d.ts:578

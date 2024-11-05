@@ -1,10 +1,8 @@
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsValue;
-use wasm_bindgen::prelude::wasm_bindgen;
 use crate::plugin::BasePlugin;
 use crate::schema::Schema;
 use js_sys::{Object, Reflect};
-use wasm_bindgen::__rt::IntoJsResult;
 use chacha20poly1305::{
     aead::{Aead, KeyInit},
     ChaCha20Poly1305, Nonce,
@@ -170,5 +168,273 @@ impl EncryptionPlugin {
         }
 
         Ok(decrypted_content.into())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use js_sys::JSON;
+    use wasm_bindgen_test::*;
+
+    #[wasm_bindgen_test]
+    fn test_encryption_basic() {
+        // Create a schema with encrypted fields
+        let schema_js = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "encrypted": ["secret"],
+            "properties": {
+                "id": {"type": "string"},
+                "secret": {"type": "string"}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+        
+        // Create test content
+        let content_js = r#"{
+            "id": "123",
+            "secret": "sensitive data"
+        }"#;
+        let content = JSON::parse(content_js).unwrap();
+
+        // Test encryption
+        let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
+        let encrypted = plugin.encrypt(schema_value.clone(), JsValue::NULL, content.clone()).unwrap();
+        
+        // Verify encrypted field is removed and replaced with encrypted data
+        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret")).unwrap().is_undefined());
+        assert!(!Reflect::get(&encrypted, &JsValue::from_str("encrypted")).unwrap().is_undefined());
+
+        // Test decryption
+        let decrypted = plugin.decrypt(schema_value, JsValue::NULL, encrypted).unwrap();
+        let secret = Reflect::get(&decrypted, &JsValue::from_str("secret")).unwrap();
+        assert_eq!(secret.as_string().unwrap(), "sensitive data");
+    }
+
+    #[wasm_bindgen_test]
+    fn test_encryption_primary_key_error() {
+        // Try to encrypt primary key (should fail)
+        let schema_js = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "encrypted": ["id"],
+            "properties": {
+                "id": {"type": "string"}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+        let content = JSON::parse(r#"{"id": "123"}"#).unwrap();
+
+        let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
+        let result = plugin.encrypt(schema_value, JsValue::NULL, content);
+        assert!(result.is_err());
+    }
+
+    #[wasm_bindgen_test]
+    fn test_encryption_no_encrypted_fields() {
+        // Test with no encrypted fields specified
+        let schema_js = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": {"type": "string"},
+                "name": {"type": "string"}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+        let content = JSON::parse(r#"{"id": "123", "name": "test"}"#).unwrap();
+
+        let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
+        let result = plugin.encrypt(schema_value.clone(), JsValue::NULL, content.clone()).unwrap();
+        
+        // Content should remain unchanged
+        assert_eq!(
+            JSON::stringify(&result).unwrap(),
+            JSON::stringify(&content).unwrap()
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn test_multiple_encrypted_fields() {
+        let schema_js = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "encrypted": ["secret1", "secret2"],
+            "properties": {
+                "id": {"type": "string"},
+                "secret1": {"type": "string"},
+                "secret2": {"type": "number"}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+        
+        let content_js = r#"{
+            "id": "123",
+            "secret1": "sensitive data",
+            "secret2": 42
+        }"#;
+        let content = JSON::parse(content_js).unwrap();
+
+        let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
+        let encrypted = plugin.encrypt(schema_value.clone(), JsValue::NULL, content).unwrap();
+        
+        // Verify both fields are removed
+        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret1")).unwrap().is_undefined());
+        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret2")).unwrap().is_undefined());
+        
+        // Verify decryption restores both fields
+        let decrypted = plugin.decrypt(schema_value, JsValue::NULL, encrypted).unwrap();
+        assert_eq!(
+            Reflect::get(&decrypted, &JsValue::from_str("secret1"))
+                .unwrap()
+                .as_string()
+                .unwrap(),
+            "sensitive data"
+        );
+        assert_eq!(
+            Reflect::get(&decrypted, &JsValue::from_str("secret2"))
+                .unwrap()
+                .as_f64()
+                .unwrap(),
+            42.0
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn test_different_data_types() {
+        let schema_js = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "encrypted": ["string_field", "number_field", "boolean_field", "object_field", "array_field"],
+            "properties": {
+                "id": {"type": "string"},
+                "string_field": {"type": "string"},
+                "number_field": {"type": "number"},
+                "boolean_field": {"type": "boolean"},
+                "object_field": {"type": "object", "properties": {"key":{"type":"string"}}},
+                "array_field": {"type": "array", "items": [{"type": "number"}]}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+        
+        let content_js = r#"{
+            "id": "123",
+            "string_field": "test",
+            "number_field": 42,
+            "boolean_field": true,
+            "object_field": {"key": "value"},
+            "array_field": [1, 2, 3]
+        }"#;
+        let content = JSON::parse(content_js).unwrap();
+
+        let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
+        let encrypted = plugin.encrypt(schema_value.clone(), JsValue::NULL, content.clone()).unwrap();
+        let decrypted = plugin.decrypt(schema_value, JsValue::NULL, encrypted).unwrap();
+
+        // Verify all fields are correctly restored
+        assert_eq!(
+            JSON::stringify(&decrypted).unwrap(),
+            JSON::stringify(&content.clone()).unwrap()
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn test_invalid_password_decryption() {
+        let schema_js = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "encrypted": ["secret"],
+            "properties": {
+                "id": {"type": "string"},
+                "secret": {"type": "string"}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+        let content = JSON::parse(r#"{"id": "123", "secret": "test"}"#).unwrap();
+
+        // Encrypt with one password
+        let plugin1 = EncryptionPlugin::new("password1".to_string()).unwrap();
+        let encrypted = plugin1.encrypt(schema_value.clone(), JsValue::NULL, content).unwrap();
+
+        // Try to decrypt with different password
+        let plugin2 = EncryptionPlugin::new("password2".to_string()).unwrap();
+        let result = plugin2.decrypt(schema_value, JsValue::NULL, encrypted);
+        assert!(result.is_err());
+    }
+
+    #[wasm_bindgen_test]
+    fn test_corrupted_encrypted_data() {
+        let schema_js = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "encrypted": ["secret"],
+            "properties": {
+                "id": {"type": "string"},
+                "secret": {"type": "string"}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+        
+        // Create content with corrupted encrypted data
+        let content = JSON::parse(r#"{
+            "id": "123",
+            "encrypted": "not-valid-base64!"
+        }"#).unwrap();
+
+        let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
+        let result = plugin.decrypt(schema_value, JsValue::NULL, content);
+        assert!(result.is_err());
+    }
+
+    #[wasm_bindgen_test]
+    fn test_empty_encrypted_fields() {
+        let schema_js = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "encrypted": [],
+            "properties": {
+                "id": {"type": "string"},
+                "data": {"type": "string"}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+        let content = JSON::parse(r#"{"id": "123", "data": "test"}"#).unwrap();
+
+        let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
+        let result = plugin.encrypt(schema_value.clone(), JsValue::NULL, content.clone()).unwrap();
+        
+        // Content should remain unchanged
+        assert_eq!(
+            JSON::stringify(&result).unwrap(),
+            JSON::stringify(&content).unwrap()
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn test_nonexistent_field_encryption() {
+        let schema_js = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "encrypted": ["nonexistent"],
+            "properties": {
+                "id": {"type": "string"}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+        let content = JSON::parse(r#"{"id": "123"}"#).unwrap();
+
+        let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
+        let result = plugin.encrypt(schema_value, JsValue::NULL, content);
+        assert!(result.is_err());
     }
 }

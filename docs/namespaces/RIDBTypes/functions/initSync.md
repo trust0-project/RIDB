@@ -21,4 +21,4 @@ a precompiled `WebAssembly.Module`.
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:810
+pkg/ridb\_rust.d.ts:839

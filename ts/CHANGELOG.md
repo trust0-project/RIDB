@@ -1,3 +1,25 @@
+## [0.4.5-rc.4](https://github.com/trust0-project/RIDB/compare/v0.4.5-rc.3...v0.4.5-rc.4) (2024-11-05)
+
+
+### Bug Fixes
+
+* adding storage doc class reference ([cae907c](https://github.com/trust0-project/RIDB/commit/cae907c632b51f172a4ebe25b8d604e48b642c1f))
+
+## [0.4.5-rc.3](https://github.com/trust0-project/RIDB/compare/v0.4.5-rc.2...v0.4.5-rc.3) (2024-11-05)
+
+
+### Bug Fixes
+
+* improve docs ([349f96a](https://github.com/trust0-project/RIDB/commit/349f96a7189f07845de489afb6523849ae196660))
+
+## [0.4.5-rc.2](https://github.com/trust0-project/RIDB/compare/v0.4.5-rc.1...v0.4.5-rc.2) (2024-11-05)
+
+
+### Bug Fixes
+
+* code suggestions ([2cb7b48](https://github.com/trust0-project/RIDB/commit/2cb7b487d36d411ac4812dc3f94a4e7a03a45cb0))
+* tests ([831d41d](https://github.com/trust0-project/RIDB/commit/831d41dc258d2d0272c7aea2dbba731e387ec3a3))
+
 ## [0.4.5-rc.1](https://github.com/trust0-project/RIDB/compare/v0.4.4...v0.4.5-rc.1) (2024-11-04)
 
 

@@ -62,7 +62,7 @@ impl Query {
         // Separate attributes and logical operators
         let obj = Object::from(query.clone());
         let keys = Object::keys(&obj);
-        let mut conditions = Array::new();
+        let conditions = Array::new();
 
         for i in 0..keys.length() {
             let key = keys.get(i).as_string().unwrap_or_default();
@@ -700,4 +700,102 @@ fn test_query_get_query_normalization_complex_mixed() {
         JSON::stringify(&normalized_query).unwrap(),
         JSON::stringify(&expected_value).unwrap()
     );
+}
+
+#[wasm_bindgen_test]
+fn test_query_parse_empty_query() {
+    let schema_str = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" }
+        }
+    }"#;
+    let query_str = "{}";
+    let schema = Schema::create(JSON::parse(schema_str).unwrap()).unwrap();
+    let query = Query::new(JSON::parse(query_str).unwrap(), schema).unwrap();
+    let result = query.parse();
+    assert!(result.is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_query_parse_non_object_query() {
+    let schema_str = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" }
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_str).unwrap()).unwrap();
+    let query = Query::new(JsValue::from_str("not an object"), schema).unwrap();
+    let result = query.parse();
+    assert!(result.is_err());
+    assert_eq!(
+        result.err().unwrap().as_string().unwrap(),
+        "Query must be an object"
+    );
+}
+
+#[wasm_bindgen_test]
+fn test_query_parse_multiple_operators() {
+    let schema_str = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "age": { "type": "number" }
+        }
+    }"#;
+    let query_str = r#"{
+        "age": { "$gt": 20, "$lt": 30 }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_str).unwrap()).unwrap();
+    let query = Query::new(JSON::parse(query_str).unwrap(), schema).unwrap();
+    let result = query.parse();
+    assert!(result.is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_query_parse_invalid_in_operator() {
+    let schema_str = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "status": { "type": "string" }
+        }
+    }"#;
+    let query_str = r#"{
+        "status": { "$in": "not-an-array" }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_str).unwrap()).unwrap();
+    let query = Query::new(JSON::parse(query_str).unwrap(), schema).unwrap();
+    let result = query.parse();
+    assert!(result.is_err());
+    assert_eq!(
+        result.err().unwrap().as_string().unwrap(),
+        "$in operator requires an array"
+    );
+}
+
+#[wasm_bindgen_test]
+fn test_query_parse_empty_logical_operators() {
+    let schema_str = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" }
+        }
+    }"#;
+    let query_str = r#"{
+        "$and": []
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_str).unwrap()).unwrap();
+    let query = Query::new(JSON::parse(query_str).unwrap(), schema).unwrap();
+    let result = query.parse();
+    assert!(result.is_ok());
 }

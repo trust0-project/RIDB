@@ -3,8 +3,7 @@ pub mod migration;
 
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::*;
-use wasm_bindgen::convert::{FromWasmAbi, IntoWasmAbi, WasmAbi};
-use js_sys::{Object, Reflect};
+use js_sys::Reflect;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"

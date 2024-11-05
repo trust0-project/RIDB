@@ -24,7 +24,7 @@ BROWSER_ENV="--environment jsdom --browser --browser.name=chrome --run"
 # Change to parent directory, add error handling
 cd .. || { echo "Failed to change directory"; exit 1; }
 
-cargo test
+RUSTFLAGS="-Awarnings" cargo test
 
 # Check which environment to test based on the options provided
 if [ "$ENVIRONMENT" = "node" ]; then
