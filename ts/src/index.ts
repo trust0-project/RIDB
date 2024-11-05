@@ -51,6 +51,7 @@ class MySimplePlugin extends RIDBTypes.BasePlugin {
 
 
 /**
+ * @packageDocumentation
  * Represents a RIDB (Rust IndexedDB) instance.
  * This is the main class exposed by the RIDB Storage sdk and is used to create a database instance.
  * 
