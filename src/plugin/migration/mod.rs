@@ -1,14 +1,12 @@
-use std::cell::Ref;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::plugin::BasePlugin;
 use crate::schema::Schema;
-use js_sys::{JsString, Reflect};
+use js_sys::{ Reflect};
 use chacha20poly1305::{
     aead::{KeyInit},
 };
-use web_sys::console::log_1;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -164,5 +162,554 @@ impl MigrationPlugin {
 
         Ok(content)
     }
+
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use js_sys::{Object, JSON};
+    use wasm_bindgen::__rt::IntoJsResult;
+    use wasm_bindgen_test::*;
+
+    #[wasm_bindgen_test]
+    fn test_basic_migration() {
+        // Schema v1
+        let schema_js = r#"{
+            "version": 2,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": {"type": "string"},
+                "data": {"type": "string"}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+        
+        // Content in v1 format
+        let content = JSON::parse(r#"{
+            "id": "123",
+            "data": "test",
+            "__version":1
+        }"#).unwrap();
+
+        // Migration function that adds a new field
+        let migrations = Object::new().into_js_result().unwrap();
+        let migration_fn = js_sys::Function::new_with_args(
+            "doc",
+            "doc.newField = 'migrated'; return doc;"
+        );
+
+        Reflect::set(
+            &migrations,
+            &JsValue::from(2),
+            &migration_fn
+        ).unwrap();
+
+        let plugin = MigrationPlugin::new().unwrap();
+        
+        // First create to set initial version
+        let content = plugin.create_hook(schema_value.clone(), migrations.clone(), content).unwrap();
+        // Then recover to trigger migration
+        let migrated = plugin.recover_hook(schema_value, migrations.clone(), content).unwrap();
+        assert_eq!(
+            Reflect::get(&migrated, &JsValue::from_str("newField"))
+                .unwrap()
+                .as_string()
+                .unwrap(),
+            "migrated"
+        );
+        assert_eq!(
+            Reflect::get(&migrated, &JsValue::from_str("__version"))
+                .unwrap()
+                .as_f64()
+                .unwrap(),
+            2.0
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn test_multiple_version_migrations() {
+        let schema_js = r#"{
+            "version": 3,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": {"type": "string"},
+                "data": {"type": "string"}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+        
+        let content = JSON::parse(r#"{
+            "id": "123",
+            "data": "test",
+            "__version":1
+        }"#).unwrap();
+
+        // Migration function that adds a new field
+        let migrations = Object::new().into_js_result().unwrap();
+        let migration2_fn = js_sys::Function::new_with_args(
+            "doc",
+            "doc.v2field = 'v2'; return doc;"
+        );
+        let migration3_fn = js_sys::Function::new_with_args(
+            "doc",
+            "doc.v3field = 'v3'; return doc;"
+        );
+
+        Reflect::set(
+            &migrations,
+            &JsValue::from(2),
+            &migration2_fn
+        ).unwrap();
+
+        Reflect::set(
+            &migrations,
+            &JsValue::from(3),
+            &migration3_fn
+        ).unwrap();
+
+        let plugin = MigrationPlugin::new().unwrap();
+        let content = plugin.create_hook(schema_value.clone(), migrations.clone(), content).unwrap();
+        let migrated = plugin.recover_hook(schema_value, migrations, content).unwrap();
+        
+        assert_eq!(
+            Reflect::get(&migrated, &JsValue::from_str("v2field"))
+                .unwrap()
+                .as_string()
+                .unwrap(),
+            "v2"
+        );
+        assert_eq!(
+            Reflect::get(&migrated, &JsValue::from_str("v3field"))
+                .unwrap()
+                .as_string()
+                .unwrap(),
+            "v3"
+        );
+        assert_eq!(
+            Reflect::get(&migrated, &JsValue::from_str("__version"))
+                .unwrap()
+                .as_f64()
+                .unwrap(),
+            3.0
+        );
+    }
+
+        #[wasm_bindgen_test]
+        fn test_no_migration_needed() {
+            let schema_js = r#"{
+                "version": 2,
+                "primaryKey": "id",
+                "type": "object",
+                "properties": {
+                    "id": {"type": "string"}
+                }
+            }"#;
+            let schema_value = JSON::parse(schema_js).unwrap();
+
+            // Content already at latest version
+            let content = JSON::parse(r#"{
+                "id": "123",
+                "__version": 2
+            }"#).unwrap();
+
+            let migrations = Object::new().into_js_result().unwrap();
+            let migration2_fn = js_sys::Function::new_with_args(
+                "doc",
+                "doc.shouldNotBeCalled = true; return doc;"
+            );
+
+            Reflect::set(
+                &migrations,
+                &JsValue::from(2),
+                &migration2_fn
+            ).unwrap();
+            let plugin = MigrationPlugin::new().unwrap();
+            let result = plugin.recover_hook(schema_value, migrations, content).unwrap();
+
+            assert!(Reflect::get(&result, &JsValue::from_str("shouldNotBeCalled")).unwrap().is_undefined());
+        }
+
+          #[wasm_bindgen_test]
+          fn test_missing_migration_function() {
+              let schema_js = r#"{
+                  "version": 2,
+                  "primaryKey": "id",
+                  "type": "object",
+                  "properties": {
+                      "id": {"type": "string"}
+                  }
+              }"#;
+              let schema_value = JSON::parse(schema_js).unwrap();
+
+              let content = JSON::parse(r#"{
+                  "id": "123",
+                  "__version": 1
+              }"#).unwrap();
+
+              // Missing migration function for version 2
+              let migrations = JSON::parse("{}").unwrap();
+
+              let plugin = MigrationPlugin::new().unwrap();
+              let result = plugin.recover_hook(schema_value, migrations, content);
+              assert!(result.is_err());
+          }
+
+          #[wasm_bindgen_test]
+          fn test_create_hook_version_handling() {
+              let schema_js = r#"{
+                  "version": 1,
+                  "primaryKey": "id",
+                  "type": "object",
+                  "properties": {
+                      "id": {"type": "string"}
+                  }
+              }"#;
+              let schema_value = JSON::parse(schema_js).unwrap();
+
+              // Content without version
+              let content = JSON::parse(r#"{"id": "123"}"#).unwrap();
+
+              let plugin = MigrationPlugin::new().unwrap();
+              let result = plugin.create_hook(schema_value, JsValue::NULL, content).unwrap();
+
+              assert_eq!(
+                  Reflect::get(&result, &JsValue::from_str("__version"))
+                      .unwrap()
+                      .as_f64()
+                      .unwrap(),
+                  1.0
+              );
+          }
+
+             #[wasm_bindgen_test]
+             fn test_undefined_migrations_object() {
+                 let schema_js = r#"{
+                     "version": 2,
+                     "primaryKey": "id",
+                     "type": "object",
+                     "properties": {
+                         "id": {"type": "string"}
+                     }
+                 }"#;
+                 let schema_value = JSON::parse(schema_js).unwrap();
+
+                 let content = JSON::parse(r#"{
+                     "id": "123",
+                     "__version": 1
+                 }"#).unwrap();
+
+                 let plugin = MigrationPlugin::new().unwrap();
+                 let result = plugin.recover_hook(schema_value, JsValue::UNDEFINED, content);
+                 assert!(result.is_err());
+             }
+
+             #[wasm_bindgen_test]
+             fn test_complex_data_type_migration() {
+                 let schema_js = r#"{
+                     "version": 2,
+                     "primaryKey": "id",
+                     "type": "object",
+                     "properties": {
+                         "id": {"type": "string"},
+                         "nested": {"type": "object", "properties": {"newp":{"type":"string"}}},
+                         "array": {"type": "array", "items": [{"type": "number"}]}
+                     }
+                 }"#;
+                 let schema_value = JSON::parse(schema_js).unwrap();
+
+                 let content = JSON::parse(r#"{
+                     "id": "123",
+                     "nested": {"old": "data"},
+                     "array": [1, 2, 3],
+                     "__version":1
+                 }"#).unwrap();
+
+                let migrations = Object::new().into_js_result().unwrap();
+                let migration2_fn = js_sys::Function::new_with_args(
+                    "doc",
+                    "doc.nested.newp = 'value'; doc.array.push(4); return doc;"
+                );
+
+                Reflect::set(
+                    &migrations,
+                    &JsValue::from(2),
+                    &migration2_fn
+                ).unwrap();
+
+                 let plugin = MigrationPlugin::new().unwrap();
+                 let content = plugin.create_hook(schema_value.clone(), migrations.clone(), content).unwrap();
+                 let migrated = plugin.recover_hook(schema_value, migrations, content).unwrap();
+
+                 let nested = Reflect::get(&migrated, &JsValue::from_str("nested")).unwrap();
+                 assert_eq!(
+                     Reflect::get(&nested, &JsValue::from_str("newp"))
+                         .unwrap()
+                         .as_string()
+                         .unwrap(),
+                     "value"
+                 );
+
+                 let array = Reflect::get(&migrated, &JsValue::from_str("array")).unwrap();
+                 assert_eq!(js_sys::Array::from(&array).length(), 4);
+             }
+
+             #[wasm_bindgen_test]
+             fn test_migration_with_field_removal() {
+                 let schema_js = r#"{
+                     "version": 2,
+                     "primaryKey": "id",
+                     "type": "object",
+                     "properties": {
+                         "id": {"type": "string"},
+                         "newField": {"type": "string"}
+                     }
+                 }"#;
+                 let schema_value = JSON::parse(schema_js).unwrap();
+
+                 let content = JSON::parse(r#"{
+                     "id": "123",
+                     "oldField": "should be removed",
+                     "__version":1
+                 }"#).unwrap();
+
+
+                 let migrations = Object::new().into_js_result().unwrap();
+                let migration2_fn = js_sys::Function::new_with_args(
+                    "doc",
+                    "doc.newField = 'new value'; delete doc.oldField; return doc;"
+                );
+
+                Reflect::set(
+                    &migrations,
+                    &JsValue::from(2),
+                    &migration2_fn
+                ).unwrap();
+
+                 let plugin = MigrationPlugin::new().unwrap();
+                 let content = plugin.create_hook(schema_value.clone(), migrations.clone(), content).unwrap();
+                 let migrated = plugin.recover_hook(schema_value, migrations, content).unwrap();
+
+                 assert!(Reflect::get(&migrated, &JsValue::from_str("oldField")).unwrap().is_undefined());
+                 assert_eq!(
+                     Reflect::get(&migrated, &JsValue::from_str("newField"))
+                         .unwrap()
+                         .as_string()
+                         .unwrap(),
+                     "new value"
+                 );
+             }
+
+             #[wasm_bindgen_test]
+             fn test_migration_error_handling() {
+                 let schema_js = r#"{
+                     "version": 2,
+                     "primaryKey": "id",
+                     "type": "object",
+                     "properties": {
+                         "id": {"type": "string"}
+                     }
+                 }"#;
+                 let schema_value = JSON::parse(schema_js).unwrap();
+
+                 let content = JSON::parse(r#"{
+                     "id": "123",
+                     "__version": 1
+                 }"#).unwrap();
+
+                 let migrations = Object::new().into_js_result().unwrap();
+                let migration2_fn = js_sys::Function::new_with_args(
+                    "doc",
+                    "throw new Error(\"Migration error\");"
+                );
+
+                Reflect::set(
+                    &migrations,
+                    &JsValue::from(2),
+                    &migration2_fn
+                ).unwrap();
+
+
+
+
+                 let plugin = MigrationPlugin::new().unwrap();
+                 let result = plugin.recover_hook(schema_value, migrations, content);
+                 assert!(result.is_err());
+             }
+
+             #[wasm_bindgen_test]
+             fn test_migration_with_type_conversion() {
+                 let schema_js = r#"{
+                     "version": 2,
+                     "primaryKey": "id",
+                     "type": "object",
+                     "properties": {
+                         "id": {"type": "string"},
+                         "value": {"type": "number"}
+                     }
+                 }"#;
+                 let schema_value = JSON::parse(schema_js).unwrap();
+
+                 let content = JSON::parse(r#"{
+                     "id": "123",
+                     "value": "42",
+                     "__version":1
+                 }"#).unwrap();
+
+                let migrations = Object::new().into_js_result().unwrap();
+                let migration2_fn = js_sys::Function::new_with_args(
+                    "doc",
+                    "doc.value = parseInt(doc.value); return doc;"
+                );
+
+                Reflect::set(
+                    &migrations,
+                    &JsValue::from(2),
+                    &migration2_fn
+                ).unwrap();
+
+                 let plugin = MigrationPlugin::new().unwrap();
+                 let content = plugin.create_hook(schema_value.clone(), migrations.clone(), content).unwrap();
+                 let migrated = plugin.recover_hook(schema_value, migrations, content).unwrap();
+
+                 assert_eq!(
+                     Reflect::get(&migrated, &JsValue::from_str("value"))
+                         .unwrap()
+                         .as_f64()
+                         .unwrap(),
+                     42.0
+                 );
+             }
+
+             #[wasm_bindgen_test]
+             fn test_migration_version_jump() {
+                 let schema_js = r#"{
+                     "version": 4,
+                     "primaryKey": "id",
+                     "type": "object",
+                     "properties": {
+                         "id": {"type": "string"}
+                     }
+                 }"#;
+                 let schema_value = JSON::parse(schema_js).unwrap();
+
+                 let content = JSON::parse(r#"{
+                     "id": "123",
+                     "__version": 1
+                 }"#).unwrap();
+
+
+                let migrations = Object::new().into_js_result().unwrap();
+                let migration2_fn = js_sys::Function::new_with_args(
+                    "doc",
+                    "doc.v2 = true; return doc;"
+                );
+                    let migration3_fn = js_sys::Function::new_with_args(
+                    "doc",
+                    "doc.v3 = true; return doc;"
+                );
+                    let migration4_fn = js_sys::Function::new_with_args(
+                    "doc",
+                    "doc.v4 = true; return doc;"
+                );
+
+                Reflect::set(
+                    &migrations,
+                    &JsValue::from(2),
+                    &migration2_fn
+                ).unwrap();
+                Reflect::set(
+                    &migrations,
+                    &JsValue::from(3),
+                    &migration3_fn
+                ).unwrap();
+                Reflect::set(
+                    &migrations,
+                    &JsValue::from(4),
+                    &migration4_fn
+                ).unwrap();
+
+                 let plugin = MigrationPlugin::new().unwrap();
+                 let content = plugin.create_hook(schema_value.clone(), migrations.clone(), content).unwrap();
+                 let migrated = plugin.recover_hook(schema_value, migrations, content).unwrap();
+
+                 // Verify all migrations were applied in order
+                 assert!(Reflect::get(&migrated, &JsValue::from_str("v2")).unwrap().as_bool().unwrap());
+                 assert!(Reflect::get(&migrated, &JsValue::from_str("v3")).unwrap().as_bool().unwrap());
+                 assert!(Reflect::get(&migrated, &JsValue::from_str("v4")).unwrap().as_bool().unwrap());
+                 assert_eq!(
+                     Reflect::get(&migrated, &JsValue::from_str("__version"))
+                         .unwrap()
+                         .as_f64()
+                         .unwrap(),
+                     4.0
+                 );
+             }
+
+             #[wasm_bindgen_test]
+             fn test_create_hook_automaticallly_existing_version() {
+                 let schema_js = r#"{
+                     "version": 2,
+                     "primaryKey": "id",
+                     "type": "object",
+                     "properties": {
+                         "id": {"type": "string"}
+                     }
+                 }"#;
+                 let schema_value = JSON::parse(schema_js).unwrap();
+
+                 let content = JSON::parse(r#"{
+                     "id": "123"
+                 }"#).unwrap();
+
+                 let plugin = MigrationPlugin::new().unwrap();
+                 let result = plugin.create_hook(schema_value, JsValue::NULL, content).unwrap();
+
+                 assert_eq!(
+                     Reflect::get(&result, &JsValue::from_str("__version"))
+                         .unwrap()
+                         .as_f64()
+                         .unwrap(),
+                     2.0
+                 );
+             }
+
+             #[wasm_bindgen_test]
+             fn test_invalid_version_format() {
+                 let schema_js = r#"{
+                     "version": 2,
+                     "primaryKey": "id",
+                     "type": "object",
+                     "properties": {
+                         "id": {"type": "string"}
+                     }
+                 }"#;
+                 let schema_value = JSON::parse(schema_js).unwrap();
+
+                 // Invalid version format (string instead of number)
+                 let content = JSON::parse(r#"{
+                     "id": "123",
+                     "__version": "1"
+                 }"#).unwrap();
+
+    let migrations = Object::new().into_js_result().unwrap();
+                let migration2_fn = js_sys::Function::new_with_args(
+                    "doc",
+                    "return doc;"
+                );
+                Reflect::set(
+                    &migrations,
+                    &JsValue::from(2),
+                    &migration2_fn
+                ).unwrap();
+
+
+                 let plugin = MigrationPlugin::new().unwrap();
+                 let result = plugin.recover_hook(schema_value, migrations, content);
+                 assert!(result.is_err());
+             }
+
 
 }

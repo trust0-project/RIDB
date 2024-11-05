@@ -50,8 +50,6 @@ impl Storage {
             .iter()
             .map(|(name, storage_internal)| {
 
-
-
                 let internals = if !migrations_map_js.is_undefined() {
                     let migration = Reflect::get(
                         &migrations_map_js,
