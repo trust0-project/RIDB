@@ -1,3 +1,10 @@
+## [0.4.6-rc.4](https://github.com/trust0-project/RIDB/compare/v0.4.6-rc.3...v0.4.6-rc.4) (2024-11-07)
+
+
+### Bug Fixes
+
+* remove typings ([1def54c](https://github.com/trust0-project/RIDB/commit/1def54c2ceaa10e826fbbe73d50b7a5a11ce7f4e))
+
 ## [0.4.6-rc.3](https://github.com/trust0-project/RIDB/compare/v0.4.6-rc.2...v0.4.6-rc.3) (2024-11-07)
 
 
