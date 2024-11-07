@@ -21,7 +21,6 @@
     "type": "git",
     "url": "https://github.com/trust0-project/RIDB.git"
   },
-  "typings": "",
   "license": "Apache-2.0",
   "files": [
     "./build/**/*",
