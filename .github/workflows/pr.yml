@@ -1,0 +1,19 @@
+name: CI
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install WASM
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - run: cd ts && npm install && npm run build && npm test
