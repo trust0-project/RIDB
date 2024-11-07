@@ -1,3 +1,10 @@
+## [0.4.6-rc.3](https://github.com/trust0-project/RIDB/compare/v0.4.6-rc.2...v0.4.6-rc.3) (2024-11-07)
+
+
+### Bug Fixes
+
+* remove peer dependencies ([e21661a](https://github.com/trust0-project/RIDB/commit/e21661a28c658ea366a3eaaf05f77a5ba6773521))
+
 ## [0.4.6-rc.2](https://github.com/trust0-project/RIDB/compare/v0.4.6-rc.1...v0.4.6-rc.2) (2024-11-07)
 
 
