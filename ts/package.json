@@ -24,8 +24,8 @@
   "typings": "",
   "license": "Apache-2.0",
   "files": [
-    "build",
-    "**/*.md"
+    "./build/**/*",
+    "./**/*.md"
   ],
   "engines": {
     "node": ">=20"
