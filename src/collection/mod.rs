@@ -135,7 +135,7 @@ impl Collection {
         self.internals.call(
             HookType::Recover,
             self.internals.find(query).await
-            .map_err(|e| JsValue::from(format!("Error in find: {}", e.as_string().unwrap_or_default())))?
+                .map_err(|e| e)?
         )
     }
 
@@ -146,7 +146,7 @@ impl Collection {
     #[wasm_bindgen]
     pub async fn count(&self, query: JsValue) -> Result<JsValue, JsValue> {
         self.internals.count(query).await
-            .map_err(|e| JsValue::from(format!("Error in count: {}", e.as_string().unwrap_or_default())))
+            .map_err(|e| e)
     }
 
     /// Finds and returns a single document in the collection by its ID.
@@ -155,7 +155,7 @@ impl Collection {
     #[wasm_bindgen(js_name="findById")]
     pub async fn find_by_id(&self, primary_key: JsValue) -> Result<JsValue, JsValue>{
         self.internals.find_document_by_id( primary_key  ).await
-            .map_err(|e| JsValue::from(format!("Error in findById: {}", e.as_string().unwrap_or_default())))
+            .map_err(|e| e)
     }
 
     /// Updates a document in the collection with the given data.
@@ -170,7 +170,7 @@ impl Collection {
         let res = self.internals.call(
             HookType::Create,
             self.internals.write(document).await
-                .map_err(|e| JsValue::from(format!("Error in update: {}", e.as_string().unwrap_or_default())))?
+                .map_err(|e| e)?
 
         )?;
 
@@ -192,7 +192,7 @@ impl Collection {
         let res = self.internals.call(
             HookType::Create,
             self.internals.write(document).await
-                .map_err(|e| JsValue::from(format!("Error in create: {}", e.as_string().unwrap_or_default())))?
+                .map_err(|e| e)?
 
         )?;
 
@@ -208,7 +208,7 @@ impl Collection {
     #[wasm_bindgen]
     pub async fn delete(&self, primary_key: JsValue) -> Result<JsValue, JsValue> {
         self.internals.remove( primary_key ).await
-            .map_err(|e| JsValue::from(format!("Error in remove: {}", e.as_string().unwrap_or_default())))
+            .map_err(|e| e)
 
     }
 }
