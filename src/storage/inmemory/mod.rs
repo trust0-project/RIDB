@@ -39,10 +39,12 @@ pub struct InMemory {
 
 impl StorageBase for InMemory {
     async fn write(&mut self, op: &Operation) -> Result<JsValue, JsValue> {
+        web_sys::console::log_1(&JsValue::from_str(&format!("📝 Starting write operation: {:?}", op.op_type)));
+        
         let primary_key = self.base.schema.primary_key.clone();
         let index_name = format!("pk_{}", primary_key);
+        web_sys::console::log_1(&JsValue::from_str(&format!("🔑 Using primary key index: {}", index_name)));
 
-        // Get or create the primary key index
         let index = self
             .by_index
             .entry(index_name.clone())
@@ -50,12 +52,13 @@ impl StorageBase for InMemory {
 
         match op.op_type {
             OpType::CREATE | OpType::UPDATE => {
-                // op.data is an object containing the document
                 let document = op.data.clone();
+                web_sys::console::log_1(&JsValue::from_str("📄 Processing document operation"));
 
-                // Step 1: Extract the primary key value from the document
+                // Extract primary key
                 let pk_value = Reflect::get(&document, &JsValue::from_str(&primary_key))
                     .map_err(|e| {
+                        web_sys::console::error_1(&JsValue::from_str(&format!("❌ Failed to get primary key: {:?}", e)));
                         JsValue::from_str(&format!("Failed to get primary key: {:?}", e))
                     })?;
 
@@ -63,99 +66,100 @@ impl StorageBase for InMemory {
                     return Err(JsValue::from_str("Document must contain a primary key"));
                 }
 
-                // Convert primary key value to string
                 let pk_str = if let Some(s) = pk_value.as_string() {
+                    web_sys::console::log_1(&JsValue::from_str(&format!("🔑 Primary key (string): {}", s)));
                     s
                 } else if let Some(n) = pk_value.as_f64() {
+                    web_sys::console::log_1(&JsValue::from_str(&format!("🔑 Primary key (number): {}", n)));
                     n.to_string()
                 } else {
+                    web_sys::console::error_1(&JsValue::from_str("❌ Invalid primary key type"));
                     return Err(JsValue::from_str("Primary key must be a string or number"));
                 };
 
-
-                // Handle the operation
                 match op.op_type {
                     OpType::CREATE => {
-                        // Validate the document against the schema
+                        web_sys::console::log_1(&JsValue::from_str("➕ Processing CREATE operation"));
                         self.base.schema.validate_schema(document.clone())?;
+                        
                         if index.contains_key(&pk_str) {
-
-                            return Err(JsValue::from_str(
-                                "Document with this primary key already exists",
-                            ));
+                            web_sys::console::error_1(&JsValue::from_str("❌ Document already exists"));
+                            return Err(JsValue::from_str("Document with this primary key already exists"));
                         }
+                        
                         index.insert(pk_str.clone(), document.clone());
+                        web_sys::console::log_1(&JsValue::from_str("✅ Document created successfully"));
                         Ok(document)
                     }
                     OpType::UPDATE => {
-                        // Validate the document against the schema
+                        web_sys::console::log_1(&JsValue::from_str("🔄 Processing UPDATE operation"));
                         self.base.schema.validate_schema(document.clone())?;
+                        
                         if !index.contains_key(&pk_str) {
-
-                            return Err(JsValue::from_str(
-                                "Document with this primary key does not exist",
-                            ));
+                            web_sys::console::error_1(&JsValue::from_str("❌ Document not found for update"));
+                            return Err(JsValue::from_str("Document with this primary key does not exist"));
                         }
+                        
                         index.insert(pk_str.clone(), document.clone());
+                        web_sys::console::log_1(&JsValue::from_str("✅ Document updated successfully"));
                         Ok(document)
                     }
                     _ => {
-                        Err(JsValue::from_str(
-                            "Unsupported operation type for this data",
-                        ))
+                        web_sys::console::error_1(&JsValue::from_str("❌ Unsupported operation type"));
+                        Err(JsValue::from_str("Unsupported operation type for this data"))
                     }
                 }
             }
             OpType::DELETE => {
-                // op.data is a string (the primary key value)
+                web_sys::console::log_1(&JsValue::from_str("🗑️ Processing DELETE operation"));
                 let pk_value = op.data.clone();
 
                 if pk_value.is_undefined() || pk_value.is_null() {
-
-                    return Err(JsValue::from_str(
-                        "Primary key value is required for delete operation",
-                    ));
+                    web_sys::console::error_1(&JsValue::from_str("❌ Primary key value is required for delete operation"));
+                    return Err(JsValue::from_str("Primary key value is required for delete operation"));
                 }
 
-                // Convert primary key value to string
                 let pk_str = if let Some(s) = pk_value.as_string() {
+                    web_sys::console::log_1(&JsValue::from_str(&format!("🔑 Deleting document with key: {}", s)));
                     s
                 } else if let Some(n) = pk_value.as_f64() {
+                    web_sys::console::log_1(&JsValue::from_str(&format!("🔑 Deleting document with key: {}", n)));
                     n.to_string()
                 } else {
-
-                    return Err(JsValue::from_str(
-                        "Primary key must be a string or number",
-                    ));
+                    web_sys::console::error_1(&JsValue::from_str("❌ Invalid primary key for deletion"));
+                    return Err(JsValue::from_str("Primary key must be a string or number"));
                 };
 
-
-                // Handle the delete operation
                 if index.remove(&pk_str).is_some() {
+                    web_sys::console::log_1(&JsValue::from_str("✅ Document deleted successfully"));
                     Ok(JsValue::from_str("Document deleted"))
                 } else {
-                    Err(JsValue::from_str(
-                        "Document with this primary key does not exist",
-                    ))
+                    web_sys::console::error_1(&JsValue::from_str("❌ Document not found for deletion"));
+                    Err(JsValue::from_str("Document with this primary key does not exist"))
                 }
             }
             _ => {
+                web_sys::console::error_1(&JsValue::from_str("❌ Unsupported operation type"));
                 Err(JsValue::from_str("Unsupported operation type"))
             }
         }
     }
 
     async fn find(&self, query: Query) -> Result<JsValue, JsValue> {
-        // Get the normalized query
+        web_sys::console::log_1(&JsValue::from_str("🔍 Starting find operation"));
+        
         let normalized_query = query.parse()?;
+        web_sys::console::log_1(&JsValue::from_str("📋 Query normalized successfully"));
 
-        // Collect matching documents
         let results = Array::new();
-
-        // Get all documents from the primary key index
         let primary_key = self.base.schema.primary_key.clone();
         let index_name = format!("pk_{}", primary_key);
+        
+        web_sys::console::log_1(&JsValue::from_str(&format!("📚 Searching in index: {}", index_name)));
+
         if let Some(index) = self.by_index.get(&index_name) {
+            web_sys::console::log_1(&JsValue::from_str(&format!("📊 Processing {} documents", index.len())));
+            
             for (_pk, doc) in index.iter() {
                 let matches = self.core.document_matches_query(doc, &normalized_query)?;
                 if matches {
@@ -164,6 +168,7 @@ impl StorageBase for InMemory {
             }
         }
 
+        web_sys::console::log_1(&JsValue::from_str(&format!("✅ Found {} matching documents", results.length())));
         Ok(results.into())
     }
 

@@ -22,11 +22,44 @@
  * # SDK Rerefence
  */
 import wasmBuffer from "../../pkg/ridb_rust_bg.wasm";
-
 import * as RIDBTypes from "ridb-rust";
-export * as RIDBTypes from "ridb-rust";
-
-export { BaseStorage } from 'ridb-rust';
+export {
+    // Enums
+    OpType,
+    // Classes
+    Database,
+    Collection,
+    Schema,
+    Query,
+    Property,
+    BasePlugin,
+    StorageInternal,
+    BaseStorage,
+    // Types
+    CreateStorage,
+    RIDBModule,
+    InternalsRecord,
+    ExtractType,
+    Doc,
+    Operation,
+    Hook,
+    BasePluginOptions,
+    SchemaType,
+    EnumerateUpTo,
+    EnumerateFrom1To,
+    IsVersionGreaterThan0,
+    AnyVersionGreaterThan1,
+    MigrationFunction,
+    MigrationPathsForSchema,
+    MigrationPathsForSchemas,
+    MigrationsParameter,
+    Operators,
+    InOperator,
+    OperatorOrType,
+    LogicalOperators,
+    QueryType,
+    SchemaTypeRecord
+} from "ridb-rust";
 
 /**
  * A simple plugin that overrides the docCreateHook and docRecoverHook methods.
@@ -47,8 +80,18 @@ class MySimplePlugin extends RIDBTypes.BasePlugin {
     }
 }
 
+export enum StorageType {
+    InMemory = "InMemory",
+    IndexDB = "IndexDB"
+}
+
+type StorageTypeMap = {
+    [StorageType.InMemory]: typeof RIDBTypes.InMemory;
+    [StorageType.IndexDB]: typeof RIDBTypes.IndexDB;
+};
 
 
+let internal: typeof import("ridb-rust") | undefined;
 
 /**
  * Represents a RIDB (Rust IndexedDB) instance.
@@ -135,7 +178,6 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
     private schemas: T;
     private migrations: RIDBTypes.MigrationPathsForSchemas<T>
     private plugins: Array<typeof RIDBTypes.BasePlugin> = [];
-    private _internal: typeof import("ridb-rust") | undefined;
     private _db: RIDBTypes.Database<T> | undefined;
 
     /**
@@ -145,13 +187,13 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
     constructor(
         options: {
             schemas: T,
-            plugins?: Array<typeof RIDBTypes.BasePlugin>
+            plugins?: Array<typeof RIDBTypes.BasePlugin> 
         } & RIDBTypes.MigrationsParameter<T>
     ) {
         const {
             schemas,
             migrations = {} as RIDBTypes.MigrationPathsForSchemas<T>,
-            plugins= this.defaultPlugins
+            plugins = []
         } = options;
 
         this.schemas = schemas;
@@ -159,10 +201,11 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
         this.migrations = migrations;
     }
 
-    get defaultPlugins() {
-        return [
-            MySimplePlugin
-        ]
+
+    private getStorageType<T extends StorageType>(
+        storageType: T
+    ): StorageTypeMap[T] {
+        return storageType === StorageType.InMemory ? internal!.InMemory : internal!.IndexDB;
     }
 
     /**
@@ -190,13 +233,13 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
      * @returns {Promise<typeof import("ridb-rust")>} A promise that resolves to the RIDB Rust module.
      * @private
      */
-    private async load(): Promise<typeof import("ridb-rust")> {
-        this._internal ??= await import("ridb-rust").then(async (module) => {
+    static async load(): Promise<typeof import("ridb-rust")> {
+        internal ??= await import("ridb-rust").then(async (module) => {
             const wasmInstance = module.initSync(wasmBuffer);
-            await module.default(wasmInstance);
+             await module.default(wasmInstance);
             return module;
         });
-        return this._internal!;
+        return internal!;
     }
 
     /**
@@ -206,7 +249,7 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
      * @private
      */
     private getRIDBModule(
-        storageType?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>
+        storageType?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType> | StorageType
     ) {
         return {
             createStorage: async (schemas: RIDBTypes.SchemaTypeRecord) =>
@@ -224,14 +267,14 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
      */
     async start(
         options?: {
-            storageType?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>,
+            storageType?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>| StorageType,
             password?: string,
             //Extra properties
             [name:string]: any
         }
     ): Promise<RIDBTypes.Database<T>> {
         const {storageType, password} = options ?? {};
-        const { Database } = await this.load();
+        const { Database } = await RIDB.load();
         this._db ??= await Database.create(
             this.schemas,
             this.migrations,
@@ -252,14 +295,19 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
      */
     private async createStorage<J extends RIDBTypes.SchemaTypeRecord>(
         schemas: J,
-        storageConstructor?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>
+        storageConstructor?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType> | StorageType
     ) {
-        if (!this._internal) {
+        if (!internal) {
             throw new Error("Start the database first");
         }
+
+        const Storage = typeof storageConstructor === "string" ? 
+             this.getStorageType(storageConstructor) : 
+            storageConstructor ?? internal.InMemory;
+
         const storages: Record<string, RIDBTypes.BaseStorage<any>> = {};
+
         for (const name in schemas) {
-            const Storage = storageConstructor ?? this._internal.InMemory;
             storages[name] = await Storage.create(
                 name,
                 schemas[name],

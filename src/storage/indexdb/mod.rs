@@ -8,7 +8,7 @@ use crate::storage::base::StorageBase;
 use crate::storage::internals::base_storage::BaseStorage;
 use crate::storage::internals::core::CoreStorage;
 use crate::operation::{OpType, Operation};
-use web_sys::{IdbDatabase, IdbOpenDbRequest, IdbRequest};
+use web_sys::{IdbDatabase, IdbOpenDbRequest, IdbRequest, console};
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -41,21 +41,43 @@ pub struct IndexDB {
 
 impl StorageBase for IndexDB {
     async fn write(&mut self, op: &Operation) -> Result<JsValue, JsValue> {
+        console::log_1(&JsValue::from_str("Starting write operation..."));
         let store_name = "documents";
-        let transaction = self.db.transaction_with_str_and_mode(
+        
+        let transaction = match self.db.transaction_with_str_and_mode(
             store_name,
             web_sys::IdbTransactionMode::Readwrite,
-        )?;
-        let store = transaction.object_store(store_name)?;
+        ) {
+            Ok(t) => t,
+            Err(e) => {
+                console::error_1(&JsValue::from_str("Failed to create transaction"));
+                return Err(e);
+            }
+        };
+
+        let store = match transaction.object_store(store_name) {
+            Ok(s) => s,
+            Err(e) => {
+                console::error_1(&JsValue::from_str("Failed to get object store"));
+                return Err(e);
+            }
+        };
 
         match op.op_type {
             OpType::CREATE | OpType::UPDATE => {
+                console::log_1(&JsValue::from_str("Processing CREATE/UPDATE operation"));
                 let document = op.data.clone();
                 
                 // Extract primary key
                 let primary_key = self.base.schema.primary_key.clone();
-                let pk_value = Reflect::get(&document, &JsValue::from_str(&primary_key))?;
-                
+                let pk_value = match Reflect::get(&document, &JsValue::from_str(&primary_key)) {
+                    Ok(v) => v,
+                    Err(e) => {
+                        console::error_2(&JsValue::from_str("Failed to get primary key value:"), &e);
+                        return Err(e);
+                    }
+                };
+
                 if pk_value.is_undefined() || pk_value.is_null() {
                     return Err(JsValue::from_str("Document must contain a primary key"));
                 }
@@ -82,6 +104,7 @@ impl StorageBase for IndexDB {
     }
 
     async fn find(&self, query: Query) -> Result<JsValue, JsValue> {
+        console::log_2(&JsValue::from_str("Starting find operation with query:"), &query.query);
         let store_name = "documents";
         let transaction = self.db.transaction_with_str(store_name)?;
         let store = transaction.object_store(store_name)?;
@@ -118,6 +141,7 @@ impl StorageBase for IndexDB {
     }
 
     async fn find_document_by_id(&self, primary_key_value: JsValue) -> Result<JsValue, JsValue> {
+        console::log_2(&JsValue::from_str("Finding document by ID:"), &primary_key_value);
         let store_name = "documents";
         let transaction = self.db.transaction_with_str(store_name)?;
         let store = transaction.object_store(store_name)?;
@@ -191,28 +215,129 @@ impl StorageBase for IndexDB {
 impl IndexDB {
     #[wasm_bindgen]
     pub async fn create(name: &str, schema_type: JsValue, migrations: JsValue) -> Result<IndexDB, JsValue> {
-        let base = BaseStorage::new(name.to_string(), schema_type, migrations)?;
+        // Ensure wasm_bindgen is initialized
+        console::log_1(&JsValue::from_str("[IndexDB] Starting database creation..."));
         
-        let window = web_sys::window().unwrap();
-        let idb = window.indexed_db()?.unwrap();
+        // Validate inputs
+        if name.is_empty() {
+            console::error_1(&JsValue::from_str("[IndexDB] Database name cannot be empty"));
+            return Err(JsValue::from_str("Database name cannot be empty"));
+        }
+
+        if schema_type.is_undefined() || schema_type.is_null() {
+            console::error_1(&JsValue::from_str("[IndexDB] Schema type is required"));
+            return Err(JsValue::from_str("Schema type is required"));
+        }
+
+        console::log_2(&JsValue::from_str("[IndexDB] Creating database with name:"), &JsValue::from_str(name));
+        console::log_2(&JsValue::from_str("[IndexDB] Schema:"), &schema_type);
         
-        let db_request = idb.open_with_u32(name, 1)?;
+        // Create BaseStorage with error handling
+        let base = match BaseStorage::new(name.to_string(), schema_type, migrations) {
+            Ok(b) => {
+                console::log_1(&JsValue::from_str("[IndexDB] BaseStorage created successfully"));
+                b
+            },
+            Err(e) => {
+                console::error_2(&JsValue::from_str("[IndexDB] Failed to create BaseStorage:"), &e);
+                return Err(e);
+            }
+        };
         
-        // Fixed closure with proper error handling
+        // Get window object with explicit error handling
+        let window = match web_sys::window() {
+            Some(win) => win,
+            None => {
+                console::error_1(&JsValue::from_str("[IndexDB] Failed to get window object"));
+                return Err(JsValue::from_str("Failed to get window object"));
+            }
+        };
+
+        // Get IndexedDB with explicit error handling
+        let idb = match window.indexed_db() {
+            Ok(Some(idb)) => {
+                console::log_1(&JsValue::from_str("[IndexDB] Successfully got IndexedDB"));
+                idb
+            },
+            Ok(None) => {
+                console::error_1(&JsValue::from_str("[IndexDB] IndexedDB not available"));
+                return Err(JsValue::from_str("IndexedDB not available"));
+            }
+            Err(e) => {
+                console::error_2(&JsValue::from_str("[IndexDB] Failed to get IndexedDB:"), &e);
+                return Err(e);
+            }
+        };
+        
+        // Open database with explicit error handling
+        let db_request = match idb.open_with_u32(name, 1) {
+            Ok(req) => {
+                console::log_1(&JsValue::from_str("[IndexDB] Database open request created"));
+                req
+            },
+            Err(e) => {
+                console::error_2(&JsValue::from_str("[IndexDB] Failed to open database:"), &e);
+                return Err(e);
+            }
+        };
+
+        // Set up error handler
+        let onerror = Closure::once(Box::new(move |e: web_sys::Event| {
+            console::error_2(&JsValue::from_str("[IndexDB] Database open error:"), &e);
+        }));
+        db_request.set_onerror(Some(onerror.as_ref().unchecked_ref()));
+        
+        // Set up upgrade handler
         let onupgradeneeded = Closure::once(Box::new(move |event: web_sys::Event| -> Result<(), JsValue> {
-            let db_request: IdbOpenDbRequest = event.target().unwrap().dyn_into()?;
-            let db: IdbDatabase = db_request.result()?.dyn_into()?;
+            console::log_1(&JsValue::from_str("[IndexDB] Running database upgrade..."));
+            
+            let db_request: IdbOpenDbRequest = match event.target() {
+                Some(target) => match target.dyn_into::<IdbOpenDbRequest>() {
+                    Ok(req) => req,
+                    Err(e) => {
+                        console::error_1(&JsValue::from_str("[IndexDB] Failed to get request from event"));
+                        return Err(e.into());
+                    }
+                },
+                None => {
+                    console::error_1(&JsValue::from_str("[IndexDB] No target in upgrade event"));
+                    return Err(JsValue::from_str("No target in upgrade event"));
+                }
+            };
+
+            let db: IdbDatabase = match db_request.result() {
+                Ok(res) => match res.dyn_into() {
+                    Ok(db) => db,
+                    Err(e) => {
+                        console::error_1(&JsValue::from_str("[IndexDB] Failed to convert result to database"));
+                        return Err(e);
+                    }
+                },
+                Err(e) => {
+                    console::error_1(&JsValue::from_str("[IndexDB] Failed to get database from request"));
+                    return Err(e);
+                }
+            };
             
             if !db.object_store_names().contains(&"documents") {
-                db.create_object_store("documents")?;
+                console::log_1(&JsValue::from_str("[IndexDB] Creating 'documents' object store"));
+                match db.create_object_store("documents") {
+                    Ok(_) => console::log_1(&JsValue::from_str("[IndexDB] Object store created successfully")),
+                    Err(e) => {
+                        console::error_1(&JsValue::from_str("[IndexDB] Failed to create object store"));
+                        return Err(e);
+                    }
+                }
             }
             Ok(())
         }));
         
         db_request.set_onupgradeneeded(Some(onupgradeneeded.as_ref().unchecked_ref()));
         
+        // Create promise for database opening
         let promise = Promise::new(&mut |resolve, reject| {
             let onsuccess = Closure::once(Box::new(move |event: web_sys::Event| {
+                console::log_1(&JsValue::from_str("[IndexDB] Database opened successfully"));
                 let request: IdbOpenDbRequest = event.target().unwrap().dyn_into().unwrap();
                 let db: IdbDatabase = request.result().unwrap().dyn_into().unwrap();
                 resolve.call1(&JsValue::undefined(), &db).unwrap();
@@ -222,12 +347,20 @@ impl IndexDB {
             onsuccess.forget();
         });
 
-        let db = JsFuture::from(promise).await?.dyn_into::<IdbDatabase>()?;
-        
+        // Wait for database to open
+        console::log_1(&JsValue::from_str("[IndexDB] Waiting for database to open..."));
+        let db = match JsFuture::from(promise).await {
+            Ok(db) => db,
+            Err(e) => {
+                console::error_2(&JsValue::from_str("[IndexDB] Failed to open database:"), &e);
+                return Err(e);
+            }
+        };
+
         Ok(IndexDB {
             base,
             core: CoreStorage {},
-            db,
+            db: db.into(),
         })
     }
 

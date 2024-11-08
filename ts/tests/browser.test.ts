@@ -1,4 +1,4 @@
 import Shared from './shared';
-import { RIDBTypes } from '..';
+import { StorageType } from '..';
 
-Shared.runTests([Shared.TestPlatform.BROWSER], [RIDBTypes.InMemory, RIDBTypes.IndexDB])
+Shared.runTests([Shared.TestPlatform.BROWSER], [{name: "InMemory", storage: StorageType.InMemory}, {name: "IndexDB", storage: StorageType.IndexDB}])

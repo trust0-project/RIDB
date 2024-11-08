@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { SchemaFieldType, RIDB, RIDBTypes } from '..';
+import { SchemaFieldType, RIDB } from '..';
 import { StoragesType } from './shared';
 
 

@@ -1,5 +1,5 @@
 
-import { BaseStorage, SchemaType, RIDBTypes } from '..';
+import { StorageType } from '..';
 import { default as Schemas } from './schemas.test';
 
 const Tests = {
@@ -13,7 +13,7 @@ export enum TestPlatform {
 }
 
 export type StoragesType = {
-    storage:typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>,
+    storage: StorageType,
     name: string
 }
 

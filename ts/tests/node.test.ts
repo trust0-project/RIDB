@@ -1,8 +1,8 @@
 import Shared from './shared';
 
-import { RIDBTypes } from '..';
+import { StorageType } from '..';
 
 Shared.runTests(
     [Shared.TestPlatform.NODE], 
-    [RIDBTypes.InMemory]
+    [{name: "InMemory", storage: StorageType.InMemory}]
 )
