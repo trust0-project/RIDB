@@ -1,3 +1,10 @@
+## [0.4.6-rc.5](https://github.com/trust0-project/RIDB/compare/v0.4.6-rc.4...v0.4.6-rc.5) (2024-11-08)
+
+
+### Bug Fixes
+
+* improve error handling in collections ([c584abf](https://github.com/trust0-project/RIDB/commit/c584abf57d8d6e51134f282086d066a8315f581d))
+
 ## [0.4.6-rc.4](https://github.com/trust0-project/RIDB/compare/v0.4.6-rc.3...v0.4.6-rc.4) (2024-11-07)
 
 
