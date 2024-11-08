@@ -1,3 +1,10 @@
+## [0.4.6-rc.6](https://github.com/trust0-project/RIDB/compare/v0.4.6-rc.5...v0.4.6-rc.6) (2024-11-08)
+
+
+### Bug Fixes
+
+* wrapping up InMemory storage to support async creation for (indexdb) ([6fddda9](https://github.com/trust0-project/RIDB/commit/6fddda9d9705ffe0202fb8358ca723467faeb154))
+
 ## [0.4.6-rc.5](https://github.com/trust0-project/RIDB/compare/v0.4.6-rc.4...v0.4.6-rc.5) (2024-11-08)
 
 
