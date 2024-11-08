@@ -1,3 +1,10 @@
+# [0.5.0-rc.1](https://github.com/trust0-project/RIDB/compare/v0.4.6-rc.6...v0.5.0-rc.1) (2024-11-08)
+
+
+### Features
+
+* indexdb basic implementation ([f9513b0](https://github.com/trust0-project/RIDB/commit/f9513b0bdc92846c5ac5141875e32ab4435d3db0))
+
 ## [0.4.6-rc.6](https://github.com/trust0-project/RIDB/compare/v0.4.6-rc.5...v0.4.6-rc.6) (2024-11-08)
 
 
