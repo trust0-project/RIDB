@@ -1,3 +1,10 @@
+# [0.5.0-rc.3](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.2...v0.5.0-rc.3) (2024-11-08)
+
+
+### Features
+
+* indexdb ([28afca7](https://github.com/trust0-project/RIDB/commit/28afca7734a683964a59f28972bc2630c7877ff6))
+
 # [0.5.0-rc.2](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.1...v0.5.0-rc.2) (2024-11-08)
 
 
