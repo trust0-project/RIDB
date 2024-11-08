@@ -1,3 +1,10 @@
+# [0.5.0-rc.2](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.1...v0.5.0-rc.2) (2024-11-08)
+
+
+### Bug Fixes
+
+* indexdb improvement and test coverage ([4e6bc43](https://github.com/trust0-project/RIDB/commit/4e6bc431512c611dd1e409374a8a1ec96a931e89))
+
 # [0.5.0-rc.1](https://github.com/trust0-project/RIDB/compare/v0.4.6-rc.6...v0.5.0-rc.1) (2024-11-08)
 
 
