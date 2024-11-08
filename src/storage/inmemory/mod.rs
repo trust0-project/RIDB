@@ -20,164 +20,21 @@ export class InMemory<T extends SchemaType> extends BaseStorage<T> {
      * Frees the resources used by the in-memory storage.
      */
     free(): void;
+
+    static create<TS extends SchemaType>(
+        name: string,
+        schema_type: TS,
+        migrations: MigrationPathsForSchema<TS>,
+    ): Promise<InMemory<TS>>;
 }
 "#;
 
 
 #[wasm_bindgen(skip_typescript)]
 pub struct InMemory {
-    pub(crate) base: BaseStorage,
-    pub(crate) by_index: HashMap<String, HashMap<String, JsValue>>,
-}
-
-impl InMemory {
-
-    fn document_matches_query(&self, document: &JsValue, query: &JsValue) -> Result<bool, JsValue> {
-        // Ensure query is an object
-        if !query.is_object() {
-            return Err(JsValue::from_str("Query must be an object"));
-        }
-
-        let keys = Object::keys(&Object::from(query.clone()));
-
-        for i in 0..keys.length() {
-            let key = keys.get(i).as_string().unwrap_or_default();
-            let value = Reflect::get(query, &JsValue::from_str(&key))
-                .map_err(|e| JsValue::from(format!("Failed to get the query value")))?;
-
-            if key == "$and" {
-                // $and operator: all conditions must be true
-                if !Array::is_array(&value) {
-                    return Err(JsValue::from_str("$and must be an array"));
-                }
-                let arr = Array::from(&value);
-                for j in 0..arr.length() {
-                    let item = arr.get(j);
-                    let matches = self.document_matches_query(document, &item)?;
-                    if !matches {
-                        return Ok(false);
-                    }
-                }
-                return Ok(true);
-            } else if key == "$or" {
-                // $or operator: at least one condition must be true
-                if !Array::is_array(&value) {
-                    return Err(JsValue::from_str("$or must be an array"));
-                }
-                let arr = Array::from(&value);
-                for j in 0..arr.length() {
-                    let item = arr.get(j);
-                    let matches = self.document_matches_query(document, &item)?;
-                    if matches {
-                        return Ok(true);
-                    }
-                }
-                return Ok(false);
-            } else {
-                // Attribute condition
-                let doc_value = Reflect::get(document, &JsValue::from_str(&key))
-                    .map_err(|e| JsValue::from(format!("Failed to get the document key")))?;
-
-                let matches = self.evaluate_condition(&doc_value, &value)?;
-                if !matches {
-                    return Ok(false);
-                }
-            }
-        }
-        Ok(true)
-    }
-
-    fn evaluate_condition(&self, doc_value: &JsValue, condition: &JsValue) -> Result<bool, JsValue> {
-        if condition.is_object() && !Array::is_array(condition) {
-            // Condition is an object with operators
-            let keys = Object::keys(&Object::from(condition.clone()));
-            for i in 0..keys.length() {
-                let key = keys.get(i).as_string().unwrap_or_default();
-                let value = Reflect::get(condition, &JsValue::from_str(&key))?;
-                match key.as_str() {
-                    "$gt" => {
-                        let res = self.compare_values(doc_value, &value, |a:f64, b:f64| a > b)?;
-                        if !res {
-                            return Ok(false);
-                        }
-                    }
-                    "$gte" => {
-                        let res = self.compare_values(doc_value, &value, |a:f64, b:f64| a >= b)?;
-                        if !res {
-                            return Ok(false);
-                        }
-                    }
-                    "$lt" => {
-                        let res = self.compare_values(doc_value, &value, |a:f64, b:f64| a < b)?;
-                        if !res {
-                            return Ok(false);
-                        }
-                    }
-                    "$lte" => {
-                        let res = self.compare_values(doc_value, &value, |a:f64, b:f64| a <= b)?;
-                        if !res {
-                            return Ok(false);
-                        }
-                    }
-                    "$in" => {
-                        if !Array::is_array(&value) {
-                            return Err(JsValue::from_str("$in value must be an array"));
-                        }
-                        let arr = Array::from(&value);
-                        let mut found = false;
-                        for j in 0..arr.length() {
-                            let item = arr.get(j);
-                            if self.values_equal(doc_value, &item)? {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if !found {
-                            return Ok(false);
-                        }
-                    }
-                    _ => {
-                        return Err(JsValue::from_str(&format!("Unsupported operator: {}", key)));
-                    }
-                }
-            }
-            Ok(true)
-        } else {
-            // Direct value comparison
-            self.values_equal(doc_value, condition)
-        }
-    }
-
-    fn compare_values<F>(
-        &self,
-        doc_value: &JsValue,
-        cond_value: &JsValue,
-        cmp: F,
-    ) -> Result<bool, JsValue>
-    where
-        F: Fn(f64, f64) -> bool,
-    {
-        let doc_num = doc_value
-            .as_f64()
-            .ok_or_else(|| JsValue::from_str("Document value is not a number"))?;
-        let cond_num = cond_value
-            .as_f64()
-            .ok_or_else(|| JsValue::from_str("Condition value is not a number"))?;
-        Ok(cmp(doc_num, cond_num))
-    }
-
-    fn values_equal(&self, doc_value: &JsValue, cond_value: &JsValue) -> Result<bool, JsValue> {
-        if doc_value.is_string() && cond_value.is_string() {
-            Ok(doc_value.as_string() == cond_value.as_string())
-        } else if doc_value.as_f64().is_some() {
-            Ok(doc_value.as_f64() == cond_value.as_f64())
-        } else if doc_value.is_truthy() || cond_value.is_falsy() {
-            Ok(doc_value.as_bool() == cond_value.as_bool())
-        } else {
-            Ok(false)
-        }
-    }
-
+    core: CoreStorage,
+    base: BaseStorage,
+    by_index: HashMap<String, HashMap<String, JsValue>>,
 }
 
 impl StorageBase for InMemory {
@@ -300,7 +157,7 @@ impl StorageBase for InMemory {
         let index_name = format!("pk_{}", primary_key);
         if let Some(index) = self.by_index.get(&index_name) {
             for (_pk, doc) in index.iter() {
-                let matches = self.document_matches_query(doc, &normalized_query)?;
+                let matches = self.core.document_matches_query(doc, &normalized_query)?;
                 if matches {
                     results.push(doc);
                 }
@@ -308,28 +165,6 @@ impl StorageBase for InMemory {
         }
 
         Ok(results.into())
-    }
-
-    async fn count(&self, query: Query) -> Result<JsValue, JsValue> {
-        // Get the normalized query
-        let normalized_query = query.parse()?;
-
-        // Count matching documents
-        let mut count = 0;
-
-        // Get all documents from the primary key index
-        let primary_key = self.base.schema.primary_key.clone();
-        let index_name = format!("pk_{}", primary_key);
-        if let Some(index) = self.by_index.get(&index_name) {
-            for (_pk, doc) in index.iter() {
-                let matches = self.document_matches_query(doc, &normalized_query)?;
-                if matches {
-                    count += 1;
-                }
-            }
-        }
-
-        Ok(JsValue::from_f64(count as f64))
     }
 
     async fn find_document_by_id(
@@ -359,6 +194,28 @@ impl StorageBase for InMemory {
         Err(JsValue::from_str("Document not found"))
     }
 
+    async fn count(&self, query: Query) -> Result<JsValue, JsValue> {
+        // Get the normalized query
+        let normalized_query = query.parse()?;
+
+        // Count matching documents
+        let mut count = 0;
+
+        // Get all documents from the primary key index
+        let primary_key = self.base.schema.primary_key.clone();
+        let index_name = format!("pk_{}", primary_key);
+        if let Some(index) = self.by_index.get(&index_name) {
+            for (_pk, doc) in index.iter() {
+                let matches = self.core.document_matches_query(doc, &normalized_query)?;
+                if matches {
+                    count += 1;
+                }
+            }
+        }
+
+        Ok(JsValue::from_f64(count as f64))
+    }
+
 
     async fn close(&self) -> Result<JsValue, JsValue> {
         Ok(JsValue::from_str("In-memory database closed"))
@@ -368,8 +225,9 @@ impl StorageBase for InMemory {
 
 #[wasm_bindgen]
 impl InMemory {
-    #[wasm_bindgen(constructor)]
-    pub fn new(name: &str, schema_type: JsValue, migrations: JsValue) -> Result<InMemory, JsValue> {
+
+    #[wasm_bindgen]
+    pub async fn create(name: &str, schema_type: JsValue, migrations: JsValue) -> Result<InMemory, JsValue> {
         let base_res = BaseStorage::new(
             name.to_string(),
             schema_type,
@@ -377,10 +235,13 @@ impl InMemory {
         );
         match base_res {
             Ok(base) => {
-                Ok(InMemory {
-                    base,
-                    by_index: HashMap::new(),
-                })
+                Ok(
+                    InMemory {
+                        base,
+                        by_index: HashMap::new(),
+                        core: CoreStorage {}
+                    }
+                )
             }
             Err(e) => {
                 Err(e)
@@ -456,6 +317,7 @@ impl InMemory {
 use wasm_bindgen_test::wasm_bindgen_test_configure;
 use wasm_bindgen_test::{wasm_bindgen_test};
 use crate::operation::{OpType, Operation};
+use crate::storage::internals::core::CoreStorage;
 
 #[cfg(feature = "browser")]
 wasm_bindgen_test_configure!(run_in_browser);
@@ -508,7 +370,7 @@ async fn test_empty_inmemory_storage() {
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
     let migrations = json_str_to_js_value("{}").unwrap();
-    let inmem = InMemory::new(schema_name.clone().as_str(), schema, migrations);
+    let inmem = InMemory::create(schema_name.clone().as_str(), schema, migrations).await;
     assert!(inmem.is_ok());
 }
 
@@ -529,7 +391,7 @@ async fn test_empty_inmemory_storage_write() {
     let schema = json_str_to_js_value(schema_str).unwrap();
     let migrations = json_str_to_js_value("{}").unwrap();
 
-    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
+    let mut inmem = InMemory::create(&schema_name, schema, migrations).await.unwrap();
 
     // Create a new item
     let new_item = Object::new();
@@ -579,7 +441,7 @@ async fn test_inmemory_storage_create_operation() {
     let schema = json_str_to_js_value(schema_str).unwrap();
     let migrations = json_str_to_js_value("{}").unwrap();
 
-    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
+    let mut inmem = InMemory::create(&schema_name, schema, migrations).await.unwrap();
 
     // Create a new item
     let new_item = Object::new();
@@ -666,7 +528,7 @@ async fn test_inmemory_storage_update_operation() {
     let schema = json_str_to_js_value(schema_str).unwrap();
     let migrations = json_str_to_js_value("{}").unwrap();
 
-    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
+    let mut inmem = InMemory::create(&schema_name, schema, migrations).await.unwrap();
 
     // Create a new item
     let new_item = Object::new();
@@ -759,7 +621,7 @@ async fn test_inmemory_storage_delete_operation() {
     let schema = json_str_to_js_value(schema_str).unwrap();
     let migrations = json_str_to_js_value("{}").unwrap();
 
-    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
+    let mut inmem = InMemory::create(&schema_name, schema, migrations).await.unwrap();
 
     // Create a new item
     let new_item = Object::new();
@@ -829,7 +691,7 @@ async fn test_inmemory_storage_find() {
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
     let migrations = json_str_to_js_value("{}").unwrap();
-    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
+    let mut inmem = InMemory::create(&schema_name, schema, migrations).await.unwrap();
 
     // Create items
     let items = vec![
@@ -901,7 +763,7 @@ async fn test_inmemory_storage_count() {
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
     let migrations = json_str_to_js_value("{}").unwrap();
-    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
+    let mut inmem = InMemory::create(&schema_name, schema, migrations).await.unwrap();
 
     // Create items
     let items = vec![
@@ -966,7 +828,7 @@ async fn test_inmemory_storage_find_with_logical_operators() {
     let schema_name = "demo".to_string();
     let schema = json_str_to_js_value(schema_str).unwrap();
     let migrations = json_str_to_js_value("{}").unwrap();
-    let mut inmem = InMemory::new(&schema_name, schema, migrations).unwrap();
+    let mut inmem = InMemory::create(&schema_name, schema, migrations).await.unwrap();
 
     // Create items
     let items = vec![

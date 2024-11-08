@@ -1,5 +1,7 @@
 pub mod storage_internal;
 pub mod base_storage;
+pub mod core;
+
 use js_sys::{Reflect};
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast,  JsValue};

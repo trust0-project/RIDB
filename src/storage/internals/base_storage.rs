@@ -11,6 +11,13 @@ const TS_APPEND_CONTENT: &'static str = r#"
  * @template T - The schema type.
  */
 export class BaseStorage<T extends SchemaType> extends StorageInternal<T> {
+
+    static create<TS extends SchemaType>(
+        name: string,
+        schema_type: TS,
+        migrations: MigrationPathsForSchema<TS>,
+    ): Promise<InMemory<TS>>;
+
     /**
      * Frees the resources used by the base storage.
      */

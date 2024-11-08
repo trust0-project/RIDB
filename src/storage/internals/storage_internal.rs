@@ -62,17 +62,6 @@ export abstract class StorageInternal<T extends SchemaType> {
      */
     abstract close(): Promise<void>;
 }
-
-/**
- * Represents a function type for creating storage with the provided schema type records.
- *
- * @template T - The schema type record.
- * @param {T} records - The schema type records.
- * @returns {Promise<InternalsRecord>} A promise that resolves to the created internals record.
- */
-export type CreateStorage = <T extends SchemaTypeRecord = SchemaTypeRecord>(
-    records: T
-) => InternalsRecord;
 "#;
 
 #[wasm_bindgen]

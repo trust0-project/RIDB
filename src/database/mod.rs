@@ -72,6 +72,17 @@ export class Database<T extends SchemaTypeRecord> {
 }
 
 /**
+ * Represents a function type for creating storage with the provided schema type records.
+ *
+ * @template T - The schema type record.
+ * @param {T} records - The schema type records.
+ * @returns {Promise<InternalsRecord>} A promise that resolves to the created internals record.
+ */
+export type CreateStorage = <T extends SchemaTypeRecord = SchemaTypeRecord>(
+    records: T
+) => Promise<InternalsRecord>;
+
+/**
  * Represents a storage module with a method for creating storage.
  */
 export type RIDBModule = {
@@ -96,7 +107,7 @@ extern "C" {
     pub type RIDBModule;
 
     #[wasm_bindgen(method, catch, js_name = "createStorage")]
-    pub fn create_storage(this: &RIDBModule, records: &Object) -> Result<JsValue, JsValue>;
+    pub async fn create_storage(this: &RIDBModule, records: &Object) -> Result<JsValue, JsValue>;
 
     #[wasm_bindgen(method, catch, js_name = "apply")]
     pub fn apply(this: &RIDBModule, plugins: Array) -> Result<Vec<JsValue>, JsValue>;
@@ -157,7 +168,7 @@ impl Database {
         }
         let storage_internal_map_js = module.create_storage(
             &schemas_map_js.clone()
-        )?;
+        ).await?;
         let vec_plugins_js: Vec<JsValue> =  module.apply(plugins)?;
 
         let mut vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()

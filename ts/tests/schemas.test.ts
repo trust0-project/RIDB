@@ -1,11 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { SchemaFieldType, RIDB, type RIDBTypes } from '..';
+import { SchemaFieldType, RIDB, RIDBTypes } from '..';
 
-const storages: (typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>|undefined)[] = [
-    undefined
-]
 
-export default (platform: string) => {
+export default (platform: string, storages:(typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>|undefined)[] ) => {
 
     return describe(`[${platform}] Testing`, () => {
 

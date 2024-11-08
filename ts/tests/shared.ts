@@ -1,4 +1,5 @@
 
+import { BaseStorage, SchemaType, RIDBTypes } from '..';
 import { default as Schemas } from './schemas.test';
 
 const Tests = {
@@ -11,10 +12,10 @@ export enum TestPlatform {
     NODE = "NODE"
 }
 
-export async function  runTests(platforms:TestPlatform[]): Promise<void> {
+export async function  runTests(platforms:TestPlatform[], storages:(typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>)[] ): Promise<void> {
     platforms.forEach(platform => {
         suites.forEach(suite => {
-            suite(platform)
+            suite(platform, storages)
         })
     })
 }

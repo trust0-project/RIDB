@@ -1,3 +1,8 @@
 import Shared from './shared';
 
-Shared.runTests([Shared.TestPlatform.NODE])
+import { RIDBTypes } from '..';
+
+Shared.runTests(
+    [Shared.TestPlatform.NODE], 
+    [RIDBTypes.InMemory]
+)

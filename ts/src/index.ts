@@ -209,7 +209,7 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
         storageType?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>
     ) {
         return {
-            createStorage: (schemas: RIDBTypes.SchemaTypeRecord) =>
+            createStorage: async (schemas: RIDBTypes.SchemaTypeRecord) =>
                 this.createStorage(schemas, storageType),
             apply: (
                 plugins: Array<typeof RIDBTypes.BasePlugin> = []
@@ -250,27 +250,23 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
      * @returns An object mapping collection names to storage instances.
      * @private
      */
-    private createStorage<J extends RIDBTypes.SchemaTypeRecord>(
+    private async createStorage<J extends RIDBTypes.SchemaTypeRecord>(
         schemas: J,
         storageConstructor?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>
     ) {
         if (!this._internal) {
             throw new Error("Start the database first");
         }
-        const Storage = storageConstructor ?? this._internal.InMemory;
-        return Object.keys(schemas).reduce(
-            (storages, name) => {
-                return {
-                    ...storages,
-                    [name]: new Storage(
-                        name,
-                        schemas[name],
-                        this.migrations[name]
-                    ),
-                }
-            },
-            {}
-        );
+        const storages: Record<string, RIDBTypes.BaseStorage<any>> = {};
+        for (const name in schemas) {
+            const Storage = storageConstructor ?? this._internal.InMemory;
+            storages[name] = await Storage.create(
+                name,
+                schemas[name],
+                this.migrations[name]
+            );
+        }
+        return storages;
     }
 }
 
