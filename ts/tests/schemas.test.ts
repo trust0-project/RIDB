@@ -1,13 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { SchemaFieldType, RIDB, RIDBTypes } from '..';
+import { StoragesType } from './shared';
 
 
-export default (platform: string, storages:(typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>|undefined)[] ) => {
+export default (platform: string, storages:StoragesType[] ) => {
 
     return describe(`[${platform}] Testing`, () => {
 
-        storages.forEach(storage => {
-            describe(`[${platform}][${storage ? 'Typescript' : 'Wasm'}] Testing Storage`, () => {
+        storages.forEach(({name, storage}) => {
+            describe(`[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}] Testing Storage`, () => {
                 it('It should be able to create a new document from JSON schema', async () => {
 
                     const db = new RIDB(

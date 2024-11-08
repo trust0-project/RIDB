@@ -1,5 +1,6 @@
 pub mod internals;
 pub mod inmemory;
+pub mod indexdb;
 mod base;
 
 use std::collections::HashMap;

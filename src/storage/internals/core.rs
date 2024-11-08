@@ -1,10 +1,10 @@
 use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::JsValue;
 
+#[derive(Debug, Clone)]
 pub struct CoreStorage {
 
 }
-
 
 impl CoreStorage {
 

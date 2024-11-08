@@ -12,7 +12,12 @@ export enum TestPlatform {
     NODE = "NODE"
 }
 
-export async function  runTests(platforms:TestPlatform[], storages:(typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>)[] ): Promise<void> {
+export type StoragesType = {
+    storage:typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>,
+    name: string
+}
+
+export async function  runTests(platforms:TestPlatform[], storages:StoragesType[] ): Promise<void> {
     platforms.forEach(platform => {
         suites.forEach(suite => {
             suite(platform, storages)
