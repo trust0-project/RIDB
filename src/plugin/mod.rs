@@ -28,15 +28,17 @@ export class BasePlugin implements BasePluginOptions {
 #[derive(Clone)]
 pub struct BasePlugin {
     pub(crate) doc_create_hook: JsValue,
-    pub(crate) doc_recover_hook: JsValue
+    pub(crate) doc_recover_hook: JsValue,
+    pub(crate) name: String,
 }
 
 #[wasm_bindgen]
 impl BasePlugin {
 
     #[wasm_bindgen(constructor)]
-    pub fn new() -> Result<BasePlugin, JsValue> {
+    pub fn new(name: String) -> Result<BasePlugin, JsValue> {
         Ok(BasePlugin {
+            name,
             doc_create_hook: JsValue::undefined(),
             doc_recover_hook: JsValue::undefined(),
         })
@@ -83,6 +85,7 @@ impl JsCast for BasePlugin {
 
     fn unchecked_from_js(val: JsValue) -> Self {
         BasePlugin {
+            name: "Name".to_string(),
             doc_create_hook: Reflect::get(&val, &JsValue::from_str("docCreateHook"))
                 .unwrap_or(JsValue::undefined()),
             doc_recover_hook: Reflect::get(&val, &JsValue::from_str("docRecoverHook"))

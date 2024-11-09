@@ -1,7 +1,9 @@
+use js_sys::JSON;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::schema::Schema;
 use crate::storage::internals::{HookType, Internals};
+use web_sys::console;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -132,11 +134,17 @@ impl Collection {
     /// the documents found in the collection.
     #[wasm_bindgen]
     pub async fn find(&mut self, query: JsValue) -> Result<JsValue, JsValue> {
-        self.internals.call(
-            HookType::Recover,
-            self.internals.find(query).await
-                .map_err(|e| e)?
-        )
+        console::log_1(&format!("[Collection:{}] Finding documents with query", self.name).into());
+        let result = match self.internals.find(query).await {
+            Ok(docs) => docs,
+            Err(e) => return Err(js_sys::Error::new(&format!("Failed to find documents: {:?}", e)).into())
+        };
+        let processed = self.internals.call(HookType::Recover, result)?;
+
+        console::log_1(&format!("[Collection:{}] Found documents: {:?}", self.name, JSON::stringify(&processed)).into());
+
+        Ok(processed)
+
     }
 
     /// counts and returns all documents in the collection.
@@ -145,8 +153,11 @@ impl Collection {
     /// the documents found in the collection.
     #[wasm_bindgen]
     pub async fn count(&self, query: JsValue) -> Result<JsValue, JsValue> {
-        self.internals.count(query).await
-            .map_err(|e| e)
+        console::log_1(&format!("[Collection:{}] Counting documents with query", self.name).into());
+        match self.internals.count(query).await {
+            Ok(count) => Ok(count),
+            Err(e) => Err(js_sys::Error::new(&format!("Failed to count documents: {:?}", e)).into())
+        }
     }
 
     /// Finds and returns a single document in the collection by its ID.
@@ -154,8 +165,17 @@ impl Collection {
     /// This function is asynchronous.
     #[wasm_bindgen(js_name="findById")]
     pub async fn find_by_id(&self, primary_key: JsValue) -> Result<JsValue, JsValue>{
-        self.internals.find_document_by_id( primary_key  ).await
-            .map_err(|e| e)
+        console::log_1(&format!("[Collection:{}] Finding document by ID", self.name).into());
+        let document = match self.internals.find_document_by_id( primary_key  ).await {
+            Ok(doc) => doc,
+            Err(e) => return Err(js_sys::Error::new(&format!("Failed to find document by ID: {:?}", e)).into())
+        };
+        console::log_1(&format!("[Collection:{}] Found document by ID", self.name).into());
+
+        self.internals.call(
+            HookType::Recover,
+            document
+        )
     }
 
     /// Updates a document in the collection with the given data.
@@ -167,12 +187,21 @@ impl Collection {
     /// * `document` - A `JsValue` representing the partial document to update.
     #[wasm_bindgen]
     pub async fn update(&mut self, document: JsValue) -> Result<JsValue, JsValue> {
-        let res = self.internals.call(
+        console::log_1(&format!("[Collection:{}] Processing document for update", self.name).into());
+        let processed_document = self.internals.call(
             HookType::Create,
-            self.internals.write(document).await
-                .map_err(|e| e)?
-
+            document
         )?;
+
+        console::log_1(&format!("[Collection:{}] Writing updated document", self.name).into());
+        let res = match self.internals.write(processed_document).await {
+            Ok(result) => result,
+            Err(e) => {
+                console::log_1(&format!("[Collection:{}] Error updating document: {:?}", self.name, e).into());
+                return Err(e);
+            }
+        };
+        console::log_1(&format!("[Collection:{}] Document updated successfully", self.name).into());
 
         self.internals.call(
             HookType::Recover,
@@ -189,12 +218,21 @@ impl Collection {
     /// * `document` - A `JsValue` representing the document to create.
     #[wasm_bindgen]
     pub async fn create(&mut self, document: JsValue) -> Result<JsValue, JsValue> {
-        let res = self.internals.call(
+        console::log_1(&format!("[Collection:{}] Processing document for creation", self.name).into());
+        let processed_document = self.internals.call(
             HookType::Create,
-            self.internals.write(document).await
-                .map_err(|e| e)?
-
+            document
         )?;
+
+        console::log_1(&format!("[Collection:{}] Writing new document", self.name).into());
+        let res = match self.internals.write(processed_document.clone()).await {
+            Ok(result) => result,
+            Err(e) => {
+                console::log_1(&format!("[Collection:{}] Error creating document: {:?}", self.name, e).into());
+                return Err(e);
+            }
+        };
+        console::log_1(&format!("[Collection:{}] Document created successfully", self.name).into());
 
         self.internals.call(
             HookType::Recover,
@@ -207,8 +245,12 @@ impl Collection {
     /// This function is asynchronous.
     #[wasm_bindgen]
     pub async fn delete(&self, primary_key: JsValue) -> Result<JsValue, JsValue> {
-        self.internals.remove( primary_key ).await
-            .map_err(|e| e)
-
+        console::log_1(&format!("[Collection:{}] Deleting document", self.name).into());
+        let result = match self.internals.remove( primary_key ).await {
+            Ok(res) => res,
+            Err(e) => return Err(js_sys::Error::new(&format!("Failed to delete document: {:?}", e)).into())
+        };
+        console::log_1(&format!("[Collection:{}] Document deleted", self.name).into());
+        Ok(result)
     }
 }

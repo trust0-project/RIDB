@@ -28,7 +28,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                             } as const
                         }
                     )
-                    await db.start({storageType: storage});
+                    await db.start({
+                        storageType: storage,
+                         password: "test"
+                        });
                     expect(db).to.not.be.undefined;
                     expect(db.collections).to.not.be.undefined;
                     expect(db.collections).to.haveOwnProperty("demo");
@@ -67,7 +70,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                         }
                     )
 
-                    await db.start({storageType: storage});
+                    await db.start({
+                        storageType: storage,
+                         password: "test"
+                        });
 
                     expect(db).to.not.be.undefined;
                     expect(db.collections).to.not.be.undefined;
@@ -109,7 +115,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                         }
                     )
 
-                    await db.start({storageType: storage});
+                    await db.start({
+                        storageType: storage,
+                         password: "test"
+                        });
 
                     expect(db).to.not.be.undefined;
                     expect(db.collections).to.not.be.undefined;
@@ -124,7 +133,6 @@ export default (platform: string, storages:StoragesType[] ) => {
                     expect(created).to.not.be.undefined;
                     expect(created).to.haveOwnProperty("id");
                     expect(created).to.haveOwnProperty("name");
-
                     expect(created.id).to.eq("12345")
                     expect(created.name).to.eq("demo")
 
@@ -160,7 +168,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                             } as const
                         }
                     )
-                    await db.start({storageType: storage})
+                    await db.start({
+                        storageType: storage,
+                         password: "test"
+                        })
                     expect(db).to.not.be.undefined;
                 });
                 it("Should be able to find a created schema entry", async () => {
@@ -184,7 +195,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                             } as const
                         }
                     )
-                    await db.start({storageType: storage})
+                    await db.start({
+                        storageType: storage,
+                         password: "test"
+                        })
                     expect(db).to.not.be.undefined;
 
                     const created = await db.collections.demo.create({
@@ -233,7 +247,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                             } as const,
                         }
                     )
-                    await db.start({storageType: storage})
+                    await db.start({
+                        storageType: storage,
+                         password: "test"
+                        })
                     expect(db).to.not.be.undefined;
 
                     const created = await db.collections.demo.create({
@@ -277,7 +294,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                             } as const
                         }
                     )
-                    await expect(async () => db.start({storageType: storage})).to.rejects.toThrowError("Validation Error: Schema type is invalid (\"wrong\")")
+                    await expect(async () => db.start({
+                        storageType: storage,
+                         password: "test"
+                        })).to.rejects.toThrowError("Validation Error: Schema type is invalid (\"wrong\")")
                 })
                 it("Should throw an error when schema properties type is invalid", async () => {
                     const db = new RIDB(
@@ -297,7 +317,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                             } as const
                         }
                     )
-                    await expect(async () => db.start({storageType: storage})).to.rejects.toThrowError("Serialization Error: invalid value: string \"....\", expected an PropertyType (String, Number, Boolean, Object or Array)")
+                    await expect(async () => db.start({
+                        storageType: storage,
+                         password: "test"
+                        })).to.rejects.toThrowError("Serialization Error: invalid value: string \"....\", expected an PropertyType (String, Number, Boolean, Object or Array)")
                 })
                 it("Should throw an error when the minLength is lower than 0", async () => {
                     const db = new RIDB(
@@ -317,7 +340,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                             } as const
                         }
                     )
-                    await expect(async () => db.start({storageType: storage})).to.rejects.toThrowError("Validation Error: Min property not valid")
+                    await expect(async () => db.start({
+                        storageType: storage,
+                         password: "test"
+                        })).to.rejects.toThrowError("Validation Error: Min property not valid")
                 })
                 it("Should throw an error when schemaType with a property that has min higher than max", async () => {
                     const db = new RIDB(
@@ -338,7 +364,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                             } as const
                         }
                     )
-                    await expect(async () => db.start({storageType: storage})).to.rejects.toThrowError("Validation Error: Min higher than max")
+                    await expect(async () => db.start({
+                        storageType: storage,
+                         password: "test"
+                        })).to.rejects.toThrowError("Validation Error: Min higher than max")
                 });
                 it("Should throw an error if migrations are declared wrong", () => {
                     const db = new RIDB(
@@ -366,7 +395,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                         }
                     )
                     expect(
-                        async () => db.start({storageType: storage})
+                        async () => db.start({
+                            storageType: storage,
+                             password: "test"
+                            })
                     ).to.rejects.toThrowError("Required Schema demo migration path 1 to not be undefined")
                 })
                 it("Should be able to create and migrate a schema from v1 to v2", async () => {
@@ -399,7 +431,10 @@ export default (platform: string, storages:StoragesType[] ) => {
                         }
                     )
 
-                    await db.start({storageType: storage})
+                    await db.start({
+                        storageType: storage,
+                         password: "test"
+                        })
                     expect(db).to.not.be.undefined;
 
                     const created = await db.collections.demo.create({

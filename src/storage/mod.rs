@@ -39,10 +39,12 @@ impl Storage {
         // Create a HashMap to store the storage internals
         let mut storages: HashMap<String, StorageInternal> = HashMap::new();
         for key in keys {
-            let key_string = key.as_string().unwrap();
+            let key_string = key.as_string();
             let value = Reflect::get(&storages_map_js.clone(), &key)
                 .map_err(|e| JsValue::from(RIDBError::from(e)))?;
-            storages.insert(key_string, value.clone().into());
+            if let Some(key_string) = key_string {
+                storages.insert(key_string, value.clone().into());
+            }
         }
 
         // Mount the storage internals
@@ -54,16 +56,16 @@ impl Storage {
                     let migration = Reflect::get(
                         &migrations_map_js,
                         &JsValue::from(name)
-                    ).map_err(|e| JsValue::from(format!("Required Schema {}", name).as_str()) )?;
+                    ).map_err(|e| RIDBError::from(format!("Required Schema {}", name).as_str()) )?;
 
                     let version = storage_internal.schema().get_version();
                     if version > 0 && !migration.is_undefined() {
                         let function = Reflect::get(&migration, &JsValue::from(version))
-                            .map_err(|e| JsValue::from(RIDBError::from(e)))?;
+                            .map_err(|e| RIDBError::from(e))?;
 
                         if function.is_undefined() {
                             return Err(
-                                JsValue::from(format!("Required Schema {} migration path {} to not be undefined", name, version).as_str())
+                                RIDBError::from(JsValue::from(format!("Required Schema {} migration path {} to not be undefined", name, version)))
                             )
                         }
                     }
@@ -84,8 +86,7 @@ impl Storage {
                     (name.clone(), internals)
                 )
 
-            }).collect::<Result<HashMap<String, Internals>, JsValue>>()
-            .map_err(|e| JsValue::from(format!("Error in Storage mounting: {}", e.as_string().unwrap_or_default())))?;
+            }).collect::<Result<HashMap<String, Internals>, RIDBError>>()?;
 
         let storage = Storage {
             internals: storages_mounted,

@@ -8,6 +8,7 @@ use crate::plugin::BasePlugin;
 use crate::plugin::encryption::EncryptionPlugin;
 use crate::plugin::migration::MigrationPlugin;
 use crate::storage::Storage;
+use web_sys::console;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -163,31 +164,37 @@ impl Database {
         module: RIDBModule,
         password: Option<String>
     ) -> Result<Database, JsValue> {
+
         if !schemas_map_js.is_object() {
             return Err(JsValue::from(RIDBError::from("Unexpected object")));
         }
+
         let storage_internal_map_js = module.create_storage(
             &schemas_map_js.clone()
         ).await?;
-        let vec_plugins_js: Vec<JsValue> =  module.apply(plugins)?;
+
+        let vec_plugins_js: Vec<JsValue> = module.apply(plugins)?;
 
         let mut vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
-        .map(|plugin| plugin.unchecked_into::<BasePlugin>())
-        .collect();
+            .map(|plugin| plugin.unchecked_into::<BasePlugin>())
+            .collect();
+
 
         if let Some(pass) = password {
             let encryption = EncryptionPlugin::new(pass)?;
-            vec_plugins.push(encryption.base);
+            vec_plugins.push(encryption.base.clone());
         }
 
-        let migration = MigrationPlugin::new()?;
-        vec_plugins.push(migration.base);
+        //vec_plugins.push(MigrationPlugin::new()?.base.clone());
+
 
         let storage = Storage::create(
             storage_internal_map_js.into(),
             migrations_js,
             vec_plugins,
-        ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
+        ).map_err(|e| {
+            JsValue::from(RIDBError::from(e))
+        })?;
 
         let db = Database {
             storage,

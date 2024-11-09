@@ -65,7 +65,7 @@ pub struct MigrationPlugin {
 
 impl MigrationPlugin {
     pub fn new() -> Result<MigrationPlugin, JsValue> {
-        let base = BasePlugin::new()?;
+        let base = BasePlugin::new("Migration".to_string())?;
         let plugin = MigrationPlugin {
             base,
         };
@@ -87,6 +87,34 @@ impl MigrationPlugin {
     }
 
     pub(crate) fn create_hook(
+        &self,
+        schema_js: JsValue,
+        migration_js: JsValue,
+        content: JsValue,
+    ) -> Result<JsValue, JsValue> {
+        // Handle both single object and array of objects
+        if content.is_array() {
+            let array = js_sys::Array::from(&content);
+            let processed_array = js_sys::Array::new();
+            
+            for i in 0..array.length() {
+                let item = array.get(i);
+                match self.create_hook_single_document(schema_js.clone(), migration_js.clone(), item) {
+                    Ok(processed_item) => {
+                        processed_array.push(&processed_item);
+                    },
+                    Err(e) => return Err(e),
+                }
+            }
+            
+            Ok(processed_array.into())
+        } else {
+            // Handle single document
+            self.create_hook_single_document(schema_js, migration_js, content)
+        }
+    }
+
+    fn create_hook_single_document(
         &self,
         schema_js: JsValue,
         migration_js: JsValue,

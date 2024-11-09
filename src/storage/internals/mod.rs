@@ -2,7 +2,7 @@ pub mod storage_internal;
 pub mod base_storage;
 pub mod core;
 
-use js_sys::{Reflect};
+use js_sys::{JsString, Reflect};
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast,  JsValue};
 use web_sys::console::log_1;
@@ -75,28 +75,25 @@ impl Internals {
                 HookType::Create => plugin.get_doc_create_hook(),
                 HookType::Recover => plugin.get_doc_recover_hook(),
             };
-            doc = self.compute_hook(doc, &hook)?;
+            doc = self.compute_hook(doc.clone(), &hook)?;
         }
         Ok(doc)
     }
 
     fn compute_hook(&self, doc: JsValue, hook: &JsValue) -> Result<JsValue, JsValue> {
-        if hook.is_function() {
-            let hook_fn = hook.dyn_ref::<js_sys::Function>()
-                .ok_or_else(|| JsValue::from(RIDBError::error("Hook is not a function")))?;
-
-            let call = hook_fn.call3(
-                &JsValue::NULL,
-                &to_value(&self.schema)?,
-                &self.migration,
-                &doc
-            );
-
-            call.map_err(|e| JsValue::from(RIDBError::error(&format!("Error executing plugin hook: {:?}", e))))?;
-        } else {
-            log_1(&JsValue::from(format!("InValid Hook type: {:?}", hook.js_typeof())));
+        if !hook.is_function() {
+            return Err(JsValue::from(RIDBError::error("Hook must be a function")));
         }
-        Ok(doc)
+
+        let hook_fn = hook.dyn_ref::<js_sys::Function>()
+            .ok_or_else(|| JsValue::from(RIDBError::error("Hook is not a function")))?;
+
+        hook_fn.call3(
+            &JsValue::NULL,
+            &to_value(&self.schema)?,
+            &self.migration,
+            &doc
+        ).map_err(|e| JsValue::from(RIDBError::error(&format!("Error executing plugin hook: {:?}", e))))
     }
 
     /// Ensures that the document has a primary key, generating one if necessary.
@@ -155,10 +152,12 @@ impl Internals {
         let document = self.ensure_primary_key(document_without_pk)?;
         let properties = self.schema.properties.clone();
         let required = self.schema.required.clone().unwrap_or(Vec::new());
+        let encrypted = self.schema.encrypted.clone().unwrap_or(Vec::new());
+
         for (key, prop) in properties {
             let value = Reflect::get(&document, &JsValue::from_str(&key))?;
             if value.is_undefined() {
-                if required.contains(&key) {
+                if required.contains(&key) && !encrypted.contains(&key) {
                     return Err(JsValue::from(RIDBError::error(
                         &format!("Field {} is required", key),
                     )));
@@ -189,13 +188,7 @@ impl Internals {
             PropertyType::String => value.is_string(),
             PropertyType::Number => value.as_f64().is_some(),
             PropertyType::Object => value.is_object(),
-            PropertyType::Array => {
-                if let Some(array) = value.dyn_ref::<js_sys::Array>() {
-                    !array.is_array()
-                } else {
-                    false
-                }
-            },
+            PropertyType::Array => value.is_array(),
             PropertyType::Boolean => value.is_falsy() || value.is_truthy(),
             _ => false,
         }

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e  # Exit on any error
 
 is_mac() {
   [[ "$OSTYPE" == "darwin"* ]]

@@ -140,6 +140,8 @@ impl Schema {
 
     pub fn validate_schema(&self, document: JsValue) -> Result<(), JsValue> {
         let required = self.required.clone().unwrap_or(Vec::new());
+        let encrypted = self.encrypted.clone().unwrap_or(Vec::new());
+
         let properties = self.properties.clone();
 
         for (key, prop) in properties {
@@ -147,7 +149,7 @@ impl Schema {
                 .map_err(|e| JsValue::from_str(&format!("Failed to get property '{}': {:?}", key, e)))?;
 
             if value.is_undefined() {
-                if required.contains(&key) {
+                if required.contains(&key) && !encrypted.contains(&key) {
                     return Err(JsValue::from_str(&format!("Field '{}' is required", key)));
                 }
             } else {

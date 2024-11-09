@@ -41,7 +41,7 @@ pub struct IndexDB {
 
 impl StorageBase for IndexDB {
     async fn write(&mut self, op: &Operation) -> Result<JsValue, JsValue> {
-        console::log_1(&JsValue::from_str("Starting write operation..."));
+        console::log_1(&JsValue::from_str(&format!("Starting operation...")));
         let store_name = "documents";
         
         let transaction = match self.db.transaction_with_str_and_mode(
@@ -65,7 +65,6 @@ impl StorageBase for IndexDB {
 
         match op.op_type {
             OpType::CREATE | OpType::UPDATE => {
-                console::log_1(&JsValue::from_str("Processing CREATE/UPDATE operation"));
                 let document = op.data.clone();
                 
                 // Extract primary key
@@ -73,22 +72,55 @@ impl StorageBase for IndexDB {
                 let pk_value = match Reflect::get(&document, &JsValue::from_str(&primary_key)) {
                     Ok(v) => v,
                     Err(e) => {
-                        console::error_2(&JsValue::from_str("Failed to get primary key value:"), &e);
+                        console::error_1(&JsValue::from_str(&format!(
+                            "Failed to get primary key '{}' from document",
+                            primary_key
+                        )));
                         return Err(e);
                     }
                 };
 
                 if pk_value.is_undefined() || pk_value.is_null() {
+                    console::error_1(&JsValue::from_str(&format!(
+                        "Document must contain primary key '{}'",
+                        primary_key
+                    )));
                     return Err(JsValue::from_str("Document must contain a primary key"));
                 }
+
+                console::log_1(&JsValue::from_str(&format!(
+                    "Processing  operation for document with {} = {:?}",
+                     primary_key, pk_value
+                )));
 
                 // Validate document against schema
                 self.base.schema.validate_schema(document.clone())?;
 
-                // Store the document
-                let _ = store.put_with_key(&document, &pk_value)?;
-                
-                Ok(document)
+                // Store the document and wait for completion
+                let request = store.put_with_key(&document, &pk_value)?;
+
+                let promise = Promise::new(&mut |resolve, reject| {
+                    let doc = document.clone();
+                    console::log_1(&JsValue::from(format!("Document to be resolved: {:?}", doc)));
+                    
+                    let onsucess = Closure::once(Box::new(move |_event: web_sys::Event| {
+                        console::log_1(&JsValue::from(format!("Resolved Document: {:?}", doc)));
+
+                        resolve.call1(&JsValue::undefined(), &doc).unwrap();
+                    }));
+                    
+                    let onerror = Closure::once(Box::new(move |e: web_sys::Event| {
+                        reject.call1(&JsValue::undefined(), &e).unwrap();
+                    }));
+                    
+                    request.set_onsuccess(Some(onsucess.as_ref().unchecked_ref()));
+                    request.set_onerror(Some(onerror.as_ref().unchecked_ref()));
+
+                    onsucess.forget();
+                    onerror.forget();
+                });
+
+                JsFuture::from(promise).await
             },
             OpType::DELETE => {
                 let pk_value = op.data.clone();
@@ -96,15 +128,31 @@ impl StorageBase for IndexDB {
                     return Err(JsValue::from_str("Primary key value is required for delete operation"));
                 }
 
-                let _ = store.delete(&pk_value)?;
-                Ok(JsValue::from_str("Document deleted"))
+                // Delete the document and wait for completion
+                let request = store.delete(&pk_value)?;
+                let promise = Promise::new(&mut |resolve, reject| {
+                    let onsucess = Closure::once(Box::new(move |_event: web_sys::Event| {
+                        resolve.call1(&JsValue::undefined(), &JsValue::from_str("Document deleted")).unwrap();
+                    }));
+                    
+                    let onerror = Closure::once(Box::new(move |e: web_sys::Event| {
+                        reject.call1(&JsValue::undefined(), &e).unwrap();
+                    }));
+                    
+                    request.set_onsuccess(Some(onsucess.as_ref().unchecked_ref()));
+                    request.set_onerror(Some(onerror.as_ref().unchecked_ref()));
+                    onsucess.forget();
+                    onerror.forget();
+                });
+
+                JsFuture::from(promise).await
             },
             _ => Err(JsValue::from_str("Unsupported operation type")),
         }
     }
 
     async fn find(&self, query: Query) -> Result<JsValue, JsValue> {
-        console::log_2(&JsValue::from_str("Starting find operation with query:"), &query.query);
+        // console::log_2(&JsValue::from_str("Starting find operation with query:"), &query.query);
         let store_name = "documents";
         let transaction = self.db.transaction_with_str(store_name)?;
         let store = transaction.object_store(store_name)?;
@@ -141,7 +189,7 @@ impl StorageBase for IndexDB {
     }
 
     async fn find_document_by_id(&self, primary_key_value: JsValue) -> Result<JsValue, JsValue> {
-        console::log_2(&JsValue::from_str("Finding document by ID:"), &primary_key_value);
+        // console::log_2(&JsValue::from_str("Finding document by ID:"), &primary_key_value);
         let store_name = "documents";
         let transaction = self.db.transaction_with_str(store_name)?;
         let store = transaction.object_store(store_name)?;
@@ -215,92 +263,81 @@ impl StorageBase for IndexDB {
 impl IndexDB {
     #[wasm_bindgen]
     pub async fn create(name: &str, schema_type: JsValue, migrations: JsValue) -> Result<IndexDB, JsValue> {
-        // Ensure wasm_bindgen is initialized
-        console::log_1(&JsValue::from_str("[IndexDB] Starting database creation..."));
+        let base = BaseStorage::new(
+            name.to_string(),
+            schema_type.clone(),
+            migrations
+        )?;
         
-        // Validate inputs
+        // console::log_1(&JsValue::from_str("[IndexDB] Starting database creation..."));
+        
         if name.is_empty() {
-            console::error_1(&JsValue::from_str("[IndexDB] Database name cannot be empty"));
+            // console::error_1(&JsValue::from_str("[IndexDB] Database name cannot be empty"));
             return Err(JsValue::from_str("Database name cannot be empty"));
         }
 
         if schema_type.is_undefined() || schema_type.is_null() {
-            console::error_1(&JsValue::from_str("[IndexDB] Schema type is required"));
+            // console::error_1(&JsValue::from_str("[IndexDB] Schema type is required"));
             return Err(JsValue::from_str("Schema type is required"));
         }
 
-        console::log_2(&JsValue::from_str("[IndexDB] Creating database with name:"), &JsValue::from_str(name));
-        console::log_2(&JsValue::from_str("[IndexDB] Schema:"), &schema_type);
-        
-        // Create BaseStorage with error handling
-        let base = match BaseStorage::new(name.to_string(), schema_type, migrations) {
-            Ok(b) => {
-                console::log_1(&JsValue::from_str("[IndexDB] BaseStorage created successfully"));
-                b
-            },
-            Err(e) => {
-                console::error_2(&JsValue::from_str("[IndexDB] Failed to create BaseStorage:"), &e);
-                return Err(e);
-            }
-        };
-        
-        // Get window object with explicit error handling
+        // console::log_2(&JsValue::from_str("[IndexDB] Creating database with name:"), &JsValue::from_str(name));
+        // console::log_2(&JsValue::from_str("[IndexDB] Schema:"), &schema_type);
+       
         let window = match web_sys::window() {
             Some(win) => win,
             None => {
-                console::error_1(&JsValue::from_str("[IndexDB] Failed to get window object"));
+                // console::error_1(&JsValue::from_str("[IndexDB] Failed to get window object"));
                 return Err(JsValue::from_str("Failed to get window object"));
             }
         };
 
-        // Get IndexedDB with explicit error handling
         let idb = match window.indexed_db() {
             Ok(Some(idb)) => {
-                console::log_1(&JsValue::from_str("[IndexDB] Successfully got IndexedDB"));
+                // console::log_1(&JsValue::from_str("[IndexDB] Successfully got IndexedDB"));
                 idb
             },
             Ok(None) => {
-                console::error_1(&JsValue::from_str("[IndexDB] IndexedDB not available"));
+                // console::error_1(&JsValue::from_str("[IndexDB] IndexedDB not available"));
                 return Err(JsValue::from_str("IndexedDB not available"));
             }
             Err(e) => {
-                console::error_2(&JsValue::from_str("[IndexDB] Failed to get IndexedDB:"), &e);
+                // console::error_2(&JsValue::from_str("[IndexDB] Failed to get IndexedDB:"), &e);
                 return Err(e);
             }
         };
         
-        // Open database with explicit error handling
         let db_request = match idb.open_with_u32(name, 1) {
             Ok(req) => {
-                console::log_1(&JsValue::from_str("[IndexDB] Database open request created"));
+                // console::log_1(&JsValue::from_str("[IndexDB] Database open request created"));
                 req
             },
             Err(e) => {
-                console::error_2(&JsValue::from_str("[IndexDB] Failed to open database:"), &e);
+                // console::error_2(&JsValue::from_str("[IndexDB] Failed to open database:"), &e);
                 return Err(e);
             }
         };
 
         // Set up error handler
         let onerror = Closure::once(Box::new(move |e: web_sys::Event| {
-            console::error_2(&JsValue::from_str("[IndexDB] Database open error:"), &e);
+            // console::error_2(&JsValue::from_str("[IndexDB] Database open error:"), &e);
         }));
         db_request.set_onerror(Some(onerror.as_ref().unchecked_ref()));
         
         // Set up upgrade handler
         let onupgradeneeded = Closure::once(Box::new(move |event: web_sys::Event| -> Result<(), JsValue> {
-            console::log_1(&JsValue::from_str("[IndexDB] Running database upgrade..."));
+            // console::log_1(&JsValue::from_str("[IndexDB] Running database upgrade..."));
             
             let db_request: IdbOpenDbRequest = match event.target() {
                 Some(target) => match target.dyn_into::<IdbOpenDbRequest>() {
                     Ok(req) => req,
                     Err(e) => {
-                        console::error_1(&JsValue::from_str("[IndexDB] Failed to get request from event"));
+                        // console::error_1(&JsValue::from_str("[IndexDB] Failed to get request from event"));
                         return Err(e.into());
                     }
                 },
                 None => {
-                    console::error_1(&JsValue::from_str("[IndexDB] No target in upgrade event"));
+                    // console::error_1(&JsValue::from_str("[IndexDB] No target in upgrade event"));
                     return Err(JsValue::from_str("No target in upgrade event"));
                 }
             };
@@ -309,22 +346,22 @@ impl IndexDB {
                 Ok(res) => match res.dyn_into() {
                     Ok(db) => db,
                     Err(e) => {
-                        console::error_1(&JsValue::from_str("[IndexDB] Failed to convert result to database"));
+                        // console::error_1(&JsValue::from_str("[IndexDB] Failed to convert result to database"));
                         return Err(e);
                     }
                 },
                 Err(e) => {
-                    console::error_1(&JsValue::from_str("[IndexDB] Failed to get database from request"));
+                    // console::error_1(&JsValue::from_str("[IndexDB] Failed to get database from request"));
                     return Err(e);
                 }
             };
             
             if !db.object_store_names().contains(&"documents") {
-                console::log_1(&JsValue::from_str("[IndexDB] Creating 'documents' object store"));
+                // console::log_1(&JsValue::from_str("[IndexDB] Creating 'documents' object store"));
                 match db.create_object_store("documents") {
-                    Ok(_) => console::log_1(&JsValue::from_str("[IndexDB] Object store created successfully")),
+                    Ok(_) => {}, // console::log_1(&JsValue::from_str("[IndexDB] Object store created successfully")),
                     Err(e) => {
-                        console::error_1(&JsValue::from_str("[IndexDB] Failed to create object store"));
+                        // console::error_1(&JsValue::from_str("[IndexDB] Failed to create object store"));
                         return Err(e);
                     }
                 }
@@ -337,7 +374,7 @@ impl IndexDB {
         // Create promise for database opening
         let promise = Promise::new(&mut |resolve, reject| {
             let onsuccess = Closure::once(Box::new(move |event: web_sys::Event| {
-                console::log_1(&JsValue::from_str("[IndexDB] Database opened successfully"));
+                // console::log_1(&JsValue::from_str("[IndexDB] Database opened successfully"));
                 let request: IdbOpenDbRequest = event.target().unwrap().dyn_into().unwrap();
                 let db: IdbDatabase = request.result().unwrap().dyn_into().unwrap();
                 resolve.call1(&JsValue::undefined(), &db).unwrap();
@@ -348,11 +385,11 @@ impl IndexDB {
         });
 
         // Wait for database to open
-        console::log_1(&JsValue::from_str("[IndexDB] Waiting for database to open..."));
+        // console::log_1(&JsValue::from_str("[IndexDB] Waiting for database to open..."));
         let db = match JsFuture::from(promise).await {
             Ok(db) => db,
             Err(e) => {
-                console::error_2(&JsValue::from_str("[IndexDB] Failed to open database:"), &e);
+                // console::error_2(&JsValue::from_str("[IndexDB] Failed to open database:"), &e);
                 return Err(e);
             }
         };
