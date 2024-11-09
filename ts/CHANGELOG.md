@@ -1,3 +1,10 @@
+# [0.5.0-rc.4](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.3...v0.5.0-rc.4) (2024-11-09)
+
+
+### Bug Fixes
+
+* migration and encryption plugins for array of documents ([3fa3c01](https://github.com/trust0-project/RIDB/commit/3fa3c01c383ebe7221a8d1d0274385734eb89446))
+
 # [0.5.0-rc.3](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.2...v0.5.0-rc.3) (2024-11-08)
 
 
