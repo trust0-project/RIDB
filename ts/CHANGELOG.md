@@ -1,3 +1,26 @@
+# [0.5.0](https://github.com/trust0-project/RIDB/compare/v0.4.5...v0.5.0) (2024-11-10)
+
+
+### Bug Fixes
+
+* code update ([eddf865](https://github.com/trust0-project/RIDB/commit/eddf865ee4d531503caa49a40c498dfeb3a60b61))
+* improve error handling in collections ([c584abf](https://github.com/trust0-project/RIDB/commit/c584abf57d8d6e51134f282086d066a8315f581d))
+* improve release config ([0cd02ae](https://github.com/trust0-project/RIDB/commit/0cd02ae3e34559b04d838414283e2318fa84fa3e))
+* indexdb improvement and test coverage ([4e6bc43](https://github.com/trust0-project/RIDB/commit/4e6bc431512c611dd1e409374a8a1ec96a931e89))
+* migration and encryption plugins for array of documents ([3fa3c01](https://github.com/trust0-project/RIDB/commit/3fa3c01c383ebe7221a8d1d0274385734eb89446))
+* remove library ([f2ed971](https://github.com/trust0-project/RIDB/commit/f2ed9711729bf8db8bf78b14948642f222e9698d))
+* remove peer dependencies ([e21661a](https://github.com/trust0-project/RIDB/commit/e21661a28c658ea366a3eaaf05f77a5ba6773521))
+* remove typings ([1def54c](https://github.com/trust0-project/RIDB/commit/1def54c2ceaa10e826fbbe73d50b7a5a11ce7f4e))
+* restore indexdb working version ([69251e1](https://github.com/trust0-project/RIDB/commit/69251e193f57c4a23a04cbb1df3a9de27b04e668))
+* wrapping up InMemory storage to support async creation for (indexdb) ([6fddda9](https://github.com/trust0-project/RIDB/commit/6fddda9d9705ffe0202fb8358ca723467faeb154))
+
+
+### Features
+
+* indexdb ([28afca7](https://github.com/trust0-project/RIDB/commit/28afca7734a683964a59f28972bc2630c7877ff6))
+* indexdb basic implementation ([f9513b0](https://github.com/trust0-project/RIDB/commit/f9513b0bdc92846c5ac5141875e32ab4435d3db0))
+* refactor ridb to simplify approach and create 1 instance for whole db, vs instance per collection ([c70bdf9](https://github.com/trust0-project/RIDB/commit/c70bdf98daf194ac69e0f3f9369f18e97af1d09a))
+
 # [0.5.0-rc.7](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.6...v0.5.0-rc.7) (2024-11-10)
 
 
