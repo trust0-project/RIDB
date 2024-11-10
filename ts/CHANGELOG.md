@@ -1,3 +1,10 @@
+# [0.5.0-rc.7](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.6...v0.5.0-rc.7) (2024-11-10)
+
+
+### Bug Fixes
+
+* remove library ([f2ed971](https://github.com/trust0-project/RIDB/commit/f2ed9711729bf8db8bf78b14948642f222e9698d))
+
 # [0.5.0-rc.6](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.5...v0.5.0-rc.6) (2024-11-10)
 
 
