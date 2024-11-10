@@ -55,7 +55,7 @@ import {
         }
     });
     console.log("Starting the database");
-    await db.start();
+    await db.start({dbName: "demo"});
     console.log("Ok :)");
 })()
 ```
@@ -63,30 +63,46 @@ import {
 ## Specification
 
 ### Storage
-A valid storage must extend [BaseStorage class](https://github.com/trust0-project/RIDB/blob/main/docsnamespaces/RIDBTypes/classes/BaseStorage.md)
+A valid storage must extend [BaseStorage class](https://github.com/trust0-project/RIDB/blob/main/docs/namespaces/RIDBTypes/classes/BaseStorage.md)
 here's some example:
 
 ```typescript
-export class InMemory<T extends SchemaType> extends BaseStorage<T>   {
-    async write(operation:Operation<T>): Promise<Doc<T>> {
-        if (operation.opType === OpType.CREATE) {
-            return operation.data;
-        }
+export class InMemory<T extends SchemaTypeRecord>  extends BaseStorage<T> {
+
+    static create<SchemasCreate extends SchemaTypeRecord>(
+        name: string,
+        schemas: SchemasCreate,
+        migrations: Record<
+            keyof SchemasCreate, 
+            MigrationPathsForSchema<SchemasCreate[keyof SchemasCreate]>
+        >,
+    ): Promise<
+        BaseStorage<
+            SchemasCreate
+        >
+    > {
         throw new Error("Method not implemented.");
     }
 
-    query(): Promise<void> {
-        throw new Error("Method not implemented.");
+    constructor(name: string, schemas: T, migrations: Record<keyof T, MigrationPathsForSchema<T[keyof T]>>) {
+        super(name, schemas, migrations);
     }
 
-    findDocumentById(id: string): Promise<null> {
+    findDocumentById(collectionName: keyof T, id: string): Promise<Doc<T[keyof T]> | null> {
         throw new Error("Method not implemented.");
     }
-
-    count(): Promise<number> {
+    find(collectionName: keyof T, query: RIDBTypes.QueryType<T[keyof T]>): Promise<Doc<T[keyof T]>[]> {
         throw new Error("Method not implemented.");
     }
-
+    write(op: Operation<T[keyof T]>): Promise<Doc<T[keyof T]>> {
+        throw new Error("Method not implemented.");
+    }
+    count(collectionName: keyof T, query: RIDBTypes.QueryType<T[keyof T]>): Promise<number> {
+        throw new Error("Method not implemented.");
+    }
+    start(): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
     close(): Promise<void> {
         throw new Error("Method not implemented.");
     }

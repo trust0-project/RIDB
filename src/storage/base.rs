@@ -1,5 +1,5 @@
 use wasm_bindgen::JsValue;
-use crate::query::{Query};
+use crate::query::Query;
 
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::operation::Operation;
@@ -14,22 +14,24 @@ export type SchemaTypeRecord = {
 };
 
 export abstract class StorageInternal<Schemas extends SchemaTypeRecord> {
-
+    constructor(
+        name: string, 
+        schemas: Schemas
+    );
+    abstract start(): Promise<void>;
+    abstract close(): Promise<void>;
     abstract count(
         colectionName: keyof Schemas, 
         query: QueryType<Schemas[keyof Schemas]>
     ): Promise<number>;
-
     abstract findDocumentById(
         collectionName: keyof Schemas, 
         id: string
     ): Promise<Doc<Schemas[keyof Schemas]> | null>;
-
     abstract find(
         collectionName: keyof Schemas, 
         query: QueryType<Schemas[keyof Schemas]>
     ): Promise<Doc<Schemas[keyof Schemas]>[]>;
-
     abstract write(
         op: Operation<Schemas[keyof Schemas]>
     ): Promise<Doc<Schemas[keyof Schemas]>>;
@@ -41,12 +43,6 @@ export abstract class StorageInternal<Schemas extends SchemaTypeRecord> {
 extern "C" {
     #[derive(Clone, Default)]
     pub type StorageExternal;
-
-    #[wasm_bindgen(method, catch, getter = schemas)]
-    pub fn schemas(this: &StorageExternal) -> Result<JsValue, JsValue>;
-
-    #[wasm_bindgen(method, getter = name)]
-    pub fn name(this: &StorageExternal) -> String;
 
     #[wasm_bindgen(method, catch)]
     pub async fn write(this: &StorageExternal, op: Operation) -> Result<JsValue, JsValue>;
@@ -70,7 +66,6 @@ extern "C" {
 
 //Represents a rust storage
 pub trait Storage {
-    fn schemas(&self) -> Result<JsValue, JsValue>;
     async fn write(&self, op: &Operation) -> Result<JsValue, JsValue>;
     async fn find(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue>;
     async fn find_document_by_id(&self, collection_name: &str, primary_key:JsValue) -> Result<JsValue, JsValue>;

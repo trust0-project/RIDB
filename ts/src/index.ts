@@ -21,6 +21,7 @@
  * 
  * # SDK Rerefence
  */
+import { BaseStorage, Doc, MigrationPathsForSchema, Operation, OpType, SchemaType, SchemaTypeRecord, StorageInternal } from "ridb-rust";
 import wasmBuffer from "../../pkg/ridb_rust_bg.wasm";
 import * as RIDBTypes from "ridb-rust";
 export {
@@ -60,6 +61,46 @@ export {
     QueryType,
     SchemaTypeRecord
 } from "ridb-rust";
+
+
+
+export class InMemory<T extends SchemaTypeRecord>  extends BaseStorage<T> {
+    
+    static create<SchemasCreate extends SchemaTypeRecord>(
+        name: string,
+        schemas: SchemasCreate,
+        migrations: Record<
+            keyof SchemasCreate, 
+            MigrationPathsForSchema<SchemasCreate[keyof SchemasCreate]>
+        >,
+    ): Promise<
+        BaseStorage<
+            SchemasCreate
+        >
+    > {
+        throw new Error("Method not implemented.");
+    }
+
+    findDocumentById(collectionName: keyof T, id: string): Promise<Doc<T[keyof T]> | null> {
+        throw new Error("Method not implemented.");
+    }
+    find(collectionName: keyof T, query: RIDBTypes.QueryType<T[keyof T]>): Promise<Doc<T[keyof T]>[]> {
+        throw new Error("Method not implemented.");
+    }
+    write(op: Operation<T[keyof T]>): Promise<Doc<T[keyof T]>> {
+        throw new Error("Method not implemented.");
+    }
+    count(collectionName: keyof T, query: RIDBTypes.QueryType<T[keyof T]>): Promise<number> {
+        throw new Error("Method not implemented.");
+    }
+    start(): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    close(): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+
+}
 
 /**
  * A simple plugin that overrides the docCreateHook and docRecoverHook methods.

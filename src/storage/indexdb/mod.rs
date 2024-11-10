@@ -266,15 +266,6 @@ impl Storage for IndexDB {
         JsFuture::from(promise).await
     }
 
-    fn schemas(&self) -> Result<JsValue, JsValue> {
-        let schemas_js = Object::new();
-        let schemas = self.base.schemas.clone();
-        for (collection, schema) in schemas {
-            let _ = Reflect::set(&schemas_js, &JsValue::from_str(&collection), &schema.into());
-        }
-        Ok(schemas_js.into())
-    }
-
     async fn close(&self) -> Result<JsValue, JsValue> {
         self.db.close();
         Ok(JsValue::from_str("IndexDB database closed"))
@@ -369,11 +360,10 @@ async fn create_database(name: &str, schemas_js: &Object) -> Result<Arc<IdbDatab
 #[wasm_bindgen]
 impl IndexDB {
     #[wasm_bindgen]
-    pub async fn create(name: &str, schemas_js: Object, migrations_js: Object) -> Result<IndexDB, JsValue> {
+    pub async fn create(name: &str, schemas_js: Object) -> Result<IndexDB, JsValue> {
         let base = BaseStorage::new(
             name.to_string(),
             schemas_js.clone(),
-            migrations_js
         )?;
 
         // Try to get existing connection from pool

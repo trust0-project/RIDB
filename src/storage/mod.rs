@@ -267,7 +267,7 @@ impl Storage {
             Err(JsValue::from_str("Invalid primary key value"))
         } else {
             let op = Operation {
-                collection: self.internal.name().clone(),
+                collection: collection_name.to_string(),
                 op_type: OpType::DELETE,
                 data: result,
                 indexes: vec![
