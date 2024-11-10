@@ -62,6 +62,9 @@ extern "C" {
 
     #[wasm_bindgen(method, catch)]
     pub async fn close(this: &StorageExternal) -> Result<JsValue, JsValue>;
+
+    #[wasm_bindgen(method, catch)]
+    pub async fn start(this: &StorageExternal) -> Result<JsValue, JsValue>;
 }
 
 
@@ -73,4 +76,6 @@ pub trait Storage {
     async fn find_document_by_id(&self, collection_name: &str, primary_key:JsValue) -> Result<JsValue, JsValue>;
     async fn count(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue>;
     async fn close(&self) -> Result<JsValue, JsValue>;
+    async fn start(&mut self) -> Result<JsValue, JsValue>;
+
 }

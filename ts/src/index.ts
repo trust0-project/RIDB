@@ -211,6 +211,7 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
         return storageType === StorageType.InMemory ? internal!.InMemory : internal!.IndexDB;
     }
 
+
     /**
      * Gets the database instance. Throws an error if the database has not been started.
      * @throws Will throw an error if the database is not started.
@@ -272,16 +273,26 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
             [name:string]: any
         }
     ): Promise<RIDBTypes.Database<T>> {
-        const {storageType, password} = options ?? {};
-        const { Database } = await RIDB.load();
-        this._db ??= await Database.create<T>(
-            this.schemas,
-            this.migrations,
-            this.plugins,
-            this.getRIDBModule(storageType),
-            password
-        );
+        if (!this._db) {
+            const {storageType, password} = options ?? {};
+            const { Database } = await RIDB.load();
+            this._db ??= await Database.create<T>(
+                this.schemas,
+                this.migrations,
+                this.plugins,
+                this.getRIDBModule(storageType),
+                password
+            );
+        } else {
+            await this.db.start();
+        }
+       
         return this.db;
+    }
+
+
+    async close() {
+        await this.db.close();
     }
 
     /**

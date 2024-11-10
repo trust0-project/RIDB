@@ -1,4 +1,5 @@
 use js_sys::{Array, Object, Promise, Reflect, JSON};
+use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::{wasm_bindgen, Closure};
 use wasm_bindgen_futures::JsFuture;
@@ -278,6 +279,91 @@ impl Storage for IndexDB {
         self.db.close();
         Ok(JsValue::from_str("IndexDB database closed"))
     }
+
+    async fn start(&mut self) -> Result<JsValue, JsValue> {
+        // Check if database is closed by attempting a simple transaction
+        let test_store = self.db.object_store_names().get(0);
+        if test_store.is_some() {
+            let store_name = test_store.unwrap();
+            if let Err(_) = self.db.transaction_with_str(&store_name) {
+                // Database is closed, need to reopen
+                let schemas_js = Object::new();
+                for (collection, schema) in self.base.schemas.iter() {
+                    let _ = Reflect::set(&schemas_js, &JsValue::from_str(collection), &to_value(&schema)?);
+                }
+                let db = create_database(&self.base.name, &schemas_js).await?;
+                // Update the pool with new connection
+                POOL.store_connection(self.base.name.clone(), Arc::downgrade(&db));
+                self.db = (*db).clone();
+            }
+            Ok(JsValue::from_str("IndexDB database started"))
+        } else{
+            Ok(JsValue::from_str("IndexDB database already started"))
+
+        }
+        
+    }
+}
+
+async fn create_database(name: &str, schemas_js: &Object) -> Result<Arc<IdbDatabase>, JsValue> {
+    let window = web_sys::window().ok_or_else(|| JsValue::from_str("No window object"))?;
+    let idb = window.indexed_db()?.ok_or_else(|| JsValue::from_str("IndexedDB not available"))?;
+    
+    let version = 1;
+    let db_request = idb.open_with_u32(name, version)?;
+
+    // Clone keys before entering the Promise
+    let keys_array = Object::keys(schemas_js);
+    let keys_vec: Vec<String> = (0..keys_array.length())
+        .filter_map(|i| keys_array.get(i).as_string())
+        .collect();
+    
+    let db = JsFuture::from(Promise::new(&mut |resolve, reject| {
+        let keys = keys_vec.clone();
+        let onupgradeneeded = Closure::once(Box::new(move |event: web_sys::Event| {
+            let db: IdbDatabase = event.target()
+                .unwrap()
+                .dyn_into::<IdbOpenDbRequest>()
+                .unwrap()
+                .result()
+                .unwrap()
+                .dyn_into()
+                .unwrap();
+            
+            for collection_name in keys {
+                if !db.object_store_names().contains(&collection_name) {
+                    db.create_object_store(&collection_name)
+                        .expect("Failed to create object store");
+                }
+            }
+        }));
+
+        let onsuccess = Closure::once(Box::new(move |event: web_sys::Event| {
+            let db: IdbDatabase = event.target()
+                .unwrap()
+                .dyn_into::<IdbOpenDbRequest>()
+                .unwrap()
+                .result()
+                .unwrap()
+                .dyn_into()
+                .unwrap();
+            resolve.call1(&JsValue::undefined(), &db).unwrap();
+        }));
+
+        let onerror = Closure::once(Box::new(move |e: web_sys::Event| {
+            reject.call1(&JsValue::undefined(), &e).unwrap();
+        }));
+
+        db_request.set_onupgradeneeded(Some(onupgradeneeded.as_ref().unchecked_ref()));
+        db_request.set_onsuccess(Some(onsuccess.as_ref().unchecked_ref()));
+        db_request.set_onerror(Some(onerror.as_ref().unchecked_ref()));
+
+        onupgradeneeded.forget();
+        onsuccess.forget();
+        onerror.forget();
+    })).await?;
+
+    Ok(Arc::new(db.dyn_into::<IdbDatabase>()?))
 }
 
 #[wasm_bindgen]
@@ -295,66 +381,7 @@ impl IndexDB {
             Some(db) => db,
             None => {
                 // Create new connection if none exists
-                let window = web_sys::window().ok_or_else(|| JsValue::from_str("No window object"))?;
-                let idb = window.indexed_db()?.ok_or_else(|| JsValue::from_str("IndexedDB not available"))?;
-                
-                let version = 1;
-                let db_request = idb.open_with_u32(name, version)?;
-
-                // Clone keys before entering the Promise
-                let keys_array = Object::keys(&schemas_js);
-                let keys_vec: Vec<String> = (0..keys_array.length())
-                    .filter_map(|i| keys_array.get(i).as_string())
-                    .collect();
-                
-                let db = JsFuture::from(Promise::new(&mut |resolve, reject| {
-                    let keys = keys_vec.clone(); // Clone the Vec for the closure
-                    let onupgradeneeded = Closure::once(Box::new(move |event: web_sys::Event| {
-                        let db: IdbDatabase = event.target()
-                            .unwrap()
-                            .dyn_into::<IdbOpenDbRequest>()
-                            .unwrap()
-                            .result()
-                            .unwrap()
-                            .dyn_into()
-                            .unwrap();
-                        
-                        // Use the cloned keys Vec instead of accessing the original Object
-                        for collection_name in keys {
-                            if !db.object_store_names().contains(&collection_name) {
-                                db.create_object_store(&collection_name)
-                                    .expect("Failed to create object store");
-                            }
-                        }
-                    }));
-
-                    let onsuccess = Closure::once(Box::new(move |event: web_sys::Event| {
-                        let db: IdbDatabase = event.target()
-                            .unwrap()
-                            .dyn_into::<IdbOpenDbRequest>()
-                            .unwrap()
-                            .result()
-                            .unwrap()
-                            .dyn_into()
-                            .unwrap();
-                        resolve.call1(&JsValue::undefined(), &db).unwrap();
-                    }));
-
-                    let onerror = Closure::once(Box::new(move |e: web_sys::Event| {
-                        reject.call1(&JsValue::undefined(), &e).unwrap();
-                    }));
-
-                    db_request.set_onupgradeneeded(Some(onupgradeneeded.as_ref().unchecked_ref()));
-                    db_request.set_onsuccess(Some(onsuccess.as_ref().unchecked_ref()));
-                    db_request.set_onerror(Some(onerror.as_ref().unchecked_ref()));
-
-                    onupgradeneeded.forget();
-                    onsuccess.forget();
-                    onerror.forget();
-                })).await?;
-
-                // Store new connection in pool
-                let db = Arc::new(db.dyn_into::<IdbDatabase>()?);
+                let db = create_database(name, &schemas_js).await?;
                 POOL.store_connection(name.to_string(), Arc::downgrade(&db));
                 db
             }
@@ -394,6 +421,11 @@ impl IndexDB {
     #[wasm_bindgen(js_name = "close")]
     pub async fn close_js(&self) -> Result<JsValue, JsValue> {
         self.close().await
+    }
+
+    #[wasm_bindgen(js_name = "start")]
+    pub async fn start_js(&mut self) -> Result<JsValue, JsValue> {
+        self.start().await
     }
 }
 // Global connection pool

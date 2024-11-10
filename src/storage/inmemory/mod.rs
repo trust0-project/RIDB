@@ -202,7 +202,16 @@ impl Storage for InMemory {
     }
 
     async fn close(&self) -> Result<JsValue, JsValue> {
+        // Clear all data from the storage
+        self.by_index.write()
+            .map_err(|_| JsValue::from_str("Failed to acquire write lock"))?
+            .clear();
+        
         Ok(JsValue::from_str("In-memory database closed"))
+    }
+
+    async fn start(&mut self) -> Result<JsValue, JsValue> {
+        Ok(JsValue::from_str("In-memory database started"))
     }
     
 }
@@ -283,8 +292,12 @@ impl InMemory {
     pub async fn close_js(&self) -> Result<JsValue, JsValue> {
         self.close().await
     }
-}
 
+    #[wasm_bindgen(js_name = "start")]
+    pub async fn start_js(&mut self) -> Result<JsValue, JsValue> {
+        self.start().await
+    }
+}
 
 #[cfg(test)]
 mod tests {
