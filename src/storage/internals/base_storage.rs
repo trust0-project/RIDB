@@ -21,29 +21,22 @@ export class BaseStorage<Schemas extends SchemaTypeRecord> extends StorageIntern
             SchemasCreate
         >
     >;
-
+    
     constructor(
         name: string, 
         schemas: Schemas, 
-        migrations: Record< keyof Schemas,   MigrationPathsForSchema<Schemas[keyof Schemas]> >
     );
 
-    count(
-        collectionName: keyof Schemas, 
-        query: QueryType< Schemas[keyof Schemas]  >
-    ): Promise<number>;
+    readonly name: string;
+    readonly schemas: Record<keyof Schemas, Schema<Schemas[keyof Schemas]>>;
 
-    findDocumentById(
-        collectionName: keyof Schemas, 
-        id: string
-    ): Promise<Doc<Schemas[keyof Schemas]> | null>;
-
-    find(
-        collectionName: keyof Schemas, 
-        query: QueryType<Schemas[keyof Schemas]>
-    ): Promise<  Doc<Schemas[keyof Schemas]>[]>;
-
+    start(): Promise<void>;
+    close(): Promise<void>;
+    count(colectionName: keyof Schemas, query: QueryType<Schemas[keyof Schemas]>): Promise<number>;
+    findDocumentById(collectionName: keyof Schemas, id: string): Promise<Doc<Schemas[keyof Schemas]> | null>;
+    find(collectionName: keyof Schemas, query: QueryType<Schemas[keyof Schemas]>): Promise<Doc<Schemas[keyof Schemas]>[]>;
     write(op: Operation<Schemas[keyof Schemas]>): Promise<Doc<Schemas[keyof Schemas]>>;
+
 }
 "#;
 
@@ -55,8 +48,6 @@ pub struct BaseStorage {
     pub(crate) name: String,
     /// The schema associated with the storage.
     pub(crate) schemas: HashMap<String, Schema>,
-    /// The associated schema migration.
-    pub(crate) migrations: HashMap<String, JsValue>
 }
 
 #[wasm_bindgen]
@@ -72,10 +63,9 @@ impl BaseStorage {
     ///
     /// * `Result<BaseStorage, JsValue>` - A result containing the new `BaseStorage` instance or an error.
     #[wasm_bindgen(constructor)]
-    pub fn new(name: String, schemas_js: Object, migrations_js: Object) -> Result<BaseStorage, JsValue> {
+    pub fn new(name: String, schemas_js: Object) -> Result<BaseStorage, JsValue> {
         
         let mut schemas: HashMap<String, Schema> = HashMap::new();
-        let mut migrations: HashMap<String, JsValue> = HashMap::new();
         let keys = Object::keys(&schemas_js.clone()).into_iter();
         
         
@@ -84,17 +74,14 @@ impl BaseStorage {
             
             let schema_type = Reflect::get(&schemas_js.clone(), &collection)?;
             let schema = Schema::create(schema_type)?;
-            let migration = Reflect::get(&migrations_js.clone(), &collection)?;
             
             schemas.insert(collection_string.clone(), schema);
-            migrations.insert(collection_string, migration);
         }
         
         
         let base_storage = BaseStorage {
             name,
             schemas,
-            migrations
         };
         Ok(base_storage)
     }

@@ -84,7 +84,7 @@ await db.start({storageType: storage})
 
 ## Type Parameters
 
-• **T** *extends* [`SchemaTypeRecord`](../namespaces/RIDBTypes/type-aliases/SchemaTypeRecord.md)
+• **T** *extends* [`SchemaTypeRecord`](../type-aliases/SchemaTypeRecord.md) = [`SchemaTypeRecord`](../type-aliases/SchemaTypeRecord.md)
 
 The type of the schema record.
 
@@ -106,7 +106,7 @@ Creates an instance of RIDB.
 
 #### Defined in
 
-[ts/src/index.ts:145](https://github.com/elribonazo/RIDB/blob/18ff16c9e22fc67c657be965ea0b226dde8a7772/ts/src/index.ts#L145)
+[ts/src/index.ts:163](https://github.com/elribonazo/RIDB/blob/8c4b793ba15f02a81452c07c053d4448d3ba80a1/ts/src/index.ts#L163)
 
 ## Accessors
 
@@ -126,13 +126,13 @@ The collections object.
 
 #### Defined in
 
-[ts/src/index.ts:184](https://github.com/elribonazo/RIDB/blob/18ff16c9e22fc67c657be965ea0b226dde8a7772/ts/src/index.ts#L184)
+[ts/src/index.ts:207](https://github.com/elribonazo/RIDB/blob/8c4b793ba15f02a81452c07c053d4448d3ba80a1/ts/src/index.ts#L207)
 
 ## Methods
 
 ### start()
 
-> **start**(`options`?): `Promise`\<[`Database`](../namespaces/RIDBTypes/classes/Database.md)\<`T`\>\>
+> **start**(`options`?): `Promise`\<[`Database`](Database.md)\<`T`\>\>
 
 Starts the database.
 
@@ -142,14 +142,14 @@ Starts the database.
 
 • **options.password?**: `string`
 
-• **options.storageType?**: *typeof* [`BaseStorage`](../namespaces/RIDBTypes/classes/BaseStorage.md)
+• **options.storageType?**: `StorageType` \| *typeof* `BaseStorage`
 
 #### Returns
 
-`Promise`\<[`Database`](../namespaces/RIDBTypes/classes/Database.md)\<`T`\>\>
+`Promise`\<[`Database`](Database.md)\<`T`\>\>
 
 A promise that resolves to the database instance.
 
 #### Defined in
 
-[ts/src/index.ts:225](https://github.com/elribonazo/RIDB/blob/18ff16c9e22fc67c657be965ea0b226dde8a7772/ts/src/index.ts#L225)
+[ts/src/index.ts:245](https://github.com/elribonazo/RIDB/blob/8c4b793ba15f02a81452c07c053d4448d3ba80a1/ts/src/index.ts#L245)

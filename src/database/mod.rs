@@ -71,6 +71,20 @@ export class Database<T extends SchemaTypeRecord> {
     readonly collections: {
         [name in keyof T]: Collection<Schema<T[name]>>
     }
+
+    /**
+     * Starts the database.
+     *
+     * @returns {Promise<void>} A promise that resolves when the database is started.
+     */
+    start(): Promise<void>;
+
+    /**
+     * Closes the database.
+     *
+     * @returns {Promise<void>} A promise that resolves when the database is closed.
+     */
+    close(): Promise<void>;
 }
 
 /**
@@ -128,6 +142,15 @@ pub struct Database {
 
 #[wasm_bindgen]
 impl Database {
+    #[wasm_bindgen(js_name = "start")]
+    pub async fn start(&self) -> Result<JsValue, JsValue> {
+        self.storage.internal.start().await
+    }
+
+    #[wasm_bindgen(js_name = "close")]
+    pub async fn close(&self) -> Result<JsValue, JsValue> {
+        self.storage.internal.close().await
+    }
 
     /// Retrieves the collections in the database.
     ///

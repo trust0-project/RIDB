@@ -192,17 +192,17 @@ impl Storage for InMemory {
         Ok(JsValue::from_f64(count as f64))
     }
 
-    fn schemas(&self) -> Result<JsValue, JsValue> {
-        let schemas_js = Object::new();
-        let schemas = self.base.schemas.clone();
-        for (collection, schema) in schemas {
-            Reflect::set(&schemas_js, &JsValue::from_str(&collection), &schema.into());
-        }
-        Ok(schemas_js.into())
+    async fn close(&self) -> Result<JsValue, JsValue> {
+        // Clear all data from the storage
+        self.by_index.write()
+            .map_err(|_| JsValue::from_str("Failed to acquire write lock"))?
+            .clear();
+        
+        Ok(JsValue::from_str("In-memory database closed"))
     }
 
-    async fn close(&self) -> Result<JsValue, JsValue> {
-        Ok(JsValue::from_str("In-memory database closed"))
+    async fn start(&mut self) -> Result<JsValue, JsValue> {
+        Ok(JsValue::from_str("In-memory database started"))
     }
     
 }
@@ -212,11 +212,10 @@ impl Storage for InMemory {
 impl InMemory {
     
     #[wasm_bindgen]
-    pub async fn create(name: &str, schemas_js: Object, migrations_js: Object) -> Result<InMemory, JsValue> {
+    pub async fn create(name: &str, schemas_js: Object) -> Result<InMemory, JsValue> {
         let base_res = BaseStorage::new(
             name.to_string(),
             schemas_js,
-            migrations_js
         );
         match base_res {
             Ok(base) => Ok(
@@ -283,8 +282,12 @@ impl InMemory {
     pub async fn close_js(&self) -> Result<JsValue, JsValue> {
         self.close().await
     }
-}
 
+    #[wasm_bindgen(js_name = "start")]
+    pub async fn start_js(&mut self) -> Result<JsValue, JsValue> {
+        self.start().await
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -344,8 +347,7 @@ mod tests {
         let schema = json_str_to_js_value(schema_str).unwrap();
         Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
         
-        let migrations = Object::from(json_str_to_js_value("{}").unwrap());
-        let inmem = InMemory::create("test_db", schemas_obj, migrations).await;
+        let inmem = InMemory::create("test_db", schemas_obj).await;
         assert!(inmem.is_ok());
     }
 
@@ -365,8 +367,7 @@ mod tests {
         let schema = json_str_to_js_value(schema_str).unwrap();
         Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
         
-        let migrations = Object::from(json_str_to_js_value("{}").unwrap());
-        let mut inmem = InMemory::create("test_db", schemas_obj, migrations).await.unwrap();
+        let inmem = InMemory::create("test_db", schemas_obj).await.unwrap();
 
         // Create a new item
         let new_item = Object::new();
@@ -426,8 +427,7 @@ mod tests {
         let schema = json_str_to_js_value(schema_str).unwrap();
         Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
         
-        let migrations = Object::from(json_str_to_js_value("{}").unwrap());
-        let mut inmem = InMemory::create("test_db", schemas_obj, migrations).await.unwrap();
+        let  inmem = InMemory::create("test_db", schemas_obj).await.unwrap();
 
         // Create test documents
         let items = vec![
@@ -485,8 +485,7 @@ mod tests {
         let schema = json_str_to_js_value(schema_str).unwrap();
         Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
         
-        let migrations = Object::from(json_str_to_js_value("{}").unwrap());
-        let mut inmem = InMemory::create("test_db", schemas_obj, migrations).await.unwrap();
+        let  inmem = InMemory::create("test_db", schemas_obj).await.unwrap();
 
         // Create test documents
         let items = vec![

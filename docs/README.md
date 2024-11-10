@@ -23,13 +23,27 @@
 
 # SDK Rerefence
 
-## Namespaces
+## Enumerations
 
-- [RIDBTypes](namespaces/RIDBTypes/README.md)
+- [OpType](enumerations/OpType.md)
 
 ## Classes
 
+- [Collection](classes/Collection.md)
+- [Database](classes/Database.md)
+- [Property](classes/Property.md)
 - [RIDB](classes/RIDB.md)
+- [Schema](classes/Schema.md)
+
+## Type Aliases
+
+- [CreateStorage](type-aliases/CreateStorage.md)
+- [Doc](type-aliases/Doc.md)
+- [ExtractType](type-aliases/ExtractType.md)
+- [Operation](type-aliases/Operation.md)
+- [RIDBModule](type-aliases/RIDBModule.md)
+- [SchemaType](type-aliases/SchemaType.md)
+- [SchemaTypeRecord](type-aliases/SchemaTypeRecord.md)
 
 ## Variables
 

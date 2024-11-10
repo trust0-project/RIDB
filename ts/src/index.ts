@@ -21,6 +21,7 @@
  * 
  * # SDK Rerefence
  */
+import { BaseStorage, Doc, MigrationPathsForSchema, Operation, OpType, SchemaType, SchemaTypeRecord, StorageInternal } from "ridb-rust";
 import wasmBuffer from "../../pkg/ridb_rust_bg.wasm";
 import * as RIDBTypes from "ridb-rust";
 export {
@@ -61,35 +62,10 @@ export {
     SchemaTypeRecord
 } from "ridb-rust";
 
-/**
- * A simple plugin that overrides the docCreateHook and docRecoverHook methods.
- */
-class MySimplePlugin extends RIDBTypes.BasePlugin {
-    constructor() {
-        super();
-        this.docCreateHook = (
-            schema,
-            migration,
-            docs
-        ) => docs;
-        this.docRecoverHook = (
-            schema,
-            migration,
-            docs
-        ) => docs;
-    }
-}
-
 export enum StorageType {
     InMemory = "InMemory",
     IndexDB = "IndexDB"
 }
-
-type StorageTypeMap = {
-    [StorageType.InMemory]: typeof RIDBTypes.InMemory;
-    //[StorageType.IndexDB]: typeof RIDBTypes.IndexDB;
-};
-
 
 let internal: typeof import("ridb-rust") | undefined;
 
@@ -211,6 +187,7 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
         return storageType === StorageType.InMemory ? internal!.InMemory : internal!.IndexDB;
     }
 
+
     /**
      * Gets the database instance. Throws an error if the database has not been started.
      * @throws Will throw an error if the database is not started.
@@ -272,16 +249,26 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
             [name:string]: any
         }
     ): Promise<RIDBTypes.Database<T>> {
-        const {storageType, password} = options ?? {};
-        const { Database } = await RIDB.load();
-        this._db ??= await Database.create<T>(
-            this.schemas,
-            this.migrations,
-            this.plugins,
-            this.getRIDBModule(storageType),
-            password
-        );
+        if (!this._db) {
+            const {storageType, password} = options ?? {};
+            const { Database } = await RIDB.load();
+            this._db ??= await Database.create<T>(
+                this.schemas,
+                this.migrations,
+                this.plugins,
+                this.getRIDBModule(storageType),
+                password
+            );
+        } else {
+            await this.db.start();
+        }
+       
         return this.db;
+    }
+
+
+    async close() {
+        await this.db.close();
     }
 
     /**
