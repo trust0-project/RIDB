@@ -109,3 +109,28 @@ export class InMemory<T extends SchemaTypeRecord>  extends BaseStorage<T> {
 
 }
 ```
+
+
+### Plugins
+Plugins extend the functionality of the database by hooking into the database lifecycle.
+
+```typescript
+/**
+ * A simple plugin that overrides the docCreateHook and docRecoverHook methods.
+ */
+class MySimplePlugin extends RIDBTypes.BasePlugin {
+    constructor() {
+        super();
+        this.docCreateHook = (
+            schema,
+            migration,
+            docs
+        ) => docs;
+        this.docRecoverHook = (
+            schema,
+            migration,
+            docs
+        ) => docs;
+    }
+}
+```
