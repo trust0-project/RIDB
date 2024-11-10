@@ -1,3 +1,10 @@
+# [0.6.0-rc.1](https://github.com/trust0-project/RIDB/compare/v0.5.0...v0.6.0-rc.1) (2024-11-10)
+
+
+### Features
+
+* add start and stop methods for the Database ([b12151f](https://github.com/trust0-project/RIDB/commit/b12151fc8443f983328d23f66c8f373378406ad8))
+
 # [0.5.0](https://github.com/trust0-project/RIDB/compare/v0.4.5...v0.5.0) (2024-11-10)
 
 
