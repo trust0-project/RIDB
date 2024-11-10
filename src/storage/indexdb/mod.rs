@@ -1,4 +1,3 @@
-use futures::channel::oneshot;
 use js_sys::{Array, Object, Promise, Reflect, JSON};
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::{wasm_bindgen, Closure};
