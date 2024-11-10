@@ -110,7 +110,6 @@ export class InMemory<T extends SchemaTypeRecord>  extends BaseStorage<T> {
 }
 ```
 
-
 ### Plugins
 Plugins extend the functionality of the database by hooking into the database lifecycle.
 
