@@ -2,7 +2,7 @@
  * @packageDocumentation
  *
  * <p align="center">
- *   <img src="https://cdn.jsdelivr.net/gh/trust0-project/ridb@latest/docs/logo.svg" alt="JavaScript Database" />
+ *   <img src="https://cdn.jsdelivr.net/gh/trust0-project/ridb@0.4.3/docs/logo.svg" alt="JavaScript Database" />
  *   <br />
  *   <br />
  *   <h3 align="center">A secure light-weight and dependency free database wrapper for the web.</h3>
@@ -164,7 +164,7 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
         options: {
             dbName: string,
             schemas: T,
-            plugins?: Array<typeof RIDBTypes.BasePlugin> 
+            plugins?: Array<typeof RIDBTypes.BasePlugin>
         } & RIDBTypes.MigrationsParameter<T>
     ) {
         const {
@@ -216,7 +216,7 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
     static async load(): Promise<typeof import("ridb-rust")> {
         internal ??= await import("ridb-rust").then(async (module) => {
             const wasmInstance = module.initSync(wasmBuffer);
-             await module.default(wasmInstance);
+            await module.default(wasmInstance);
             return module;
         });
         return internal!;
@@ -234,7 +234,7 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
         return {
             createStorage: async (schemas: T) => this.createStorage(schemas, storageType),
             apply: (plugins: Array<typeof RIDBTypes.BasePlugin> = []) => plugins.map((Plugin) => new Plugin()),
-        }  as RIDBTypes.RIDBModule;
+        } as RIDBTypes.RIDBModule;
     }
 
     /**
@@ -244,13 +244,13 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
      */
     async start(
         options?: {
-            storageType?: typeof RIDBTypes.BaseStorage<T>| StorageType,
+            storageType?: typeof RIDBTypes.BaseStorage<T> | StorageType,
             password?: string,
-            [name:string]: any
+            [name: string]: any
         }
     ): Promise<RIDBTypes.Database<T>> {
         if (!this._db) {
-            const {storageType, password} = options ?? {};
+            const { storageType, password } = options ?? {};
             const { Database } = await RIDB.load();
             this._db ??= await Database.create<T>(
                 this.schemas,
@@ -262,7 +262,7 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
         } else {
             await this.db.start();
         }
-       
+
         return this.db;
     }
 
@@ -287,8 +287,8 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
             throw new Error("Start the database first");
         }
 
-        const Storage = typeof storageConstructor === "string" ? 
-             this.getStorageType(storageConstructor) : 
+        const Storage = typeof storageConstructor === "string" ?
+            this.getStorageType(storageConstructor) :
             storageConstructor ?? internal.InMemory;
 
         return Storage.create(
