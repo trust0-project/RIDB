@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/trust0-project/ridb@0.4.3/docs/logo.svg" alt="JavaScript Database" />
+  <img src="https://cdn.jsdelivr.net/gh/trust0-project/ridb@latest/docs/logo.svg" alt="JavaScript Database" />
   <br />
   <br />
   <h3 align="center">A secure light-weight and dependency free database wrapper for the web.</h3>
