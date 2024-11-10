@@ -1,3 +1,10 @@
+# [0.5.0-rc.6](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.5...v0.5.0-rc.6) (2024-11-10)
+
+
+### Bug Fixes
+
+* restore indexdb working version ([69251e1](https://github.com/trust0-project/RIDB/commit/69251e193f57c4a23a04cbb1df3a9de27b04e668))
+
 # [0.5.0-rc.5](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.4...v0.5.0-rc.5) (2024-11-10)
 
 
