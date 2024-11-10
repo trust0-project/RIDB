@@ -1,3 +1,10 @@
+# [0.5.0-rc.5](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.4...v0.5.0-rc.5) (2024-11-10)
+
+
+### Features
+
+* refactor ridb to simplify approach and create 1 instance for whole db, vs instance per collection ([c70bdf9](https://github.com/trust0-project/RIDB/commit/c70bdf98daf194ac69e0f3f9369f18e97af1d09a))
+
 # [0.5.0-rc.4](https://github.com/trust0-project/RIDB/compare/v0.5.0-rc.3...v0.5.0-rc.4) (2024-11-09)
 
 
