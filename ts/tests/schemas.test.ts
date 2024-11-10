@@ -93,11 +93,27 @@ export default (platform: string, storages:StoragesType[] ) => {
                     expect(created.id).to.eq("12345")
 
                 })
-                it("Should allow updating a document", async () => {
+                it("Should allow updating multi model encrypted document", async () => {
                     const db = new RIDB(
                         {
                             dbName: "test",
                             schemas: {
+                                demo2: {
+                                    version: 0,
+                                    primaryKey: 'id',
+                                    type: SchemaFieldType.object,
+                                    encrypted: [],
+                                    properties: {
+                                        id: {
+                                            type: SchemaFieldType.string,
+                                            maxLength: 60
+                                        },
+                                        name: {
+                                            type: SchemaFieldType.string,
+                                            maxLength: 20
+                                        },
+                                    }
+                                },
                                 demo: {
                                     version: 0,
                                     primaryKey: 'id',
@@ -120,8 +136,8 @@ export default (platform: string, storages:StoragesType[] ) => {
 
                     await db.start({
                         storageType: storage,
-                         password: "test"
-                        });
+                        password: "test"
+                    });
 
                     expect(db).to.not.be.undefined;
                     expect(db.collections).to.not.be.undefined;
@@ -150,7 +166,6 @@ export default (platform: string, storages:StoragesType[] ) => {
                     expect(result).to.haveOwnProperty("name");
                     expect(result.id).to.eq("12345")
                     expect(result.name).to.eq("demo2")
-
 
                 })
                 it("Should be able to create a default database with a valid schema", async () => {

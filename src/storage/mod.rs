@@ -53,7 +53,6 @@ impl Storage {
         plugins: Vec<BasePlugin>,
         storage: StorageExternal
     ) -> Result<Storage, JsValue> {
-        web_sys::console::log_1(&"Creating new Storage instance".into());
         let storage = Storage {
             internal: storage,
             plugins,
@@ -210,127 +209,58 @@ impl Storage {
 
 
     pub(crate) async fn write(&self, collection_name: &str, document_without_pk: JsValue) -> Result<JsValue, JsValue> {
-        web_sys::console::log_2(
-            &"Writing document to collection:".into(),
-            &collection_name.into()
-        );
-        web_sys::console::log_2(
-            &"Initial document:".into(),
-            &document_without_pk
-        );
-        
-        let schema = self.get_schema(collection_name)?;
-        web_sys::console::log_1(&"Schema retrieved successfully".into());
+        // Move all the preparation logic before the async operation
+        let document = {
+            let schema = self.get_schema(collection_name)?;
+            let primary_key = schema.primary_key.clone();
+            let indexes = schema.indexes.clone();
+            
+            let document = self.validate_schema(collection_name, document_without_pk)?;
+            
+            let indexes = match indexes {
+                Some(mut existing) => {
+                    existing.push(primary_key.clone());
+                    existing
+                },
+                _ => {
+                    let mut new_index: Vec<String> = Vec::new();
+                    new_index.push(primary_key.clone());
+                    new_index
+                }
+            };
 
-        let primary_key = schema.primary_key.clone();
-        let indexes = schema.indexes.clone();
-        web_sys::console::log_2(
-            &"Primary key:".into(),
-            &primary_key.clone().into()
-        );
+            let pk = Reflect::get(&document, &JsValue::from_str(primary_key.as_str()))
+                .map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
-        let document = match self.validate_schema(collection_name, document_without_pk) {
-            Ok(doc) => {
-                web_sys::console::log_2(
-                    &"Schema validation successful. Validated document:".into(),
-                    &doc
-                );
-                doc
-            },
-            Err(e) => {
-                web_sys::console::error_1(&"Schema validation failed:".into());
-                web_sys::console::error_1(&e);
-                return Err(JsValue::from(RIDBError::from(e)));
+            // Find existing document
+            let existing = self.find_document_by_id(collection_name, pk).await?;
+            
+            let op_type = if existing.is_null() { OpType::CREATE } else { OpType::UPDATE };
+
+            Operation {
+                collection: collection_name.to_string(),
+                op_type,
+                data: document,
+                indexes,
             }
         };
 
-        let indexes = match indexes {
-            Some(mut existing) => {
-                existing.push(primary_key.clone());
-                web_sys::console::log_1(&"Using existing indexes with primary key added".into());
-                existing
-            },
-            _ => {
-                let mut new_index: Vec<String> = Vec::new();
-                new_index.push(primary_key.clone());
-                web_sys::console::log_1(&"Created new index array with primary key".into());
-                new_index
-            }
-        };
-
-        let pk = match Reflect::get(&document.clone(), &JsValue::from_str(primary_key.as_str())) {
-            Ok(val) => {
-                web_sys::console::log_2(&"Retrieved primary key value:".into(), &val);
-                val
-            },
-            Err(e) => {
-                web_sys::console::error_1(&"Failed to get primary key from document".into());
-                return Err(JsValue::from(RIDBError::from(e)));
-            }
-        };
-
-        web_sys::console::log_1(&format!("Find by id start in colllection:{}", &collection_name).into());
-
-        let existing = self.find_document_by_id(&collection_name, pk.clone()).await?;
-
-
-        web_sys::console::log_1(&format!("Find by id result in colllection:{} == {:?}", &collection_name, &existing).into());
-
-
-        let op_type = if existing.is_null() { OpType::CREATE } else { OpType::UPDATE };
-
-        let op = Operation {
-            collection: collection_name.to_string(),
-            op_type,
-            data: document,
-            indexes,
-        };
-
-        web_sys::console::log_2(
-            &"Executing write operation for collection:".into(),
-            &op.clone().collection.into()
-        );
-        
-        match self.internal.write(op).await {
-            Ok(result) => {
-                web_sys::console::log_1(&"Write operation successful".into());
-                Ok(result)
-            },
-            Err(e) => {
-                web_sys::console::error_1(&"Write operation failed:".into());
-                web_sys::console::error_1(&e);
-                Err(JsValue::from(RIDBError::from(e)))
-            }
-        }
+        // Perform the actual write operation
+        self.internal.write(document).await
+            .map_err(|e| JsValue::from(RIDBError::from(e)))
     }
 
     pub(crate) async fn find_document_by_id(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, JsValue>{
-        web_sys::console::log_3(
-            &"Finding document by ID in collection:".into(),
-            &collection_name.into(),
-            &primary_key
-        );
         match self.internal.find_document_by_id( 
             collection_name, 
             primary_key
         ).await {
-            Ok(document) => {
-                web_sys::console::log_1(&if document.is_null() { 
-                    "Document not found".into() 
-                } else { 
-                    "Document found".into() 
-                });
-                Ok(document)
-            },
+            Ok(document) => Ok(document),
             Err(_) => Ok(JsValue::NULL),
         }
     }
 
     pub(crate) async fn remove(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, JsValue> {
-        web_sys::console::log_2(
-            &"Removing document from collection:".into(),
-            &collection_name.into()
-        );
         let result = self.find_document_by_id(collection_name, primary_key.clone()).await?;
         let schema = self.get_schema(collection_name)?;
         if result.is_null() {

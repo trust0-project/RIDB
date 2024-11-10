@@ -68,7 +68,7 @@ extern "C" {
 //Represents a rust storage
 pub trait Storage {
     fn schemas(&self) -> Result<JsValue, JsValue>;
-    async fn write(&mut self, op: &Operation) -> Result<JsValue, JsValue>;
+    async fn write(&self, op: &Operation) -> Result<JsValue, JsValue>;
     async fn find(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue>;
     async fn find_document_by_id(&self, collection_name: &str, primary_key:JsValue) -> Result<JsValue, JsValue>;
     async fn count(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue>;

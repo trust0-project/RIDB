@@ -10,7 +10,6 @@ use crate::plugin::migration::MigrationPlugin;
 use crate::schema::Schema;
 use crate::storage::base::StorageExternal;
 use crate::storage::Storage;
-use web_sys::console;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -139,23 +138,18 @@ impl Database {
     /// * `Result<Object, JsValue>` - A result containing an `Object` with the collections or an error.
     #[wasm_bindgen(getter)]
     pub fn collections(&self) -> Result<Object, JsValue> {
-        console::log_1(&"Database::collections() - Starting collection retrieval".into());
         let mut collections: HashMap<String, Collection> = HashMap::new();
         for (key, _) in self.storage.schemas.iter() {
-            console::log_2(&"Database::collections() - Creating collection:".into(), &key.into());
             let storage = self.storage.clone();
-
             let collection = Collection::from(
                 key.clone(),
                 storage
             );
-
             collections.insert(
                 key.clone(), 
                 collection
             );
         }
-        console::log_1(&"Database::collections() - Finished creating collections object".into());
         let object = Object::new();
         for (key, collection) in collections {
             Reflect::set(
@@ -175,12 +169,8 @@ impl Database {
         module: RIDBModule,
         password: Option<String>
     ) -> Result<Database, JsValue> {
-        console::log_1(&"Database::create() - Starting database creation".into());
-        
-        console::log_1(&"Database::create() - Creating storage".into());
         let storage: StorageExternal = module.create_storage(&schemas_js).await?.into();
 
-        console::log_1(&"Database::create() - Applying plugins".into());
         let vec_plugins_js: Vec<JsValue> = module.apply(plugins)?;
         let mut vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
             .map(|plugin| plugin.unchecked_into::<BasePlugin>())
@@ -193,13 +183,11 @@ impl Database {
 
         vec_plugins.push(MigrationPlugin::new()?.base.clone());
 
-        console::log_1(&"Database::create() - Processing schemas and migrations".into());
         let mut schemas: HashMap<String, Schema> = HashMap::new();
         let mut migrations: HashMap<String, JsValue> = HashMap::new();
         let keys = Object::keys(&schemas_js.clone()).into_iter();
         for collection in keys {
             let collection_string: String = collection.as_string().ok_or("Invalid collection name")?;
-            console::log_2(&"Database::create() - Processing schema for collection:".into(), &collection_string.clone().into());
             let schema_type = Reflect::get(&schemas_js.clone(), &collection)?;
             let schema = Schema::create(schema_type)?;
             let migration = Reflect::get(&migrations_js.clone(), &collection)?;
@@ -222,7 +210,6 @@ impl Database {
             migrations.insert(collection_string, migration);
         }
 
-        console::log_1(&"Database::create() - Creating final storage instance".into());
         let storage = Storage::create(
             schemas,
             migrations,
@@ -230,7 +217,6 @@ impl Database {
             storage
         ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
-        console::log_1(&"Database::create() - Database creation complete".into());
         Ok(Database { storage })
     }
 }

@@ -157,15 +157,12 @@ impl EncryptionPlugin {
     }
     
     pub(crate) fn decrypt(&self, schema_js: JsValue, migration: JsValue, content: JsValue) -> Result<JsValue, JsValue> {
-        console::log_2(&"Starting decryption with content:".into(), &content);
         
         // Add validation for input parameters
         if schema_js.is_undefined() || schema_js.is_null() {
-            console::log_2(&"Schema validation failed. Schema:".into(), &schema_js);
             return Err(JsValue::from("Schema cannot be null or undefined"));
         }
         if content.is_undefined() || content.is_null() {
-            console::log_2(&"Content validation failed. Content:".into(), &content);
             return Err(JsValue::from("Content cannot be null or undefined"));
         }
 
@@ -181,7 +178,6 @@ impl EncryptionPlugin {
                             decrypted_array.push(&decrypted_item);
                         },
                         Err(e) => {
-                            console::log_2(&"Error decrypting array item:".into(), &e);
                             return Err(e);
                         }
                     }
@@ -197,27 +193,22 @@ impl EncryptionPlugin {
     fn decrypt_single_document(&self, schema_js: JsValue, migration: JsValue, content: JsValue) -> Result<JsValue, JsValue> {
         // Validate content is an object
         if !content.is_object() {
-            console::log_2(&"Content must be an object. Received:".into(), &content);
             return Err(JsValue::from("Content must be an object"));
         }
 
         let content_obj = Object::from(content);
-        console::log_2(&"Processing content object:".into(), &content_obj);
         
         // Safe get of encrypted data
         let encrypted_data = match Reflect::get(&content_obj, &JsValue::from_str("__encrypted")) {
             Ok(data) => {
-                console::log_2(&"Successfully retrieved encrypted data:".into(), &data);
                 data
             },
             Err(_) => {
-                console::log_1(&"Failed to read encrypted data from content object".into());
                 return Err(JsValue::from("Failed to read encrypted data"));
             }
         };
 
         if encrypted_data.is_undefined() {
-            console::log_2(&"No encrypted data found in content:".into(), &content_obj);
             return Ok(JsValue::from(content_obj));
         }
 
@@ -282,7 +273,6 @@ impl EncryptionPlugin {
             }
         }
 
-        console::log_2(&"Successfully decrypted data. Result:".into(), &content_obj);
         Ok(JsValue::from(content_obj))
     }
 }

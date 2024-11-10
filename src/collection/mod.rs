@@ -3,7 +3,6 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 use crate::schema::Schema;
 use crate::storage::{HookType, Storage};
-use web_sys::console;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -140,37 +139,21 @@ impl Collection {
     /// the documents found in the collection.
     #[wasm_bindgen]
     pub async fn find(&mut self, query: JsValue) -> Result<JsValue, JsValue> {
-        console::log_1(&format!("[Collection:{}] Finding documents with query: {}", 
-            self.name, 
-            JSON::stringify(&query).unwrap_or_else(|_| "Invalid JSON".into())
-        ).into());
-        
         let result = match self.storage.internal.find(&self.name, query).await {
             Ok(docs) => {
-                console::log_1(&format!("[Collection:{}] Raw documents found: {}", 
-                    self.name,
-                    JSON::stringify(&docs).unwrap_or_else(|_| "Invalid JSON".into())
-                ).into());
                 docs
             },
             Err(e) => {
-                console::log_1(&format!("[Collection:{}] Error finding documents: {:?}", self.name, e).into());
                 return Err(js_sys::Error::new(&format!("Failed to find documents: {:?}", e)).into())
             }
         };
 
         let processed = if result.is_undefined() || result.is_null() {
-            console::log_1(&format!("[Collection:{}] No documents found", self.name).into());
             result
         } else {
-            console::log_1(&format!("[Collection:{}] Processing documents through recover hook", self.name).into());
             self.storage.call(&self.name, HookType::Recover, result)?
         };
 
-        console::log_1(&format!("[Collection:{}] Final processed documents: {}", 
-            self.name, 
-            JSON::stringify(&processed).unwrap_or_else(|_| "Invalid JSON".into())
-        ).into());
 
         Ok(processed)
     }
@@ -181,7 +164,6 @@ impl Collection {
     /// the documents found in the collection.
     #[wasm_bindgen]
     pub async fn count(&self, query: JsValue) -> Result<JsValue, JsValue> {
-        console::log_1(&format!("[Collection:{}] Counting documents with query", self.name).into());
         match self.storage.internal.count(&self.name, query).await {
             Ok(count) => Ok(count),
             Err(e) => Err(js_sys::Error::new(&format!("Failed to count documents: {:?}", e)).into())
@@ -193,12 +175,10 @@ impl Collection {
     /// This function is asynchronous.
     #[wasm_bindgen(js_name="findById")]
     pub async fn find_by_id(&self, primary_key: JsValue) -> Result<JsValue, JsValue>{
-        console::log_1(&format!("[Collection:{}] Finding document by ID", self.name).into());
         let document = match self.storage.internal.find_document_by_id(&self.name, primary_key  ).await {
             Ok(doc) => doc,
             Err(e) => return Err(js_sys::Error::new(&format!("Failed to find document by ID: {:?}", e)).into())
         };
-        console::log_1(&format!("[Collection:{}] Found document by ID", self.name).into());
 
         self.storage.call(
             &self.name, 
@@ -216,49 +196,22 @@ impl Collection {
     /// * `document` - A `JsValue` representing the partial document to update.
     #[wasm_bindgen]
     pub async fn update(&mut self, document: JsValue) -> Result<JsValue, JsValue> {
-        console::log_1(&format!("[Collection:{}] Processing document for update. Input: {}", 
-            self.name,
-            JSON::stringify(&document).unwrap_or_else(|_| "Invalid JSON".into())
-        ).into());
-
         let processed_document = self.storage.call(
             &self.name, 
             HookType::Create,
             document
         )?;
 
-        console::log_1(&format!("[Collection:{}] Document processed through create hook: {}", 
-            self.name,
-            JSON::stringify(&processed_document).unwrap_or_else(|_| "Invalid JSON".into())
-        ).into());
-
         let res = match self.storage.write(&self.name, processed_document).await {
-            Ok(result) => {
-                console::log_1(&format!("[Collection:{}] Document successfully written: {}", 
-                    self.name,
-                    JSON::stringify(&result).unwrap_or_else(|_| "Invalid JSON".into())
-                ).into());
-                result
-            },
-            Err(e) => {
-                console::log_1(&format!("[Collection:{}] Error updating document: {:?}", self.name, e).into());
-                return Err(e);
-            }
+            Ok(result) => result,
+            Err(e) => return Err(e)
         };
 
-        console::log_1(&format!("[Collection:{}] Processing updated document through recover hook", self.name).into());
-        let final_result = self.storage.call(
+        self.storage.call(
             &self.name, 
             HookType::Recover,
             res
-        )?;
-
-        console::log_1(&format!("[Collection:{}] Final processed document: {}", 
-            self.name,
-            JSON::stringify(&final_result).unwrap_or_else(|_| "Invalid JSON".into())
-        ).into());
-
-        Ok(final_result)
+        )
     }
 
     /// Creates a new document in the collection.
@@ -270,22 +223,16 @@ impl Collection {
     /// * `document` - A `JsValue` representing the document to create.
     #[wasm_bindgen]
     pub async fn create(&mut self, document: JsValue) -> Result<JsValue, JsValue> {
-        console::log_1(&format!("[Collection:{}] Processing document for creation", self.name).into());
         let processed_document = self.storage.call(
             &self.name, 
             HookType::Create,
             document
         )?;
 
-        console::log_1(&format!("[Collection:{}] Writing new document", self.name).into());
         let res = match self.storage.write(&self.name, processed_document.clone()).await {
             Ok(result) => result,
-            Err(e) => {
-                console::log_1(&format!("[Collection:{}] Error creating document: {:?}", self.name, e).into());
-                return Err(e);
-            }
+            Err(e) => return Err(e)
         };
-        console::log_1(&format!("[Collection:{}] Document created successfully", self.name).into());
 
         self.storage.call(
             &self.name, 
@@ -299,12 +246,9 @@ impl Collection {
     /// This function is asynchronous.
     #[wasm_bindgen]
     pub async fn delete(&self, primary_key: JsValue) -> Result<JsValue, JsValue> {
-        console::log_1(&format!("[Collection:{}] Deleting document", self.name).into());
-        let result = match self.storage.remove(&self.name, primary_key ).await {
-            Ok(res) => res,
-            Err(e) => return Err(js_sys::Error::new(&format!("Failed to delete document: {:?}", e)).into())
-        };
-        console::log_1(&format!("[Collection:{}] Document deleted", self.name).into());
-        Ok(result)
+        match self.storage.remove(&self.name, primary_key ).await {
+            Ok(res) => Ok(res),
+            Err(e) => Err(js_sys::Error::new(&format!("Failed to delete document: {:?}", e)).into())
+        }
     }
 }

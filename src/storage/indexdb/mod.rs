@@ -1,3 +1,4 @@
+use futures::channel::oneshot;
 use js_sys::{Array, Object, Promise, Reflect, JSON};
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::{wasm_bindgen, Closure};
@@ -53,9 +54,45 @@ impl Drop for IndexDB {
     }
 }
 
+async fn idb_request_result(request: IdbRequest) -> Result<JsValue, JsValue> {
+    let promise = Promise::new(&mut |resolve, reject| {
+
+        let reject2 = reject.clone();
+        let success_callback = Closure::once(Box::new(move |event: web_sys::Event| {
+            let request: IdbRequest = event.target()
+                .unwrap()
+                .dyn_into()
+                .unwrap();
+            
+            match request.result() {
+                Ok(result) => resolve.call1(&JsValue::undefined(), &result).unwrap(),
+                Err(e) => reject.call1(&JsValue::undefined(), &e).unwrap(),
+            }
+        }));
+
+        let error_callback = Closure::once(Box::new(move |event: web_sys::Event| {
+            let request: IdbRequest = event.target()
+                .unwrap()
+                .dyn_into()
+                .unwrap();
+            
+            let error = request.error().unwrap();
+            reject2.call1(&JsValue::undefined(), &error.unwrap()).unwrap();
+        }));
+
+        request.set_onsuccess(Some(success_callback.as_ref().unchecked_ref()));
+        request.set_onerror(Some(error_callback.as_ref().unchecked_ref()));
+
+        // The closures will automatically be dropped after the Promise resolves/rejects
+        success_callback.forget();
+        error_callback.forget();
+    });
+
+    JsFuture::from(promise).await
+}
+
 impl Storage for IndexDB {
-    async fn write(&mut self, op: &Operation) -> Result<JsValue, JsValue> {
-        console::log_1(&JsValue::from_str(&format!("Starting operation...")));
+    async fn write(&self, op: &Operation) -> Result<JsValue, JsValue> {
         let store_name = &op.collection;
         
         let transaction = match self.db.transaction_with_str_and_mode(
@@ -63,18 +100,12 @@ impl Storage for IndexDB {
             web_sys::IdbTransactionMode::Readwrite,
         ) {
             Ok(t) => t,
-            Err(e) => {
-                console::error_1(&JsValue::from_str("Failed to create transaction"));
-                return Err(e);
-            }
+            Err(e) => return Err(e),
         };
 
         let store = match transaction.object_store(store_name) {
             Ok(s) => s,
-            Err(e) => {
-                console::error_1(&JsValue::from_str("Failed to get object store"));
-                return Err(e);
-            }
+            Err(e) => return Err(e),
         };
 
         let schema = self.base.schemas.get(op.collection.as_str()).ok_or_else(|| JsValue::from_str("Collection not found"))?;
@@ -87,57 +118,21 @@ impl Storage for IndexDB {
                 let primary_key = schema.primary_key.clone();
                 let pk_value = match Reflect::get(&document, &JsValue::from_str(&primary_key)) {
                     Ok(v) => v,
-                    Err(e) => {
-                        console::error_1(&JsValue::from_str(&format!(
-                            "Failed to get primary key '{}' from document",
-                            primary_key
-                        )));
-                        return Err(e);
-                    }
+                    Err(e) => return Err(e),
                 };
 
                 if pk_value.is_undefined() || pk_value.is_null() {
-                    console::error_1(&JsValue::from_str(&format!(
-                        "Document must contain primary key '{}'",
-                        primary_key
-                    )));
                     return Err(JsValue::from_str("Document must contain a primary key"));
                 }
-
-                console::log_1(&JsValue::from_str(&format!(
-                    "Processing  operation for document with {} = {:?}",
-                     primary_key, pk_value
-                )));
 
                 // Validate document against schema
                 schema.validate_schema(document.clone())?;
 
                 // Store the document and wait for completion
                 let request = store.put_with_key(&document, &pk_value)?;
+                idb_request_result(request).await?;
 
-                let promise = Promise::new(&mut |resolve, reject| {
-                    let onsucess = Closure::once(Box::new(move |event: web_sys::Event| {
-                        let request: IdbRequest = event.target().unwrap().dyn_into().unwrap();
-                        let result = request.result().unwrap();
-                        resolve.call1(&JsValue::undefined(), &result).unwrap();
-                    }));
-                    
-                    let onerror = Closure::once(Box::new(move |e: web_sys::Event| {
-                        reject.call1(&JsValue::undefined(), &e).unwrap();
-                    }));
-                    
-                    request.set_onsuccess(Some(onsucess.as_ref().unchecked_ref()));
-                    request.set_onerror(Some(onerror.as_ref().unchecked_ref()));
-
-                    onsucess.forget();
-                    onerror.forget();
-                });
-
-                JsFuture::from(promise).await?;
-
-                Ok(
-                    document.clone()
-                )
+                Ok(document.clone())
             },
             OpType::DELETE => {
                 let pk_value = op.data.clone();
@@ -169,7 +164,6 @@ impl Storage for IndexDB {
     }
 
     async fn find(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
-        // console::log_2(&JsValue::from_str("Starting find operation with query:"), &query.query);
         let store_name = collection_name;
         let transaction = self.db.transaction_with_str(store_name)?;
         let store = transaction.object_store(store_name)?;
@@ -211,7 +205,6 @@ impl Storage for IndexDB {
     }
 
     async fn find_document_by_id(&self, collection_name: &str, primary_key_value: JsValue) -> Result<JsValue, JsValue> {
-        // console::log_2(&JsValue::from_str("Finding document by ID:"), &primary_key_value);
         let store_name = collection_name;
         let transaction = self.db.transaction_with_str(store_name)?;
         let store = transaction.object_store(store_name)?;
@@ -378,7 +371,7 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "write")]
-    pub async fn write_js(&mut self, op: &Operation) -> Result<JsValue, JsValue> {
+    pub async fn write_js(&self, op: &Operation) -> Result<JsValue, JsValue> {
         self.write(op).await
     }
 

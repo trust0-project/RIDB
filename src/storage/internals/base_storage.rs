@@ -73,18 +73,14 @@ impl BaseStorage {
     /// * `Result<BaseStorage, JsValue>` - A result containing the new `BaseStorage` instance or an error.
     #[wasm_bindgen(constructor)]
     pub fn new(name: String, schemas_js: Object, migrations_js: Object) -> Result<BaseStorage, JsValue> {
-        web_sys::console::log_1(&format!("Creating new BaseStorage... for db {}", name).into());
-        web_sys::console::log_2(&"Name:".into(), &name.clone().into());
         
         let mut schemas: HashMap<String, Schema> = HashMap::new();
         let mut migrations: HashMap<String, JsValue> = HashMap::new();
         let keys = Object::keys(&schemas_js.clone()).into_iter();
         
-        web_sys::console::log_1(&"Processing schema collections...".into());
         
         for collection in keys {
             let collection_string: String = collection.as_string().ok_or("Invalid collection name")?;
-            web_sys::console::log_2(&"Processing collection:".into(), &collection_string.clone().into());
             
             let schema_type = Reflect::get(&schemas_js.clone(), &collection)?;
             let schema = Schema::create(schema_type)?;
@@ -94,7 +90,6 @@ impl BaseStorage {
             migrations.insert(collection_string, migration);
         }
         
-        web_sys::console::log_1(&"BaseStorage creation complete".into());
         
         let base_storage = BaseStorage {
             name,
