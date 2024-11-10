@@ -1,3 +1,16 @@
+# [0.6.0](https://github.com/trust0-project/RIDB/compare/v0.5.0...v0.6.0) (2024-11-10)
+
+
+### Bug Fixes
+
+* improve documentation and interface for external storages ([8c4b793](https://github.com/trust0-project/RIDB/commit/8c4b793ba15f02a81452c07c053d4448d3ba80a1))
+* port minor improvements in docs and exports ([#24](https://github.com/trust0-project/RIDB/issues/24)) ([c92fabb](https://github.com/trust0-project/RIDB/commit/c92fabb231f210471bdb3a83b1f794f3982c18f6))
+
+
+### Features
+
+* add start and stop methods for the Database ([b12151f](https://github.com/trust0-project/RIDB/commit/b12151fc8443f983328d23f66c8f373378406ad8))
+
 # [0.6.0-rc.2](https://github.com/trust0-project/RIDB/compare/v0.6.0-rc.1...v0.6.0-rc.2) (2024-11-10)
 
 
