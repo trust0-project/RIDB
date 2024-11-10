@@ -5,7 +5,8 @@ permissions:
   pull-requests: write
   id-token: write
 
-on: [push, pull_request]
+on:
+  pull_request:
 
 jobs:
   test:
