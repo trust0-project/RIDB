@@ -25,7 +25,8 @@ base64 = "0.22.1"
 chacha20poly1305 = { version = "0.10.1", features = ["std"] }
 rand = "0.9.0-alpha.2"
 getrandom = { version = "0.2", features = ["js"] }
-
+parking_lot = "0.12"
+lazy_static = "1.4"
 [package.metadata.wasm-bindgen]
 typescript = true
 

@@ -87,7 +87,7 @@ export enum StorageType {
 
 type StorageTypeMap = {
     [StorageType.InMemory]: typeof RIDBTypes.InMemory;
-    [StorageType.IndexDB]: typeof RIDBTypes.IndexDB;
+    //[StorageType.IndexDB]: typeof RIDBTypes.IndexDB;
 };
 
 
@@ -173,24 +173,26 @@ let internal: typeof import("ridb-rust") | undefined;
  * @class
  * @template T - The type of the schema record.
  */
-export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
+export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRecord> {
 
     private schemas: T;
     private migrations: RIDBTypes.MigrationPathsForSchemas<T>
     private plugins: Array<typeof RIDBTypes.BasePlugin> = [];
     private _db: RIDBTypes.Database<T> | undefined;
-
+    private dbName: string;
     /**
      * Creates an instance of RIDB.
      * @param options
      */
     constructor(
         options: {
+            dbName: string,
             schemas: T,
             plugins?: Array<typeof RIDBTypes.BasePlugin> 
         } & RIDBTypes.MigrationsParameter<T>
     ) {
         const {
+            dbName,
             schemas,
             migrations = {} as RIDBTypes.MigrationPathsForSchemas<T>,
             plugins = []
@@ -199,12 +201,13 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
         this.schemas = schemas;
         this.plugins = plugins;
         this.migrations = migrations;
+        this.dbName = dbName;
     }
 
 
     private getStorageType<T extends StorageType>(
         storageType: T
-    ): StorageTypeMap[T] {
+    ) {
         return storageType === StorageType.InMemory ? internal!.InMemory : internal!.IndexDB;
     }
 
@@ -249,15 +252,12 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
      * @private
      */
     private getRIDBModule(
-        storageType?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType> | StorageType
+        storageType?: typeof RIDBTypes.BaseStorage<T> | StorageType
     ) {
         return {
-            createStorage: async (schemas: RIDBTypes.SchemaTypeRecord) =>
-                this.createStorage(schemas, storageType),
-            apply: (
-                plugins: Array<typeof RIDBTypes.BasePlugin> = []
-            ) => plugins.map((Plugin) => new Plugin()),
-        };
+            createStorage: async (schemas: T) => this.createStorage(schemas, storageType),
+            apply: (plugins: Array<typeof RIDBTypes.BasePlugin> = []) => plugins.map((Plugin) => new Plugin()),
+        }  as RIDBTypes.RIDBModule;
     }
 
     /**
@@ -267,15 +267,14 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
      */
     async start(
         options?: {
-            storageType?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>| StorageType,
+            storageType?: typeof RIDBTypes.BaseStorage<T>| StorageType,
             password?: string,
-            //Extra properties
             [name:string]: any
         }
     ): Promise<RIDBTypes.Database<T>> {
         const {storageType, password} = options ?? {};
         const { Database } = await RIDB.load();
-        this._db ??= await Database.create(
+        this._db ??= await Database.create<T>(
             this.schemas,
             this.migrations,
             this.plugins,
@@ -293,9 +292,9 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
      * @returns An object mapping collection names to storage instances.
      * @private
      */
-    private async createStorage<J extends RIDBTypes.SchemaTypeRecord>(
-        schemas: J,
-        storageConstructor?: typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType> | StorageType
+    private async createStorage(
+        schemas: T,
+        storageConstructor?: typeof RIDBTypes.BaseStorage<T> | StorageType
     ) {
         if (!internal) {
             throw new Error("Start the database first");
@@ -305,16 +304,11 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord> {
              this.getStorageType(storageConstructor) : 
             storageConstructor ?? internal.InMemory;
 
-        const storages: Record<string, RIDBTypes.BaseStorage<any>> = {};
-
-        for (const name in schemas) {
-            storages[name] = await Storage.create(
-                name,
-                schemas[name],
-                this.migrations[name]
-            );
-        }
-        return storages;
+        return Storage.create(
+            this.dbName,
+            schemas,
+            this.migrations
+        );
     }
 }
 

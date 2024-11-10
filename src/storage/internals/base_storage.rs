@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+
+use js_sys::{Object, Reflect, JSON};
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::schema::Schema;
@@ -5,87 +8,42 @@ use crate::schema::Schema;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
-/**
- * Represents the base storage implementation, extending `StorageInternal`.
- *
- * @template T - The schema type.
- */
-export class BaseStorage<T extends SchemaType> extends StorageInternal<T> {
-
-    static create<TS extends SchemaType>(
+export class BaseStorage<Schemas extends SchemaTypeRecord> extends StorageInternal<Schemas> {
+    static create<SchemasCreate extends SchemaTypeRecord>(
         name: string,
-        schema_type: TS,
-        migrations: MigrationPathsForSchema<TS>,
-    ): Promise<InMemory<TS>>;
+        schemas: SchemasCreate,
+        migrations: Record<
+            keyof SchemasCreate, 
+            MigrationPathsForSchema<SchemasCreate[keyof SchemasCreate]>
+        >,
+    ): Promise<
+        BaseStorage<
+            SchemasCreate
+        >
+    >;
 
-    /**
-     * Frees the resources used by the base storage.
-     */
-    free(): void;
+    constructor(
+        name: string, 
+        schemas: Schemas, 
+        migrations: Record< keyof Schemas,   MigrationPathsForSchema<Schemas[keyof Schemas]> >
+    );
 
-    /**
-     * Creates a new `BaseStorage` instance with the provided name and schema type.
-     *
-     * @param {string} name - The name of the storage.
-     * @param {any} schema_type - The schema type of the storage.
-     * @param migration
-     */
-    constructor(name: string, schema_type: T, migration: MigrationPathsForSchema<T>);
+    count(
+        collectionName: keyof Schemas, 
+        query: QueryType< Schemas[keyof Schemas]  >
+    ): Promise<number>;
 
-    /**
-     * The name of the storage.
-     */
-    readonly name: string;
+    findDocumentById(
+        collectionName: keyof Schemas, 
+        id: string
+    ): Promise<Doc<Schemas[keyof Schemas]> | null>;
 
-    /**
-     * The schema associated with the storage.
-     */
-    readonly schema: Schema<T>;
+    find(
+        collectionName: keyof Schemas, 
+        query: QueryType<Schemas[keyof Schemas]>
+    ): Promise<  Doc<Schemas[keyof Schemas]>[]>;
 
-    /**
-     * Closes the storage.
-     *
-     * @returns {Promise<void>} A promise that resolves when the storage is closed.
-     */
-    close(): Promise<void>;
-
-    /**
-     * Counts the number of documents in the storage.
-     *
-     * @returns {Promise<number>} A promise that resolves to the number of documents.
-     */
-    count(query: QueryType<T>): Promise<number>;
-
-    /**
-     * Finds a document by its ID.
-     *
-     * @param {string} id - The ID of the document to find.
-     * @returns {Promise<null>} A promise that resolves to the found document or null.
-     */
-    findDocumentById(id: string): Promise<Doc<T> | null>;
-
-    /**
-     * Queries the storage.
-     *
-     * @returns {Promise<void>} A promise that resolves when the query is complete.
-     */
-    find(query: QueryType<T>): Promise<Doc<T>[]>;
-
-    /**
-     * Removes a document by its ID.
-     *
-     * @param {string} id - The ID of the document to remove.
-     * @returns {Promise<void>} A promise that resolves when the document is removed.
-     */
-    remove(id: string): Promise<void>;
-
-    /**
-     * Writes an operation to the storage.
-     *
-     * @param {Operation<T>} op - The operation to write.
-     * @returns {Promise<Doc<T>>} A promise that resolves to the document written.
-     */
-    write(op: Operation<T>): Promise<Doc<T>>;
+    write(op: Operation<Schemas[keyof Schemas]>): Promise<Doc<Schemas[keyof Schemas]>>;
 }
 "#;
 
@@ -96,9 +54,9 @@ pub struct BaseStorage {
     /// The name of the storage.
     pub(crate) name: String,
     /// The schema associated with the storage.
-    pub(crate) schema: Schema,
+    pub(crate) schemas: HashMap<String, Schema>,
     /// The associated schema migration.
-    pub(crate) migration: JsValue
+    pub(crate) migrations: HashMap<String, JsValue>
 }
 
 #[wasm_bindgen]
@@ -114,49 +72,35 @@ impl BaseStorage {
     ///
     /// * `Result<BaseStorage, JsValue>` - A result containing the new `BaseStorage` instance or an error.
     #[wasm_bindgen(constructor)]
-    pub fn new(name: String, schema_type: JsValue, migration: JsValue) -> Result<BaseStorage, JsValue> {
-        match Schema::create(schema_type) {
-            Ok(schema) => {
-                match schema.is_valid() {
-                    Ok(_) => {
-                        Ok(
-                            BaseStorage {
-                                name,
-                                schema,
-                                migration
-                            })
-                    },
-                    Err(e) => {
-                        Err(JsValue::from(e))
-                    }
-                }
-            },
-            Err(e) => Err(e)
+    pub fn new(name: String, schemas_js: Object, migrations_js: Object) -> Result<BaseStorage, JsValue> {
+        web_sys::console::log_1(&format!("Creating new BaseStorage... for db {}", name).into());
+        web_sys::console::log_2(&"Name:".into(), &name.clone().into());
+        
+        let mut schemas: HashMap<String, Schema> = HashMap::new();
+        let mut migrations: HashMap<String, JsValue> = HashMap::new();
+        let keys = Object::keys(&schemas_js.clone()).into_iter();
+        
+        web_sys::console::log_1(&"Processing schema collections...".into());
+        
+        for collection in keys {
+            let collection_string: String = collection.as_string().ok_or("Invalid collection name")?;
+            web_sys::console::log_2(&"Processing collection:".into(), &collection_string.clone().into());
+            
+            let schema_type = Reflect::get(&schemas_js.clone(), &collection)?;
+            let schema = Schema::create(schema_type)?;
+            let migration = Reflect::get(&migrations_js.clone(), &collection)?;
+            
+            schemas.insert(collection_string.clone(), schema);
+            migrations.insert(collection_string, migration);
         }
-    }
-
-    /// Retrieves the schema of the storage.
-    ///
-    /// # Returns
-    ///
-    /// * `Schema` - The schema associated with the storage.
-    #[wasm_bindgen(getter)]
-    pub fn schema(&self) -> Schema {
-        self.schema.clone()
-    }
-
-    /// Retrieves the name of the storage.
-    ///
-    /// # Returns
-    ///
-    /// * `String` - The name of the storage.
-    #[wasm_bindgen(getter)]
-    pub fn name(&self) -> String {
-        self.name.clone()
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn migration(&self) -> JsValue {
-        self.migration.clone()
+        
+        web_sys::console::log_1(&"BaseStorage creation complete".into());
+        
+        let base_storage = BaseStorage {
+            name,
+            schemas,
+            migrations
+        };
+        Ok(base_storage)
     }
 }

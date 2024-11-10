@@ -7,6 +7,8 @@ use crate::error::RIDBError;
 use crate::plugin::BasePlugin;
 use crate::plugin::encryption::EncryptionPlugin;
 use crate::plugin::migration::MigrationPlugin;
+use crate::schema::Schema;
+use crate::storage::base::StorageExternal;
 use crate::storage::Storage;
 use web_sys::console;
 
@@ -79,9 +81,9 @@ export class Database<T extends SchemaTypeRecord> {
  * @param {T} records - The schema type records.
  * @returns {Promise<InternalsRecord>} A promise that resolves to the created internals record.
  */
-export type CreateStorage = <T extends SchemaTypeRecord = SchemaTypeRecord>(
+export type CreateStorage = <T extends SchemaTypeRecord>(
     records: T
-) => Promise<InternalsRecord>;
+) => Promise<BaseStorage<T>>;
 
 /**
  * Represents a storage module with a method for creating storage.
@@ -137,14 +139,23 @@ impl Database {
     /// * `Result<Object, JsValue>` - A result containing an `Object` with the collections or an error.
     #[wasm_bindgen(getter)]
     pub fn collections(&self) -> Result<Object, JsValue> {
-        let  collections: HashMap<String, Collection> =
-            self.storage.internals
-                .iter()
-                .map(|(key, internals)| {
-                    (key.clone(), Collection::from(key.clone(), internals.clone()))
-                })
-                .collect();
+        console::log_1(&"Database::collections() - Starting collection retrieval".into());
+        let mut collections: HashMap<String, Collection> = HashMap::new();
+        for (key, _) in self.storage.schemas.iter() {
+            console::log_2(&"Database::collections() - Creating collection:".into(), &key.into());
+            let storage = self.storage.clone();
 
+            let collection = Collection::from(
+                key.clone(),
+                storage
+            );
+
+            collections.insert(
+                key.clone(), 
+                collection
+            );
+        }
+        console::log_1(&"Database::collections() - Finished creating collections object".into());
         let object = Object::new();
         for (key, collection) in collections {
             Reflect::set(
@@ -158,48 +169,68 @@ impl Database {
 
     #[wasm_bindgen]
     pub async fn create(
-        schemas_map_js: Object,
+        schemas_js: Object,
         migrations_js: Object,
         plugins: Array,
         module: RIDBModule,
         password: Option<String>
     ) -> Result<Database, JsValue> {
+        console::log_1(&"Database::create() - Starting database creation".into());
+        
+        console::log_1(&"Database::create() - Creating storage".into());
+        let storage: StorageExternal = module.create_storage(&schemas_js).await?.into();
 
-        if !schemas_map_js.is_object() {
-            return Err(JsValue::from(RIDBError::from("Unexpected object")));
-        }
-
-        let storage_internal_map_js = module.create_storage(
-            &schemas_map_js.clone()
-        ).await?;
-
+        console::log_1(&"Database::create() - Applying plugins".into());
         let vec_plugins_js: Vec<JsValue> = module.apply(plugins)?;
-
         let mut vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
             .map(|plugin| plugin.unchecked_into::<BasePlugin>())
             .collect();
-
 
         if let Some(pass) = password {
             let encryption = EncryptionPlugin::new(pass)?;
             vec_plugins.push(encryption.base.clone());
         }
 
-        //vec_plugins.push(MigrationPlugin::new()?.base.clone());
+        vec_plugins.push(MigrationPlugin::new()?.base.clone());
 
+        console::log_1(&"Database::create() - Processing schemas and migrations".into());
+        let mut schemas: HashMap<String, Schema> = HashMap::new();
+        let mut migrations: HashMap<String, JsValue> = HashMap::new();
+        let keys = Object::keys(&schemas_js.clone()).into_iter();
+        for collection in keys {
+            let collection_string: String = collection.as_string().ok_or("Invalid collection name")?;
+            console::log_2(&"Database::create() - Processing schema for collection:".into(), &collection_string.clone().into());
+            let schema_type = Reflect::get(&schemas_js.clone(), &collection)?;
+            let schema = Schema::create(schema_type)?;
+            let migration = Reflect::get(&migrations_js.clone(), &collection)?;
 
+            let version = schema.get_version();
+            if version > 0 && !migration.is_undefined() {
+                let function = Reflect::get(&migration, &JsValue::from(version))
+                    .map_err(|e| RIDBError::from(e))?;
+
+                if function.is_undefined() {
+                    return Err(
+                        JsValue::from(
+                            format!("Required Schema {} migration path {} to not be undefined", collection_string, version)
+                        )
+                    )
+                }
+            }
+
+            schemas.insert(collection_string.clone(), schema);
+            migrations.insert(collection_string, migration);
+        }
+
+        console::log_1(&"Database::create() - Creating final storage instance".into());
         let storage = Storage::create(
-            storage_internal_map_js.into(),
-            migrations_js,
+            schemas,
+            migrations,
             vec_plugins,
-        ).map_err(|e| {
-            JsValue::from(RIDBError::from(e))
-        })?;
+            storage
+        ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
-        let db = Database {
-            storage,
-        };
-
-        Ok(db)
+        console::log_1(&"Database::create() - Database creation complete".into());
+        Ok(Database { storage })
     }
 }
