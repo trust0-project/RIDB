@@ -31,7 +31,7 @@ export class InMemory<T extends SchemaTypeRecord> extends BaseStorage<T> {
 }
 "#;
 
-
+#[derive(Debug)]
 #[wasm_bindgen(skip_typescript)]
 pub struct InMemory {
     core: CoreStorage,

@@ -3,10 +3,7 @@ use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::plugin::BasePlugin;
 use crate::schema::Schema;
-use js_sys::{ Reflect};
-use chacha20poly1305::{
-    aead::{KeyInit},
-};
+use js_sys::Reflect;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -117,7 +114,7 @@ impl MigrationPlugin {
     fn create_hook_single_document(
         &self,
         schema_js: JsValue,
-        migration_js: JsValue,
+        _migration_js: JsValue,
         content: JsValue,
     ) -> Result<JsValue, JsValue> {
         let doc_version_key = JsValue::from("__version");
@@ -148,7 +145,7 @@ impl MigrationPlugin {
         let doc_version_js = Reflect::get(
             &content,
             &doc_version_key
-        ).map_err(|e| JsValue::from(format!("Error")))?;
+        ).map_err(|e| JsValue::from(format!("Error getting the document version, err {:?}", e)))?;
 
         let doc_version = if doc_version_js.is_undefined() {
             version
@@ -169,7 +166,7 @@ impl MigrationPlugin {
 
                 let function = Reflect::get(
                     &migration_js, &JsValue::from(next_version)
-                ).map_err(|e| JsValue::from(format!("Error")))?;
+                ).map_err(|e| JsValue::from(format!("Error recovering migration function for version {:?}", e)))?;
 
                 if function.is_undefined() {
                     return Err(JsValue::from(format!("Migrating function {} to schema version not found", next_version)))

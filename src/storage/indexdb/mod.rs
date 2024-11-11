@@ -1,4 +1,4 @@
-use js_sys::{Array, Object, Promise, Reflect, JSON};
+use js_sys::{Array, Object, Promise, Reflect};
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::{wasm_bindgen, Closure};
@@ -171,7 +171,7 @@ impl Storage for IndexDB {
         let normalized_query = query.parse()?;
         let request = store.get_all()?;
         let normalized_query = normalized_query.clone();
-        let promise = Promise::new(&mut |resolve, reject| {
+        let promise = Promise::new(&mut |resolve, _reject| {
             let value = normalized_query.clone();
             let core = self.core.clone();
             let onsucess = Closure::once(Box::new(move |event: web_sys::Event| {
@@ -238,7 +238,7 @@ impl Storage for IndexDB {
         let normalized_query = query.parse()?;
         let request = store.get_all()?;
         let normalized_query = normalized_query.clone();        
-        let promise = Promise::new(&mut |resolve, reject| {
+        let promise = Promise::new(&mut |resolve, _reject| {
             let value = normalized_query.clone();
             let core = self.core.clone();
             let onsucess = Closure::once(Box::new(move |event: web_sys::Event| {

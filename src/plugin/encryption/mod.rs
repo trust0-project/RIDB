@@ -9,7 +9,6 @@ use chacha20poly1305::{
 };
 use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
 use getrandom::getrandom;
-use web_sys::console;
 
 #[derive(Clone)]
 pub struct EncryptionPlugin {
@@ -82,7 +81,7 @@ impl EncryptionPlugin {
         }
     }
 
-    fn encrypt_single_document(&self, schema_js: JsValue, migration: JsValue, content: JsValue) -> Result<JsValue, JsValue> {
+    fn encrypt_single_document(&self, schema_js: JsValue, _migration: JsValue, content: JsValue) -> Result<JsValue, JsValue> {
         // Add validation for input parameters
         if schema_js.is_undefined() || schema_js.is_null() {
             return Err(JsValue::from("Schema cannot be null or undefined"));
@@ -190,7 +189,7 @@ impl EncryptionPlugin {
         }
     }
 
-    fn decrypt_single_document(&self, schema_js: JsValue, migration: JsValue, content: JsValue) -> Result<JsValue, JsValue> {
+    fn decrypt_single_document(&self, schema_js: JsValue, _migration: JsValue, content: JsValue) -> Result<JsValue, JsValue> {
         // Validate content is an object
         if !content.is_object() {
             return Err(JsValue::from("Content must be an object"));
