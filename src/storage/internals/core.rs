@@ -19,7 +19,7 @@ impl CoreStorage {
         for i in 0..keys.length() {
             let key = keys.get(i).as_string().unwrap_or_default();
             let value = Reflect::get(query, &JsValue::from_str(&key))
-                .map_err(|e| JsValue::from(format!("Failed to get the query value")))?;
+                .map_err(|e| JsValue::from(format!("Failed to get the query value, err {:?}", e)))?;
 
             if key == "$and" {
                 // $and operator: all conditions must be true
@@ -52,7 +52,7 @@ impl CoreStorage {
             } else {
                 // Attribute condition
                 let doc_value = Reflect::get(document, &JsValue::from_str(&key))
-                    .map_err(|e| JsValue::from(format!("Failed to get the document key")))?;
+                    .map_err(|e| JsValue::from(format!("Failed to get the document key, err {:?}", e)))?;
 
                 let matches = self.evaluate_condition(&doc_value, &value)?;
                 if !matches {

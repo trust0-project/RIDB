@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use js_sys::{Object, Reflect, JSON};
+use js_sys::{Object, Reflect};
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::schema::Schema;
@@ -41,7 +41,7 @@ export class BaseStorage<Schemas extends SchemaTypeRecord> extends StorageIntern
 "#;
 
 #[wasm_bindgen(skip_typescript)]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 /// Represents the base storage with a name and schema.
 pub struct BaseStorage {
     /// The name of the storage.

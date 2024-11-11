@@ -18,14 +18,6 @@ pub(crate) enum HookType {
     Recover,
 }
 
-impl HookType {
-    fn as_str(&self) -> &'static str {
-        match self {
-            HookType::Create => "create",
-            HookType::Recover => "recover",
-        }
-    }
-}
 
 #[derive(Clone)]
 /// Represents the storage system containing a map of internal storages.

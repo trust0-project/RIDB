@@ -44,6 +44,11 @@ impl BasePlugin {
         })
     }
 
+    #[wasm_bindgen( getter = name)]
+    pub fn name(&self) -> JsValue {
+       JsValue::from_str(&self.name)
+    }
+
     #[wasm_bindgen( getter = docCreateHook)]
     pub fn get_doc_create_hook(&self) -> JsValue {
         self.clone().doc_create_hook

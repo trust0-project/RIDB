@@ -1,4 +1,4 @@
-use js_sys::{Array, Object, Promise, Reflect, JSON};
+use js_sys::{Array, Object, Promise, Reflect};
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::{wasm_bindgen, Closure};
@@ -7,7 +7,7 @@ use crate::query::Query;
 use crate::storage::internals::base_storage::BaseStorage;
 use crate::storage::internals::core::CoreStorage;
 use crate::operation::{OpType, Operation};
-use web_sys::{IdbDatabase, IdbOpenDbRequest, IdbRequest, console};
+use web_sys::{IdbDatabase, IdbOpenDbRequest, IdbRequest};
 use std::sync::Arc;
 use parking_lot::Mutex;
 use std::collections::HashMap;
@@ -171,7 +171,7 @@ impl Storage for IndexDB {
         let normalized_query = query.parse()?;
         let request = store.get_all()?;
         let normalized_query = normalized_query.clone();
-        let promise = Promise::new(&mut |resolve, reject| {
+        let promise = Promise::new(&mut |resolve, _reject| {
             let value = normalized_query.clone();
             let core = self.core.clone();
             let onsucess = Closure::once(Box::new(move |event: web_sys::Event| {
@@ -238,7 +238,7 @@ impl Storage for IndexDB {
         let normalized_query = query.parse()?;
         let request = store.get_all()?;
         let normalized_query = normalized_query.clone();        
-        let promise = Promise::new(&mut |resolve, reject| {
+        let promise = Promise::new(&mut |resolve, _reject| {
             let value = normalized_query.clone();
             let core = self.core.clone();
             let onsucess = Closure::once(Box::new(move |event: web_sys::Event| {
@@ -452,6 +452,238 @@ impl IndexDBPool {
         if let Some(arc_db) = db.upgrade() {
             connections.insert(name, arc_db);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::Value;
+    use wasm_bindgen_test::*;
+    
+    // Configure tests to run in browser
+    wasm_bindgen_test_configure!(run_in_browser);
+
+    fn json_str_to_js_value(json_str: &str) -> Result<JsValue, JsValue> {
+        let json_value: Value =
+            serde_json::from_str(json_str).map_err(|e| JsValue::from_str(&e.to_string()))?;
+        Ok(value_to_js_value(&json_value))
+    }
+
+    fn value_to_js_value(value: &Value) -> JsValue {
+        match value {
+            Value::Null => JsValue::null(),
+            Value::Bool(b) => JsValue::from_bool(*b),
+            Value::Number(n) => {
+                if let Some(i) = n.as_i64() {
+                    JsValue::from_f64(i as f64)
+                } else if let Some(f) = n.as_f64() {
+                    JsValue::from_f64(f)
+                } else {
+                    JsValue::undefined()
+                }
+            }
+            Value::String(s) => JsValue::from_str(s),
+            Value::Array(arr) => {
+                let js_array = Array::new();
+                for item in arr {
+                    js_array.push(&value_to_js_value(item));
+                }
+                js_array.into()
+            }
+            Value::Object(obj) => {
+                let js_obj = Object::new();
+                for (key, value) in obj {
+                    js_sys::Reflect::set(
+                        &js_obj,
+                        &JsValue::from_str(key),
+                        &value_to_js_value(value),
+                    )
+                        .unwrap();
+                }
+                js_obj.into()
+            }
+        }
+    }
+
+    #[wasm_bindgen_test(async)]
+    async fn test_empty_indexdb_storage() {
+        let schemas_obj = Object::new();
+        let schema_str = "{ \"version\": 1, \"primaryKey\": \"id\", \"type\": \"object\", \"properties\": { \"id\": { \"type\": \"string\", \"maxLength\": 60 } } }";
+        let schema = json_str_to_js_value(schema_str).unwrap();
+        Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
+        
+        let db = IndexDB::create("test_db", schemas_obj).await;
+        assert!(db.is_ok());
+        
+        // Clean up
+        db.unwrap().close().await.unwrap();
+    }
+
+    #[wasm_bindgen_test(async)]
+    async fn test_indexdb_storage_create_operation() {
+        let schemas_obj = Object::new();
+        let schema_str = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "required": ["id", "name"],
+            "properties": {
+                "id": { "type": "string", "maxLength": 60 },
+                "name": { "type": "string" }
+            }
+        }"#;
+        let schema = json_str_to_js_value(schema_str).unwrap();
+        Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
+        
+        let db = IndexDB::create("test_db_create", schemas_obj).await.unwrap();
+
+        // Create a new item
+        let new_item = Object::new();
+        Reflect::set(&new_item, &JsValue::from_str("id"), &JsValue::from_str("1234")).unwrap();
+        Reflect::set(&new_item, &JsValue::from_str("name"), &JsValue::from_str("Test Item")).unwrap();
+
+        let op = Operation {
+            collection: "demo".to_string(),
+            op_type: OpType::CREATE,
+            data: new_item.clone().into(),
+            indexes: vec![],
+        };
+
+        // Test successful creation
+        let created = db.write(&op).await.unwrap();
+        assert_eq!(
+            Reflect::get(&created, &JsValue::from_str("id")).unwrap(),
+            JsValue::from_str("1234")
+        );
+
+        // Test document retrieval
+        let found = db
+            .find_document_by_id("demo", JsValue::from_str("1234"))
+            .await
+            .unwrap();
+        assert_eq!(
+            Reflect::get(&found, &JsValue::from_str("name")).unwrap(),
+            JsValue::from_str("Test Item")
+        );
+
+        // Clean up
+        db.close().await.unwrap();
+    }
+
+    #[wasm_bindgen_test(async)]
+    async fn test_indexdb_storage_find() {
+        let schemas_obj = Object::new();
+        let schema_str = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "age": { "type": "number" },
+                "status": { "type": "string" }
+            }
+        }"#;
+        let schema = json_str_to_js_value(schema_str).unwrap();
+        Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
+        
+        let db = IndexDB::create("test_db_find", schemas_obj).await.unwrap();
+
+        // Create test documents
+        let items = vec![
+            json_str_to_js_value(r#"{
+                "id": "1", "name": "Alice", "age": 30, "status": "active"
+            }"#).unwrap(),
+            json_str_to_js_value(r#"{
+                "id": "2", "name": "Bob", "age": 25, "status": "inactive"
+            }"#).unwrap(),
+            json_str_to_js_value(r#"{
+                "id": "3", "name": "Charlie", "age": 35, "status": "active"
+            }"#).unwrap(),
+        ];
+
+        for item in items {
+            let create_op = Operation {
+                collection: "demo".to_string(),
+                op_type: OpType::CREATE,
+                data: item,
+                indexes: vec![],
+            };
+            db.write(&create_op).await.unwrap();
+        }
+
+        // Test find with query
+        let query_value = json_str_to_js_value(r#"{
+            "status": "active",
+            "age": { "$gt": 30 }
+        }"#).unwrap();
+        
+        let result = db.find_js("demo", query_value).await.unwrap();
+        let result_array = Array::from(&result);
+        
+        assert_eq!(result_array.length(), 1);
+        let first_doc = result_array.get(0);
+        assert_eq!(
+            Reflect::get(&first_doc, &JsValue::from_str("name")).unwrap(),
+            JsValue::from_str("Charlie")
+        );
+
+        // Clean up
+        db.close().await.unwrap();
+    }
+
+    #[wasm_bindgen_test(async)]
+    async fn test_indexdb_storage_count() {
+        let schemas_obj = Object::new();
+        let schema_str = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "status": { "type": "string" }
+            }
+        }"#;
+        let schema = json_str_to_js_value(schema_str).unwrap();
+        Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
+        
+        let db = IndexDB::create("test_db_count", schemas_obj).await.unwrap();
+
+        // Create test documents
+        let items = vec![
+            json_str_to_js_value(r#"{
+                "id": "1", "name": "Alice", "status": "active"
+            }"#).unwrap(),
+            json_str_to_js_value(r#"{
+                "id": "2", "name": "Bob", "status": "inactive"
+            }"#).unwrap(),
+            json_str_to_js_value(r#"{
+                "id": "3", "name": "Charlie", "status": "active"
+            }"#).unwrap(),
+        ];
+
+        for item in items {
+            let create_op = Operation {
+                collection: "demo".to_string(),
+                op_type: OpType::CREATE,
+                data: item,
+                indexes: vec![],
+            };
+            db.write(&create_op).await.unwrap();
+        }
+
+        // Test count with query
+        let query_value = json_str_to_js_value(r#"{
+            "status": "active"
+        }"#).unwrap();
+        
+        let result = db.count_js("demo", query_value).await.unwrap();
+        assert_eq!(result.as_f64().unwrap(), 2.0);
+
+        // Clean up
+        db.close().await.unwrap();
     }
 }
 
