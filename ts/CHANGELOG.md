@@ -1,3 +1,10 @@
+## [0.6.3-rc.1](https://github.com/trust0-project/RIDB/compare/v0.6.2...v0.6.3-rc.1) (2024-11-11)
+
+
+### Bug Fixes
+
+* adding small improvements to support wider storage types ([40ed8d5](https://github.com/trust0-project/RIDB/commit/40ed8d59357a953586ebd45d7921b4ab107fcc2e))
+
 ## [0.6.2](https://github.com/trust0-project/RIDB/compare/v0.6.1...v0.6.2) (2024-11-11)
 
 
