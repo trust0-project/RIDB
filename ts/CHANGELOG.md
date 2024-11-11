@@ -1,3 +1,10 @@
+## [0.6.4-rc.1](https://github.com/trust0-project/RIDB/compare/v0.6.3...v0.6.4-rc.1) (2024-11-11)
+
+
+### Bug Fixes
+
+* update docs and package exports ([f31eee2](https://github.com/trust0-project/RIDB/commit/f31eee21ea2e5ec2e472b329b6f7d4e1b393d129))
+
 ## [0.6.3](https://github.com/trust0-project/RIDB/compare/v0.6.2...v0.6.3) (2024-11-11)
 
 
