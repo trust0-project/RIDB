@@ -121,13 +121,13 @@ export class InMemory<T extends SchemaTypeRecord>  extends BaseStorage<T> {
     findDocumentById(collectionName: keyof T, id: string): Promise<Doc<T[keyof T]> | null> {
         throw new Error("Method not implemented.");
     }
-    find(collectionName: keyof T, query: RIDBTypes.QueryType<T[keyof T]>): Promise<Doc<T[keyof T]>[]> {
+    find(collectionName: keyof T, query: QueryType<T[keyof T]>): Promise<Doc<T[keyof T]>[]> {
         throw new Error("Method not implemented.");
     }
     write(op: Operation<T[keyof T]>): Promise<Doc<T[keyof T]>> {
         throw new Error("Method not implemented.");
     }
-    count(collectionName: keyof T, query: RIDBTypes.QueryType<T[keyof T]>): Promise<number> {
+    count(collectionName: keyof T, query: QueryType<T[keyof T]>): Promise<number> {
         throw new Error("Method not implemented.");
     }
     start(): Promise<void> {
@@ -147,7 +147,7 @@ Plugins extend the functionality of the database by hooking into the database li
 /**
  * A simple plugin that overrides the docCreateHook and docRecoverHook methods.
  */
-class MySimplePlugin extends RIDBTypes.BasePlugin {
+class MySimplePlugin extends BasePlugin {
     constructor() {
         super();
         this.docCreateHook = (
