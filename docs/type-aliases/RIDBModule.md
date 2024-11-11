@@ -26,12 +26,6 @@ Plugin constructors array
 
 `BasePlugin`[]
 
-### createStorage
-
-> **createStorage**: [`CreateStorage`](CreateStorage.md)
-
-Creates storage with the provided schema type records.
-
 ## Defined in
 
-pkg/ridb\_rust.d.ts:622
+pkg/ridb\_rust.d.ts:635

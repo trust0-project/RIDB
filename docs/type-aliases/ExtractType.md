@@ -28,4 +28,4 @@ type ArrayType = ExtractType<'array'>; // ArrayType is Array<any>
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:77
+pkg/ridb\_rust.d.ts:276

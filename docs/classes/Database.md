@@ -50,7 +50,7 @@ This is a read-only property where the key is the name of the collection and the
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:589
+pkg/ridb\_rust.d.ts:602
 
 ## Methods
 
@@ -68,7 +68,7 @@ A promise that resolves when the database is closed.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:605
+pkg/ridb\_rust.d.ts:618
 
 ***
 
@@ -86,13 +86,13 @@ A promise that resolves when the database is started.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:598
+pkg/ridb\_rust.d.ts:611
 
 ***
 
 ### create()
 
-> `static` **create**\<`TS`\>(`schemas`, `migrations`, `plugins`, `options`, `password`?): `Promise`\<[`Database`](Database.md)\<`TS`\>\>
+> `static` **create**\<`TS`\>(`db_name`, `schemas`, `migrations`, `plugins`, `options`, `password`?, `storage`?): `Promise`\<[`Database`](Database.md)\<`TS`\>\>
 
 Creates a new `Database` instance with the provided schemas and storage module.
 
@@ -103,6 +103,8 @@ Creates a new `Database` instance with the provided schemas and storage module.
 A record of schema types.
 
 #### Parameters
+
+• **db\_name**: `string`
 
 • **schemas**: `TS`
 
@@ -116,6 +118,8 @@ The schemas to use for the collections.
 
 • **password?**: `string`
 
+• **storage?**: `BaseStorage`\<`TS`\>
+
 #### Returns
 
 `Promise`\<[`Database`](Database.md)\<`TS`\>\>
@@ -124,4 +128,4 @@ A promise that resolves to the created `Database` instance.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:576
+pkg/ridb\_rust.d.ts:587

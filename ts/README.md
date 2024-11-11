@@ -66,8 +66,7 @@ Use with custom storage (IndexDB and InMemory)
 import {
     RIDB,
     SchemaFieldType,
-    InMemory,
-    IndexDB
+    StorageType
 } from '@trust0/ridb';
 
 (async () => {
@@ -85,7 +84,7 @@ import {
         }
     });
     console.log("Starting the database");
-    await db.start({dbName: "demo", storage: IndexDB //or InMemory});
+    await db.start({dbName: "demo", storage: StorageType.IndexDB //or StorageType.InMemory});
     console.log("Ok :)");
 })()
 ```

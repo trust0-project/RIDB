@@ -34,7 +34,7 @@ A promise that resolves to an array of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:112
+pkg/ridb\_rust.d.ts:311
 
 ***
 
@@ -58,7 +58,7 @@ A promise that resolves to the created document.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:137
+pkg/ridb\_rust.d.ts:336
 
 ***
 
@@ -82,7 +82,7 @@ A promise that resolves when the deletion is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:145
+pkg/ridb\_rust.d.ts:344
 
 ***
 
@@ -104,7 +104,7 @@ A promise that resolves to an array of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:105
+pkg/ridb\_rust.d.ts:304
 
 ***
 
@@ -128,7 +128,7 @@ A promise that resolves to the found document.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:120
+pkg/ridb\_rust.d.ts:319
 
 ***
 
@@ -152,4 +152,4 @@ A promise that resolves when the update is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:129
+pkg/ridb\_rust.d.ts:328
