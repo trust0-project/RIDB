@@ -244,20 +244,16 @@ impl Database {
     }
 }
 
+
 #[cfg(test)]
 mod tests {
-    use crate::storage::inmemory::InMemory;
-
     use super::*;
     use wasm_bindgen_test::*;
     use js_sys::{Function, Object, Reflect};
     use wasm_bindgen::{prelude::Closure, JsValue};
+    use crate::storage::{indexdb::IndexDB, inmemory::InMemory};
 
-    wasm_bindgen_test_configure!(run_in_browser);
-
-    #[wasm_bindgen_test]
-    async fn test_database_creation() {
-        // Create a simple schema
+    fn create_test_schema() -> JsValue {
         let schema_js = r#"{
             "users": {
                 "version": 0,
@@ -275,57 +271,75 @@ mod tests {
                 }
             }
         }"#;
+        js_sys::JSON::parse(schema_js).unwrap()
+    }
 
-        let schemas = js_sys::JSON::parse(schema_js).unwrap();
+    async fn create_test_database(storage_creator: impl Fn(Object) -> js_sys::Promise + 'static) -> Result<Database, JsValue> {
+        let schemas = create_test_schema();
         let migrations = Object::new();
         let plugins = js_sys::Array::new();
         
-        // Create storage module with InMemory storage
         let module = Object::new();
-        let create_storage_fn = Closure::wrap(Box::new(move |records: JsValue| {
-            wasm_bindgen_futures::future_to_promise(async move {
-                let records_obj: Object = records.unchecked_into();
-                InMemory::create("test-db", records_obj)
-                    .await
-                    .map(|storage| JsValue::from(storage))
-                    .map_err(|e| e)
-            })
-        }) as Box<dyn FnMut(JsValue) -> js_sys::Promise>);
+        let create_storage_fn = Closure::once_into_js(Box::new(move |records: JsValue| {
+            let records_obj: Object = records.unchecked_into();
+            storage_creator(records_obj)
+        }));
       
-        let apply_fn = Function::new_with_args(
-            "plugins",
-            "return []"
-        );
+        let apply_fn = Function::new_with_args("plugins", "return []");
         
-        Reflect::set(
-            &module,
-            &"createStorage".into(), 
-            &create_storage_fn.into_js_value()
-        ).unwrap();
+        Reflect::set(&module, &"createStorage".into(), &create_storage_fn).unwrap();
+        Reflect::set(&module, &"apply".into(), &apply_fn).unwrap();
 
-        Reflect::set(
-            &module, 
-            &"apply".into(), 
-            &apply_fn
-        ).unwrap();
-
-        // Create the database
-        let db = Database::create(
-            schemas.clone().unchecked_into(),
+        Database::create(
+            schemas.unchecked_into(),
             migrations,
             plugins,
             module.unchecked_into(),
             None
-        ).await.unwrap();
+        ).await
+    }
 
-        // Test that we can get collections
+    #[wasm_bindgen_test]
+    async fn test_database_creation_inmemory() {
+        let db = create_test_database(|records| {
+            wasm_bindgen_futures::future_to_promise(async move {
+                InMemory::create("test-db", records)
+                    .await
+                    .map(|storage| JsValue::from(storage))
+                    .map_err(|e| e)
+            })
+        })
+        .await
+        .unwrap();
+
+        // Test collections
         let collections = db.collections().unwrap();
         assert!(Reflect::has(&collections, &"users".into()).unwrap());
 
-        // Test that we can start the database
+        // Test lifecycle
         db.start().await.unwrap();
+        db.close().await.unwrap();
+    }
 
-        // Clean up
+    #[wasm_bindgen_test]
+    async fn test_database_creation_indexdb() {
+        let db = create_test_database(|records| {
+            wasm_bindgen_futures::future_to_promise(async move {
+                IndexDB::create("test-db", records)
+                    .await
+                    .map(|storage| JsValue::from(storage))
+                    .map_err(|e| e)
+            })
+        })
+        .await
+        .unwrap();
+
+        // Test collections
+        let collections = db.collections().unwrap();
+        assert!(Reflect::has(&collections, &"users".into()).unwrap());
+
+        // Test lifecycle
+        db.start().await.unwrap();
         db.close().await.unwrap();
     }
 }
