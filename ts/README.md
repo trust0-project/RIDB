@@ -22,13 +22,13 @@
 In order to install simply run the following command
 npm:
 ``` 
-npm i @elribonazo/ridb --save
+npm i @trust0/ridb --save
 ```
 
 yarn:
 
 ``` 
-yarn add @elribonazo/ridb
+yarn add @trust0/ridb
 ```
 
 ## Usage
