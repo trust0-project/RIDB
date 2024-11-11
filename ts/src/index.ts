@@ -241,12 +241,16 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
             const { storageType, password } = options ?? {};
             const { Database } = await RIDB.load();
 
-            const StorageInstance = typeof storageType === "string" ?
+            const StorageClass = typeof storageType === "string" ?
                 this.getStorageType(storageType) :
                 storageType ?? undefined;
+            
+            if (StorageClass && !StorageClass.create) {
+                throw new Error("Your storage does not have an async create function, please check documentation")
+            }
                 
-            const storage = StorageInstance ? 
-                await StorageInstance.create(this.dbName, this.schemas, options) :
+            const storage = StorageClass ? 
+                await StorageClass.create(this.dbName, this.schemas, options) :
                 undefined;
 
             this._db ??= await Database.create<T>(
