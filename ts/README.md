@@ -102,10 +102,7 @@ export class InMemory<T extends SchemaTypeRecord>  extends BaseStorage<T> {
     static create<SchemasCreate extends SchemaTypeRecord>(
         name: string,
         schemas: SchemasCreate,
-        migrations: Record<
-            keyof SchemasCreate, 
-            MigrationPathsForSchema<SchemasCreate[keyof SchemasCreate]>
-        >,
+        options: any
     ): Promise<
         BaseStorage<
             SchemasCreate
@@ -114,8 +111,8 @@ export class InMemory<T extends SchemaTypeRecord>  extends BaseStorage<T> {
         throw new Error("Method not implemented.");
     }
 
-    constructor(name: string, schemas: T, migrations: Record<keyof T, MigrationPathsForSchema<T[keyof T]>>) {
-        super(name, schemas, migrations);
+    constructor(name: string, schemas: T, options: any) {
+        super(name, schemas, options);
     }
 
     findDocumentById(collectionName: keyof T, id: string): Promise<Doc<T[keyof T]> | null> {
