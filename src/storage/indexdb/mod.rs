@@ -29,11 +29,14 @@ export class IndexDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
      */
     free(): void;
 
-    static create<TS extends SchemaTypeRecord>(
-        name: string,
-        schema_type: any,
-        migrations: any,
-    ): Promise<IndexDB<TS>>;
+    static create<SchemasCreate extends SchemaTypeRecord>(
+        dbName: string,
+        schemas: SchemasCreate,
+    ): Promise<
+        IndexDB<
+            SchemasCreate
+        >
+    >;
 }
 "#;
 
@@ -364,6 +367,7 @@ impl IndexDB {
         let base = BaseStorage::new(
             name.to_string(),
             schemas_js.clone(),
+            None
         )?;
 
         // Try to get existing connection from pool

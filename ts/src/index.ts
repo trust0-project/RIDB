@@ -2,7 +2,7 @@
  * @packageDocumentation
  *
  * <p align="center">
- *   <img src="https://cdn.jsdelivr.net/gh/trust0-project/ridb@0.4.3/docs/logo.svg" alt="JavaScript Database" />
+ *   <img src="https://cdn.jsdelivr.net/gh/trust0-project/ridblatest/docs/logo.svg" alt="JavaScript Database" />
  *   <br />
  *   <br />
  *   <h3 align="center">A secure light-weight and dependency free database wrapper for the web.</h3>
@@ -21,7 +21,6 @@
  * 
  * # SDK Rerefence
  */
-import { BaseStorage, Doc, MigrationPathsForSchema, Operation, OpType, SchemaType, SchemaTypeRecord, StorageInternal } from "ridb-rust";
 import wasmBuffer from "../../pkg/ridb_rust_bg.wasm";
 import * as RIDBTypes from "ridb-rust";
 export {
@@ -97,7 +96,7 @@ let internal: typeof import("ridb-rust") | undefined;
  * 
  * ### Starting the database
  * ```typescript    
- * await db.start()
+ * await db.start({dbName: "demo"})
  * ```
  * 
  * ### Using with encryption plugin
@@ -105,6 +104,7 @@ let internal: typeof import("ridb-rust") | undefined;
  * ```typescript
  * await db.start({
  *     password: "my-password"
+ *     db
  * })
  * ```
  * 
@@ -143,12 +143,19 @@ let internal: typeof import("ridb-rust") | undefined;
  *     }
  * )
  * 
- * await db.start({storageType: storage})
+ * await db.start({dbName: "demo"})
  * ```
  *
  * @class
  * @template T - The type of the schema record.
  */
+
+type StartOptions<T extends RIDBTypes.SchemaTypeRecord> = {
+    storageType?: typeof RIDBTypes.BaseStorage<T> | StorageType,
+    password?: string,
+    [name: string]: any
+}
+
 export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRecord> {
 
     private schemas: T;
@@ -223,46 +230,40 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
     }
 
     /**
-     * Gets the RIDB module with the provided storage type.
-     * @param {typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>} [storageType] - The storage type to use.
-     * @returns An object containing createStorage and apply functions.
-     * @private
-     */
-    private getRIDBModule(
-        storageType?: typeof RIDBTypes.BaseStorage<T> | StorageType
-    ) {
-        return {
-            createStorage: async (schemas: T) => this.createStorage(schemas, storageType),
-            apply: (plugins: Array<typeof RIDBTypes.BasePlugin> = []) => plugins.map((Plugin) => new Plugin()),
-        } as RIDBTypes.RIDBModule;
-    }
-
-    /**
      * Starts the database.
      * @returns {Promise<RIDBTypes.Database<T>>} A promise that resolves to the database instance.
      * @param options
      */
     async start(
-        options?: {
-            storageType?: typeof RIDBTypes.BaseStorage<T> | StorageType,
-            password?: string,
-            [name: string]: any
-        }
+        options?: StartOptions<T>
     ): Promise<RIDBTypes.Database<T>> {
         if (!this._db) {
             const { storageType, password } = options ?? {};
             const { Database } = await RIDB.load();
+
+            const StorageInstance = typeof storageType === "string" ?
+                this.getStorageType(storageType) :
+                storageType ?? undefined;
+                
+            const storage = StorageInstance ? 
+                await StorageInstance.create(this.dbName, this.schemas, options) :
+                undefined;
+
             this._db ??= await Database.create<T>(
+                this.dbName,
                 this.schemas,
                 this.migrations,
                 this.plugins,
-                this.getRIDBModule(storageType),
-                password
+                {
+                    apply: (plugins: Array<typeof RIDBTypes.BasePlugin> = []) => plugins.map((Plugin) => new Plugin()),
+                },
+                password,
+                storage
             );
+
         } else {
             await this.db.start();
         }
-
         return this.db;
     }
 
@@ -271,32 +272,6 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
         await this.db.close();
     }
 
-    /**
-     * Creates storage instances for the provided schemas.
-     * @template J - The type of the schema record.
-     * @param {J} schemas - The schema definitions.
-     * @param {typeof RIDBTypes.BaseStorage<RIDBTypes.SchemaType>} [storageConstructor] - The storage constructor to use.
-     * @returns An object mapping collection names to storage instances.
-     * @private
-     */
-    private async createStorage(
-        schemas: T,
-        storageConstructor?: typeof RIDBTypes.BaseStorage<T> | StorageType
-    ) {
-        if (!internal) {
-            throw new Error("Start the database first");
-        }
-
-        const Storage = typeof storageConstructor === "string" ?
-            this.getStorageType(storageConstructor) :
-            storageConstructor ?? internal.InMemory;
-
-        return Storage.create(
-            this.dbName,
-            schemas,
-            this.migrations
-        );
-    }
 }
 
 /**

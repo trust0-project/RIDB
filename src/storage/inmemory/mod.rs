@@ -23,11 +23,14 @@ export class InMemory<T extends SchemaTypeRecord> extends BaseStorage<T> {
      */
     free(): void;
 
-    static create<TS extends SchemaTypeRecord>(
-        name: string,
-        schema_type: any,
-        migrations: any,
-    ): Promise<InMemory<TS>>;
+    static create<SchemasCreate extends SchemaTypeRecord>(
+        dbName: string,
+        schemas: SchemasCreate,
+    ): Promise<
+        InMemory<
+            SchemasCreate
+        >
+    >;
 }
 "#;
 
@@ -216,6 +219,7 @@ impl InMemory {
         let base_res = BaseStorage::new(
             name.to_string(),
             schemas_js,
+            None
         );
         match base_res {
             Ok(base) => Ok(
