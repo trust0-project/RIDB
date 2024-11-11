@@ -38,7 +38,7 @@ Creating your own database is pretty straight forward.
 import {
     RIDB,
     SchemaFieldType
-} from '@elribonazo/ridb';
+} from '@trust0/ridb';
 
 (async () => {
     const db =  new RIDB({
@@ -56,6 +56,36 @@ import {
     });
     console.log("Starting the database");
     await db.start({dbName: "demo"});
+    console.log("Ok :)");
+})()
+```
+
+Use with custom storage (IndexDB and InMemory)
+
+```javascript
+import {
+    RIDB,
+    SchemaFieldType,
+    InMemory,
+    IndexDB
+} from '@trust0/ridb';
+
+(async () => {
+    const db =  new RIDB({
+        demo: {
+            version: 0,
+            primaryKey: 'id',
+            type: SchemaFieldType.object,
+            properties: {
+                id: {
+                    type: SchemaFieldType.string,
+                    maxLength: 60
+                }
+            }
+        }
+    });
+    console.log("Starting the database");
+    await db.start({dbName: "demo", storage: IndexDB //or InMemory});
     console.log("Ok :)");
 })()
 ```
