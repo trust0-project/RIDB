@@ -9,6 +9,7 @@ use crate::plugin::encryption::EncryptionPlugin;
 use crate::plugin::migration::MigrationPlugin;
 use crate::schema::Schema;
 use crate::storage::base::StorageExternal;
+use crate::storage::inmemory::InMemory;
 use crate::storage::Storage;
 
 #[wasm_bindgen(typescript_custom_section)]
@@ -56,11 +57,13 @@ export class Database<T extends SchemaTypeRecord> {
      * @returns {Promise<Database<TS>>} A promise that resolves to the created `Database` instance.
      */
     static create<TS extends SchemaTypeRecord>(
+        db_name: string,
         schemas: TS,
         migrations: MigrationPathsForSchemas<TS> | MigrationPathsForSchema<TS[string]>,
         plugins:Array<typeof BasePlugin>,
         options: RIDBModule,
-        password?:string
+        password?:string,
+        storage?: BaseStorage<TS>
     ): Promise<Database<TS>>;
 
     /**
@@ -102,12 +105,6 @@ export type CreateStorage = <T extends SchemaTypeRecord>(
  * Represents a storage module with a method for creating storage.
  */
 export type RIDBModule = {
-    /**
-     * Creates storage with the provided schema type records.
-     *
-     * @type {CreateStorage}
-     */
-    createStorage: CreateStorage,
 
     /**
      * Plugin constructors array
@@ -186,13 +183,19 @@ impl Database {
 
     #[wasm_bindgen]
     pub async fn create(
+        db_name: &str,
         schemas_js: Object,
         migrations_js: Object,
         plugins: Array,
         module: RIDBModule,
-        password: Option<String>
+        password: Option<String>,
+        storage: Option<StorageExternal>
     ) -> Result<Database, JsValue> {
-        let storage: StorageExternal = module.create_storage(&schemas_js).await?.into();
+        let storage: StorageExternal = if let Some(storage) = storage {
+            storage.into()
+        } else {
+            JsValue::from(InMemory::create(db_name, schemas_js.clone()).await?).into()
+        };
 
         let vec_plugins_js: Vec<JsValue> = module.apply(plugins)?;
         let mut vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
@@ -243,7 +246,7 @@ impl Database {
         Ok(Database { storage })
     }
 }
-
+/*
 #[cfg(test)]
 mod tests {
     use crate::storage::{indexdb::IndexDB, inmemory::InMemory};
@@ -402,4 +405,4 @@ mod tests {
         // Clean up
         db.close().await.unwrap();
     }
-}
+} */

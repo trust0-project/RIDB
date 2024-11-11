@@ -8,14 +8,16 @@ use crate::schema::Schema;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
+
+export type BaseStorageOptions =  {
+    [name:string]:string | boolean | number
+}
+
 export class BaseStorage<Schemas extends SchemaTypeRecord> extends StorageInternal<Schemas> {
     static create<SchemasCreate extends SchemaTypeRecord>(
-        name: string,
+        dbName: string,
         schemas: SchemasCreate,
-        migrations: Record<
-            keyof SchemasCreate, 
-            MigrationPathsForSchema<SchemasCreate[keyof SchemasCreate]>
-        >,
+        options?: BaseStorageOptions
     ): Promise<
         BaseStorage<
             SchemasCreate
@@ -23,12 +25,14 @@ export class BaseStorage<Schemas extends SchemaTypeRecord> extends StorageIntern
     >;
     
     constructor(
-        name: string, 
+        dbName: string, 
         schemas: Schemas, 
+        options?: BaseStorageOptions
     );
 
-    readonly name: string;
+    readonly dbName: string;
     readonly schemas: Record<keyof Schemas, Schema<Schemas[keyof Schemas]>>;
+    readonly options: BaseStorageOptions;
 
     start(): Promise<void>;
     close(): Promise<void>;
@@ -37,6 +41,7 @@ export class BaseStorage<Schemas extends SchemaTypeRecord> extends StorageIntern
     find(collectionName: keyof Schemas, query: QueryType<Schemas[keyof Schemas]>): Promise<Doc<Schemas[keyof Schemas]>[]>;
     write(op: Operation<Schemas[keyof Schemas]>): Promise<Doc<Schemas[keyof Schemas]>>;
 
+    getOption(name: string): string | boolean | number | undefined;
 }
 "#;
 
@@ -44,10 +49,11 @@ export class BaseStorage<Schemas extends SchemaTypeRecord> extends StorageIntern
 #[derive(Clone, Debug)]
 /// Represents the base storage with a name and schema.
 pub struct BaseStorage {
-    /// The name of the storage.
+    /// The name of the database.
     pub(crate) name: String,
     /// The schema associated with the storage.
     pub(crate) schemas: HashMap<String, Schema>,
+    pub(crate) options: Option<Object>,
 }
 
 #[wasm_bindgen]
@@ -63,26 +69,30 @@ impl BaseStorage {
     ///
     /// * `Result<BaseStorage, JsValue>` - A result containing the new `BaseStorage` instance or an error.
     #[wasm_bindgen(constructor)]
-    pub fn new(name: String, schemas_js: Object) -> Result<BaseStorage, JsValue> {
-        
+    pub fn new(name: String, schemas_js: Object, options: Option<Object>) -> Result<BaseStorage, JsValue> {
         let mut schemas: HashMap<String, Schema> = HashMap::new();
         let keys = Object::keys(&schemas_js.clone()).into_iter();
-        
-        
         for collection in keys {
             let collection_string: String = collection.as_string().ok_or("Invalid collection name")?;
-            
             let schema_type = Reflect::get(&schemas_js.clone(), &collection)?;
             let schema = Schema::create(schema_type)?;
-            
             schemas.insert(collection_string.clone(), schema);
         }
-        
-        
         let base_storage = BaseStorage {
             name,
             schemas,
+            options
         };
         Ok(base_storage)
     }
+
+    #[wasm_bindgen(js_name = getOption)]
+    pub fn get_option(&self, name: String) -> Result<JsValue, JsValue> {
+        let value = Reflect::get(
+            self.options.as_ref().unwrap(), 
+            &JsValue::from_str(&name)
+        )?;
+        Ok(value)
+    }
+
 }
