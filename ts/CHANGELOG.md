@@ -1,3 +1,13 @@
+## [0.6.2](https://github.com/trust0-project/RIDB/compare/v0.6.1...v0.6.2) (2024-11-11)
+
+
+### Bug Fixes
+
+* add simple db tests for indexdb and inmemory ([100bdf7](https://github.com/trust0-project/RIDB/commit/100bdf78d7bff228ba055681a36395791615b8da))
+* lint code ([2204f65](https://github.com/trust0-project/RIDB/commit/2204f6579090039d49456e1bd30f47c46bf5f5a8))
+* small database tests ([5394479](https://github.com/trust0-project/RIDB/commit/53944792e4ec5d0fd2ca25562ea80dc648217519))
+* test coverage and small doc improvements ([#25](https://github.com/trust0-project/RIDB/issues/25)) ([fc2dcce](https://github.com/trust0-project/RIDB/commit/fc2dcce18d022bb994af82e1682f812527e0c4c2))
+
 ## [0.6.2-rc.1](https://github.com/trust0-project/RIDB/compare/v0.6.1...v0.6.2-rc.1) (2024-11-11)
 
 
