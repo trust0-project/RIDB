@@ -1,3 +1,10 @@
+## [0.6.5-rc.2](https://github.com/trust0-project/RIDB/compare/v0.6.5-rc.1...v0.6.5-rc.2) (2024-11-14)
+
+
+### Bug Fixes
+
+* indexdb issue with starting a database with different stores (potentially breaking it) ([341a989](https://github.com/trust0-project/RIDB/commit/341a989900c8653ebf625c4bc606829ac27e36c8))
+
 ## [0.6.5-rc.1](https://github.com/trust0-project/RIDB/compare/v0.6.4...v0.6.5-rc.1) (2024-11-14)
 
 
