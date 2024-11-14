@@ -427,6 +427,66 @@ export default (platform: string, storages: StoragesType[]) => {
                         })
                     ).to.rejects.toThrowError("Required Schema demo migration path 1 to not be undefined")
                 })
+                it("Should handle multiple collections independently", async () => {
+                    const db = new RIDB(
+                        {
+                            dbName: "test",
+                            schemas: {
+                                users: {
+                                    version: 0,
+                                    primaryKey: 'id',
+                                    type: SchemaFieldType.object,
+                                    properties: {
+                                        id: {
+                                            type: SchemaFieldType.string,
+                                            maxLength: 60
+                                        },
+                                        name: {
+                                            type: SchemaFieldType.string,
+                                            maxLength: 20
+                                        }
+                                    }
+                                },
+                                posts: {
+                                    version: 0,
+                                    primaryKey: 'id',
+                                    type: SchemaFieldType.object,
+                                    properties: {
+                                        id: {
+                                            type: SchemaFieldType.string,
+                                            maxLength: 60
+                                        },
+                                        title: {
+                                            type: SchemaFieldType.string,
+                                            maxLength: 100
+                                        }
+                                    }
+                                }
+                            } as const
+                        }
+                    )
+
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+
+                    // Create a user in the users collection
+                    const user = await db.collections.users.create({
+                        id: "user1",
+                        name: "Test User"
+                    });
+
+                    expect(user).to.not.be.undefined;
+                    expect(user.id).to.eq("user1");
+
+                    // Verify posts collection exists but is empty
+                    const postsCount = await db.collections.posts.count({});
+                    expect(postsCount).to.eq(0);
+
+                    const allPosts = await db.collections.posts.find({});
+                    expect(allPosts.length).to.eq(0);
+                });
                 it("Should be able to create and migrate a schema from v1 to v2", async () => {
                     const db = new RIDB(
                         {
