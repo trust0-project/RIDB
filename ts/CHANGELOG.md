@@ -1,3 +1,10 @@
+## [0.6.5-rc.1](https://github.com/trust0-project/RIDB/compare/v0.6.4...v0.6.5-rc.1) (2024-11-14)
+
+
+### Bug Fixes
+
+* issue with inmemory collection not storing indexes for each collection correctly ([aafa0a4](https://github.com/trust0-project/RIDB/commit/aafa0a4e35ab24f4f4303247ebb35abf44df4c1d))
+
 ## [0.6.4](https://github.com/trust0-project/RIDB/compare/v0.6.3...v0.6.4) (2024-11-11)
 
 
