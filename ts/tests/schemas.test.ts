@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { v4 as uuidv4 } from 'uuid';
 import { SchemaFieldType, RIDB } from '..';
 import { StoragesType } from './shared';
 
@@ -13,7 +14,7 @@ export default (platform: string, storages: StoragesType[]) => {
 
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -50,7 +51,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("should allow optional fields", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -96,7 +97,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should allow updating multi model encrypted document", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo2: {
                                     version: 0,
@@ -171,7 +172,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should be able to create a default database with a valid schema", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -196,7 +197,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should be able to find a created schema entry", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -249,7 +250,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should be able to count a created schema entry", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -305,7 +306,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error with a schema with invalid type", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -324,7 +325,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error when schema properties type is invalid", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -348,7 +349,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error when the minLength is lower than 0", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -372,7 +373,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error when schemaType with a property that has min higher than max", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -397,7 +398,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error if migrations are declared wrong", () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo: {
                                     version: 1,
@@ -430,7 +431,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should handle multiple collections independently", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 users: {
                                     version: 0,
@@ -490,7 +491,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should be able to create and migrate a schema from v1 to v2", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test",
+                            dbName: "test" + uuidv4(),
                             schemas: {
                                 demo: {
                                     version: 1,
