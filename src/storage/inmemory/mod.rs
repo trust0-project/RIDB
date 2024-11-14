@@ -47,7 +47,7 @@ impl Storage for InMemory {
     async fn write(&self, op: &Operation) -> Result<JsValue, JsValue> {
         let schema = self.base.schemas.get(op.collection.as_str()).ok_or_else(|| JsValue::from_str("Collection not found"))?;
         let primary_key = schema.primary_key.clone();
-        let index_name = format!("pk_{}", primary_key);
+        let index_name = format!("pk_{}_{}", op.collection, primary_key);
 
         let mut index_guard = self.by_index.write().map_err(|_| JsValue::from_str("Failed to acquire write lock"))?;
         let index = index_guard
@@ -128,7 +128,7 @@ impl Storage for InMemory {
         let normalized_query = query.parse()?;
         let results = Array::new();
         let primary_key = schema.primary_key.clone();
-        let index_name = format!("pk_{}", primary_key);
+        let index_name = format!("pk_{}_{}", collection_name, primary_key);
 
         if let Some(index) = self.by_index.read().unwrap().get(&index_name) {
             for (_pk, doc) in index.iter() {
@@ -148,9 +148,8 @@ impl Storage for InMemory {
         primary_key_value: JsValue,
     ) -> Result<JsValue, JsValue> {
         let schema = self.base.schemas.get(collection_name).ok_or_else(|| JsValue::from_str("Collection not found"))?;
-
         let primary_key = schema.primary_key.clone();
-        let index_name = format!("pk_{}", primary_key);
+        let index_name = format!("pk_{}_{}", collection_name, primary_key);
 
         // Convert primary key value to string
         let pk_str = if let Some(s) = primary_key_value.as_string() {
@@ -173,16 +172,12 @@ impl Storage for InMemory {
 
     async fn count(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
         let schema = self.base.schemas.get(collection_name).ok_or_else(|| JsValue::from_str("Collection not found"))?;
-
-        // Get the normalized query
         let normalized_query = query.parse()?;
-
-        // Count matching documents
         let mut count = 0;
 
-        // Get all documents from the primary key index
         let primary_key = schema.primary_key.clone();
-        let index_name = format!("pk_{}", primary_key);
+        let index_name = format!("pk_{}_{}", collection_name, primary_key);
+
         if let Some(index) = self.by_index.read().unwrap().get(&index_name) {
             for (_pk, doc) in index.iter() {
                 let matches = self.core.document_matches_query(doc, &normalized_query)?;
@@ -521,5 +516,67 @@ mod tests {
         
         let result = inmem.count_js("demo", query_value).await.unwrap();
         assert_eq!(result.as_f64().unwrap(), 2.0);
+    }
+
+    #[wasm_bindgen_test(async)]
+    async fn test_inmemory_storage_multiple_collections() {
+        let schemas_obj = Object::new();
+        
+        // First collection schema (users)
+        let users_schema_str = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "email": { "type": "string" }
+            }
+        }"#;
+        let users_schema = json_str_to_js_value(users_schema_str).unwrap();
+        Reflect::set(&schemas_obj, &JsValue::from_str("users"), &users_schema).unwrap();
+        
+        // Second collection schema (posts)
+        let posts_schema_str = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "title": { "type": "string" },
+                "content": { "type": "string" }
+            }
+        }"#;
+        let posts_schema = json_str_to_js_value(posts_schema_str).unwrap();
+        Reflect::set(&schemas_obj, &JsValue::from_str("posts"), &posts_schema).unwrap();
+        
+        let inmem = InMemory::create("test_multi_db", schemas_obj).await.unwrap();
+
+        // Insert data only into users collection
+        let user = json_str_to_js_value(r#"{
+            "id": "1",
+            "name": "Alice",
+            "email": "alice@example.com"
+        }"#).unwrap();
+
+        let create_op = Operation {
+            collection: "users".to_string(),
+            op_type: OpType::CREATE,
+            data: user,
+            indexes: vec![],
+        };
+        inmem.write(&create_op).await.unwrap();
+
+        // Query the empty posts collection
+        let empty_query = json_str_to_js_value("{}").unwrap();
+        
+        // Test find on empty collection
+        let posts_result = inmem.find_js("posts", empty_query.clone()).await.unwrap();
+        let posts_array = Array::from(&posts_result);
+        assert_eq!(posts_array.length(), 0);
+        
+        // Test count on empty collection
+        let count_result = inmem.count_js("posts", empty_query).await.unwrap();
+        assert_eq!(count_result.as_f64().unwrap(), 0.0);
     }
 }

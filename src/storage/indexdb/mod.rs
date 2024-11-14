@@ -98,12 +98,33 @@ impl Storage for IndexDB {
     async fn write(&self, op: &Operation) -> Result<JsValue, JsValue> {
         let store_name = &op.collection;
         
+        let store_names = self.db.object_store_names();
+        let stores: Vec<String> = (0..store_names.length())
+            .filter_map(|i| {
+                let store = store_names.get(i)?;
+                Some(store.as_str().to_string())
+            })
+            .collect();
+        web_sys::console::log_1(&JsValue::from_str(&format!(
+            "Available stores: {:?}, Attempting to access: {}",
+            stores, store_name
+        )));
+
         let transaction = match self.db.transaction_with_str_and_mode(
             store_name,
             web_sys::IdbTransactionMode::Readwrite,
         ) {
             Ok(t) => t,
-            Err(e) => return Err(e),
+            Err(e) => {
+                web_sys::console::error_1(&JsValue::from_str(&format!(
+                    "Failed to create transaction for store '{}': {:?}",
+                    store_name, e
+                )));
+                return Err(JsValue::from_str(&format!(
+                    "Failed to access store '{}'. Available stores: {:?}",
+                    store_name, stores
+                )));
+            }
         };
 
         let store = match transaction.object_store(store_name) {
@@ -168,7 +189,29 @@ impl Storage for IndexDB {
 
     async fn find(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
         let store_name = collection_name;
-        let transaction = self.db.transaction_with_str(store_name)?;
+        
+        let store_names = self.db.object_store_names();
+        let stores: Vec<String> = (0..store_names.length())
+        .filter_map(|i| {
+            let store = store_names.get(i)?;
+            Some(store.as_str().to_string())
+        })
+        .collect();
+
+        let transaction = match self.db.transaction_with_str(store_name) {
+            Ok(t) => t,
+            Err(e) => {
+                web_sys::console::error_1(&JsValue::from_str(&format!(
+                    "Failed to create transaction for store '{}': {:?}",
+                    store_name, e
+                )));
+                return Err(JsValue::from_str(&format!(
+                    "Failed to access store '{}'. Available stores: {:?}",
+                    store_name, stores
+                )));
+            }
+        };
+
         let store = transaction.object_store(store_name)?;
         
         let normalized_query = query.parse()?;
@@ -685,6 +728,72 @@ mod tests {
         
         let result = db.count_js("demo", query_value).await.unwrap();
         assert_eq!(result.as_f64().unwrap(), 2.0);
+
+        // Clean up
+        db.close().await.unwrap();
+    }
+
+    #[wasm_bindgen_test(async)]
+    async fn test_indexdb_multiple_collections() {
+        // Create schemas for two collections
+        let schemas_obj = Object::new();
+        
+        // Schema for users collection
+        let users_schema = json_str_to_js_value(r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "email": { "type": "string" }
+            }
+        }"#).unwrap();
+        
+        // Schema for products collection
+        let products_schema = json_str_to_js_value(r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "price": { "type": "number" }
+            }
+        }"#).unwrap();
+        
+        Reflect::set(&schemas_obj, &JsValue::from_str("users"), &users_schema).unwrap();
+        Reflect::set(&schemas_obj, &JsValue::from_str("products"), &products_schema).unwrap();
+        
+        let db = IndexDB::create("test_db_multiple_collections", schemas_obj).await.unwrap();
+
+        // Insert data only into users collection
+        let user = json_str_to_js_value(r#"{
+            "id": "1",
+            "name": "John Doe",
+            "email": "john@example.com"
+        }"#).unwrap();
+
+        let create_op = Operation {
+            collection: "users".to_string(),
+            op_type: OpType::CREATE,
+            data: user,
+            indexes: vec![],
+        };
+        
+        db.write(&create_op).await.unwrap();
+
+        // Query the empty products collection
+        let empty_query = json_str_to_js_value("{}").unwrap();
+        
+        // Find all products (should be empty)
+        let products_result = db.find_js("products", empty_query.clone()).await.unwrap();
+        let products_array = Array::from(&products_result);
+        assert_eq!(products_array.length(), 0);
+
+        // Count products (should be 0)
+        let count_result = db.count_js("products", empty_query).await.unwrap();
+        assert_eq!(count_result.as_f64().unwrap(), 0.0);
 
         // Clean up
         db.close().await.unwrap();

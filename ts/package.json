@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb",
-  "version": "0.6.4",
+  "version": "0.6.5-rc.2",
   "description": "Dependency free wasm db encrypted and secure database wrapper for web and node.",
   "main": "./build/cjs/index.js",
   "publishConfig": {
@@ -63,6 +63,7 @@
     "typedoc-plugin-rename-defaults": "^0.7.1",
     "typedoc-theme-hierarchy": "^5.0.3",
     "typescript": "^5.4.5",
+    "uuid": "^11.0.3",
     "vite-plugin-top-level-await": "^1.4.1",
     "vite-plugin-wasm": "^3.3.0",
     "vitest": "^1.6.0",
