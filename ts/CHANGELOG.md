@@ -1,3 +1,12 @@
+## [0.6.5](https://github.com/trust0-project/RIDB/compare/v0.6.4...v0.6.5) (2024-11-14)
+
+
+### Bug Fixes
+
+* indexdb and inmemory storage fixes ([#27](https://github.com/trust0-project/RIDB/issues/27)) ([f98a577](https://github.com/trust0-project/RIDB/commit/f98a577d9246e51e31489f32feeebc4dc46b4234))
+* indexdb issue with starting a database with different stores (potentially breaking it) ([341a989](https://github.com/trust0-project/RIDB/commit/341a989900c8653ebf625c4bc606829ac27e36c8))
+* issue with inmemory collection not storing indexes for each collection correctly ([aafa0a4](https://github.com/trust0-project/RIDB/commit/aafa0a4e35ab24f4f4303247ebb35abf44df4c1d))
+
 ## [0.6.5-rc.2](https://github.com/trust0-project/RIDB/compare/v0.6.5-rc.1...v0.6.5-rc.2) (2024-11-14)
 
 
