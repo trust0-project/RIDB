@@ -163,6 +163,7 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
     private plugins: Array<typeof RIDBTypes.BasePlugin> = [];
     private _db: RIDBTypes.Database<T> | undefined;
     private dbName: string;
+    
     /**
      * Creates an instance of RIDB.
      * @param options
@@ -205,6 +206,10 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
             throw new Error("Start the database first");
         }
         return this._db;
+    }
+
+    get started() {
+        return this._db?.started ?? false;
     }
 
     /**
@@ -274,6 +279,8 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
 
     async close() {
         await this.db.close();
+        this._db = undefined;
+        debugger;
     }
 
 }

@@ -70,7 +70,7 @@ pub trait Storage {
     async fn find(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue>;
     async fn find_document_by_id(&self, collection_name: &str, primary_key:JsValue) -> Result<JsValue, JsValue>;
     async fn count(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue>;
-    async fn close(&self) -> Result<JsValue, JsValue>;
+    async fn close(&mut self) -> Result<JsValue, JsValue>;
     async fn start(&mut self) -> Result<JsValue, JsValue>;
 
 }

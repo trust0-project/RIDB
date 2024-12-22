@@ -1,3 +1,16 @@
+# [0.7.0-rc.1](https://github.com/trust0-project/RIDB/compare/v0.6.5...v0.7.0-rc.1) (2024-12-22)
+
+
+### Bug Fixes
+
+* add sample browser implementation ([4e59c05](https://github.com/trust0-project/RIDB/commit/4e59c055d17e5dca6f67d79e5d05a17f6a520187))
+
+
+### Features
+
+* make indexdb re-usable on the same browser runtime ([6b15e62](https://github.com/trust0-project/RIDB/commit/6b15e62d6e3bd0006b5328f8aa44b37529df2304))
+* make inmemory storage reusable ([3a9d73f](https://github.com/trust0-project/RIDB/commit/3a9d73f44c9d35f53ff1e9990af6c539eda6d41c))
+
 ## [0.6.5](https://github.com/trust0-project/RIDB/compare/v0.6.4...v0.6.5) (2024-11-14)
 
 

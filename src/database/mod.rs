@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::{ JsCast, JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
+use web_sys::console::log_1;
 use crate::collection::Collection;
 use crate::error::RIDBError;
 use crate::plugin::BasePlugin;
@@ -75,6 +76,8 @@ export class Database<T extends SchemaTypeRecord> {
         [name in keyof T]: Collection<Schema<T[name]>>
     }
 
+    readonly started: boolean;
+
     /**
      * Starts the database.
      *
@@ -133,21 +136,40 @@ extern "C" {
 /// Represents a database with collections of documents.
 pub struct Database {
     /// The storage mechanism for the database.
-    pub(crate) storage: Storage
+    pub(crate) storage: Storage,
+    pub(crate) started: bool
 }
 
 
 #[wasm_bindgen]
 impl Database {
     #[wasm_bindgen(js_name = "start")]
-    pub async fn start(&self) -> Result<JsValue, JsValue> {
-        self.storage.internal.start().await
+    pub async fn start(&mut self) -> Result<JsValue, JsValue> {
+        log_1(&"Starting the database...".into());
+        if self.started {
+            log_1(&"Database already started.".into());
+            return Err(JsValue::from("Database already started"));
+        }
+        let res = self.storage.internal.start().await;
+        self.started = true;
+        log_1(&"Database started successfully.".into());
+        res
     }
 
     #[wasm_bindgen(js_name = "close")]
-    pub async fn close(&self) -> Result<JsValue, JsValue> {
-        self.storage.internal.close().await
+    pub async fn close(mut self) -> Result<JsValue, JsValue> {
+        log_1(&"Closing the database...".into());
+        let res = self.storage.internal.close().await;
+        self.started = false;
+        log_1(&"Database closed successfully.".into());
+        res
     }
+
+    #[wasm_bindgen(getter, js_name = "started")]
+    pub fn started(&self) -> bool {
+        self.started
+    }
+
 
     /// Retrieves the collections in the database.
     ///
@@ -158,8 +180,10 @@ impl Database {
     /// * `Result<Object, JsValue>` - A result containing an `Object` with the collections or an error.
     #[wasm_bindgen(getter)]
     pub fn collections(&self) -> Result<Object, JsValue> {
+        log_1(&"Retrieving collections...".into());
         let mut collections: HashMap<String, Collection> = HashMap::new();
         for (key, _) in self.storage.schemas.iter() {
+            log_1(&format!("Processing collection: {}", key).into());
             let storage = self.storage.clone();
             let collection = Collection::from(
                 key.clone(),
@@ -178,6 +202,7 @@ impl Database {
                 &JsValue::from(collection)
             ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
         }
+        log_1(&"Collections retrieved successfully.".into());
         Ok(object)
     }
 
@@ -191,22 +216,28 @@ impl Database {
         password: Option<String>,
         storage: Option<StorageExternal>
     ) -> Result<Database, JsValue> {
+        log_1(&format!("Creating database: {}", db_name).into());
         let storage: StorageExternal = if let Some(storage) = storage {
+            log_1(&"Using provided storage.".into());
             storage.into()
         } else {
+            log_1(&"Creating InMemory storage.".into());
             JsValue::from(InMemory::create(db_name, schemas_js.clone()).await?).into()
         };
 
         let vec_plugins_js: Vec<JsValue> = module.apply(plugins)?;
+        log_1(&"Plugins applied.".into());
         let mut vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
             .map(|plugin| plugin.unchecked_into::<BasePlugin>())
             .collect();
 
         if let Some(pass) = password {
+            log_1(&"Adding encryption plugin.".into());
             let encryption = EncryptionPlugin::new(pass)?;
             vec_plugins.push(encryption.base.clone());
         }
 
+        log_1(&"Adding migration plugin.".into());
         vec_plugins.push(MigrationPlugin::new()?.base.clone());
 
         let mut schemas: HashMap<String, Schema> = HashMap::new();
@@ -214,6 +245,7 @@ impl Database {
         let keys = Object::keys(&schemas_js.clone()).into_iter();
         for collection in keys {
             let collection_string: String = collection.as_string().ok_or("Invalid collection name")?;
+            log_1(&format!("Processing schema for collection: {}", collection_string).into());
             let schema_type = Reflect::get(&schemas_js.clone(), &collection)?;
             let schema = Schema::create(schema_type)?;
             let migration = Reflect::get(&migrations_js.clone(), &collection)?;
@@ -224,6 +256,7 @@ impl Database {
                     .map_err(|e| RIDBError::from(e))?;
 
                 if function.is_undefined() {
+                    log_1(&format!("Migration path undefined for collection: {}, version: {}", collection_string, version).into());
                     return Err(
                         JsValue::from(
                             format!("Required Schema {} migration path {} to not be undefined", collection_string, version)
@@ -236,6 +269,7 @@ impl Database {
             migrations.insert(collection_string, migration);
         }
 
+        log_1(&"Creating storage with schemas and migrations.".into());
         let storage = Storage::create(
             schemas,
             migrations,
@@ -243,7 +277,8 @@ impl Database {
             storage
         ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
-        Ok(Database { storage })
+        log_1(&"Database created successfully.".into());
+        Ok(Database { storage, started: false })
     }
 }
 /*
