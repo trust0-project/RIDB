@@ -312,7 +312,44 @@ impl Storage for IndexDB {
         JsFuture::from(promise).await
     }
 
-    async fn close(&self) -> Result<JsValue, JsValue> {
+    async fn close(&mut self) -> Result<JsValue, JsValue> {
+        // Wait for any pending transactions to complete
+        let store_names = self.db.object_store_names();
+        let stores: Vec<String> = (0..store_names.length())
+            .filter_map(|i| {
+                let store = store_names.get(i)?;
+                Some(store.as_str().to_string())
+            })
+            .collect();
+
+        // Create a read transaction for each store to ensure all operations are complete
+        for store_name in stores {
+            let transaction = self.db.transaction_with_str(&store_name)?;
+            
+            // Wait for the transaction to complete
+            let promise = Promise::new(&mut |resolve, reject| {
+                let oncomplete = Closure::once(Box::new(move |_: web_sys::Event| {
+                    resolve.call0(&JsValue::undefined()).unwrap();
+                }));
+                
+                let onerror = Closure::once(Box::new(move |e| {
+                    reject.call1(&JsValue::undefined(), &e).unwrap();
+                }));
+                
+                transaction.set_oncomplete(Some(oncomplete.as_ref().unchecked_ref()));
+                transaction.set_onerror(Some(onerror.as_ref().unchecked_ref()));
+                
+                oncomplete.forget();
+                onerror.forget();
+            });
+            
+            JsFuture::from(promise).await?;
+        }
+
+        // Remove the connection from the pool
+        POOL.remove_connection(&self.base.name);
+
+        // Now safe to close the database
         self.db.close();
         Ok(JsValue::from_str("IndexDB database closed"))
     }
@@ -456,7 +493,7 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "close")]
-    pub async fn close_js(&self) -> Result<JsValue, JsValue> {
+    pub async fn close_js(&mut self) -> Result<JsValue, JsValue> {
         self.close().await
     }
 
@@ -485,20 +522,35 @@ impl IndexDBPool {
         }
     }
 
+    /// Retrieves a connection from the pool, recreating it if it's closed
     fn get_connection(&self, name: &str) -> Option<Arc<IdbDatabase>> {
-        let connections = self.connections.lock();
+        let mut connections = self.connections.lock();
         if let Some(db) = connections.get(name) {
-            Some(db.clone())
+            // Check if the database connection is still valid
+            if db.is_closed() {
+                // Remove the closed connection
+                connections.remove(name);
+                None
+            } else {
+                Some(db.clone())
+            }
         } else {
             None
         }
     }
 
+    /// Stores a new connection in the pool
     fn store_connection(&self, name: String, db: Weak<IdbDatabase>) {
         let mut connections = self.connections.lock();
         if let Some(arc_db) = db.upgrade() {
             connections.insert(name, arc_db);
         }
+    }
+
+    /// Removes a connection from the pool
+    fn remove_connection(&self, name: &str) {
+        let mut connections = self.connections.lock();
+        connections.remove(name);
     }
 }
 
@@ -583,7 +635,7 @@ mod tests {
         let schema = json_str_to_js_value(schema_str).unwrap();
         Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
         
-        let db = IndexDB::create("test_db_create", schemas_obj).await.unwrap();
+        let mut db = IndexDB::create("test_db_create", schemas_obj).await.unwrap();
 
         // Create a new item
         let new_item = Object::new();
@@ -635,7 +687,7 @@ mod tests {
         let schema = json_str_to_js_value(schema_str).unwrap();
         Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
         
-        let db = IndexDB::create("test_db_find", schemas_obj).await.unwrap();
+        let mut db = IndexDB::create("test_db_find", schemas_obj).await.unwrap();
 
         // Create test documents
         let items = vec![
@@ -696,7 +748,7 @@ mod tests {
         let schema = json_str_to_js_value(schema_str).unwrap();
         Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
         
-        let db = IndexDB::create("test_db_count", schemas_obj).await.unwrap();
+        let mut db = IndexDB::create("test_db_count", schemas_obj).await.unwrap();
 
         // Create test documents
         let items = vec![
@@ -765,7 +817,7 @@ mod tests {
         Reflect::set(&schemas_obj, &JsValue::from_str("users"), &users_schema).unwrap();
         Reflect::set(&schemas_obj, &JsValue::from_str("products"), &products_schema).unwrap();
         
-        let db = IndexDB::create("test_db_multiple_collections", schemas_obj).await.unwrap();
+        let mut db = IndexDB::create("test_db_multiple_collections", schemas_obj).await.unwrap();
 
         // Insert data only into users collection
         let user = json_str_to_js_value(r#"{
@@ -797,6 +849,21 @@ mod tests {
 
         // Clean up
         db.close().await.unwrap();
+    }
+}
+
+// Add this extension trait
+trait IdbDatabaseExt {
+    fn is_closed(&self) -> bool;
+}
+
+impl IdbDatabaseExt for IdbDatabase {
+    fn is_closed(&self) -> bool {
+        // Attempt to start a dummy transaction to see if the database is closed
+        match self.transaction_with_str("__non_existent_store__") {
+            Ok(_) => false,
+            Err(_) => true,
+        }
     }
 }
 
