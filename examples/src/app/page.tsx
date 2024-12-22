@@ -7,14 +7,19 @@ import { RIDB, SchemaFieldType, StorageType, Doc } from "@trust0/ridb";
 
 const schemas =  {
   demo: {
-      version: 0,
+      version: 1,
       primaryKey: 'id',
       type: SchemaFieldType.object,
       properties: {
           id: {
               type: SchemaFieldType.string,
               maxLength: 60
-          }
+          },
+          age: {
+            type: SchemaFieldType.number,
+            default: 18,
+            required: false
+        }
       }
   }
 } as const;
@@ -27,6 +32,16 @@ export default function Home() {
       {
           dbName: "test-database",
           schemas,
+          migrations: {
+            demo: {
+              1: function (doc) {
+                  return {
+                    ...doc,
+                    age: doc.age || 18
+                  }
+              }
+            }
+        }
       }
     ),
     []
@@ -55,7 +70,6 @@ export default function Home() {
     if (db) {
       const demoCollection = db.collections.demo;
       const allDemos = await demoCollection.find({});
-      debugger;
       setDemos(allDemos);
     }
   };
@@ -118,7 +132,7 @@ export default function Home() {
             <h2 className="text-xl font-semibold mb-2">Demos</h2>
             <ul className="list-disc pl-5 mb-4">
               {demos.map(demo => (
-                <li key={demo.id} className="text-lg">{demo.id}</li>
+                <li key={demo.id} className="text-lg">{demo.id} - {demo.age}</li>
               ))}
             </ul>
             <input

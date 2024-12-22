@@ -2,8 +2,9 @@
 extern crate wasm_bindgen_test;
 
 use std::collections::HashMap;
-use js_sys::{ JSON};
+use js_sys::JSON;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
@@ -63,6 +64,11 @@ export class Property {
     readonly required?: boolean;
 
     /**
+     * An optional default value for the property.
+     */
+    readonly default?: any;
+
+    /**
      * An optional map of nested properties for object-type properties.
      */
     readonly properties?: {
@@ -103,6 +109,10 @@ pub struct Property {
     /// Optional minimum length for string-type properties.
     #[serde(rename = "minLength", skip_serializing_if = "Option::is_none")]
     pub(crate) min_length: Option<i32>,
+
+    /// Optional default value for the property.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) default: Option<Value>,
 }
 
 #[wasm_bindgen]
@@ -264,6 +274,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: None,
+            default: None,
         };
         assert_eq!(default_property.property_type, PropertyType::String);
         assert!(default_property.items.is_none());
@@ -285,6 +296,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: None,
+            default: None,
         };
         // Test default values to ensure proper initialization
         assert_eq!(default_property.property_type, PropertyType::Array);
@@ -312,6 +324,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: None,
+            default: None,
         };
         let default_property = Property {
             property_type: PropertyType::Array,
@@ -321,6 +334,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: None,
+            default: None,
         };
         let result = default_property.is_valid();
         match result {
@@ -339,6 +353,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: None,
+            default: None,
         };
 
         let default_property2 = Property {
@@ -349,6 +364,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: None,
+            default: None,
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -369,6 +385,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: None,
+            default: None,
         };
 
         let default_property2 = Property {
@@ -379,6 +396,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: None,
+            default: None,
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -399,6 +417,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: None,
+            default: None,
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -418,6 +437,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: None,
+            default: None,
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -437,6 +457,7 @@ mod tests {
             max_length: Some(1),
             min_length: Some(2),
             properties: None,
+            default: None,
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -456,6 +477,7 @@ mod tests {
             max_length: Some(1),
             min_length: Some(-1),
             properties: None,
+            default: None,
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -475,6 +497,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: None,
+            default: None,
         }.is_valid();
         // Check the result for an error message
         match result {
@@ -493,6 +516,7 @@ mod tests {
             max_length: None,
             min_length: None,
             properties: Some(HashMap::new()),
+            default: None,
         }.is_valid();
         // Check the result for an error message
         match result {

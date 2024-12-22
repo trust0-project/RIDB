@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use base::StorageExternal;
-use js_sys::Reflect;
+use js_sys::{Reflect, JSON};
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast, JsValue};
 
@@ -12,7 +12,7 @@ pub mod base;
 pub mod indexdb;
 pub mod inmemory;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub(crate) enum HookType {
     Create,
     Recover,
@@ -74,18 +74,23 @@ impl Storage {
             .map(|migration| migration)
     }
 
-    pub(crate) fn call(&self, collection_name: &str,hook_type: HookType, mut doc: JsValue) -> Result<JsValue, JsValue> {
+    pub(crate) async fn call(&self, collection_name: &str,hook_type: HookType, mut doc: JsValue) -> Result<JsValue, JsValue> {
         let plugins = &self.plugins;
         for plugin in plugins {
             let hook = match hook_type {
                 HookType::Create => plugin.get_doc_create_hook(),
                 HookType::Recover => plugin.get_doc_recover_hook(),
             };
+            let doc_json = JSON::stringify(&doc)?;
             doc = self.compute_hook(
                 collection_name, 
                 doc.clone(), 
                 &hook
             )?;
+            let doc_json_new = JSON::stringify(&doc.clone())?;
+            if doc_json_new != doc_json && hook_type == HookType::Recover {
+                self.write(collection_name, doc.clone()).await?;
+            }
         }
         Ok(doc)
     }
@@ -200,6 +205,27 @@ impl Storage {
     }
 
 
+    fn set_default_fields(&self, collection_name: &str, document: JsValue) -> Result<JsValue, JsValue> {
+        let schema = self.get_schema(collection_name)?;
+        let properties = schema.properties.clone();
+
+        for (key, prop) in properties {
+
+            let current_value = Reflect::get(&document, &JsValue::from_str(&key))?;
+            if current_value.is_null() || current_value.is_undefined() {
+                let has_default = prop.default.is_some();
+                if has_default {
+                    Reflect::set(
+                        &document, 
+                        &JsValue::from_str(&key), 
+                        &to_value(&prop.default)?
+                    )?;
+                }
+            }
+        }
+        Ok(document)
+    }
+
     pub(crate) async fn write(&self, collection_name: &str, document_without_pk: JsValue) -> Result<JsValue, JsValue> {
         // Move all the preparation logic before the async operation
         let document = {
@@ -232,7 +258,7 @@ impl Storage {
             Operation {
                 collection: collection_name.to_string(),
                 op_type,
-                data: document,
+                data: self.set_default_fields(collection_name, document)?,
                 indexes,
             }
         };

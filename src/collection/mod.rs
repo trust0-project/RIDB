@@ -147,14 +147,18 @@ impl Collection {
             }
         };
 
-        let processed = if result.is_undefined() || result.is_null() {
-            result
-        } else {
-            self.storage.call(&self.name, HookType::Recover, result)?
-        };
+        // Convert the result to a JavaScript array
+        let array = js_sys::Array::from(&result);
+        let processed_array = js_sys::Array::new();
 
+        // Iterate over each document in the array
+        for item in array.iter() {
+            // Recover the document individually
+            let processed_item = self.storage.call(&self.name, HookType::Recover, item).await?;
+            processed_array.push(&processed_item);
+        }
 
-        Ok(processed)
+        Ok(processed_array.into())
     }
 
     /// counts and returns all documents in the collection.
@@ -178,12 +182,15 @@ impl Collection {
             Ok(doc) => doc,
             Err(e) => return Err(js_sys::Error::new(&format!("Failed to find document by ID: {:?}", e)).into())
         };
-
-        self.storage.call(
-            &self.name, 
-            HookType::Recover,
-            document
-        )
+        if document.is_undefined() || document.is_null() {
+            Ok(document)
+        } else {
+            self.storage.call(
+                &self.name, 
+                HookType::Recover, 
+                document
+            ).await
+        }
     }
 
     /// Updates a document in the collection with the given data.
@@ -199,7 +206,7 @@ impl Collection {
             &self.name, 
             HookType::Create,
             document
-        )?;
+        ).await?;
 
         let res = match self.storage.write(&self.name, processed_document).await {
             Ok(result) => result,
@@ -210,7 +217,7 @@ impl Collection {
             &self.name, 
             HookType::Recover,
             res
-        )
+        ).await
     }
 
     /// Creates a new document in the collection.
@@ -226,7 +233,7 @@ impl Collection {
             &self.name, 
             HookType::Create,
             document
-        )?;
+        ).await?;
 
         let res = match self.storage.write(&self.name, processed_document.clone()).await {
             Ok(result) => result,
@@ -237,7 +244,7 @@ impl Collection {
             &self.name, 
             HookType::Recover,
             res
-        )
+        ).await
     }
 
     /// Deletes a document from the collection by its ID.
