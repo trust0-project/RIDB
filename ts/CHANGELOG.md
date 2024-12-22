@@ -1,3 +1,10 @@
+## [0.7.1-rc.1](https://github.com/trust0-project/RIDB/compare/v0.7.0...v0.7.1-rc.1) (2024-12-22)
+
+
+### Bug Fixes
+
+* apply migrations on early finds on recover hook, count, etc ([a32458a](https://github.com/trust0-project/RIDB/commit/a32458a0c3f4d01e89ddff6e6645551682495b36))
+
 # [0.7.0](https://github.com/trust0-project/RIDB/compare/v0.6.5...v0.7.0) (2024-12-22)
 
 
