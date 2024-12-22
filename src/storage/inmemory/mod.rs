@@ -40,6 +40,7 @@ pub struct InMemory {
     core: CoreStorage,
     base: BaseStorage,
     by_index: RwLock<HashMap<String, HashMap<String, JsValue>>>,
+    started: bool,
 }
 
 impl Storage for InMemory {
@@ -190,16 +191,26 @@ impl Storage for InMemory {
         Ok(JsValue::from_f64(count as f64))
     }
 
-    async fn close(&self) -> Result<JsValue, JsValue> {
-        // Clear all data from the storage
-        self.by_index.write()
-            .map_err(|_| JsValue::from_str("Failed to acquire write lock"))?
-            .clear();
-        
-        Ok(JsValue::from_str("In-memory database closed"))
+    async fn close(&mut self) -> Result<JsValue, JsValue> {
+        // Clear all data from the storage and reset internal state
+        let mut index_guard = self.by_index.write()
+            .map_err(|_| JsValue::from_str("Failed to acquire write lock"))?;
+        index_guard.clear();
+
+        // Reset any other internal states if necessary
+        self.started = false;
+
+        Ok(JsValue::from_str("In-memory database closed and reset"))
     }
 
     async fn start(&mut self) -> Result<JsValue, JsValue> {
+        // Reinitialize any internal states if necessary
+        if self.started {
+            return Err(JsValue::from_str("In-memory database already started"));
+        }
+
+        self.started = true;
+
         Ok(JsValue::from_str("In-memory database started"))
     }
     
@@ -221,7 +232,8 @@ impl InMemory {
                 InMemory {
                     base,
                     by_index: RwLock::new(HashMap::new()),
-                    core: CoreStorage {}
+                    core: CoreStorage {},
+                    started: false,
                 }
             ),
             Err(e) => Err(e)
@@ -278,7 +290,7 @@ impl InMemory {
     }
 
     #[wasm_bindgen(js_name = "close")]
-    pub async fn close_js(&self) -> Result<JsValue, JsValue> {
+    pub async fn close_js(&mut self) -> Result<JsValue, JsValue> {
         self.close().await
     }
 
@@ -578,5 +590,50 @@ mod tests {
         // Test count on empty collection
         let count_result = inmem.count_js("posts", empty_query).await.unwrap();
         assert_eq!(count_result.as_f64().unwrap(), 0.0);
+    }
+
+    #[wasm_bindgen_test(async)]
+    async fn test_inmemory_storage_reuse_after_close() {
+        let schemas_obj = Object::new();
+        let schema_str = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "maxLength": 60 },
+                "name": { "type": "string" }
+            }
+        }"#;
+        let schema = json_str_to_js_value(schema_str).unwrap();
+        Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
+
+        let mut inmem = InMemory::create("test_db", schemas_obj).await.unwrap();
+
+        // Start the storage
+        inmem.start_js().await.unwrap();
+
+        // Perform some operations
+        let new_item = json_str_to_js_value(r#"{
+            "id": "1", "name": "Test Item"
+        }"#).unwrap();
+        let op = Operation {
+            collection: "demo".to_string(),
+            op_type: OpType::CREATE,
+            data: new_item,
+            indexes: vec![],
+        };
+        inmem.write(&op).await.unwrap();
+
+        // Close the storage
+        inmem.close_js().await.unwrap();
+
+        // Start the storage again
+        inmem.start_js().await.unwrap();
+
+        // Ensure storage is empty after restart
+        let query_value = json_str_to_js_value("{}").unwrap();
+        let result = inmem.find_js("demo", query_value).await.unwrap();
+        let result_array = Array::from(&result);
+        assert_eq!(result_array.length(), 0);
     }
 }
