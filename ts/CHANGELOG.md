@@ -1,3 +1,10 @@
+# [0.8.0-rc.1](https://github.com/trust0-project/RIDB/compare/v0.7.1-rc.2...v0.8.0-rc.1) (2024-12-23)
+
+
+### Features
+
+* implementing new hashing, integrity check and encryption plugins with PBKDF2, AES-256-GCM and  SHA3-512 ([33eef48](https://github.com/trust0-project/RIDB/commit/33eef485cf9cea504748a2018f79e9a1fdfd87c3))
+
 ## [0.7.1-rc.2](https://github.com/trust0-project/RIDB/compare/v0.7.1-rc.1...v0.7.1-rc.2) (2024-12-23)
 
 
