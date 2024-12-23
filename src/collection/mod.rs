@@ -39,7 +39,7 @@ export type Doc<T extends SchemaType> = {
 } & {
 	[K in keyof T["properties"] as T["properties"][K]["required"] extends false ? never : K]: ExtractType<T["properties"][K]["type"]>;
 } & {
-	__version: number;
+	__version?: number;
 };
 
 /**
@@ -73,14 +73,14 @@ export class Collection<T extends SchemaType> {
 	 * @param document - A partial document containing the fields to update.
 	 * @returns A promise that resolves when the update is complete.
 	 */
-	update(document: Partial<Omit<Doc<T>, "__version">>): Promise<void>;
+	update(document: Partial<Doc<T>>): Promise<void>;
 	/**
 	 * Creates a new document in the collection.
 	 *
 	 * @param document - The document to create.
 	 * @returns A promise that resolves to the created document.
 	 */
-	create(document: Omit<Doc<T>, "__version">): Promise<Doc<T>>;
+	create(document: Doc<T>): Promise<Doc<T>>;
 	/**
 	 * Deletes a document in the collection by its ID.
 	 *
