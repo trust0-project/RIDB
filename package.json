@@ -33,7 +33,10 @@
     "docs": "typedoc --cleanOutputDir false",
     "runtest": "npm run build && npm run test:node",
     "build": "sh build.sh",
-    "test": "npm run test:node && npm run test:browser",
+    "test": "sh test.sh",
+    "performance": "sh performance.sh",
+    "performance:node": "sh performance.sh -e node",
+    "performance:browser": "sh performance.sh -e browser",
     "test:node": "sh test.sh -e node",
     "test:browser": "sh test.sh -e browser",
     "prepublishOnly": "npm run build"
