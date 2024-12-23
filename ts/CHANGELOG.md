@@ -1,3 +1,16 @@
+# [0.8.0](https://github.com/trust0-project/RIDB/compare/v0.7.0...v0.8.0) (2024-12-23)
+
+
+### Bug Fixes
+
+* adding integrity check to ensure data has not been manipulated ([b7354ca](https://github.com/trust0-project/RIDB/commit/b7354ca18bd81ecc19e7a305abe2a903c87f93ef))
+* apply migrations on early finds on recover hook, count, etc ([a32458a](https://github.com/trust0-project/RIDB/commit/a32458a0c3f4d01e89ddff6e6645551682495b36))
+
+
+### Features
+
+* implementing new hashing, integrity check and encryption plugins with PBKDF2, AES-256-GCM and  SHA3-512 ([33eef48](https://github.com/trust0-project/RIDB/commit/33eef485cf9cea504748a2018f79e9a1fdfd87c3))
+
 # [0.8.0-rc.1](https://github.com/trust0-project/RIDB/compare/v0.7.1-rc.2...v0.8.0-rc.1) (2024-12-23)
 
 
