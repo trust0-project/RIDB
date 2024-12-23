@@ -27,6 +27,9 @@ rand = "0.9.0-alpha.2"
 getrandom = { version = "0.2", features = ["js"] }
 parking_lot = "0.12"
 lazy_static = "1.4"
+sha3 = "0.10"
+hex = "0.4"
+
 [package.metadata.wasm-bindgen]
 typescript = true
 

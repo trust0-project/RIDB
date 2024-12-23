@@ -3,7 +3,9 @@ use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::plugin::BasePlugin;
 use crate::schema::Schema;
-use js_sys::Reflect;
+use js_sys::{Reflect, JSON};
+use sha3::{Digest, Sha3_512};
+use std::str::FromStr;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -134,56 +136,44 @@ impl MigrationPlugin {
         migration_js: JsValue,
         mut content: JsValue
     ) -> Result<JsValue, JsValue> {
-
         let doc_version_key = JsValue::from("__version");
         let schema = Schema::create(schema_js.clone())?;
-
         //Ensure that we have the version set correctly
         content = self.create_hook(schema_js.clone(), migration_js.clone(), content)?;
         let version = schema.version;
-
         let doc_version_js = Reflect::get(
             &content,
             &doc_version_key
         ).map_err(|e| JsValue::from(format!("Error getting the document version, err {:?}", e)))?;
-
         let doc_version = if doc_version_js.is_undefined() {
             version
         } else {
             doc_version_js.as_f64()
                 .ok_or_else(|| JsValue::from("__version should be a number"))? as i32
         };
-
         if doc_version < version {
             // Iterate through each version that needs migration
             for current_version in doc_version..version {
                 // Get the next version's migration function
                 let next_version = current_version+1;
-
                 if migration_js.is_undefined() {
                     return Err(JsValue::from("Migration Object is undefined".to_string()))
                 }
-
                 let function = Reflect::get(
                     &migration_js, &JsValue::from(next_version)
                 ).map_err(|e| JsValue::from(format!("Error recovering migration function for version {:?}", e)))?;
-
                 if function.is_undefined() {
                     return Err(JsValue::from(format!("Migrating function {} to schema version not found", next_version)))
                 }
-
                 let upgraded = Reflect::apply(
                     &function.unchecked_into(),
                     &JsValue::NULL,
                     &js_sys::Array::of1(&content)
                 )?;
-
                 Reflect::set(&upgraded, &doc_version_key, &JsValue::from(next_version))?;
-
                 content = upgraded;
             }
         }
-
         Ok(content)
     }
 

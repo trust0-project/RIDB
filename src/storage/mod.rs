@@ -4,6 +4,7 @@ use base::StorageExternal;
 use js_sys::{Reflect, JSON};
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast, JsValue};
+use web_sys::console;
 
 use crate::{error::RIDBError, operation::{OpType, Operation}, plugin::BasePlugin, schema::{property_type::PropertyType, Schema}};
 
@@ -96,19 +97,36 @@ impl Storage {
     }
 
     fn compute_hook(&self, collection_name: &str, doc: JsValue, hook: &JsValue) -> Result<JsValue, JsValue> {
+        // Log the initial state of the document
+        console::log_1(&JsValue::from_str(&format!("Initial doc: {:?}", doc)));
+
         let schema = self.get_schema(collection_name)?;
         let migration = self.get_migration(collection_name)?;
+
         if !hook.is_function() {
             return Err(JsValue::from(RIDBError::error("Hook must be a function")));
         }
+
         let hook_fn = hook.dyn_ref::<js_sys::Function>()
             .ok_or_else(|| JsValue::from(RIDBError::error("Hook is not a function")))?;
-        hook_fn.call3(
+
+        // Log before calling the hook function
+        console::log_1(&JsValue::from_str("Calling hook function"));
+
+        let result = hook_fn.call3(
             &JsValue::NULL,
             &to_value(&schema)?,
             &migration,
             &doc
-        ).map_err(|e| JsValue::from(RIDBError::error(&format!("Error executing plugin hook: {:?}", e))))
+        );
+
+        // Log the result of the hook function call
+        match &result {
+            Ok(updated_doc) => console::log_1(&JsValue::from_str(&format!("Updated doc: {:?}", updated_doc))),
+            Err(e) => console::log_1(&JsValue::from_str(&format!("Error executing hook: {:?}", e))),
+        }
+
+        result.map_err(|e| JsValue::from(RIDBError::error(&format!("Error executing plugin hook: {:?}", e))))
     }
 
 
@@ -205,12 +223,10 @@ impl Storage {
     }
 
 
-    fn set_default_fields(&self, collection_name: &str, document: JsValue) -> Result<JsValue, JsValue> {
+    pub fn set_default_fields(&self, collection_name: &str, document: JsValue) -> Result<JsValue, JsValue> {
         let schema = self.get_schema(collection_name)?;
         let properties = schema.properties.clone();
-
         for (key, prop) in properties {
-
             let current_value = Reflect::get(&document, &JsValue::from_str(&key))?;
             if current_value.is_null() || current_value.is_undefined() {
                 let has_default = prop.default.is_some();
