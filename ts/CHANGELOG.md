@@ -1,3 +1,10 @@
+## [0.8.1-rc.1](https://github.com/trust0-project/RIDB/compare/v0.8.0...v0.8.1-rc.1) (2024-12-23)
+
+
+### Bug Fixes
+
+* improve types and restore commented tests ([2f40c32](https://github.com/trust0-project/RIDB/commit/2f40c3264b08ff975bd469909ecadf318785bb37))
+
 # [0.8.0](https://github.com/trust0-project/RIDB/compare/v0.7.0...v0.8.0) (2024-12-23)
 
 
