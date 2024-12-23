@@ -1,3 +1,10 @@
+# [0.10.0-rc.1](https://github.com/trust0-project/RIDB/compare/v0.9.0...v0.10.0-rc.1) (2024-12-23)
+
+
+### Features
+
+* split packages ([7e43973](https://github.com/trust0-project/RIDB/commit/7e439730b1ae575b172f32428ea381429e11a1f4))
+
 # [0.9.0](https://github.com/trust0-project/RIDB/compare/v0.8.0...v0.9.0) (2024-12-23)
 
 
