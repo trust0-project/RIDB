@@ -58,13 +58,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
           npm ci
-          npm install @semantic-release/changelog@^6.0.3
-          npm install @semantic-release/commit-analyzer@^13.0.0
-          npm install @semantic-release/exec@^6.0.3
-          npm install @semantic-release/git@^10.0.1
-          npm install @semantic-release/github@^10.3.3
-          npm install @semantic-release/npm@^12.0.1
-          npm install @semantic-release/release-notes-generator@^14.0.1
-          npm install semantic-release@^24.1.1
           npm run docs
           npx semantic-release

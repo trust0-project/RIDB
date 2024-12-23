@@ -39,8 +39,17 @@
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^10.3.5",
+    "@semantic-release/npm": "^12.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.2",
+    "semantic-release": "^24.2.0",
+    "webdriverio": "^9.0.9",
+    "@trust0/ridb-wasm": "^1.0.3",
     "@esbuild-plugins/node-resolve": "^0.2.2",
-    "@trust0/ridb-wasm": "^1.0.1",
     "@types/node": "^20.14.2",
     "@vitest/browser": "^1.6.0",
     "@vitest/coverage-istanbul": "^1.6.0",
@@ -59,17 +68,6 @@
     "uuid": "^11.0.3",
     "vite-plugin-top-level-await": "^1.4.1",
     "vite-plugin-wasm": "^3.3.0",
-    "vitest": "^1.6.0",
-    "webdriverio": "^9.0.9"
-  },
-  "dependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^13.0.0",
-    "@semantic-release/exec": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^10.3.5",
-    "@semantic-release/npm": "^12.0.1",
-    "@semantic-release/release-notes-generator": "^14.0.2",
-    "semantic-release": "^24.2.0"
+    "vitest": "^1.6.0"
   }
 }
