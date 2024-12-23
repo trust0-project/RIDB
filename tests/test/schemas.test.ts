@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
-import { SchemaFieldType, RIDB } from '..';
-import { StoragesType } from './shared';
+import { SchemaFieldType, RIDB } from '../..';
+import { StoragesType } from '../shared';
 
 
 export default (platform: string, storages: StoragesType[]) => {
@@ -11,7 +11,6 @@ export default (platform: string, storages: StoragesType[]) => {
         storages.forEach(({ name, storage }) => {
             describe(`[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}] Testing Storage`, () => {
                 it('It should be able to create a new document from JSON schema', async () => {
-
                     const db = new RIDB(
                         {
                             dbName: "test" + uuidv4(),

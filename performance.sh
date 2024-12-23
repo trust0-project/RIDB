@@ -16,7 +16,7 @@ if [ -z "$ENVIRONMENT" ]; then
     echo "Testing ESM Version on both Node and Browser environments"
     
     echo "Testing ESM Version on Node"
-    VITE_CJS_IGNORE_WARNING=true npx vitest --config "vitest.config.ts" $NODE_ENV tests/node.test.ts || { echo "Vitest tests failed"; exit 1; }
+    VITE_CJS_IGNORE_WARNING=true npx vitest --config "vitest.config.ts" $NODE_ENV tests/performance-node.test.ts || { echo "Vitest tests failed"; exit 1; }
     
     # Check if chromedriver is installed
     if ! which chromedriver > /dev/null; then
@@ -24,7 +24,7 @@ if [ -z "$ENVIRONMENT" ]; then
         exit 1
     fi
     echo "Testing ESM Version in Browser"
-    VITE_CJS_IGNORE_WARNING=true npx vitest --config "vitest.config.ts" $BROWSER_ENV tests/browser.test.ts || { echo "Vitest tests failed"; exit 1; }
+    VITE_CJS_IGNORE_WARNING=true npx vitest --config "vitest.config.ts" $BROWSER_ENV tests/performance-browser.test.ts || { echo "Vitest tests failed"; exit 1; }
     exit 0
 fi
 
@@ -35,7 +35,7 @@ BROWSER_ENV="--environment jsdom --browser --browser.name=chrome --run"
 # Check which environment to test based on the options provided
 if [ "$ENVIRONMENT" = "node" ]; then
     echo "Testing ESM Version on Node"
-    VITE_CJS_IGNORE_WARNING=true npx vitest --config "vitest.config.ts" $NODE_ENV tests/node.test.ts || { echo "Vitest tests failed"; exit 1; }
+    VITE_CJS_IGNORE_WARNING=true npx vitest --config "vitest.config.ts" $NODE_ENV tests/performance-node.test.ts || { echo "Vitest tests failed"; exit 1; }
 elif [ "$ENVIRONMENT" = "browser" ]; then
     # Check if chromedriver is installed
     if ! which chromedriver > /dev/null; then
@@ -43,7 +43,7 @@ elif [ "$ENVIRONMENT" = "browser" ]; then
         exit 1
     fi
     echo "Testing ESM Version in Browser"
-    VITE_CJS_IGNORE_WARNING=true npx vitest --config "vitest.config.ts" $BROWSER_ENV tests/browser.test.ts || { echo "Vitest tests failed"; exit 1; }
+    VITE_CJS_IGNORE_WARNING=true npx vitest --config "vitest.config.ts" $BROWSER_ENV tests/performance-browser.test.ts || { echo "Vitest tests failed"; exit 1; }
 else
     echo "Error: Unknown environment specified. Please use '-e node' or '-e browser'."
     exit 1
