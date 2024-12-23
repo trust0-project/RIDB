@@ -107,4 +107,4 @@ The type of the schema record.
 
 ## Defined in
 
-[index.ts:154](https://github.com/trust0-project/RIDB/blob/f964a7022dbc979a3be83e938a1b4df0cf43ab4a/src/index.ts#L154)
+[index.ts:154](https://github.com/trust0-project/RIDB/blob/4fef281da10b105fc67cc4df20c81fa87000ec0b/src/index.ts#L154)

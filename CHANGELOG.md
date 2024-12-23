@@ -1,3 +1,15 @@
+# [0.10.0](https://github.com/trust0-project/RIDB/compare/v0.9.0...v0.10.0) (2024-12-23)
+
+
+### Bug Fixes
+
+* upgrade wasm ([f964a70](https://github.com/trust0-project/RIDB/commit/f964a7022dbc979a3be83e938a1b4df0cf43ab4a))
+
+
+### Features
+
+* split packages ([7e43973](https://github.com/trust0-project/RIDB/commit/7e439730b1ae575b172f32428ea381429e11a1f4))
+
 # [0.10.0-rc.2](https://github.com/trust0-project/RIDB/compare/v0.10.0-rc.1...v0.10.0-rc.2) (2024-12-23)
 
 
