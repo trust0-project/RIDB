@@ -1,6 +1,7 @@
 pub mod encryption;
 pub mod migration;
 pub mod integrity;
+pub mod defaults;
 
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::*;

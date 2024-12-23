@@ -1,3 +1,17 @@
+# [0.9.0-rc.1](https://github.com/trust0-project/RIDB/compare/v0.8.1-rc.1...v0.9.0-rc.1) (2024-12-23)
+
+
+### Features
+
+* extract logic of setting the default values into defaults plugin + testing ([75f23d8](https://github.com/trust0-project/RIDB/commit/75f23d8c9e1cd91ebb1423f39d52ec7997708a83))
+
+## [0.8.1-rc.1](https://github.com/trust0-project/RIDB/compare/v0.8.0...v0.8.1-rc.1) (2024-12-23)
+
+
+### Bug Fixes
+
+* improve types and restore commented tests ([2f40c32](https://github.com/trust0-project/RIDB/commit/2f40c3264b08ff975bd469909ecadf318785bb37))
+
 # [0.8.0](https://github.com/trust0-project/RIDB/compare/v0.7.0...v0.8.0) (2024-12-23)
 
 

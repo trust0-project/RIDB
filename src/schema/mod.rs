@@ -98,7 +98,7 @@ export class Schema<T extends SchemaType> {
      * The properties defined in the schema.
      */
     readonly properties: {
-        [K in keyof T['properties'] as T['properties'][K]['required'] extends false ? K : never]?: T['properties'][K];
+        [K in keyof T['properties'] as T['properties'][K]['required'] extends false | (T['properties'][K]['default'] extends undefined ? true: false)  ? K : never]?: T['properties'][K];
     } & {
         [K in keyof T['properties'] as T['properties'][K]['required'] extends false ? never : K]: T['properties'][K];
     };

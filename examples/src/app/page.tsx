@@ -68,9 +68,7 @@ export default function Home() {
   const handleAddDemo = async () => {
     if (db && isStarted && newDemoId) {
       const demoCollection = db.collections.demo;
-      debugger;
       await demoCollection.create({ id: newDemoId });
-      debugger;
       setNewDemoId('');
       fetchDemos();
     }

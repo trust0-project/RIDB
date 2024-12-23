@@ -35,60 +35,59 @@ export type ExtractType<T extends string> = T extends 'string' ? string :
  * type Document = Doc<Schema>; // Document is { name: string; age: number; }
  */
 export type Doc<T extends SchemaType> = {
-    [name in keyof T['properties']]: ExtractType<T['properties'][name]['type']>
-} & {__version?: number };
+	[K in keyof T["properties"] as T["properties"][K]["required"] extends false | (T["properties"][K]["default"] extends undefined ? true : false) ? K : never]?: ExtractType<T["properties"][K]["type"]>;
+} & {
+	[K in keyof T["properties"] as T["properties"][K]["required"] extends false ? never : K]: ExtractType<T["properties"][K]["type"]>;
+} & {
+	__version?: number;
+};
 
 /**
  * Collection is a class that represents a collection of documents in a database.
  * @template T - A schema type defining the structure of the documents in the collection.
  */
 export class Collection<T extends SchemaType> {
-    /**
-     * Finds all documents in the collection.
-     *
-     * @returns A promise that resolves to an array of documents.
-     */
-    find(query: QueryType<T>): Promise<Doc<T>[]>;
-
-    /**
-     * count all documents in the collection.
-     *
-     * @returns A promise that resolves to an array of documents.
-     */
-    count(query: QueryType<T>): Promise<number>;
-
-    /**
-     * Finds a single document in the collection by its ID.
-     *
-     * @param id - The ID of the document to find.
-     * @returns A promise that resolves to the found document.
-     */
-    findById(id: string): Promise<Doc<T>>;
-
-    /**
-     * Updates a document in the collection by its ID.
-     *
-     * @param id - The ID of the document to update.
-     * @param document - A partial document containing the fields to update.
-     * @returns A promise that resolves when the update is complete.
-     */
-    update(document: Partial<Doc<T>>): Promise<void>;
-
-    /**
-     * Creates a new document in the collection.
-     *
-     * @param document - The document to create.
-     * @returns A promise that resolves to the created document.
-     */
-    create(document: Doc<T>): Promise<Doc<T>>;
-
-    /**
-     * Deletes a document in the collection by its ID.
-     *
-     * @param id - The ID of the document to delete.
-     * @returns A promise that resolves when the deletion is complete.
-     */
-    delete(id: string): Promise<void>;
+	/**
+	 * Finds all documents in the collection.
+	 *
+	 * @returns A promise that resolves to an array of documents.
+	 */
+	find(query: QueryType<T>): Promise<Doc<T>[]>;
+	/**
+	 * count all documents in the collection.
+	 *
+	 * @returns A promise that resolves to an array of documents.
+	 */
+	count(query: QueryType<T>): Promise<number>;
+	/**
+	 * Finds a single document in the collection by its ID.
+	 *
+	 * @param id - The ID of the document to find.
+	 * @returns A promise that resolves to the found document.
+	 */
+	findById(id: string): Promise<Doc<T>>;
+	/**
+	 * Updates a document in the collection by its ID.
+	 *
+	 * @param id - The ID of the document to update.
+	 * @param document - A partial document containing the fields to update.
+	 * @returns A promise that resolves when the update is complete.
+	 */
+	update(document: Partial<Doc<T>>): Promise<void>;
+	/**
+	 * Creates a new document in the collection.
+	 *
+	 * @param document - The document to create.
+	 * @returns A promise that resolves to the created document.
+	 */
+	create(document: Doc<T>): Promise<Doc<T>>;
+	/**
+	 * Deletes a document in the collection by its ID.
+	 *
+	 * @param id - The ID of the document to delete.
+	 * @returns A promise that resolves when the deletion is complete.
+	 */
+	delete(id: string): Promise<void>;
 }
 
 "#;

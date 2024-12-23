@@ -488,6 +488,46 @@ export default (platform: string, storages: StoragesType[]) => {
                     const allPosts = await db.collections.posts.find({});
                     expect(allPosts.length).to.eq(0);
                 });
+
+                it("Should handle migrations and integrity with default fields", async () => {
+                    const db = new RIDB(
+                        {
+                            dbName: "test" + uuidv4(),
+                            schemas: {
+                                demo: {
+                                    version: 0,
+                                    primaryKey: 'id',
+                                    type: SchemaFieldType.object,
+                                    properties: {
+                                        id: {
+                                            type: SchemaFieldType.string,
+                                            maxLength: 60
+                                        },
+                                        age: {
+                                            type: SchemaFieldType.number,
+                                            default: 18,
+                                            required: false
+                                        }
+                                    }
+                                }
+                            } as const,
+                        }
+                    )
+
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+
+                    await db.collections.demo.create({ id: "test-id" });
+
+                    const found = await db.collections.demo.findById("test-id");
+                    expect(found).to.not.be.undefined;
+                    expect(found?.id).to.eq("test-id");
+                    expect(found?.age).to.eq(18);
+
+
+                });
                 it("Should be able to create and migrate a schema from v1 to v2", async () => {
                     const db = new RIDB(
                         {

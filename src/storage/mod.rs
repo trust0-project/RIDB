@@ -107,8 +107,12 @@ impl Storage {
         let schema = self.get_schema(collection_name)?;
         let migration = self.get_migration(collection_name)?;
 
-        if !hook.is_function() {
+        if !hook.is_function() && !hook.is_undefined() {
             return Err(JsValue::from(RIDBError::error("Hook must be a function")));
+        }
+
+        if hook.is_undefined() {
+            return Ok(doc);
         }
 
         let hook_fn = hook.dyn_ref::<js_sys::Function>()
@@ -217,29 +221,9 @@ impl Storage {
         Ok(document)
     }
 
-
-    pub fn set_default_fields(&self, collection_name: &str, document: JsValue) -> Result<JsValue, JsValue> {
-        let schema = self.get_schema(collection_name)?;
-        let properties = schema.properties.clone();
-        for (key, prop) in properties {
-            let current_value = Reflect::get(&document, &JsValue::from_str(&key))?;
-            if current_value.is_null() || current_value.is_undefined() {
-                let has_default = prop.default.is_some();
-                if has_default {
-                    Reflect::set(
-                        &document, 
-                        &JsValue::from_str(&key), 
-                        &to_value(&prop.default)?
-                    )?;
-                }
-            }
-        }
-        Ok(document)
-    }
-
     pub(crate) async fn write(&self, collection_name: &str, document_without_pk: JsValue) -> Result<JsValue, JsValue> {
         // Move all the preparation logic before the async operation
-        let document = {
+        let operation = {
             let schema = self.get_schema(collection_name)?;
             let primary_key = schema.primary_key.clone();
             let indexes = schema.indexes.clone();
@@ -269,13 +253,13 @@ impl Storage {
             Operation {
                 collection: collection_name.to_string(),
                 op_type,
-                data: self.set_default_fields(collection_name, document)?,
+                data: document,
                 indexes,
             }
         };
 
         // Perform the actual write operation
-        self.internal.write(document).await
+        self.internal.write(operation).await
             .map_err(|e| JsValue::from(RIDBError::from(e)))
     }
 
