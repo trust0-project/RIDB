@@ -7,9 +7,10 @@ import { RIDB, SchemaFieldType, StorageType, Doc } from "@trust0/ridb";
 
 const schemas =  {
   demo: {
-      version: 1,
+      version: 0,
       primaryKey: 'id',
       type: SchemaFieldType.object,
+      encrypted:["age"] as string[],
       properties: {
           id: {
               type: SchemaFieldType.string,
@@ -31,17 +32,7 @@ export default function Home() {
     () => new RIDB(
       {
           dbName: "test-database",
-          schemas,
-          migrations: {
-            demo: {
-              1: function (doc) {
-                  return {
-                    ...doc,
-                    age: doc.age || 18
-                  }
-              }
-            }
-        }
+          schemas
       }
     ),
     []
@@ -53,7 +44,7 @@ export default function Home() {
 
   const handleStart = async () => {
     if (db) {
-      await db.start({ storageType });
+      await db.start({ storageType, password:"demo" });
       setIsStarted(true);
       fetchDemos();
     }

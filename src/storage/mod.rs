@@ -1,10 +1,9 @@
 use std::collections::HashMap;
 
 use base::StorageExternal;
-use js_sys::{Reflect, JSON};
+use js_sys::Reflect;
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast, JsValue};
-use web_sys::console;
 
 use crate::{error::RIDBError, operation::{OpType, Operation}, plugin::BasePlugin, schema::{property_type::PropertyType, Schema}};
 
@@ -13,7 +12,7 @@ pub mod base;
 pub mod indexdb;
 pub mod inmemory;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub(crate) enum HookType {
     Create,
     Recover,
@@ -75,31 +74,36 @@ impl Storage {
             .map(|migration| migration)
     }
 
-    pub(crate) async fn call(&self, collection_name: &str,hook_type: HookType, mut doc: JsValue) -> Result<JsValue, JsValue> {
-        let plugins = &self.plugins;
+    pub(crate) async fn call(&self, collection_name: &str, hook_type: HookType, mut doc: JsValue) -> Result<JsValue, JsValue> {
+        // Determine the order of plugins based on the hook type
+        let plugins = match hook_type.clone() {
+            HookType::Create => self.plugins.clone(),
+            HookType::Recover => {
+                let mut reversed_plugins = self.plugins.clone();
+                reversed_plugins.reverse(); // Reverse the plugins for Recover
+                reversed_plugins
+            },
+        };
+
+        // Iterate over the plugins in the determined order
         for plugin in plugins {
-            let hook = match hook_type {
+            let hook = match hook_type.clone() {
                 HookType::Create => plugin.get_doc_create_hook(),
                 HookType::Recover => plugin.get_doc_recover_hook(),
             };
-            let doc_json = JSON::stringify(&doc)?;
+            // Apply the hook to the document
             doc = self.compute_hook(
                 collection_name, 
                 doc.clone(), 
                 &hook
-            )?;
-            let doc_json_new = JSON::stringify(&doc.clone())?;
-            if doc_json_new != doc_json && hook_type == HookType::Recover {
-                self.write(collection_name, doc.clone()).await?;
-            }
+            )?.clone();
+            
         }
         Ok(doc)
     }
 
     fn compute_hook(&self, collection_name: &str, doc: JsValue, hook: &JsValue) -> Result<JsValue, JsValue> {
         // Log the initial state of the document
-        console::log_1(&JsValue::from_str(&format!("Initial doc: {:?}", doc)));
-
         let schema = self.get_schema(collection_name)?;
         let migration = self.get_migration(collection_name)?;
 
@@ -110,21 +114,12 @@ impl Storage {
         let hook_fn = hook.dyn_ref::<js_sys::Function>()
             .ok_or_else(|| JsValue::from(RIDBError::error("Hook is not a function")))?;
 
-        // Log before calling the hook function
-        console::log_1(&JsValue::from_str("Calling hook function"));
-
         let result = hook_fn.call3(
             &JsValue::NULL,
             &to_value(&schema)?,
             &migration,
-            &doc
+            &doc.clone()
         );
-
-        // Log the result of the hook function call
-        match &result {
-            Ok(updated_doc) => console::log_1(&JsValue::from_str(&format!("Updated doc: {:?}", updated_doc))),
-            Err(e) => console::log_1(&JsValue::from_str(&format!("Error executing hook: {:?}", e))),
-        }
 
         result.map_err(|e| JsValue::from(RIDBError::error(&format!("Error executing plugin hook: {:?}", e))))
     }

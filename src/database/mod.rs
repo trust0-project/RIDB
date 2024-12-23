@@ -5,6 +5,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::console::log_1;
 use crate::collection::Collection;
 use crate::error::RIDBError;
+use crate::plugin::integrity::IntegrityPlugin;
 use crate::plugin::BasePlugin;
 use crate::plugin::encryption::EncryptionPlugin;
 use crate::plugin::migration::MigrationPlugin;
@@ -231,14 +232,19 @@ impl Database {
             .map(|plugin| plugin.unchecked_into::<BasePlugin>())
             .collect();
 
+        log_1(&"Adding migration plugin.".into());
+        vec_plugins.push(MigrationPlugin::new()?.base.clone());
+
+        log_1(&"Adding integrity plugin.".into());
+        vec_plugins.push(IntegrityPlugin::new()?.base.clone());
+
         if let Some(pass) = password {
             log_1(&"Adding encryption plugin.".into());
             let encryption = EncryptionPlugin::new(pass)?;
             vec_plugins.push(encryption.base.clone());
         }
 
-        log_1(&"Adding migration plugin.".into());
-        vec_plugins.push(MigrationPlugin::new()?.base.clone());
+      
 
         let mut schemas: HashMap<String, Schema> = HashMap::new();
         let mut migrations: HashMap<String, JsValue> = HashMap::new();

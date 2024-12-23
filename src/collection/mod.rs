@@ -1,11 +1,7 @@
-use js_sys::{Object, Reflect, JSON};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 use crate::schema::Schema;
 use crate::storage::{HookType, Storage};
-use sha3::{Digest, Sha3_512};
-use web_sys::console;
-use serde_json::{Value, to_string};
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -159,8 +155,7 @@ impl Collection {
         for item in array.iter() {
             // Recover the document individually
             let processed_item = self.storage.call(&self.name, HookType::Recover, item.clone()).await?;
-            let with_integrity =  self.check_integrity(processed_item.clone())?;
-            processed_array.push(&with_integrity);
+            processed_array.push(&processed_item);
         }
 
         Ok(processed_array.into())
@@ -190,12 +185,11 @@ impl Collection {
         if document.is_undefined() || document.is_null() {
             Ok(document)
         } else {
-            let computed = self.storage.call(
+            self.storage.call(
                 &self.name, 
                 HookType::Recover, 
                 document
-            ).await?;
-            self.check_integrity(computed.clone())
+            ).await
         }
     }
 
@@ -214,101 +208,16 @@ impl Collection {
             document
         ).await?;
         
-        let valid_doc = self.add_integrity(processed_document.clone())?;
-        let res = match self.storage.write(&self.name, valid_doc).await {
+        let res = match self.storage.write(&self.name, processed_document).await {
             Ok(result) => Ok(result),
             Err(e) => Err(e)
         }?;
 
         self.storage.call(
             &self.name, 
-            HookType::Create,
-            res
+            HookType::Recover,
+            res.clone()
         ).await
-    }
-
-    /// Adds an integrity hash to the document.
-    fn add_integrity(&self,mut document: JsValue) -> Result<JsValue, JsValue> {
-        document = self.storage.set_default_fields(&self.name, document)?;
-        console::log_1(
-            &JsValue::from(
-                format!("Adding integrity to document: {:?}", &document)
-            )
-        );
-        // Remove the "__integrity" field if it exists
-        let document_without_integrity = document.clone();
-        Reflect::delete_property(&Object::from(document_without_integrity.clone()), &JsValue::from("__integrity"))?;
-
-        // Convert JsValue to serde_json::Value
-        let js_string = JSON::stringify(&document_without_integrity)?;
-        let serde_value: Value = serde_json::from_str(&js_string.as_string().unwrap())
-            .map_err(|e| JsValue::from(format!("Error converting to serde_json::Value: {:?}", e)))?;
-
-        // Sort the serde_json::Value
-        let sorted_value = sort_json(serde_value);
-
-        // Serialize the sorted Value
-        let upgraded_str = to_string(&sorted_value)
-            .map_err(|e| JsValue::from(format!("Error serializing sorted JSON: {:?}", e)))?;
-
-        // Compute the hash
-        let mut hasher = Sha3_512::new();
-        hasher.update(upgraded_str.as_bytes());
-        let result = hasher.finalize();
-        let hex_hash = hex::encode(result);
-       
-        // Set the "__integrity" field
-        Reflect::set(&document, &JsValue::from("__integrity"), &JsValue::from(hex_hash))?;
-        console::log_1(
-            &JsValue::from(
-                format!("Integrity added to document: {:?}", &document)
-            )
-        );
-        Ok(document)
-    }
-
-    /// Checks the integrity of the document.
-    fn check_integrity(&self, document: JsValue) -> Result<JsValue, JsValue> {
-        // Get the integrity field
-        let integrity = Reflect::get(&document.clone(), &JsValue::from("__integrity"))?;
-        let integrity_str = integrity
-            .as_string()
-            .ok_or_else(|| JsValue::from("Error retrieving integrity value"))?;
-
-        // Remove the "__integrity" field from the document
-        let document_without_integrity = document.clone();
-        Reflect::delete_property(&Object::from(document_without_integrity.clone()), &JsValue::from("__integrity"))?;
-
-        // Convert JsValue to serde_json::Value
-
-        console::log_1(
-            &JsValue::from(
-                format!("Checking Integrity to document: {:?}", &document_without_integrity)
-            )
-        );
-
-
-        let js_string = JSON::stringify(&document_without_integrity)?;
-        let serde_value: Value = serde_json::from_str(&js_string.as_string().unwrap())
-            .map_err(|e| JsValue::from(format!("Error converting to serde_json::Value: {:?}", e)))?;
-
-        // Sort the serde_json::Value
-        let sorted_value = sort_json(serde_value);
-
-        // Serialize the sorted Value
-        let upgraded_str = to_string(&sorted_value)
-            .map_err(|e| JsValue::from(format!("Error serializing sorted JSON: {:?}", e)))?;
-
-        // Compute the hash
-        let mut hasher = Sha3_512::new();
-        hasher.update(upgraded_str.as_bytes());
-        let result = hasher.finalize();
-        let hex_hash = hex::encode(result);
-
-        if hex_hash != integrity_str {
-            return Err(JsValue::from("Integrity check failed"));
-        }
-        Ok(document)
     }
 
     /// Creates a new document in the collection.
@@ -326,9 +235,8 @@ impl Collection {
             document
         ).await?;
 
-        let with_integrity = self.add_integrity(processed_document)?;
 
-        let res = match self.storage.write(&self.name, with_integrity).await {
+        let res = match self.storage.write(&self.name, processed_document).await {
             Ok(result) => Ok(result),
             Err(e) =>  Err(e)
         }?;
@@ -336,7 +244,7 @@ impl Collection {
         self.storage.call(
             &self.name, 
             HookType::Recover,
-            res
+            res.clone()
         ).await
     }
 
@@ -349,23 +257,5 @@ impl Collection {
             Ok(res) => Ok(res),
             Err(e) => Err(js_sys::Error::new(&format!("Failed to delete document: {:?}", e)).into())
         }
-    }
-}
-
-fn sort_json(value: Value) -> Value {
-    match value {
-        Value::Object(map) => {
-            let mut sorted_map = serde_json::Map::new();
-            let mut keys: Vec<_> = map.keys().cloned().collect();
-            keys.sort();
-            for key in keys {
-                sorted_map.insert(key.clone(), sort_json(map.get(&key).unwrap().clone()));
-            }
-            Value::Object(sorted_map)
-        },
-        Value::Array(arr) => {
-            Value::Array(arr.into_iter().map(sort_json).collect())
-        },
-        other => other,
     }
 }

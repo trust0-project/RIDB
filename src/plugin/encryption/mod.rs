@@ -3,10 +3,10 @@ use wasm_bindgen::JsValue;
 use crate::plugin::BasePlugin;
 use crate::schema::Schema;
 use js_sys::{Object, Reflect};
-use chacha20poly1305::{
-    aead::{Aead, KeyInit},
-    ChaCha20Poly1305, Nonce,
-};
+use aes_gcm::{AeadCore, Aes256Gcm, KeyInit, Nonce};
+use aes_gcm::aead::{Aead, OsRng};
+use pbkdf2::pbkdf2_hmac;
+use sha3::Sha3_256;
 use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
 use getrandom::getrandom;
 
@@ -16,16 +16,12 @@ pub struct EncryptionPlugin {
     pub(crate) password: String,
 }
 
-fn derive_key(password: &str) -> Result<[u8; 32], JsValue> {
+fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], JsValue> {
     if password.is_empty() {
         return Err(JsValue::from("Password cannot be empty"));
     }
-    
     let mut key = [0u8; 32];
-    let pass_bytes = password.as_bytes();
-    for (i, &byte) in pass_bytes.iter().enumerate() {
-        key[i % 32] ^= byte;
-    }
+    pbkdf2_hmac::<Sha3_256>(password.as_bytes(), salt, 100_000, &mut key);
     Ok(key)
 }
 
@@ -129,20 +125,30 @@ impl EncryptionPlugin {
         if has_encrypted_fields {
             let serialized = js_sys::JSON::stringify(&encrypted_obj)
                 .map_err(|_| JsValue::from("Failed to stringify encrypted data"))?;
-            let mut nonce = [0u8; 12];
-            getrandom(&mut nonce).map_err(|e| JsValue::from(e.to_string()))?;
-                let key = derive_key(&self.password)?;
-            let cipher = ChaCha20Poly1305::new_from_slice(&key)
+            let serialized_bytes = serialized.as_string()
+                .ok_or_else(|| JsValue::from("Failed to convert serialized data to string"))?
+                .as_bytes()
+                .to_vec();
+
+            // Generate random salt and nonce
+            let mut salt = [0u8; 16];
+            getrandom(&mut salt).map_err(|e| JsValue::from(e.to_string()))?;
+            let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
+
+            // Derive key using PBKDF2
+            let key = derive_key(&self.password, &salt)?;
+            let cipher = Aes256Gcm::new_from_slice(&key)
                 .map_err(|_| JsValue::from("Failed to create cipher"))?;
-            let serialized_str = serialized.as_string()
-            .ok_or_else(|| JsValue::from("Failed to convert serialized data to string"))?;
-        
+
             let encrypted_data = cipher
-                .encrypt(Nonce::from_slice(&nonce), serialized_str.as_bytes())
+                .encrypt(&nonce, serialized_bytes.as_ref())
                 .map_err(|_| JsValue::from("Encryption failed"))?;
 
-            let mut combined = nonce.to_vec();
+            // Combine salt, nonce, and ciphertext
+            let mut combined = salt.to_vec();
+            combined.extend_from_slice(&nonce);
             combined.extend(encrypted_data);
+
             let encoded = BASE64.encode(combined);
 
             Reflect::set(
@@ -199,12 +205,8 @@ impl EncryptionPlugin {
         
         // Safe get of encrypted data
         let encrypted_data = match Reflect::get(&content_obj, &JsValue::from_str("__encrypted")) {
-            Ok(data) => {
-                data
-            },
-            Err(_) => {
-                return Err(JsValue::from("Failed to read encrypted data"));
-            }
+            Ok(data) => data,
+            Err(_) => return Err(JsValue::from("Failed to read encrypted data")),
         };
 
         if encrypted_data.is_undefined() {
@@ -233,32 +235,33 @@ impl EncryptionPlugin {
         let decoded = BASE64
             .decode(encrypted_str)
             .map_err(|_| JsValue::from("Invalid base64 data"))?;
-    
-        if decoded.len() < 12 {
+
+        if decoded.len() < 28 {
             return Err(JsValue::from("Invalid encrypted data length"));
         }
-    
-        // Split nonce and ciphertext
-        let (nonce, ciphertext) = decoded.split_at(12);
-        let nonce = Nonce::from_slice(nonce);
-    
-        // Create cipher
-        let key = derive_key(&self.password);
-        let cipher = ChaCha20Poly1305::new_from_slice(&key?)
+
+        // Split salt, nonce, and ciphertext
+        let (salt, rest) = decoded.split_at(16);
+        let (nonce_bytes, ciphertext) = rest.split_at(12);
+        let nonce = Nonce::from_slice(nonce_bytes);
+
+        // Derive key using PBKDF2
+        let key = derive_key(&self.password, salt)?;
+        let cipher = Aes256Gcm::new_from_slice(&key)
             .map_err(|_| JsValue::from("Failed to create cipher"))?;
-    
+
         // Decrypt the data
         let decrypted_data = cipher
             .decrypt(nonce, ciphertext)
             .map_err(|_| JsValue::from("Decryption failed"))?;
-    
+
         let decrypted_str = String::from_utf8(decrypted_data)
             .map_err(|_| JsValue::from("Invalid UTF-8 data"))?;
-    
+
         // Parse the decrypted JSON string back into a JS object
         let encrypted_obj = js_sys::JSON::parse(&decrypted_str)
-            .map_err(|_| JsValue::from("Failed to parse encrypted data"))?;
-    
+            .map_err(|_| JsValue::from("Failed to parse decrypted data"))?;
+
         // Remove the encrypted field
         Reflect::delete_property(&content_obj, &JsValue::from_str("__encrypted"))?;
         
@@ -541,5 +544,41 @@ mod tests {
         let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
         let result = plugin.encrypt(schema_value, JsValue::NULL, content);
         assert!(result.is_err());
+    }
+
+    #[wasm_bindgen_test]
+    fn test_aes_gcm_encryption() {
+        // Create a schema with encrypted fields
+        let schema_js = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "encrypted": ["secret"],
+            "properties": {
+                "id": {"type": "string"},
+                "secret": {"type": "string"}
+            }
+        }"#;
+        let schema_value = JSON::parse(schema_js).unwrap();
+
+        // Create test content
+        let content_js = r#"{
+            "id": "123",
+            "secret": "sensitive data"
+        }"#;
+        let content = JSON::parse(content_js).unwrap();
+
+        // Test encryption
+        let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
+        let encrypted = plugin.encrypt(schema_value.clone(), JsValue::NULL, content.clone()).unwrap();
+
+        // Verify encrypted field is removed and replaced with encrypted data
+        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret")).unwrap().is_undefined());
+        assert!(!Reflect::get(&encrypted, &JsValue::from_str("__encrypted")).unwrap().is_undefined());
+
+        // Test decryption
+        let decrypted = plugin.decrypt(schema_value, JsValue::NULL, encrypted).unwrap();
+        let secret = Reflect::get(&decrypted, &JsValue::from_str("secret")).unwrap();
+        assert_eq!(secret.as_string().unwrap(), "sensitive data");
     }
 }

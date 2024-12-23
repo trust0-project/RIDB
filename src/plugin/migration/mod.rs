@@ -3,9 +3,7 @@ use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::plugin::BasePlugin;
 use crate::schema::Schema;
-use js_sys::{Reflect, JSON};
-use sha3::{Digest, Sha3_512};
-use std::str::FromStr;
+use js_sys::Reflect;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
