@@ -1,3 +1,10 @@
+## [0.10.1](https://github.com/trust0-project/RIDB/compare/v0.10.0...v0.10.1) (2024-12-23)
+
+
+### Bug Fixes
+
+* improve documentation ([8537f21](https://github.com/trust0-project/RIDB/commit/8537f217cf50f4758a5e2596a96d15f48892806f))
+
 # [0.10.0](https://github.com/trust0-project/RIDB/compare/v0.9.0...v0.10.0) (2024-12-23)
 
 
