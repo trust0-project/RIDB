@@ -244,8 +244,6 @@ impl Database {
             vec_plugins.push(encryption.base.clone());
         }
 
-      
-
         let mut schemas: HashMap<String, Schema> = HashMap::new();
         let mut migrations: HashMap<String, JsValue> = HashMap::new();
         let keys = Object::keys(&schemas_js.clone()).into_iter();
