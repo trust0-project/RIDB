@@ -2,7 +2,7 @@
     "$schema": "https://typedoc-plugin-markdown.org/schema.json",
     "entryPoints": ["./src/index.ts"],
     "readme": "none",
-    "out": "../docs",
+    "out": "docs",
     "plugin": [
         "typedoc-plugin-markdown",
         "typedoc-plugin-rename-defaults"

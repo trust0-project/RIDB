@@ -1,4 +1,4 @@
-[**@trust0/ridb**](../README.md) • **Docs**
+[**@trust0/ridb**](../README.md)
 
 ***
 
@@ -34,4 +34,4 @@ An enumeration of schema field types.
 
 ## Defined in
 
-[ts/src/index.ts:280](https://github.com/elribonazo/RIDB/blob/cdcf1ad61f1dbeb3d667be3c081d55e50ee77e89/ts/src/index.ts#L280)
+[index.ts:292](https://github.com/elribonazo/RIDB/blob/136618e9b61a9796bbcdb99fcbd801065c2a0772/src/index.ts#L292)

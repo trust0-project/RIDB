@@ -34,7 +34,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
           scope: '@trust0'  # Replace with your organization scope
           cache: 'npm'
-          cache-dependency-path: ./ts/package-lock.json
+          cache-dependency-path: ./package-lock.json
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -47,8 +47,8 @@ jobs:
 
       - name: Configure npm authentication
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ./ts/.npmrc
-          echo "@trust0:registry=https://registry.npmjs.org/" >> ./ts/.npmrc
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ./.npmrc
+          echo "@trust0:registry=https://registry.npmjs.org/" >> ./.npmrc
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
@@ -56,4 +56,15 @@ jobs:
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_SECRET }}
-        run: cd ts && npm ci && npx semantic-release
+        run: |
+          npm ci
+          npm install @semantic-release/changelog@^6.0.3
+          npm install @semantic-release/commit-analyzer@^13.0.0
+          npm install @semantic-release/exec@^6.0.3
+          npm install @semantic-release/git@^10.0.1
+          npm install @semantic-release/github@^10.3.3
+          npm install @semantic-release/npm@^12.0.1
+          npm install @semantic-release/release-notes-generator@^14.0.1
+          npm install semantic-release@^24.1.1
+          npm run docs
+          npx semantic-release

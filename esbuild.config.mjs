@@ -8,7 +8,7 @@ const wasmPlugin = {
     name: 'wasm',
     setup(build) {
         build.onResolve({ filter: /\.wasm$/ }, args => {
-            return { path: path.resolve(args.resolveDir, args.path), namespace: 'wasm' };
+            return { path: path.resolve('./node_modules', args.path), namespace: 'wasm' };
         });
         build.onLoad({ filter: /.*/, namespace: 'wasm' }, async (args) => {
             const buffer = await fs.promises.readFile(args.path);

@@ -1,6 +1,7 @@
-
-pkg
+node_modules/*
+cjs/*
+esm/*
+umd/*
 .idea
-/target
-node_modules
-build
+coverage
+build/*

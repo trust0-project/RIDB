@@ -19,8 +19,9 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org/'
-
+          cache: 'npm'
+          cache-dependency-path: ./package-lock.json
       - name: Install WASM
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      - run: cd ts && npm install && npm run build && npm test
+      - run: npm install && npm test

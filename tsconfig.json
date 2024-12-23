@@ -19,7 +19,7 @@
   },
   "include": [
     "src/**/*",
-    "../pkg"
+    "node_modules/@trust0/ridb-wasm/**/*"
   ],
   "exclude": ["node_modules", "dist"]
 }

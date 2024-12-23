@@ -21,9 +21,10 @@
  * 
  * # SDK Rerefence
  */
-import wasmBuffer from "../../pkg/ridb_rust_bg.wasm";
-import * as RIDBTypes from "ridb-rust";
-export {
+// @ts-ignore
+import wasmBuffer from "@trust0/ridb-wasm/ridb_wasm_bg.wasm";
+import * as RIDBTypes from "@trust0/ridb-wasm";
+export type {
     // Enums
     OpType,
     // Classes
@@ -59,14 +60,14 @@ export {
     LogicalOperators,
     QueryType,
     SchemaTypeRecord
-} from "ridb-rust";
+} from "@trust0/ridb-wasm";
 
 export enum StorageType {
     InMemory = "InMemory",
     IndexDB = "IndexDB"
 }
 
-let internal: typeof import("ridb-rust") | undefined;
+let internal: typeof import("@trust0/ridb-wasm") | undefined;
 
 /**
  * Represents a RIDB (Rust IndexedDB) instance.
@@ -108,7 +109,7 @@ let internal: typeof import("ridb-rust") | undefined;
  * })
  * ```
  * 
- * A compatible storage should be a class implementing [StorageInternal<RIDBTypes.SchemaType> ](../namespaces/RIDBTypes/classes/StorageInternal.md) and its methods.
+ * A compatible storage should be a class implementing [StorageInternal<RIDBTypes.SchemaType> ](../docs/namespaces/RIDBTypes/classes/StorageInternal.md) and its methods.
  * 
  * ### Using with migration plugin
  * The migration plugin will automatically migrate your documents for you as you upgrade and change your schemas over the time. 
@@ -150,7 +151,7 @@ let internal: typeof import("ridb-rust") | undefined;
  * @template T - The type of the schema record.
  */
 
-type StartOptions<T extends RIDBTypes.SchemaTypeRecord> = {
+export type StartOptions<T extends RIDBTypes.SchemaTypeRecord> = {
     storageType?: typeof RIDBTypes.BaseStorage<T> | StorageType,
     password?: string,
     [name: string]: any
@@ -222,11 +223,11 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
 
     /**
      * Loads the RIDB Rust module.
-     * @returns {Promise<typeof import("ridb-rust")>} A promise that resolves to the RIDB Rust module.
+     * @returns {Promise<typeof import("@trust0/ridb-wasm")>} A promise that resolves to the RIDB Rust module.
      * @private
      */
-    static async load(): Promise<typeof import("ridb-rust")> {
-        internal ??= await import("ridb-rust").then(async (module) => {
+    static async load(): Promise<typeof import("@trust0/ridb-wasm")> {
+        internal ??= await import("@trust0/ridb-wasm").then(async (module) => {
             const wasmInstance = module.initSync(wasmBuffer);
             await module.default(wasmInstance);
             return module;
