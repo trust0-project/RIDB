@@ -1,3 +1,10 @@
+## [0.7.1-rc.2](https://github.com/trust0-project/RIDB/compare/v0.7.1-rc.1...v0.7.1-rc.2) (2024-12-23)
+
+
+### Bug Fixes
+
+* adding integrity check to ensure data has not been manipulated ([b7354ca](https://github.com/trust0-project/RIDB/commit/b7354ca18bd81ecc19e7a305abe2a903c87f93ef))
+
 ## [0.7.1-rc.1](https://github.com/trust0-project/RIDB/compare/v0.7.0...v0.7.1-rc.1) (2024-12-22)
 
 
