@@ -41,35 +41,70 @@ export default function Home() {
   const [demos, setDemos] = useState<Doc<typeof schemas.demo>[]>([]);
   const [newDemoId, setNewDemoId] = useState('');
   const [storageType, setStorageType] = useState<StorageType>(StorageType.IndexDB);
+  const [operationTime, setOperationTime] = useState<string | null>(null);
+  const [operationHistory, setOperationHistory] = useState<{ name: string; time: string }[]>([]);
+  const [numRecords, setNumRecords] = useState<number>(1);
+
+  const logOperation = (name: string, startTime: number, endTime: number) => {
+    const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
+    setOperationHistory((prev) => [...prev, { name, time: `${timeTaken} seconds` }]);
+  };
 
   const handleStart = async () => {
     if (db) {
-      await db.start({ storageType, password:"demo" });
+      const startTime = performance.now();
+      await db.start({ storageType, password: "demo" });
+      const endTime = performance.now();
+      logOperation('Start DB', startTime, endTime);
       setIsStarted(true);
       fetchDemos();
     }
   };
 
-  const handleClose = async() => {
+  const handleClose = async () => {
     if (db) {
+      const startTime = performance.now();
       await db.close();
+      const endTime = performance.now();
+      logOperation('Close DB', startTime, endTime);
       setIsStarted(false);
     }
   };
 
   const fetchDemos = async () => {
     if (db) {
+      const startTime = performance.now();
       const demoCollection = db.collections.demo;
       const allDemos = await demoCollection.find({});
+      const endTime = performance.now();
+      logOperation('Fetch Demos', startTime, endTime);
       setDemos(allDemos);
     }
   };
 
   const handleAddDemo = async () => {
     if (db && isStarted && newDemoId) {
+      const startTime = performance.now();
       const demoCollection = db.collections.demo;
       await demoCollection.create({ id: newDemoId });
+      const endTime = performance.now();
+      logOperation('Add Demo', startTime, endTime);
       setNewDemoId('');
+      fetchDemos();
+    }
+  };
+
+  const generateRandomData = async () => {
+    if (db && isStarted) {
+      const startTime = performance.now();
+      const demoCollection = db.collections.demo;
+      for (let i = 0; i < numRecords; i++) {
+        const randomId = `demo-${Math.random().toString(36).substr(2, 9)}`;
+        const randomAge = Math.floor(Math.random() * 100);
+        await demoCollection.create({ id: randomId, age: randomAge });
+      }
+      const endTime = performance.now();
+      logOperation('Generate Random Data', startTime, endTime);
       fetchDemos();
     }
   };
@@ -115,6 +150,7 @@ export default function Home() {
             </button>
           )}
           <p className="text-lg font-medium">Status: {isStarted ? 'Started' : 'Stopped'}</p>
+          <p className="text-lg font-medium">Operation Time: {operationTime}</p>
         </div>
         {isStarted && (
           <div className="w-full">
@@ -142,8 +178,36 @@ export default function Home() {
             >
               Add Demo
             </button>
+            <input
+              type="number"
+              value={numRecords}
+              onChange={(e) => setNumRecords(Number(e.target.value))}
+              placeholder="Number of Records"
+              className="p-2 border rounded-md shadow-sm w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-800"
+              aria-label="Number of Records"
+            />
+            <button
+              onClick={generateRandomData}
+              disabled={!isStarted || !db}
+              className={`p-2 w-full rounded-md shadow-md transition-colors ${
+                !isStarted || !db ? 'bg-gray-300 cursor-not-allowed' : 'bg-purple-500 hover:bg-purple-600 text-white'
+              }`}
+              aria-disabled={!isStarted || !db}
+            >
+              Generate Random Data
+            </button>
           </div>
         )}
+        <div className="w-full">
+          <h2 className="text-xl font-semibold mb-2">Operation History</h2>
+          <ul className="list-disc pl-5 mb-4">
+            {operationHistory.map((operation, index) => (
+              <li key={index} className="text-lg">
+                {operation.name}: {operation.time}
+              </li>
+            ))}
+          </ul>
+        </div>
       </main>
     </div>
   );

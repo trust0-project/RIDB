@@ -1,3 +1,4 @@
+
 import Shared from './shared';
 import { StorageType } from '..';
 
