@@ -2,6 +2,9 @@
 set -e  # Exit on any error
 # Initialize variables
 ENVIRONMENT=""
+# Define test environment options
+NODE_ENV="--environment node --run"
+BROWSER_ENV="--environment jsdom --browser --browser.name=chrome --run"
 
 # Parse command-line options
 while getopts e: option
@@ -28,9 +31,6 @@ if [ -z "$ENVIRONMENT" ]; then
     exit 0
 fi
 
-# Define test environment options
-NODE_ENV="--environment node --run"
-BROWSER_ENV="--environment jsdom --browser --browser.name=chrome --run"
 
 # Check which environment to test based on the options provided
 if [ "$ENVIRONMENT" = "node" ]; then
