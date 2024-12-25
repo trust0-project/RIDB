@@ -58,7 +58,8 @@ const generic = {
 // Build ES module
 esbuild.build({
     ...generic,
-    outfile:"build/esm/index.mjs",
+    outdir:"build/esm",
+    outExtension: { ".js": ".mjs" },
     target: ['esnext'],
     format: 'esm',
     plugins: [
@@ -68,7 +69,8 @@ esbuild.build({
 }).then(() => {
     esbuild.build({
         ...generic,
-        outfile:"build/cjs/index.cjs",
+        outdir:"build/cjs",
+        outExtension: { ".js": ".cjs" },
         target: ['es6'],
         format: 'cjs',
         plugins: [

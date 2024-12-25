@@ -24,10 +24,10 @@
 // @ts-ignore
 import wasmBuffer from "@trust0/ridb-wasm/ridb_wasm_bg.wasm";
 import * as RIDBTypes from "@trust0/ridb-wasm";
-export type {
-    // Enums
+import { BaseStorage } from "@trust0/ridb-wasm";
+export {
+    BaseStorage, 
     OpType,
-    // Classes
     Database,
     Collection,
     Schema,
@@ -35,8 +35,6 @@ export type {
     Property,
     BasePlugin,
     StorageInternal,
-    BaseStorage,
-    // Types
     CreateStorage,
     RIDBModule,
     InternalsRecord,
@@ -61,11 +59,6 @@ export type {
     QueryType,
     SchemaTypeRecord
 } from "@trust0/ridb-wasm";
-
-export enum StorageType {
-    InMemory = "InMemory",
-    IndexDB = "IndexDB"
-}
 
 let internal: typeof import("@trust0/ridb-wasm") | undefined;
 
@@ -151,8 +144,21 @@ let internal: typeof import("@trust0/ridb-wasm") | undefined;
  * @template T - The type of the schema record.
  */
 
+type StorageClass<T extends RIDBTypes.SchemaTypeRecord> = {
+    create: (
+        name: string, 
+        schemas: T, 
+        options: any
+    ) => Promise<BaseStorage<T>>;
+}
+
+export enum StorageType {
+    InMemory = "InMemory",
+    IndexDB = "IndexDB"
+}
+
 export type StartOptions<T extends RIDBTypes.SchemaTypeRecord> = {
-    storageType?: typeof RIDBTypes.BaseStorage<T> | StorageType,
+    storageType?: StorageClass<T> | StorageType,
     password?: string,
     [name: string]: any
 }

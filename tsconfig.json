@@ -18,8 +18,7 @@
 
   },
   "include": [
-    "src/**/*",
-    "node_modules/@trust0/ridb-wasm/**/*"
+    "src/**/*"
   ],
   "exclude": ["node_modules", "dist"]
 }
