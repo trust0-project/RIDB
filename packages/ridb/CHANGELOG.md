@@ -1,3 +1,11 @@
+## [0.10.2-rc.6](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.5...v0.10.2-rc.6) (2024-12-26)
+
+
+### Bug Fixes
+
+* ci pipeline fix wasm-pack ([a2cdf9d](https://github.com/trust0-project/RIDB/commit/a2cdf9d860792f299980d3d74cdb8e81de741d8a))
+* paths ([3ac2202](https://github.com/trust0-project/RIDB/commit/3ac2202b2050584873de79eeba8fc06df9d0a008))
+
 ## [0.10.2-rc.5](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.4...v0.10.2-rc.5) (2024-12-26)
 
 
