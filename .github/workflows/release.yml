@@ -55,6 +55,6 @@ jobs:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
-          npm ci
+          npm install
           npm run build
           cd packages/ridb && npx semantic-release

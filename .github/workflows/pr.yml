@@ -43,5 +43,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-          npm ci
+          npm install
           npm test
