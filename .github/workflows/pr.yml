@@ -27,9 +27,6 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-
       - name: Configure npm authentication
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ./.npmrc
