@@ -1,3 +1,10 @@
+## [0.10.2-rc.7](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.6...v0.10.2-rc.7) (2024-12-26)
+
+
+### Bug Fixes
+
+* test ([e041f50](https://github.com/trust0-project/RIDB/commit/e041f50695f098fbc0f9ce5ad8ca9f5bfa1a81e5))
+
 ## [0.10.2-rc.6](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.5...v0.10.2-rc.6) (2024-12-26)
 
 
