@@ -4,46 +4,45 @@
     "description": "Dependency free wasm db encrypted and secure database wrapper for web and node.",
     "main": "./build/cjs/index.js",
     "publishConfig": {
-      "access": "public"
+        "access": "public"
     },
     "module": "./build/esm/index.js",
     "exports": {
-      ".": {
-        "import": "./build/esm/index.mjs",
-        "require": "./build/cjs/index.cjs",
-        "default": "./build/esm/index.mjs",
-        "types": "./build/index.d.ts"
-      }
+        ".": {
+            "import": "./build/esm/index.mjs",
+            "require": "./build/cjs/index.cjs",
+            "default": "./build/esm/index.mjs",
+            "types": "./build/index.d.ts"
+        }
     },
     "author": "elribonazo@gmail.com",
     "types": "./build/index.d.ts",
     "repository": {
-      "type": "git",
-      "url": "https://github.com/trust0-project/RIDB.git"
+        "type": "git",
+        "url": "https://github.com/trust0-project/RIDB.git"
     },
     "license": "Apache-2.0",
     "files": [
-      "./build/**/*",
-      "./**/*.md"
+        "./build/**/*",
+        "./**/*.md"
     ],
     "engines": {
-      "node": ">=20"
+        "node": ">=20"
     },
     "scripts": {
-      "docs": "typedoc --cleanOutputDir false",
-      "runtest": "npm run build && npm run test:node",
-      "build": "rm -rf build && npm run types && node esbuild.config.mjs",
-      "test": "sh test.sh",
-      "test:node": "sh test.sh -e node",
-      "test:browser": "sh test.sh -e browser",
-      "types":"npm run types:default && npm run types:esm && npm run types:cjs",
-      "types:default":"npx dts-bundle-generator src/index.ts  --no-check -o ./build/index.d.ts",
-      "types:esm":"npx dts-bundle-generator src/index.ts  --no-check -o ./build/esm/index.d.ts",
-      "types:cjs":"npx dts-bundle-generator src/index.ts  --no-check -o ./build/cjs/index.d.ts",
-      "prepublishOnly": "npm run build"
+        "docs": "typedoc --cleanOutputDir false",
+        "runtest": "npm run build && npm run test:node",
+        "build": "rm -rf build && npm run types && node esbuild.config.mjs",
+        "test": "sh test.sh",
+        "test:node": "sh test.sh -e node",
+        "test:browser": "sh test.sh -e browser",
+        "types": "npm run types:default && npm run types:esm && npm run types:cjs",
+        "types:default": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/index.d.ts",
+        "types:esm": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/esm/index.d.ts",
+        "types:cjs": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/cjs/index.d.ts",
+        "prepublishOnly": "npm run build"
     },
     "devDependencies": {
-      "@trust0/ridb-wasm": "file:../../../ridb-wasm/pkg"
+        "@trust0/ridb-wasm": "^1.0.10"
     }
-  }
-  
+}
