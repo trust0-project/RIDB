@@ -1,6 +1,6 @@
 {
     "name": "@trust0/ridb",
-    "version": "0.10.1",
+    "version": "0.10.0-rc.3",
     "description": "Dependency free wasm db encrypted and secure database wrapper for web and node.",
     "main": "./build/cjs/index.js",
     "publishConfig": {
@@ -43,11 +43,10 @@
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {
-      "esbuild": "0.21.5",
-      "esbuild-plugin-wasm": "^1.1.0",
-      "esbuild-plugin-wasm-pack": "^1.1.0",
-      "@esbuild-plugins/node-resolve": "^0.2.2",
-
+        "esbuild": "0.21.5",
+        "esbuild-plugin-wasm": "^1.1.0",
+        "esbuild-plugin-wasm-pack": "^1.1.0",
+        "@esbuild-plugins/node-resolve": "^0.2.2",
         "@trust0/ridb-wasm": "^1.0.11"
     }
 }
