@@ -14,7 +14,6 @@
     "test": "lerna run test"
   },
   "release": {
-    "repositoryUrl": "https://github.com/trust0-project/RIDB.git",
     "branches": [
       { "name": "main" },
       { "name": "develop", "prerelease": "rc", "channel": "rc" },
@@ -23,13 +22,12 @@
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
-      "@semantic-release/npm",
       "@semantic-release/github",
       "@semantic-release/changelog",
       [
         "@semantic-release/git",
         {
-          "assets": ["CHANGELOG.md", "package.json", "package-lock.json", "docs"],
+          "assets": ["packages"],
           "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
       ]
