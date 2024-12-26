@@ -47,5 +47,9 @@
     "@anolilab/multi-semantic-release": "^1.1.6",
     "@anolilab/semantic-release-preset": "^9.0.3",
     "lerna": "^8.1.9"
+  },
+  "optionalDependencies": {
+    "@esbuild/darwin-arm64": "0.15.18",
+    "@rollup/rollup-linux-x64-gnu": "^4.24.0"
   }
 }
