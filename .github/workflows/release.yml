@@ -32,9 +32,7 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org/'
-          scope: '@trust0'  # Replace with your organization scope
-          cache: 'npm'
-          cache-dependency-path: ./package-lock.json
+          scope: '@trust0'
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1

@@ -11,6 +11,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -18,8 +20,6 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org/'
           scope: '@trust0'  # Replace with your organization scope
-          cache: 'npm'
-          cache-dependency-path: ./package-lock.json
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
