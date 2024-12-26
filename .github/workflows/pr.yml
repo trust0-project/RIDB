@@ -49,4 +49,5 @@ jobs:
         run: |
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           npm install
-          cd packages/ridb && npm test
+          npm run build
+          npm test

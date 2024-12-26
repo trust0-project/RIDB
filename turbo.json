@@ -6,16 +6,10 @@
         "outputs": ["build/**"]
       },
       "test": {
-        "persistent": true,
-        "cache": false
+        "dependsOn": ["^test"]
       },
       "docs": {
-        "persistent": true,
-        "cache": false
-      },
-      "dev": {
-        "persistent": true,
-        "cache": false
+        "dependsOn": ["^docs"]
       }
     }
 }
