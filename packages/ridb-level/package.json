@@ -40,10 +40,6 @@
     "types:cjs": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/cjs/index.d.ts",
     "prepublishOnly": "npm run build"
   },
-  "release": {
-    "plugins": ["@semantic-release/commit-analyzer", "@semantic-release/release-notes-generator"],
-    "noCi": true
-  },
   "devDependencies": {
     "esbuild": "0.21.5",
     "esbuild-plugin-wasm": "^1.1.0",
