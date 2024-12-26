@@ -15,7 +15,6 @@
     "release": "npm run build && npm run docs && changeset version && changeset publish"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.11",
     "@esbuild-plugins/node-resolve": "^0.2.2",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
