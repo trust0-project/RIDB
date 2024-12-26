@@ -5,3 +5,5 @@ umd/*
 .idea
 coverage
 build/*
+.turbo
+node_modules/**/*

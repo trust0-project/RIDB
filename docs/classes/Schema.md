@@ -1,4 +1,4 @@
-[**@trust0/ridb**](../README.md) • **Docs**
+[**@trust0/ridb**](../README.md)
 
 ***
 
@@ -24,7 +24,7 @@ An optional array of indexes.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:237
+ridb-wasm/pkg/ridb\_wasm.d.ts:207
 
 ***
 
@@ -36,19 +36,19 @@ The primary key of the schema.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:227
+ridb-wasm/pkg/ridb\_wasm.d.ts:197
 
 ***
 
 ### properties
 
-> `readonly` **properties**: \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false ? K : never\]?: T\["properties"\]\[K\] \} & \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false ? never : K\]: T\["properties"\]\[K\] \}
+> `readonly` **properties**: \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false \| (T\["properties"\]\[K\]\["default"\] extends undefined ? true : false) ? K : never\]?: T\["properties"\]\[K\] \} & \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false ? never : K\]: T\["properties"\]\[K\] \}
 
 The properties defined in the schema.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:246
+ridb-wasm/pkg/ridb\_wasm.d.ts:216
 
 ***
 
@@ -60,7 +60,7 @@ The schema definition.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:208
+ridb-wasm/pkg/ridb\_wasm.d.ts:178
 
 ***
 
@@ -72,7 +72,7 @@ The type of the schema.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:232
+ridb-wasm/pkg/ridb\_wasm.d.ts:202
 
 ***
 
@@ -84,7 +84,7 @@ The version of the schema.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:222
+ridb-wasm/pkg/ridb\_wasm.d.ts:192
 
 ## Methods
 
@@ -102,7 +102,7 @@ The JSON representation of the schema.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:256
+ridb-wasm/pkg/ridb\_wasm.d.ts:226
 
 ***
 
@@ -120,7 +120,9 @@ The schema type.
 
 #### Parameters
 
-• **definition**: `TS`
+##### definition
+
+`TS`
 
 #### Returns
 
@@ -130,4 +132,4 @@ The created `Schema` instance.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:217
+ridb-wasm/pkg/ridb\_wasm.d.ts:187

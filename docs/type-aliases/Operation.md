@@ -1,4 +1,4 @@
-[**@trust0/ridb**](../README.md) • **Docs**
+[**@trust0/ridb**](../README.md)
 
 ***
 
@@ -44,4 +44,4 @@ The type of operation to be performed (e.g., CREATE, UPDATE, DELETE).
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:115
+ridb-wasm/pkg/ridb\_wasm.d.ts:338

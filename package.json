@@ -1,73 +1,17 @@
 {
-  "name": "@trust0/ridb",
-  "version": "0.10.1",
-  "description": "Dependency free wasm db encrypted and secure database wrapper for web and node.",
-  "main": "./build/cjs/index.js",
-  "publishConfig": {
-    "access": "public"
-  },
-  "module": "./build/esm/index.js",
-  "exports": {
-    ".": {
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs",
-      "default": "./build/esm/index.mjs",
-      "types": "./build/index.d.ts"
-    }
-  },
-  "author": "elribonazo@gmail.com",
-  "types": "./build/index.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/trust0-project/RIDB.git"
-  },
-  "license": "Apache-2.0",
-  "files": [
-    "./build/**/*",
-    "./**/*.md"
-  ],
+  "name": "trust0",
+  "version": "0.0.0",
   "engines": {
     "node": ">=20"
   },
+  "packageManager": "npm@10.9.0",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "docs": "typedoc --cleanOutputDir false",
-    "runtest": "npm run build && npm run test:node",
-    "build": "sh build.sh",
-    "test": "npm run test:node && npm run test:browser",
-    "test:node": "sh test.sh -e node",
-    "test:browser": "sh test.sh -e browser",
-    "prepublishOnly": "npm run build"
-  },
-  "devDependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^13.0.0",
-    "@semantic-release/exec": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^10.3.5",
-    "@semantic-release/npm": "^12.0.1",
-    "@semantic-release/release-notes-generator": "^14.0.2",
-    "semantic-release": "^24.2.0",
-    "webdriverio": "^9.0.9",
-    "@trust0/ridb-wasm": "^1.0.3",
-    "@esbuild-plugins/node-resolve": "^0.2.2",
-    "@types/node": "^20.14.2",
-    "@vitest/browser": "^1.6.0",
-    "@vitest/coverage-istanbul": "^1.6.0",
-    "@vitest/ui": "^1.6.0",
-    "esbuild": "0.21.5",
-    "esbuild-plugin-wasm": "^1.1.0",
-    "esbuild-plugin-wasm-pack": "^1.1.0",
-    "jsdom": "^24.1.0",
-    "ts-node": "^10.9.2",
-    "typedoc": "^0.27.5",
-    "typedoc-plugin-external-module-map": "^2.1.0",
-    "typedoc-plugin-markdown": "^4.3.3",
-    "typedoc-plugin-rename-defaults": "^0.7.2",
-    "typedoc-theme-hierarchy": "^5.0.4",
-    "typescript": "^5.4.5",
-    "uuid": "^11.0.3",
-    "vite-plugin-top-level-await": "^1.4.1",
-    "vite-plugin-wasm": "^3.3.0",
-    "vitest": "^1.6.0"
+    "build": "npx turbo build",
+    "test": "npx turbo test",
+    "release": "npm run build && npm run docs && changeset version && changeset publish"
   }
 }
