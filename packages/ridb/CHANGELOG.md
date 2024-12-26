@@ -1,3 +1,10 @@
+## [0.11.1-rc.1](https://github.com/trust0-project/RIDB/compare/v0.11.0...v0.11.1-rc.1) (2024-12-26)
+
+
+### Bug Fixes
+
+* package release ([7cd385a](https://github.com/trust0-project/RIDB/commit/7cd385afa930dde4af877af30bd4d19edcc6496f))
+
 # [0.11.0](https://github.com/trust0-project/RIDB/compare/v0.10.1...v0.11.0) (2024-12-26)
 
 
