@@ -1,4 +1,4 @@
-[**@trust0/ridb**](../README.md) • **Docs**
+[**@trust0/ridb**](../README.md)
 
 ***
 
@@ -24,7 +24,9 @@ count all documents in the collection.
 
 #### Parameters
 
-• **query**: `QueryType`\<`T`\>
+##### query
+
+`QueryType`\<`T`\>
 
 #### Returns
 
@@ -34,7 +36,7 @@ A promise that resolves to an array of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:311
+ridb-wasm/pkg/ridb\_wasm.d.ts:497
 
 ***
 
@@ -46,7 +48,9 @@ Creates a new document in the collection.
 
 #### Parameters
 
-• **document**: [`Doc`](../type-aliases/Doc.md)\<`T`\>
+##### document
+
+[`Doc`](../type-aliases/Doc.md)\<`T`\>
 
 The document to create.
 
@@ -58,7 +62,7 @@ A promise that resolves to the created document.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:336
+ridb-wasm/pkg/ridb\_wasm.d.ts:519
 
 ***
 
@@ -70,7 +74,9 @@ Deletes a document in the collection by its ID.
 
 #### Parameters
 
-• **id**: `string`
+##### id
+
+`string`
 
 The ID of the document to delete.
 
@@ -82,7 +88,7 @@ A promise that resolves when the deletion is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:344
+ridb-wasm/pkg/ridb\_wasm.d.ts:526
 
 ***
 
@@ -94,7 +100,9 @@ Finds all documents in the collection.
 
 #### Parameters
 
-• **query**: `QueryType`\<`T`\>
+##### query
+
+`QueryType`\<`T`\>
 
 #### Returns
 
@@ -104,7 +112,7 @@ A promise that resolves to an array of documents.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:304
+ridb-wasm/pkg/ridb\_wasm.d.ts:491
 
 ***
 
@@ -116,7 +124,9 @@ Finds a single document in the collection by its ID.
 
 #### Parameters
 
-• **id**: `string`
+##### id
+
+`string`
 
 The ID of the document to find.
 
@@ -128,7 +138,7 @@ A promise that resolves to the found document.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:319
+ridb-wasm/pkg/ridb\_wasm.d.ts:504
 
 ***
 
@@ -140,7 +150,9 @@ Updates a document in the collection by its ID.
 
 #### Parameters
 
-• **document**: `Partial`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>\>
+##### document
+
+`Partial`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>\>
 
 A partial document containing the fields to update.
 
@@ -152,4 +164,4 @@ A promise that resolves when the update is complete.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:328
+ridb-wasm/pkg/ridb\_wasm.d.ts:512

@@ -1,4 +1,4 @@
-[**@trust0/ridb**](../README.md) • **Docs**
+[**@trust0/ridb**](../README.md)
 
 ***
 
@@ -50,7 +50,7 @@ This is a read-only property where the key is the name of the collection and the
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:602
+ridb-wasm/pkg/ridb\_wasm.d.ts:288
 
 ## Methods
 
@@ -68,7 +68,7 @@ A promise that resolves when the database is closed.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:618
+ridb-wasm/pkg/ridb\_wasm.d.ts:306
 
 ***
 
@@ -86,7 +86,7 @@ A promise that resolves when the database is started.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:611
+ridb-wasm/pkg/ridb\_wasm.d.ts:299
 
 ***
 
@@ -104,21 +104,35 @@ A record of schema types.
 
 #### Parameters
 
-• **db\_name**: `string`
+##### db\_name
 
-• **schemas**: `TS`
+`string`
+
+##### schemas
+
+`TS`
 
 The schemas to use for the collections.
 
-• **migrations**: `MigrationPathsForSchemas`\<`TS`\> \| `MigrationPathsForSchema`\<`TS`\[`string`\]\>
+##### migrations
 
-• **plugins**: *typeof* `BasePlugin`[]
+`MigrationPathsForSchemas`\<`TS`\> | `MigrationPathsForSchema`\<`TS`\[`string`\]\>
 
-• **options**: [`RIDBModule`](../type-aliases/RIDBModule.md)
+##### plugins
 
-• **password?**: `string`
+*typeof* `BasePlugin`[]
 
-• **storage?**: `BaseStorage`\<`TS`\>
+##### options
+
+[`RIDBModule`](../type-aliases/RIDBModule.md)
+
+##### password?
+
+`string`
+
+##### storage?
+
+`BaseStorage`\<`TS`\>
 
 #### Returns
 
@@ -128,4 +142,4 @@ A promise that resolves to the created `Database` instance.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:587
+ridb-wasm/pkg/ridb\_wasm.d.ts:273

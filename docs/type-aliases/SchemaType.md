@@ -1,4 +1,4 @@
-[**@trust0/ridb**](../README.md) • **Docs**
+[**@trust0/ridb**](../README.md)
 
 ***
 
@@ -58,4 +58,4 @@ The version of the schema.
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:165
+ridb-wasm/pkg/ridb\_wasm.d.ts:135

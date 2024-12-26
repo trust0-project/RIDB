@@ -12,13 +12,9 @@
     "allowJs": true,
     "skipLibCheck": false,
     "lib": ["ES2022", "DOM"],
-    "paths": {
-      "ridb-rust": ["../pkg"]
-    }
-
   },
   "include": [
     "src/**/*"
   ],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "build"]
 }

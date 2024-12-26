@@ -1,4 +1,4 @@
-[**@trust0/ridb**](../README.md) • **Docs**
+[**@trust0/ridb**](../README.md)
 
 ***
 
@@ -20,7 +20,9 @@ Plugin constructors array
 
 #### Parameters
 
-• **plugins**: *typeof* `BasePlugin`[]
+##### plugins
+
+*typeof* `BasePlugin`[]
 
 #### Returns
 
@@ -28,4 +30,4 @@ Plugin constructors array
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:635
+ridb-wasm/pkg/ridb\_wasm.d.ts:323
