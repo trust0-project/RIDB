@@ -1,4 +1,4 @@
-[**@trust0/ridb**](../README.md) • **Docs**
+[**@trust0/ridb**](../README.md)
 
 ***
 
@@ -28,4 +28,4 @@ type ArrayType = ExtractType<'array'>; // ArrayType is Array<any>
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:276
+ridb-wasm/pkg/ridb\_wasm.d.ts:459

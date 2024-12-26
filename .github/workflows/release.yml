@@ -58,5 +58,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
           npm ci
-          npm run docs
-          npx semantic-release
+          npm run release

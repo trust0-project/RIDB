@@ -1,4 +1,4 @@
-[**@trust0/ridb**](../README.md) • **Docs**
+[**@trust0/ridb**](../README.md)
 
 ***
 
@@ -10,6 +10,18 @@ Represents a property within a schema, including various constraints and nested 
 
 ## Properties
 
+### default?
+
+> `readonly` `optional` **default**: `any`
+
+An optional default value for the property.
+
+#### Defined in
+
+ridb-wasm/pkg/ridb\_wasm.d.ts:432
+
+***
+
 ### items?
 
 > `readonly` `optional` **items**: [`Property`](Property.md)[]
@@ -18,7 +30,7 @@ An optional array of nested properties for array-type properties.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:438
+ridb-wasm/pkg/ridb\_wasm.d.ts:402
 
 ***
 
@@ -30,7 +42,7 @@ The maximum number of items for array-type properties, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:443
+ridb-wasm/pkg/ridb\_wasm.d.ts:407
 
 ***
 
@@ -42,7 +54,7 @@ The maximum length for string-type properties, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:453
+ridb-wasm/pkg/ridb\_wasm.d.ts:417
 
 ***
 
@@ -54,7 +66,7 @@ The minimum number of items for array-type properties, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:448
+ridb-wasm/pkg/ridb\_wasm.d.ts:412
 
 ***
 
@@ -66,7 +78,7 @@ The minimum length for string-type properties, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:458
+ridb-wasm/pkg/ridb\_wasm.d.ts:422
 
 ***
 
@@ -78,7 +90,7 @@ The primary key of the property, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:433
+ridb-wasm/pkg/ridb\_wasm.d.ts:397
 
 ***
 
@@ -94,7 +106,7 @@ An optional map of nested properties for object-type properties.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:468
+ridb-wasm/pkg/ridb\_wasm.d.ts:437
 
 ***
 
@@ -106,7 +118,7 @@ An optional array of required fields for object-type properties.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:463
+ridb-wasm/pkg/ridb\_wasm.d.ts:427
 
 ***
 
@@ -118,7 +130,7 @@ The type of the property.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:423
+ridb-wasm/pkg/ridb\_wasm.d.ts:387
 
 ***
 
@@ -130,4 +142,4 @@ The version of the property, if applicable.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:428
+ridb-wasm/pkg/ridb\_wasm.d.ts:392

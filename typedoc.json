@@ -1,12 +1,13 @@
 {
     "$schema": "https://typedoc-plugin-markdown.org/schema.json",
-    "entryPoints": ["./src/index.ts"],
+    "entryPoints": [
+        "./packages/ridb/src/index.ts",
+    ],
     "readme": "none",
     "out": "docs",
     "plugin": [
         "typedoc-plugin-markdown",
         "typedoc-plugin-rename-defaults"
-
     ],
     "navigationLinks": {
         "Docs": "https://github.com/elribonazo/RIDB.git",

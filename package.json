@@ -1,47 +1,21 @@
 {
-  "name": "@trust0/ridb",
-  "version": "0.10.1",
-  "description": "Dependency free wasm db encrypted and secure database wrapper for web and node.",
-  "main": "./build/cjs/index.js",
-  "publishConfig": {
-    "access": "public"
-  },
-  "module": "./build/esm/index.js",
-  "exports": {
-    ".": {
-      "import": "./build/esm/index.mjs",
-      "require": "./build/cjs/index.cjs",
-      "default": "./build/esm/index.mjs",
-      "types": "./build/index.d.ts"
-    }
-  },
-  "author": "elribonazo@gmail.com",
-  "types": "./build/index.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/trust0-project/RIDB.git"
-  },
-  "license": "Apache-2.0",
-  "files": [
-    "./build/**/*",
-    "./**/*.md"
-  ],
+  "name": "trust0",
+  "version": "0.0.0",
   "engines": {
     "node": ">=20"
   },
+  "packageManager": "npm@10.9.0",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "docs": "typedoc --cleanOutputDir false",
-    "runtest": "npm run build && npm run test:node",
-    "build": "sh build.sh",
-    "test": "sh test.sh",
-    "performance": "sh performance.sh",
-    "performance:node": "sh performance.sh -e node",
-    "performance:browser": "sh performance.sh -e browser",
-    "test:node": "sh test.sh -e node",
-    "test:browser": "sh test.sh -e browser",
-    "prepublishOnly": "npm run build"
+    "build": "npx turbo build",
+    "test": "npx turbo test",
+    "release": "npm run build && npm run docs && changeset version && changeset publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.11",
     "@esbuild-plugins/node-resolve": "^0.2.2",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
@@ -50,7 +24,6 @@
     "@semantic-release/github": "^10.3.5",
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.2",
-    "@trust0/ridb-wasm": "file:../ridb-wasm/pkg",
     "@types/node": "^20.14.2",
     "@vitest/browser": "^1.6.0",
     "@vitest/coverage-istanbul": "^1.6.0",
@@ -61,6 +34,7 @@
     "jsdom": "^24.1.3",
     "semantic-release": "^24.2.0",
     "ts-node": "^10.9.2",
+    "turbo": "^2.3.3",
     "typedoc": "^0.27.5",
     "typedoc-plugin-external-module-map": "^2.1.0",
     "typedoc-plugin-markdown": "^4.3.3",

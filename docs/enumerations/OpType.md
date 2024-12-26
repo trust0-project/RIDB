@@ -1,4 +1,4 @@
-[**@trust0/ridb**](../README.md) • **Docs**
+[**@trust0/ridb**](../README.md)
 
 ***
 
@@ -18,7 +18,7 @@ Count Operation.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:59
+ridb-wasm/pkg/ridb\_wasm.d.ts:63
 
 ***
 
@@ -30,7 +30,7 @@ Create operation.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:43
+ridb-wasm/pkg/ridb\_wasm.d.ts:47
 
 ***
 
@@ -42,7 +42,7 @@ Delete operation.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:51
+ridb-wasm/pkg/ridb\_wasm.d.ts:55
 
 ***
 
@@ -54,7 +54,7 @@ Query Operation.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:55
+ridb-wasm/pkg/ridb\_wasm.d.ts:59
 
 ***
 
@@ -66,4 +66,4 @@ Update operation.
 
 #### Defined in
 
-pkg/ridb\_rust.d.ts:47
+ridb-wasm/pkg/ridb\_wasm.d.ts:51

@@ -1,4 +1,4 @@
-[**@trust0/ridb**](../README.md) • **Docs**
+[**@trust0/ridb**](../README.md)
 
 ***
 
@@ -16,4 +16,4 @@ Represents a record of schema types, where each key is a string and the value is
 
 ## Defined in
 
-pkg/ridb\_rust.d.ts:516
+ridb-wasm/pkg/ridb\_wasm.d.ts:558
