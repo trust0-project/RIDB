@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[packages/ridb/src/index.ts:123](https://github.com/elribonazo/RIDB/blob/34575303e94cb4910ffa833ab354c3c4c328d81d/packages/ridb/src/index.ts#L123)
+[packages/ridb/src/index.ts:123](https://github.com/elribonazo/RIDB/blob/56953e7daf1db67092f8732dd6adee955f103a76/packages/ridb/src/index.ts#L123)
 
 ***
 
@@ -24,4 +24,4 @@
 
 #### Defined in
 
-[packages/ridb/src/index.ts:122](https://github.com/elribonazo/RIDB/blob/34575303e94cb4910ffa833ab354c3c4c328d81d/packages/ridb/src/index.ts#L122)
+[packages/ridb/src/index.ts:122](https://github.com/elribonazo/RIDB/blob/56953e7daf1db67092f8732dd6adee955f103a76/packages/ridb/src/index.ts#L122)

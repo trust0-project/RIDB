@@ -1,6 +1,6 @@
 {
     "name": "@trust0/ridb",
-    "version": "1.0.0-rc.1",
+    "version": "1.0.3",
     "description": "Dependency free wasm db encrypted and secure database wrapper for web and node.",
     "main": "./build/cjs/index.js",
     "publishConfig": {
@@ -36,9 +36,9 @@
         "test:node": "sh test.sh -e node",
         "test:browser": "sh test.sh -e browser",
         "types": "npm run types:default && npm run types:esm && npm run types:cjs",
-        "types:default": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/index.d.ts",
-        "types:esm": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/esm/index.d.ts",
-        "types:cjs": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/cjs/index.d.ts",
+        "types:default": "npx dts-bundle-generator src/index.ts --no-check --external-inlines @trust0/ridb-wasm -o ./build/index.d.ts",
+        "types:esm": "npx dts-bundle-generator src/index.ts --no-check --external-inlines @trust0/ridb-wasm -o ./build/esm/index.d.ts",
+        "types:cjs": "npx dts-bundle-generator src/index.ts --no-check --external-inlines @trust0/ridb-wasm -o ./build/cjs/index.d.ts",
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {

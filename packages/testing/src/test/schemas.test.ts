@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
-import { RIDB, SchemaFieldType } from '@trust0/ridb';
+import { RIDB, SchemaFieldType, Doc } from '@trust0/ridb';
 import { StoragesType } from '..';
 
 
@@ -526,29 +526,31 @@ export default (platform: string, storages: StoragesType[]) => {
 
                 });
                 it("Should be able to create and migrate a schema from v1 to v2", async () => {
+                    const schema = {
+                        version: 1,
+                        primaryKey: 'id',
+                        type: SchemaFieldType.object,
+                        required: ['id', 'age'],
+                        properties: {
+                            id: {
+                                type: SchemaFieldType.string,
+                                maxLength: 60
+                            },
+                            age: {
+                                type: SchemaFieldType.number,
+                            }
+                        }
+                    }
+                    
                     const db = new RIDB(
                         {
                             dbName: "test" + uuidv4(),
                             schemas: {
-                                demo: {
-                                    version: 1,
-                                    primaryKey: 'id',
-                                    type: SchemaFieldType.object,
-                                    required: ['id', 'age'],
-                                    properties: {
-                                        id: {
-                                            type: SchemaFieldType.string,
-                                            maxLength: 60
-                                        },
-                                        age: {
-                                            type: SchemaFieldType.number,
-                                        }
-                                    }
-                                }
+                                demo: schema
                             } as const,
                             migrations: {
                                 demo: {
-                                    1: function (doc) {
+                                    1: function (doc: Doc<typeof schema>) {
                                         return doc
                                     }
                                 }
