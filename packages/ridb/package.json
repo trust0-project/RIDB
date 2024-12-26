@@ -24,7 +24,8 @@
     "license": "Apache-2.0",
     "files": [
         "./build/**/*",
-        "./**/*.md"
+        "./**/*.md",
+        "../../README.md"
     ],
     "engines": {
         "node": ">=20"
