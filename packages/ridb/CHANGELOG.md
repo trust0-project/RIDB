@@ -1,3 +1,10 @@
+## [0.10.2-rc.8](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.7...v0.10.2-rc.8) (2024-12-26)
+
+
+### Bug Fixes
+
+* release pipeline ([d7eb487](https://github.com/trust0-project/RIDB/commit/d7eb487e481b989a6295b9caa3ca560ab67839ad))
+
 ## [0.10.2-rc.7](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.6...v0.10.2-rc.7) (2024-12-26)
 
 
