@@ -43,6 +43,6 @@
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {
-        "@trust0/ridb-wasm": "^1.0.10"
+        "@trust0/ridb-wasm": "^1.0.11"
     }
 }

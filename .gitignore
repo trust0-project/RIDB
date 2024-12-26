@@ -6,3 +6,4 @@ umd/*
 coverage
 build/*
 .turbo
+node_modules/**/*
