@@ -2,7 +2,7 @@
  * @packageDocumentation
  *
  * <p align="center">
- *   <img src="https://cdn.jsdelivr.net/gh/trust0-project/ridb@latest/docs/logo.svg" alt="JavaScript Database" />
+ *   <img src="https://cdn.jsdelivr.net/gh/trust0-project/ridb@latest/logo.svg" alt="JavaScript Database" />
  *   <br />
  *   <br />
  *   <h3 align="center">A secure light-weight and dependency free database wrapper for the web.</h3>
@@ -21,10 +21,10 @@
  * 
  * # SDK Rerefence
  */
-// @ts-ignore
+
+// @ts-ignore @ignore
 import wasmBuffer from "@trust0/ridb-wasm/ridb_wasm_bg.wasm";
-import * as RIDBTypes from "@trust0/ridb-wasm";
-import { BaseStorage } from "@trust0/ridb-wasm";
+import { BasePlugin, BaseStorage, Database, MigrationPathsForSchemas, MigrationsParameter, SchemaTypeRecord } from "@trust0/ridb-wasm";
 
 let internal: typeof import("@trust0/ridb-wasm") | undefined;
 
@@ -68,7 +68,7 @@ let internal: typeof import("@trust0/ridb-wasm") | undefined;
  * })
  * ```
  * 
- * A compatible storage should be a class implementing [StorageInternal<RIDBTypes.SchemaType> ](../docs/namespaces/RIDBTypes/classes/StorageInternal.md) and its methods.
+ * A compatible storage should be a class implementing [StorageInternal<SchemaType> ](../docs/namespaces/RIDBTypes/classes/StorageInternal.md) and its methods.
  * 
  * ### Using with migration plugin
  * The migration plugin will automatically migrate your documents for you as you upgrade and change your schemas over the time. 
@@ -110,7 +110,7 @@ let internal: typeof import("@trust0/ridb-wasm") | undefined;
  * @template T - The type of the schema record.
  */
 
-type StorageClass<T extends RIDBTypes.SchemaTypeRecord> = {
+type StorageClass<T extends SchemaTypeRecord> = {
     create: (
         name: string, 
         schemas: T, 
@@ -123,18 +123,58 @@ export enum StorageType {
     IndexDB = "IndexDB"
 }
 
-export type StartOptions<T extends RIDBTypes.SchemaTypeRecord> = {
+export type StartOptions<T extends SchemaTypeRecord> = {
     storageType?: StorageClass<T> | StorageType,
     password?: string,
     [name: string]: any
 }
 
-export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRecord> {
+export type {
+    OpType, 
+    IndexDB, 
+    Operators, 
+    InOperator, 
+    OperatorOrType, 
+    LogicalOperators, 
+    QueryType, 
+    Query, 
+    InternalsRecord, 
+    ExtractType, 
+    Doc, 
+    Collection, 
+    InMemory, 
+    Operation, 
+    Property, 
+    CoreStorage, 
+    EnumerateUpTo, 
+    EnumerateFrom1To, 
+    IsVersionGreaterThan0, 
+    AnyVersionGreaterThan1, 
+    MigrationFunction, 
+    MigrationPathsForSchema, 
+    MigrationPathsForSchemas, 
+    MigrationsParameter, 
+    BaseStorageOptions, 
+    BaseStorage, 
+    SchemaType, 
+    Schema, 
+    Database, 
+    CreateStorage, 
+    RIDBModule, 
+    Hook, 
+    BasePluginOptions, 
+    BasePlugin, 
+    SchemaTypeRecord, 
+    StorageInternal
+} from "@trust0/ridb-wasm";
+
+
+export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
 
     private schemas: T;
-    private migrations: RIDBTypes.MigrationPathsForSchemas<T>
-    private plugins: Array<typeof RIDBTypes.BasePlugin> = [];
-    private _db: RIDBTypes.Database<T> | undefined;
+    private migrations: MigrationPathsForSchemas<T>
+    private plugins: Array<typeof BasePlugin> = [];
+    private _db: Database<T> | undefined;
     private dbName: string;
     
     /**
@@ -145,13 +185,13 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
         options: {
             dbName: string,
             schemas: T,
-            plugins?: Array<typeof RIDBTypes.BasePlugin>
-        } & RIDBTypes.MigrationsParameter<T>
+            plugins?: Array<typeof BasePlugin>
+        } & MigrationsParameter<T>
     ) {
         const {
             dbName,
             schemas,
-            migrations = {} as RIDBTypes.MigrationPathsForSchemas<T>,
+            migrations = {} as MigrationPathsForSchemas<T>,
             plugins = []
         } = options;
 
@@ -209,12 +249,12 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
 
     /**
      * Starts the database.
-     * @returns {Promise<RIDBTypes.Database<T>>} A promise that resolves to the database instance.
+     * @returns {Promise<Database<T>>} A promise that resolves to the database instance.
      * @param options
      */
     async start(
         options?: StartOptions<T>
-    ): Promise<RIDBTypes.Database<T>> {
+    ): Promise<Database<T>> {
         if (!this._db) {
             const { storageType, password } = options ?? {};
             const { Database } = await RIDB.load();
@@ -237,7 +277,7 @@ export class RIDB<T extends RIDBTypes.SchemaTypeRecord = RIDBTypes.SchemaTypeRec
                 this.migrations,
                 this.plugins,
                 {
-                    apply: (plugins: Array<typeof RIDBTypes.BasePlugin> = []) => plugins.map((Plugin) => new Plugin()),
+                    apply: (plugins: Array<typeof BasePlugin> = []) => plugins.map((Plugin) => new Plugin()),
                 },
                 password,
                 storage
@@ -268,3 +308,4 @@ export const SchemaFieldType = {
     array: 'array' as const,
     object: 'object' as const,
 };
+

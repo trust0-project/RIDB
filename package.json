@@ -9,7 +9,7 @@
     "packages/*"
   ],
   "scripts": {
-    "docs": "typedoc && node scripts/docs.js",
+    "docs": "lerna run docs --stream --loglevel verbose",
     "build": "lerna run build --stream --loglevel verbose",
     "test": "lerna run test --stream --loglevel verbose"
   },
@@ -37,7 +37,7 @@
           "assets": [
             "packages/**/package.json",
             "packages/**/package-lock.json",
-            "docs/**/*"
+            "packages/**/docs/**/*"
           ],
           "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
