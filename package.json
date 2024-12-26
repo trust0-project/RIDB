@@ -9,7 +9,7 @@
     "packages/*"
   ],
   "scripts": {
-    "docs": "typedoc --cleanOutputDir false",
+    "docs": "typedoc",
     "build": "lerna run build",
     "test": "lerna run test"
   },
@@ -48,6 +48,11 @@
   "devDependencies": {
     "@anolilab/multi-semantic-release": "^1.1.6",
     "@anolilab/semantic-release-preset": "^9.0.3",
+    "typedoc": "^0.27.6",
+    "typedoc-plugin-external-module-map": "^2.1.0",
+    "typedoc-plugin-markdown": "^4.3.3",
+    "typedoc-plugin-rename-defaults": "^0.7.2",
+    "typedoc-theme-hierarchy": "^5.0.4",
     "lerna": "^8.1.9"
   },
   "optionalDependencies": {

@@ -16,12 +16,12 @@
     },
     "useTsLinkResolution": true,
     "hideGenerator": true,
-    "entryPointStrategy": "resolve",
+    "entryPointStrategy": "expand",
     "excludePrivate": false,
     "excludeReferences": false,
     "excludeProtected": false,
     "excludeInternal": false,
     "excludeNotDocumented": false,
-    "theme": "default",
+    "theme": "markdown",
     "excludeExternals": false
 }
