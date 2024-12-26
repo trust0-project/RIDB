@@ -1,3 +1,12 @@
+## [0.10.2-rc.9](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.8...v0.10.2-rc.9) (2024-12-26)
+
+
+### Bug Fixes
+
+* ci ([311a6eb](https://github.com/trust0-project/RIDB/commit/311a6ebf3ad9f8556df3332bf96bbeebe4988a2d))
+* pipeline improvement, missing checkout step ([9cf327b](https://github.com/trust0-project/RIDB/commit/9cf327bec1e7e8dd16dc456d2f15c7612b50ea99))
+* testing ([7993a09](https://github.com/trust0-project/RIDB/commit/7993a09dea3b9cc815d70e0c00c55fc744829801))
+
 ## [0.10.2-rc.8](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.7...v0.10.2-rc.8) (2024-12-26)
 
 
