@@ -1,3 +1,26 @@
+# @trust0/ridb 1.0.0-rc.1 (2024-12-26)
+
+
+### Bug Fixes
+
+* ci ([311a6eb](https://github.com/trust0-project/RIDB/commit/311a6ebf3ad9f8556df3332bf96bbeebe4988a2d))
+* clean workspace and include latest wasm version ([e942a7d](https://github.com/trust0-project/RIDB/commit/e942a7da5b76924e993a53166cac6f7797160eb9))
+* fetch wasm from workspace ([dc81bb2](https://github.com/trust0-project/RIDB/commit/dc81bb2115e59002c33a510f838f86d436397efe))
+* fix testing ([5e99350](https://github.com/trust0-project/RIDB/commit/5e99350898eda8968d8a6890d0cfafc1d35b8fae))
+* lerna ([4967593](https://github.com/trust0-project/RIDB/commit/4967593efbd8986c1d77de397dcdb6c0900bf247))
+* monorepo ([2d769a0](https://github.com/trust0-project/RIDB/commit/2d769a01327f6a2fd65d4318c1d93ce5c3a0d1f0))
+* package release ([7cd385a](https://github.com/trust0-project/RIDB/commit/7cd385afa930dde4af877af30bd4d19edcc6496f))
+* release process ([42e9ecb](https://github.com/trust0-project/RIDB/commit/42e9ecb20e6e036654a14880024ac0fb222d5798))
+* remove local package ([72ce2b4](https://github.com/trust0-project/RIDB/commit/72ce2b462b4a149f1b3909f2e39988d1f816fbd6))
+* workspace testing fix ([fcb9867](https://github.com/trust0-project/RIDB/commit/fcb986716a10289391419eeeaf9ea92da85ecc19))
+
+## [0.11.1-rc.1](https://github.com/trust0-project/RIDB/compare/v0.11.0...v0.11.1-rc.1) (2024-12-26)
+
+
+### Bug Fixes
+
+* package release ([7cd385a](https://github.com/trust0-project/RIDB/commit/7cd385afa930dde4af877af30bd4d19edcc6496f))
+
 # [0.11.0](https://github.com/trust0-project/RIDB/compare/v0.10.1...v0.11.0) (2024-12-26)
 
 

@@ -10,8 +10,46 @@
   ],
   "scripts": {
     "docs": "typedoc --cleanOutputDir false",
-    "build": "npx turbo build",
-    "test": "npx turbo test",
-    "release": "npm run build && npm run docs && changeset version && changeset publish"
+    "build": "lerna run build",
+    "test": "lerna run test"
+  },
+  "release": {
+    "branches": [
+      {
+        "name": "main"
+      },
+      {
+        "name": "develop",
+        "prerelease": "rc",
+        "channel": "rc"
+      },
+      "v+([0-9])?(.{+([0-9]),x}).x"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github",
+      "@semantic-release/changelog",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "packages"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ],
+      "@semantic-release/npm"
+    ],
+    "noCi": true
+  },
+  "devDependencies": {
+    "@anolilab/multi-semantic-release": "^1.1.6",
+    "@anolilab/semantic-release-preset": "^9.0.3",
+    "lerna": "^8.1.9"
+  },
+  "optionalDependencies": {
+    "@esbuild/darwin-arm64": "0.15.18",
+    "@rollup/rollup-linux-x64-gnu": "^4.24.0"
   }
 }
