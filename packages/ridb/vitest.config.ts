@@ -1,25 +1,24 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite'
-import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
+import { resolve } from 'path'
+import wasm from "vite-plugin-wasm"
+import topLevelAwait from "vite-plugin-top-level-await"
 
 const isCI = process.env.CI === "true";
 
 export default defineConfig({
+    root: resolve(__dirname, '../..'),
     build: {
         minify: 'terser',
-
         terserOptions: {
             format: {
                 comments: 'all',
                 preserve_annotations: true,
             },
-
-        },
-
+        }
     },
     test: {
-        setupFiles: ['./tests/setup.ts'],
+        setupFiles: ['./packages/ridb/tests/setup.ts'],
         reporters: ['verbose'],
         coverage: {
             provider: 'istanbul',
@@ -34,6 +33,5 @@ export default defineConfig({
                 'build/esm/**/*'
             ],
         },
-
     }
 })

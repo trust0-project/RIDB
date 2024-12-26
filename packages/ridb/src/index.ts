@@ -25,40 +25,6 @@
 import wasmBuffer from "@trust0/ridb-wasm/ridb_wasm_bg.wasm";
 import * as RIDBTypes from "@trust0/ridb-wasm";
 import { BaseStorage } from "@trust0/ridb-wasm";
-export {
-    BaseStorage, 
-    OpType,
-    Database,
-    Collection,
-    Schema,
-    Query,
-    Property,
-    BasePlugin,
-    StorageInternal,
-    CreateStorage,
-    RIDBModule,
-    InternalsRecord,
-    ExtractType,
-    Doc,
-    Operation,
-    Hook,
-    BasePluginOptions,
-    SchemaType,
-    EnumerateUpTo,
-    EnumerateFrom1To,
-    IsVersionGreaterThan0,
-    AnyVersionGreaterThan1,
-    MigrationFunction,
-    MigrationPathsForSchema,
-    MigrationPathsForSchemas,
-    MigrationsParameter,
-    Operators,
-    InOperator,
-    OperatorOrType,
-    LogicalOperators,
-    QueryType,
-    SchemaTypeRecord
-} from "@trust0/ridb-wasm";
 
 let internal: typeof import("@trust0/ridb-wasm") | undefined;
 
