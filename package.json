@@ -15,8 +15,14 @@
   },
   "release": {
     "branches": [
-      { "name": "main" },
-      { "name": "develop", "prerelease": "rc", "channel": "rc" },
+      {
+        "name": "main"
+      },
+      {
+        "name": "develop",
+        "prerelease": "rc",
+        "channel": "rc"
+      },
       "v+([0-9])?(.{+([0-9]),x}).x"
     ],
     "plugins": [
@@ -27,7 +33,9 @@
       [
         "@semantic-release/git",
         {
-          "assets": ["packages"],
+          "assets": [
+            "packages"
+          ],
           "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
       ],
@@ -37,6 +45,7 @@
   },
   "devDependencies": {
     "@anolilab/multi-semantic-release": "^1.1.6",
+    "@anolilab/semantic-release-preset": "^9.0.3",
     "lerna": "^8.1.9"
   }
 }
