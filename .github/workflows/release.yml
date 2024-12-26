@@ -57,5 +57,4 @@ jobs:
         run: |
           npm install
           npm run build
-          cd packages/ridb && npx semantic-release
-          cd packages/ridb-level && npx semantic-release
+          npx multi-semantic-release
