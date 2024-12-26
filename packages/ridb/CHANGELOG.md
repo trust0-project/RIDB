@@ -1,3 +1,10 @@
+## [0.10.2-rc.3](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.2...v0.10.2-rc.3) (2024-12-26)
+
+
+### Bug Fixes
+
+* pr pipeline ([9ecc6df](https://github.com/trust0-project/RIDB/commit/9ecc6df4a7163aaead43f79a6e36147930941d12))
+
 ## [0.10.2-rc.2](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.1...v0.10.2-rc.2) (2024-12-26)
 
 
