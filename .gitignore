@@ -1,4 +1,4 @@
-node_modules/*
+node_modules
 cjs/*
 esm/*
 umd/*
@@ -6,4 +6,3 @@ umd/*
 coverage
 build/*
 .turbo
-node_modules/**/*

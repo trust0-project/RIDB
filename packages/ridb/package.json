@@ -30,8 +30,6 @@
         "node": ">=20"
     },
     "scripts": {
-        "docs": "typedoc --cleanOutputDir false",
-        "runtest": "npm run build && npm run test:node",
         "build": "rm -rf build && npm run types && node esbuild.config.mjs",
         "test": "sh test.sh",
         "test:node": "sh test.sh -e node",
