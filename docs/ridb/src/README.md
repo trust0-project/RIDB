@@ -27,6 +27,18 @@
 
 ## Index
 
+### Enumerations
+
+- [StorageType](enumerations/StorageType.md)
+
+### Classes
+
+- [RIDB](classes/RIDB.md)
+
+### Type Aliases
+
+- [StartOptions](type-aliases/StartOptions.md)
+
 ### Variables
 
 - [SchemaFieldType](variables/SchemaFieldType.md)
