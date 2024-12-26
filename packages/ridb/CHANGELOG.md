@@ -1,3 +1,10 @@
+## [0.10.2-rc.5](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.4...v0.10.2-rc.5) (2024-12-26)
+
+
+### Bug Fixes
+
+* ci ([cf56fe3](https://github.com/trust0-project/RIDB/commit/cf56fe3b29e748b7b8974097893f73a2baba9cb0))
+
 ## [0.10.2-rc.4](https://github.com/trust0-project/RIDB/compare/v0.10.2-rc.3...v0.10.2-rc.4) (2024-12-26)
 
 
