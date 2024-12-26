@@ -13,6 +13,10 @@
     "build": "lerna run build",
     "test": "lerna run test"
   },
+  "release": {
+    "plugins": ["@semantic-release/commit-analyzer", "@semantic-release/release-notes-generator"],
+    "noCi": true
+  },
   "devDependencies": {
     "@anolilab/multi-semantic-release": "^1.1.6",
     "lerna": "^8.1.9"
