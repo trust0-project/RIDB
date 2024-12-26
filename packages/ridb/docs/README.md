@@ -5,7 +5,7 @@
 # @trust0/ridb
 
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/trust0-project/ridb@latest/logo.svg" alt="JavaScript Database" />
+  <img src="https://raw.githubusercontent.com/trust0-project/RIDB/refs/heads/main/logo.svg" alt="JavaScript Database" />
   <br />
   <br />
   <h3 align="center">A secure light-weight and dependency free database wrapper for the web.</h3>
