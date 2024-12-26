@@ -1,6 +1,6 @@
 
-import { StorageType } from '..';
 
+import { StorageClass, type StorageType } from '@trust0/ridb';
 import { default as Schemas } from './test/schemas.test';
 
 const Tests = {
@@ -14,7 +14,7 @@ export enum TestPlatform {
 }
 
 export type StoragesType = {
-    storage: StorageType,
+    storage: StorageType | StorageClass<any>,
     name: string
 }
 

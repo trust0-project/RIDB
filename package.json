@@ -9,9 +9,9 @@
     "packages/*"
   ],
   "scripts": {
-    "docs": "typedoc",
-    "build": "lerna run build",
-    "test": "lerna run test"
+    "docs": "typedoc && node scripts/docs.js",
+    "build": "lerna run build --stream --loglevel verbose",
+    "test": "lerna run test --stream --loglevel verbose"
   },
   "release": {
     "branches": [

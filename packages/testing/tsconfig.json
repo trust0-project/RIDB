@@ -17,8 +17,6 @@
   },
   "include": [
     "src/**/*",
-    "node_modules/@trust0/ridb/**/*",
-    "../testing/src/**/*"
   ],
   "exclude": ["node_modules", "dist"]
 }

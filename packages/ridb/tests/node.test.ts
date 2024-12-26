@@ -1,8 +1,8 @@
-import Shared from './shared';
 
-import { StorageType } from '..';
+import { StorageType } from '@trust0/ridb';
+import { runTests, TestPlatform } from '@trust0/ridb-testing';
 
-Shared.runTests(
-    [Shared.TestPlatform.NODE], 
+runTests(
+    [TestPlatform.NODE], 
     [{name: "InMemory", storage: StorageType.InMemory}]
 )
