@@ -1,20 +1,4 @@
 {
-    "version": "independent",
-    "npmClient": "npm",
-    "command": {
-      "publish": {
-        "conventionalCommits": true,
-        "yes": true,
-        "allowBranch": ["main", "develop"],
-        "prerelease": true,
-        "preid": "rc"
-      },
-      "version": {
-        "message": "chore(release): publish"
-      },
-      "bootstrap": {
-        "hoist": true
-      }
-    },
-    "packages": ["packages/*"]
-} 
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+  "version": "0.0.0"
+}
