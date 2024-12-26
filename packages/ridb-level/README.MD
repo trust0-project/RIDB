@@ -16,4 +16,5 @@
     <a href="https://www.npmjs.com/package/@trust0/ridb"><img src="https://img.shields.io/npm/dm/@trust0/ridb?color=c63a3b&style=flat-square"></a>   
 </p>
 
-### WORK IN PROGRESS
+### Description
+This package is a leveldb wrapper for the ridb database.
