@@ -2,6 +2,7 @@
     "$schema": "https://typedoc-plugin-markdown.org/schema.json",
     "entryPoints": [
         "./packages/ridb/src/index.ts",
+        "./packages/ridb-level/src/index.ts",
     ],
     "readme": "none",
     "out": "docs",
@@ -10,8 +11,8 @@
         "typedoc-plugin-rename-defaults"
     ],
     "navigationLinks": {
-        "Docs": "https://github.com/elribonazo/RIDB.git",
-        "GitHub": "https://github.com/elribonazo/RIDB.git"
+        "Docs": "https://github.com/trust0/RIDB.git",
+        "GitHub": "https://github.com/trust0/RIDB.git"
     },
     "useTsLinkResolution": true,
     "hideGenerator": true,
