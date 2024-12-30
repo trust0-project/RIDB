@@ -1,22 +1,20 @@
 {
   "name": "@trust0/ridb-wasm",
+  "type": "module",
+  "private": true,
+  "version": "1.0.11",
+  "main": "./pkg/ridb_wasm.js",
+  "types": "./pkg/ridb_wasm.d.ts",
+  "sideEffects": [
+    "./pkg/snippets/*"
+  ],
   "scripts": {
     "test": "sh test.sh",
     "build": "sh build.sh"
   },
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "type": "module",
-  "version": "1.0.11",
   "files": [
-    "pkg/ridb_wasm_bg.wasm",
-    "pkg/ridb_wasm.js",
-    "pkg/ridb_wasm.d.ts"
-  ],
-  "main": "pkg/ridb_wasm.js",
-  "types": "pkg/ridb_wasm.d.ts",
-  "sideEffects": [
-    "./pkg/snippets/*"
+    "./pkg/ridb_wasm_bg.wasm",
+    "./pkg/ridb_wasm.js",
+    "./pkg/ridb_wasm.d.ts"
   ]
 }
