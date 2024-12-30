@@ -9,6 +9,7 @@
     "packages/*"
   ],
   "scripts": {
+    "clean": "lerna run clean --stream --loglevel verbose && rm -rf node_modules package-lock.json",
     "docs": "lerna run docs --stream --loglevel verbose",
     "build": "lerna run build --stream --loglevel verbose",
     "test": "lerna run test --stream --loglevel verbose"

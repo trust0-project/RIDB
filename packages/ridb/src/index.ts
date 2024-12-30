@@ -23,7 +23,7 @@
  */
 
 // @ts-ignore @ignore
-import wasmBuffer from "@trust0/ridb-wasm/ridb_wasm_bg.wasm";
+import wasmBuffer from "@trust0/ridb-wasm/pkg/ridb_wasm_bg.wasm";
 import { BasePlugin, BaseStorage, Database, MigrationPathsForSchemas, MigrationsParameter, SchemaTypeRecord } from "@trust0/ridb-wasm";
 
 let internal: typeof import("@trust0/ridb-wasm") | undefined;
@@ -258,7 +258,6 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
         if (!this._db) {
             const { storageType, password } = options ?? {};
             const { Database } = await RIDB.load();
-
             const StorageClass = typeof storageType === "string" ?
                 this.getStorageType(storageType) :
                 storageType ?? undefined;
@@ -266,7 +265,7 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
             if (StorageClass && !StorageClass.create) {
                 throw new Error("Your storage does not have an async create function, please check documentation")
             }
-                
+            
             const storage = StorageClass ? 
                 await StorageClass.create(this.dbName, this.schemas, options) :
                 undefined;
@@ -293,7 +292,6 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
     async close() {
         await this.db.close();
         this._db = undefined;
-        debugger;
     }
 
 }

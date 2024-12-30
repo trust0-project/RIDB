@@ -502,8 +502,7 @@ export default (platform: string, storages: StoragesType[]) => {
                                         },
                                         age: {
                                             type: SchemaFieldType.number,
-                                            default: 18,
-                                            required: false
+                                            default: 18
                                         }
                                     }
                                 }

@@ -1,7 +1,5 @@
 
 import esbuild from 'esbuild';
-import fs from 'fs';
-import path from 'path';
 import { NodeResolvePlugin } from '@esbuild-plugins/node-resolve';
 
 
@@ -35,30 +33,14 @@ const generic = {
 // Build ES module
 esbuild.build({
     ...generic,
-    outdir:"build/esm",
-    outExtension: { ".js": ".mjs" },
+    outdir:"build",
+    outExtension: { ".js": ".js" },
     target: ['esnext'],
     format: 'esm',
     plugins: [
         ...plugins
     ],
-}).then(() => {
-    esbuild.build({
-        ...generic,
-        outdir:"build/cjs",
-        outExtension: { ".js": ".cjs" },
-        target: ['es6'],
-        format: 'cjs',
-        plugins: [
-            ...plugins
-        ],
-    }).catch((err) => {
-        console.log(err)
-        process.exit(1)
-    });
-})
-
-    .catch((err) => {
+}).catch((err) => {
     console.log(err)
     process.exit(1)
 });
