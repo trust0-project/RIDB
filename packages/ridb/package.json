@@ -1,22 +1,14 @@
 {
     "name": "@trust0/ridb",
-    "version": "1.0.3",
+    "version": "1.0.5",
     "description": "Dependency free wasm db encrypted and secure database wrapper for web and node.",
-    "main": "./build/cjs/index.js",
+    "main": "./build/index.js",
+    "types": "./build/index.d.ts",
+    "type": "module",
     "publishConfig": {
         "access": "public"
     },
-    "module": "./build/esm/index.js",
-    "exports": {
-        ".": {
-            "import": "./build/esm/index.mjs",
-            "require": "./build/cjs/index.cjs",
-            "default": "./build/esm/index.mjs",
-            "types": "./build/index.d.ts"
-        }
-    },
     "author": "elribonazo@gmail.com",
-    "types": "./build/index.d.ts",
     "repository": {
         "type": "git",
         "url": "https://github.com/trust0-project/RIDB.git"
@@ -30,15 +22,14 @@
         "node": ">=20"
     },
     "scripts": {
+        "clean": "rm -rf build node_modules",
         "docs":"typedoc",
         "build": "rm -rf build && npm run types && node esbuild.config.mjs",
         "test": "sh test.sh",
         "test:node": "sh test.sh -e node",
         "test:browser": "sh test.sh -e browser",
-        "types": "npm run types:default && npm run types:esm && npm run types:cjs",
-        "types:default": "npx dts-bundle-generator src/index.ts --no-check --external-inlines @trust0/ridb-wasm -o ./build/index.d.ts",
-        "types:esm": "npx dts-bundle-generator src/index.ts --no-check --external-inlines @trust0/ridb-wasm -o ./build/esm/index.d.ts",
-        "types:cjs": "npx dts-bundle-generator src/index.ts --no-check --external-inlines @trust0/ridb-wasm -o ./build/cjs/index.d.ts",
+        "types": "npm run types:default",
+        "types:default": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/index.d.ts",
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {

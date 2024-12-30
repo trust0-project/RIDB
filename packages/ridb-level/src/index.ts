@@ -21,22 +21,27 @@
  * 
  * # SDK Rerefence
  */
+import { RIDB } from "@trust0/ridb";
 import type { 
     SchemaTypeRecord, 
     Doc, 
     Operation,
     QueryType,
  } from "@trust0/ridb-wasm";
-import { BaseStorage, OpType, Query} from "@trust0/ridb-wasm";
+import type { BaseStorage as BaseStorageWasm} from "@trust0/ridb-wasm";
 import type { ClassicLevel } from "classic-level";
 type Level = ClassicLevel<string, string>
+
+
+const { BaseStorage, Query, OpType } = await RIDB.load();
+
 export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
     private db: Level;
     static async create<SchemasCreate extends SchemaTypeRecord>(
         name: string,
         schemas: SchemasCreate,
         options: any
-    ): Promise<BaseStorage<SchemasCreate>> {
+    ): Promise<BaseStorageWasm<SchemasCreate>> {
         const levelImport = await import("classic-level");
         const level = levelImport.ClassicLevel;
         return new LevelDB(level, name, schemas, options);
@@ -109,7 +114,7 @@ export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
             lt: `${collectionPrefix}\xFF`,
         })) {
             const doc = JSON.parse(value);
-            if (this.matchesQuery(doc, queryInstance)) {
+            if (this.core.matchesQuery(doc, queryInstance)) {
                 count++;
             }
         }
@@ -129,13 +134,10 @@ export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
             lt: `${collectionPrefix}\xFF`,
         })) {
             const doc = JSON.parse(value);
-            if (this.matchesQuery(doc, queryInstance)) {
+            if (this.core.matchesQuery(doc, queryInstance)) {
                 docs.push(doc);
             }
         }
         return docs;
-    }
-    matchesQuery(doc: Doc<T[keyof T]>, query: Query<any>): boolean {
-        return this.core.matchesQuery(doc, query);
     }
 }

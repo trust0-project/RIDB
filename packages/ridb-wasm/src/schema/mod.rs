@@ -20,35 +20,29 @@ export type SchemaType = {
     /**
      * The version of the schema.
      */
-    readonly version: number;
+     version: number;
 
     /**
      * The primary key of the schema.
      */
-    readonly primaryKey: string;
+     primaryKey: string;
 
     /**
      * The type of the schema.
      */
-    readonly type: string;
+     type: string;
 
-    /**
-     * An optional array of required fields.
-     */
-    readonly required?: string[];
-
-    /**
-     * An optional array of indexes.
-     */
-    readonly indexes?: string[];
-    readonly encrypted?: string[];
+     required?:  string[];
+     indexes?:  string[];
+     encrypted?:  string[];
     /**
      * The properties defined in the schema.
      */
-    readonly properties: {
+     properties: {
         [name: string]: Property;
     };
 };
+
 
 /**
  * Represents a schema, including its definition and related methods.
@@ -88,11 +82,20 @@ export class Schema<T extends SchemaType> {
     /**
      * An optional array of indexes.
      */
-    readonly indexes?: string[];
+    /**
+     * An optional array of indexes.
+     */
+    readonly indexes?: (Extract<keyof T, string>)[];
 
-    readonly required?: string[];
+    /**
+     * An optional array of required fields.
+     */
+    readonly required?: (Extract<keyof T, string>)[];
 
-    readonly encrypted?: string[];
+    /**
+     * An optional array of encrypted fields.
+     */
+    readonly encrypted?: (Extract<keyof T, string>)[];
 
     /**
      * The properties defined in the schema.

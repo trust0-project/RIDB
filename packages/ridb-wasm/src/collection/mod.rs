@@ -20,12 +20,16 @@ export type InternalsRecord = {
  * type ObjectType = ExtractType<'object'>; // ObjectType is object
  * type ArrayType = ExtractType<'array'>; // ArrayType is Array<any>
  */
-export type ExtractType<T extends string> = T extends 'string' ? string :
-    T extends 'number' ? number :
-    T extends 'boolean' ? boolean :
-    T extends 'object' ? object :
-    T extends 'array' ? Array<any> :
-    never;
+export type ExtractType<T extends string> = 
+  T extends "string" ? string : 
+  T extends "number" ? number : 
+  T extends "boolean" ? boolean : 
+  T extends "object" ? object : 
+  T extends "array" ? any[] : 
+  never;
+
+export type IsOptional<T> = T extends { required: false } ? true :
+  T extends { default: any } ? true : false;
 
 /**
  * Doc is a utility type that transforms a schema type into a document type where each property is mapped to its extracted type.
@@ -35,11 +39,11 @@ export type ExtractType<T extends string> = T extends 'string' ? string :
  * type Document = Doc<Schema>; // Document is { name: string; age: number; }
  */
 export type Doc<T extends SchemaType> = {
-	[K in keyof T["properties"] as T["properties"][K]["required"] extends false | (T["properties"][K]["default"] extends undefined ? true : false) ? K : never]?: ExtractType<T["properties"][K]["type"]>;
+  [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends true ? K : never]?: 
+    ExtractType<T["properties"][K]["type"]>
 } & {
-	[K in keyof T["properties"] as T["properties"][K]["required"] extends false ? never : K]: ExtractType<T["properties"][K]["type"]>;
-} & {
-	__version?: number;
+  [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends false ? K : never]: 
+    ExtractType<T["properties"][K]["type"]>
 };
 
 /**

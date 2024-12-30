@@ -5,25 +5,27 @@ import React, { useMemo, useState } from 'react';
 
 import { RIDB, SchemaFieldType, StorageType, Doc } from "@trust0/ridb";
 
-const schemas =  {
-  demo: {
-      version: 0,
-      primaryKey: 'id',
-      type: SchemaFieldType.object,
-      encrypted:["age"] as string[],
-      properties: {
-          id: {
-              type: SchemaFieldType.string,
-              maxLength: 60
-          },
-          age: {
-            type: SchemaFieldType.number,
-            default: 18,
-            required: false
-        }
-      }
+
+const demoSchema = {
+  version: 0 as const,
+  primaryKey: 'id',
+  type: SchemaFieldType.object,
+  encrypted:["age"],
+  properties: {
+      id: {
+          type: SchemaFieldType.string,
+          maxLength: 60
+      },
+      age: {
+        type: SchemaFieldType.number,
+        default: 18
+    }
   }
-} as const;
+};
+
+const schemas =  {
+  demo: demoSchema
+};
 
 type DBType = RIDB<typeof schemas>;
 

@@ -9,6 +9,7 @@
     "./pkg/snippets/*"
   ],
   "scripts": {
+    "clean": "rm -rf build node_modules",
     "test": "sh test.sh",
     "build": "sh build.sh"
   },
