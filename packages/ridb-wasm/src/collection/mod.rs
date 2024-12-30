@@ -44,6 +44,8 @@ export type Doc<T extends SchemaType> = {
 } & {
   [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends false ? K : never]: 
     ExtractType<T["properties"][K]["type"]>
+} & {
+  __version?: number;
 };
 
 /**
