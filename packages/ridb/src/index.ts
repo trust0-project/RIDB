@@ -23,7 +23,7 @@
  */
 
 // @ts-ignore @ignore
-import wasmBuffer from "@trust0/ridb-wasm/ridb_wasm_bg.wasm";
+import wasmBuffer from "@trust0/ridb-wasm/pkg/ridb_wasm_bg.wasm";
 import { BasePlugin, BaseStorage, Database, MigrationPathsForSchemas, MigrationsParameter, SchemaTypeRecord } from "@trust0/ridb-wasm";
 
 let internal: typeof import("@trust0/ridb-wasm") | undefined;
