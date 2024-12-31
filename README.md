@@ -52,3 +52,12 @@ By default RIDB is bundled with a default InMemory storage with support for writ
 | **InMemory Storage**           | Robust type safe implementation of an inMemory storage
 | **LevelDB Storage**           | Robust type safe implementation for LevelDB 'classic-level'                
 
+
+## Contributing
+I'm very welcome to contributions from anyone, feel free to always open an Issue or create a Pull request. 
+I'll try to be as transparent as I can around the things that are needed for the project.
+
+Main priorities:
+* Improve documentation
+* Adding more examples
+* Testing and code coverage

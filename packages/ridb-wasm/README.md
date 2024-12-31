@@ -64,12 +64,3 @@ In order to run it, write the following:
 ```bash
 sh test.sh
 ```
-
-## Contributing
-I'm very welcome to contributions from anyone, feel free to always open an Issue or create a Pull request. 
-I'll try to be as transparent as I can around the things that are needed for the project.
-
-Main priorities:
-* Improve documentation
-* Adding more examples
-* Testing and code coverage
