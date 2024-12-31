@@ -48,7 +48,7 @@ The schema type.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:394
+ridb-wasm/pkg/ridb\_wasm.d.ts:190
 
 ## Properties
 
@@ -62,7 +62,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:394
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:403
+ridb-wasm/pkg/ridb\_wasm.d.ts:199
 
 ***
 
@@ -76,7 +76,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:403
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:400
+ridb-wasm/pkg/ridb\_wasm.d.ts:196
 
 ***
 
@@ -90,7 +90,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:400
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:402
+ridb-wasm/pkg/ridb\_wasm.d.ts:198
 
 ***
 
@@ -104,7 +104,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:402
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:401
+ridb-wasm/pkg/ridb\_wasm.d.ts:197
 
 ## Methods
 
@@ -122,7 +122,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:401
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:405
+ridb-wasm/pkg/ridb\_wasm.d.ts:201
 
 ***
 
@@ -150,7 +150,7 @@ keyof `T`
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:406
+ridb-wasm/pkg/ridb\_wasm.d.ts:202
 
 ***
 
@@ -178,13 +178,13 @@ keyof `T`
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:408
+ridb-wasm/pkg/ridb\_wasm.d.ts:204
 
 ***
 
 ### findDocumentById()
 
-> **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
+> **findDocumentById**(`collectionName`, `id`): `Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
 
 #### Parameters
 
@@ -198,7 +198,7 @@ keyof `T`
 
 #### Returns
 
-`Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
+`Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
 
 #### Inherited from
 
@@ -206,7 +206,7 @@ keyof `T`
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:407
+ridb-wasm/pkg/ridb\_wasm.d.ts:203
 
 ***
 
@@ -222,7 +222,7 @@ Frees the resources used by the in-memory storage.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:213
+ridb-wasm/pkg/ridb\_wasm.d.ts:659
 
 ***
 
@@ -246,7 +246,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:213
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:411
+ridb-wasm/pkg/ridb\_wasm.d.ts:207
 
 ***
 
@@ -270,7 +270,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:411
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:412
+ridb-wasm/pkg/ridb\_wasm.d.ts:208
 
 ***
 
@@ -288,7 +288,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:412
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:404
+ridb-wasm/pkg/ridb\_wasm.d.ts:200
 
 ***
 
@@ -312,7 +312,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:404
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:409
+ridb-wasm/pkg/ridb\_wasm.d.ts:205
 
 ***
 
@@ -344,4 +344,4 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:409
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:215
+ridb-wasm/pkg/ridb\_wasm.d.ts:661

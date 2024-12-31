@@ -16,4 +16,4 @@ Represents a record of schema types, where each key is a string and the value is
 
 ## Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:640
+ridb-wasm/pkg/ridb\_wasm.d.ts:217

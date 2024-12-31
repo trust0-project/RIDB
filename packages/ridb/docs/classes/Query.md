@@ -32,7 +32,7 @@
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:109
+ridb-wasm/pkg/ridb\_wasm.d.ts:168
 
 ## Properties
 
@@ -42,4 +42,4 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:109
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:110
+ridb-wasm/pkg/ridb\_wasm.d.ts:169

@@ -62,15 +62,18 @@ export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
     async findDocumentById(
         collectionName: keyof T,
         id: string
-    ): Promise<Doc<T[keyof T]> | null> {
+    ): Promise<Doc<T[keyof T]> | undefined> {
         const key = `${String(collectionName)}:${id}`;
         try {
             const value = await this.db.get(key);
+            if (!value) {
+                return undefined
+            }
             const doc = JSON.parse(value);
             return doc;
         } catch (err: any) {
             if (err.notFound) {
-                return null;
+                return undefined;
             } else {
                 throw err;
             }
@@ -79,19 +82,38 @@ export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
     /** Write an operation (insert, update, delete) */
     async write(op: Operation<T[keyof T]>): Promise<Doc<T[keyof T]>> {
         const collectionName = String(op.collection);
-        const id = "id"  in op.data ? op.data.id : null;
-        if (!id) {
-            throw new Error("Document ID is required");
-        }
-        const key = `${collectionName}:${id}`;
+        const primaryKey = this.getSchema(collectionName).primaryKey;
+
         switch (op.opType) {
-            case OpType.CREATE:
-            case OpType.UPDATE: {
+            case OpType.CREATE: {
+                const id = primaryKey  in op.data ? (op.data as any)[primaryKey] : null;
+                if (!id) {
+                    throw new Error("Document ID is required");
+                }
+                const key = `${collectionName}:${id}`;
                 const value = JSON.stringify(op.data);
                 await this.db.put(key, value);
                 break;
             }
+            case OpType.UPDATE: {
+                const id = primaryKey  in op.data ? (op.data as any)[primaryKey] : null;
+                if (!id) {
+                    throw new Error("Document ID is required");
+                }
+                const existingRecord = await this.findDocumentById(collectionName, id);
+                if (!existingRecord) {
+                    throw new Error("Document ID not found");
+                }
+                const key = `${collectionName}:${id}`;
+                const value = JSON.stringify({
+                    ...existingRecord,
+                    ...op.data
+                });
+                await this.db.put(key, value);
+                break;
+            }
             case OpType.DELETE: {
+                const key = `${collectionName}:${op.data}`;
                 await this.db.del(key);
                 break;
             }

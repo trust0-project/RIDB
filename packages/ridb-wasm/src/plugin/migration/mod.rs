@@ -427,7 +427,7 @@ mod tests {
                      "properties": {
                          "id": {"type": "string"},
                          "nested": {"type": "object", "properties": {"newp":{"type":"string"}}},
-                         "array": {"type": "array", "items": [{"type": "number"}]}
+                         "array": {"type": "array", "items": {"type": "number"}}
                      }
                  }"#;
                  let schema_value = JSON::parse(schema_js).unwrap();

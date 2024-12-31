@@ -28,19 +28,19 @@ An optional default value for the property.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:308
+ridb-wasm/pkg/ridb\_wasm.d.ts:523
 
 ***
 
 ### items?
 
-> `readonly` `optional` **items**: [`Property`](Property.md)[]
+> `readonly` `optional` **items**: [`Property`](Property.md)
 
 An optional array of nested properties for array-type properties.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:278
+ridb-wasm/pkg/ridb\_wasm.d.ts:493
 
 ***
 
@@ -52,7 +52,7 @@ The maximum number of items for array-type properties, if applicable.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:283
+ridb-wasm/pkg/ridb\_wasm.d.ts:498
 
 ***
 
@@ -64,7 +64,7 @@ The maximum length for string-type properties, if applicable.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:293
+ridb-wasm/pkg/ridb\_wasm.d.ts:508
 
 ***
 
@@ -76,7 +76,7 @@ The minimum number of items for array-type properties, if applicable.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:288
+ridb-wasm/pkg/ridb\_wasm.d.ts:503
 
 ***
 
@@ -88,7 +88,7 @@ The minimum length for string-type properties, if applicable.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:298
+ridb-wasm/pkg/ridb\_wasm.d.ts:513
 
 ***
 
@@ -100,7 +100,7 @@ The primary key of the property, if applicable.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:273
+ridb-wasm/pkg/ridb\_wasm.d.ts:488
 
 ***
 
@@ -116,7 +116,7 @@ An optional map of nested properties for object-type properties.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:313
+ridb-wasm/pkg/ridb\_wasm.d.ts:528
 
 ***
 
@@ -128,7 +128,7 @@ An optional array of required fields for object-type properties.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:303
+ridb-wasm/pkg/ridb\_wasm.d.ts:518
 
 ***
 
@@ -140,7 +140,7 @@ The type of the property.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:263
+ridb-wasm/pkg/ridb\_wasm.d.ts:478
 
 ***
 
@@ -152,4 +152,4 @@ The version of the property, if applicable.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:268
+ridb-wasm/pkg/ridb\_wasm.d.ts:483

@@ -49,7 +49,7 @@
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:394
+ridb-wasm/pkg/ridb\_wasm.d.ts:190
 
 ## Properties
 
@@ -59,7 +59,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:394
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:403
+ridb-wasm/pkg/ridb\_wasm.d.ts:199
 
 ***
 
@@ -69,7 +69,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:403
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:400
+ridb-wasm/pkg/ridb\_wasm.d.ts:196
 
 ***
 
@@ -79,7 +79,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:400
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:402
+ridb-wasm/pkg/ridb\_wasm.d.ts:198
 
 ***
 
@@ -89,7 +89,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:402
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:401
+ridb-wasm/pkg/ridb\_wasm.d.ts:197
 
 ## Methods
 
@@ -107,7 +107,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:401
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:405
+ridb-wasm/pkg/ridb\_wasm.d.ts:201
 
 ***
 
@@ -135,7 +135,7 @@ keyof `Schemas`
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:406
+ridb-wasm/pkg/ridb\_wasm.d.ts:202
 
 ***
 
@@ -163,13 +163,13 @@ keyof `Schemas`
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:408
+ridb-wasm/pkg/ridb\_wasm.d.ts:204
 
 ***
 
 ### findDocumentById()
 
-> **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+> **findDocumentById**(`collectionName`, `id`): `Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
 #### Parameters
 
@@ -183,7 +183,7 @@ keyof `Schemas`
 
 #### Returns
 
-`Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+`Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
 #### Overrides
 
@@ -191,7 +191,7 @@ keyof `Schemas`
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:407
+ridb-wasm/pkg/ridb\_wasm.d.ts:203
 
 ***
 
@@ -211,7 +211,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:407
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:411
+ridb-wasm/pkg/ridb\_wasm.d.ts:207
 
 ***
 
@@ -231,7 +231,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:411
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:412
+ridb-wasm/pkg/ridb\_wasm.d.ts:208
 
 ***
 
@@ -249,7 +249,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:412
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:404
+ridb-wasm/pkg/ridb\_wasm.d.ts:200
 
 ***
 
@@ -273,7 +273,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:404
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:409
+ridb-wasm/pkg/ridb\_wasm.d.ts:205
 
 ***
 
@@ -305,4 +305,4 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:409
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:384
+ridb-wasm/pkg/ridb\_wasm.d.ts:180

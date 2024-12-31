@@ -38,7 +38,7 @@ export class BaseStorage<Schemas extends SchemaTypeRecord> extends StorageIntern
     start(): Promise<void>;
     close(): Promise<void>;
     count(colectionName: keyof Schemas, query: QueryType<Schemas[keyof Schemas]>): Promise<number>;
-    findDocumentById(collectionName: keyof Schemas, id: string): Promise<Doc<Schemas[keyof Schemas]> | null>;
+    findDocumentById(collectionName: keyof Schemas, id: string): Promise<Doc<Schemas[keyof Schemas]> | null | undefined>;
     find(collectionName: keyof Schemas, query: QueryType<Schemas[keyof Schemas]>): Promise<Doc<Schemas[keyof Schemas]>[]>;
     write(op: Operation<Schemas[keyof Schemas]>): Promise<Doc<Schemas[keyof Schemas]>>;
 

@@ -7,7 +7,7 @@ use crate::query::Query;
 use crate::storage::internals::base_storage::BaseStorage;
 use crate::storage::internals::core::CoreStorage;
 use std::sync::RwLock;
-
+use crate::logger::Logger;
 use super::base::Storage;
 
 #[wasm_bindgen(typescript_custom_section)]
@@ -45,10 +45,16 @@ pub struct InMemory {
 
 impl Storage for InMemory {
 
+
+
+
     async fn write(&self, op: &Operation) -> Result<JsValue, JsValue> {
+        
         let schema = self.base.schemas.get(op.collection.as_str()).ok_or_else(|| JsValue::from_str("Collection not found"))?;
         let primary_key = schema.primary_key.clone();
         let index_name = format!("pk_{}_{}", op.collection, primary_key);
+
+        Logger::debug(&JsValue::from(&format!("Attempting to acquire write lock for index: {}", index_name)));
 
         let mut index_guard = self.by_index.write().map_err(|_| JsValue::from_str("Failed to acquire write lock"))?;
         let index = index_guard
@@ -63,60 +69,48 @@ impl Storage for InMemory {
                 let pk_value = Reflect::get(&document, &JsValue::from_str(&primary_key))
                     .map_err(|e| JsValue::from_str(&format!("Failed to get primary key: {:?}", e)))?;
 
-                if pk_value.is_undefined() || pk_value.is_null() {
-                    return Err(JsValue::from_str("Document must contain a primary key"));
-                }
+                let pk_str = self.core.get_primary_key(pk_value)?;
 
-                let pk_str = if let Some(s) = pk_value.as_string() {
-                    s
-                } else if let Some(n) = pk_value.as_f64() {
-                    n.to_string()
-                } else {
-                    return Err(JsValue::from_str("Primary key must be a string or number"));
-                };
+                Logger::debug(&JsValue::from(&format!("Primary key extracted: {}", pk_str)));
 
                 match op.op_type {
                     OpType::CREATE => {
-                        schema.validate_schema(document.clone())?;
-                        
+                        Logger::debug(&JsValue::from(&format!("Creating document with primary key: {}", pk_str)));
+
                         if index.contains_key(&pk_str) {
+                            Logger::debug(&JsValue::from("Document with this primary key already exists"));
                             return Err(JsValue::from_str("Document with this primary key already exists"));
                         }
                         
                         index.insert(pk_str.clone(), document.clone());
+                        Logger::debug(&JsValue::from(&format!("Document created with primary key: {}", pk_str)));
                         Ok(document)
                     }
                     OpType::UPDATE => {
-                        schema.validate_schema(document.clone())?;
-                        
+                        Logger::debug(&JsValue::from(&format!("Updating document with primary key: {}", pk_str)));
+
                         if !index.contains_key(&pk_str) {
+                            Logger::debug(&JsValue::from("Document with this primary key does not exist"));
                             return Err(JsValue::from_str("Document with this primary key does not exist"));
                         }
-                        
+
                         index.insert(pk_str.clone(), document.clone());
+                        Logger::debug(&JsValue::from(&format!("Document updated with primary key: {}", pk_str)));
                         Ok(document)
                     }
                     _ => Err(JsValue::from_str("Unsupported operation type for this data"))
                 }
             }
             OpType::DELETE => {
-                let pk_value = op.data.clone();
+                Logger::debug(&JsValue::from(&format!("Deleting document with primary key: {}", primary_key)));
 
-                if pk_value.is_undefined() || pk_value.is_null() {
-                    return Err(JsValue::from_str("Primary key value is required for delete operation"));
-                }
-
-                let pk_str = if let Some(s) = pk_value.as_string() {
-                    s
-                } else if let Some(n) = pk_value.as_f64() {
-                    n.to_string()
-                } else {
-                    return Err(JsValue::from_str("Primary key must be a string or number"));
-                };
+                let pk_str = self.core.get_primary_key(op.data.clone())?;
 
                 if index.remove(&pk_str).is_some() {
+                    Logger::debug(&JsValue::from(&format!("Document deleted with primary key: {}", pk_str)));
                     Ok(JsValue::from_str("Document deleted"))
                 } else {
+                    Logger::debug(&JsValue::from("Document with this primary key does not exist"));
                     Err(JsValue::from_str("Document with this primary key does not exist"))
                 }
             }
@@ -153,14 +147,14 @@ impl Storage for InMemory {
         let primary_key = schema.primary_key.clone();
         let index_name = format!("pk_{}_{}", collection_name, primary_key);
 
+        Logger::debug(
+            &JsValue::from(
+                &format!("finding indes pk_{}_{}", collection_name, primary_key)
+            )
+        );
+
         // Convert primary key value to string
-        let pk_str = if let Some(s) = primary_key_value.as_string() {
-            s
-        } else if let Some(n) = primary_key_value.as_f64() {
-            n.to_string()
-        } else {
-            return Err(JsValue::from_str("Invalid primary key value"));
-        };
+        let pk_str = self.core.get_primary_key(primary_key_value)?;
 
         // Retrieve the index
         if let Some(index) = self.by_index.read().unwrap().get(&index_name) {
@@ -169,7 +163,7 @@ impl Storage for InMemory {
             }
         }
 
-        Err(JsValue::from_str("Document not found"))
+        Ok(JsValue::undefined())
     }
 
     async fn count(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
@@ -221,6 +215,7 @@ impl Storage for InMemory {
 
 #[wasm_bindgen]
 impl InMemory {
+
     
     #[wasm_bindgen]
     pub async fn create(name: &str, schemas_js: Object) -> Result<InMemory, JsValue> {

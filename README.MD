@@ -48,5 +48,7 @@ By default RIDB is bundled with a default InMemory storage with support for writ
 | **Data Encryption Plugin**     | Secure data with encryption plugins                                         |
 | **Migration Plugin**           | Support for data migrations                                                 |
 | **Integrity Plugin**           | Support for data has not been tampered with                                              |
-| **IndexDB Storage**           | Robust type safe replacement for Dexie          
+| **IndexDB Storage**           | Robust type safe replacement for Dexie        
+| **InMemory Storage**           | Robust type safe implementation of an inMemory storage
+| **LevelDB Storage**           | Robust type safe implementation for LevelDB 'classic-level'                
 

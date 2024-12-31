@@ -576,7 +576,304 @@ export default (platform: string, storages: StoragesType[]) => {
 
                     expect(created.__version).to.eq(1);
                 })
-            })
-        })
+                it('Should handle array types in schema', async () => {
+                    const db = new RIDB({
+                        dbName: "test" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    tags: {
+                                        type: SchemaFieldType.array,
+                                        items: { type: SchemaFieldType.string }
+                                    }
+                                }
+                            }
+                        } as const
+                    });
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+                    const created = await db.collections.demo.create({
+                        id: "12345",
+                        tags: ["tag1", "tag2"]
+                    });
+                    expect(created).to.not.be.undefined;
+                    expect(created.tags).to.deep.equal(["tag1", "tag2"]);
+                });
+
+                it('Should handle nested object properties', async () => {
+                    const db = new RIDB({
+                        dbName: "test" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    profile: {
+                                        type: SchemaFieldType.object,
+                                        properties: {
+                                            firstName: { type: SchemaFieldType.string },
+                                            lastName: { type: SchemaFieldType.string }
+                                        }
+                                    }
+                                }
+                            }
+                        } as const
+                    });
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+                    const created = await db.collections.demo.create({
+                        id: "12345",
+                        profile: {
+                            firstName: "John",
+                            lastName: "Doe"
+                        }
+                    });
+                    expect(created).to.not.be.undefined;
+                    expect(created.profile).to.deep.equal({
+                        firstName: "John",
+                        lastName: "Doe"
+                    });
+                });
+
+                it('Should throw error when required property is missing', async () => {
+                    const db = new RIDB({
+                        dbName: "test" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    name: { type: SchemaFieldType.string }
+                                }
+                            }
+                        } as const
+                    });
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+                    await expect(db.collections.demo.create({
+                        id: "missing_property_12345"
+                    } as any)).rejects.toThrowError("Validation Error: Missing required property 'name'");
+                });
+
+                it('Should support boolean types in schema', async () => {
+                    const db = new RIDB({
+                        dbName: "test" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    isActive: { type: SchemaFieldType.boolean }
+                                }
+                            }
+                        } as const
+                    });
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+                    const created = await db.collections.demo.create({
+                        id: "12345",
+                        isActive: true
+                    });
+                    expect(created).to.not.be.undefined;
+                    expect(created.isActive).to.be.true;
+                });
+
+                it('Should apply default values when creating documents', async () => {
+                    const db = new RIDB({
+                        dbName: "test" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    status: { type: SchemaFieldType.string, default: 'active' }
+                                }
+                            }
+                        } as const
+                    });
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+                    const created = await db.collections.demo.create({
+                        id: "12345"
+                    });
+                    expect(created).to.not.be.undefined;
+                    expect(created.status).to.equal('active');
+                });
+
+                it('Should handle updates without affecting unspecified fields', async () => {
+                    const db = new RIDB({
+                        dbName: "test" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    name: { type: SchemaFieldType.string },
+                                    age: { type: SchemaFieldType.number }
+                                }
+                            }
+                        } as const
+                    });
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+                    await db.collections.demo.create({
+                        id: "12345",
+                        name: "Alice",
+                        age: 30
+                    });
+                    await db.collections.demo.update({
+                        id: "12345",
+                        name: "Bob"
+                    });
+                    const updated = await db.collections.demo.findById("12345");
+                    expect(updated).to.not.be.undefined;
+                    expect(updated?.name).to.equal("Bob");
+                    expect(updated?.age).to.equal(30);
+                });
+
+                it('Should validate maxItems constraint on arrays', async () => {
+                    const db = new RIDB({
+                        dbName: "test" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    tags: {
+                                        type: SchemaFieldType.array,
+                                        items: { type: SchemaFieldType.string, maxItems: 1 },
+                                        maxItems: 2
+                                    }
+                                }
+                            }
+                        } as const
+                    });
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+                    await expect(db.collections.demo.create({
+                        id: "12345",
+                        tags: ["tag1", "tag2", "tag3"]
+                    })).rejects.toThrowError("Validation Error: Property 'tags' exceeds maximum items of '2'");
+                });
+
+                it('Should handle deletion of documents', async () => {
+                    const db = new RIDB({
+                        dbName: "test" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    data: { type: SchemaFieldType.string }
+                                }
+                            }
+                        } as const
+                    });
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+                    await db.collections.demo.create({
+                        id: "12345",
+                        data: "Sample data"
+                    });
+                    await db.collections.demo.delete("12345");
+                    const found = await db.collections.demo.findById("12345");
+                    expect(found).to.be.undefined;
+                });
+
+                it('Should enforce maxLength on string properties', async () => {
+                    const db = new RIDB({
+                        dbName: "test" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: {
+                                        type: SchemaFieldType.string,
+                                        maxLength: 5
+                                    }
+                                }
+                            }
+                        } as const
+                    });
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+                    await expect(db.collections.demo.create({
+                        id: "213123123123"
+                    })).rejects.toThrowError("Validation Error: Property 'id' exceeds maximum length of '5'");
+                });
+
+                it('Should handle querying with complex conditions', async () => {
+                    const db = new RIDB({
+                        dbName: "test" + uuidv4(),
+                        schemas: {
+                            users: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    age: { type: SchemaFieldType.number },
+                                    isActive: { type: SchemaFieldType.boolean }
+                                }
+                            }
+                        } as const
+                    });
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+                    await db.collections.users.create({ id: 'u1', age: 25, isActive: true });
+                    await db.collections.users.create({ id: 'u2', age: 30, isActive: false });
+                    await db.collections.users.create({ id: 'u3', age: 35, isActive: true });
+
+                    const results = await db.collections.users.find({
+                        $and: [
+                            { age: { $gte: 30 } },
+                            { isActive: true }
+                        ]
+                    });
+                    expect(results.length).to.equal(1);
+                    expect(results[0].id).to.equal('u3');
+                });
+            });
+        });
     });
 }

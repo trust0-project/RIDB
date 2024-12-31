@@ -44,4 +44,4 @@ The type of operation to be performed (e.g., CREATE, UPDATE, DELETE).
 
 ## Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:232
+ridb-wasm/pkg/ridb\_wasm.d.ts:447

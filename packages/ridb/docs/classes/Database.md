@@ -60,7 +60,7 @@ This is a read-only property where the key is the name of the collection and the
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:574
+ridb-wasm/pkg/ridb\_wasm.d.ts:397
 
 ***
 
@@ -70,7 +70,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:574
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:578
+ridb-wasm/pkg/ridb\_wasm.d.ts:401
 
 ## Methods
 
@@ -88,7 +88,7 @@ A promise that resolves when the database is closed.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:592
+ridb-wasm/pkg/ridb\_wasm.d.ts:415
 
 ***
 
@@ -106,7 +106,7 @@ A promise that resolves when the database is started.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:585
+ridb-wasm/pkg/ridb\_wasm.d.ts:408
 
 ***
 
@@ -162,4 +162,4 @@ A promise that resolves to the created `Database` instance.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:559
+ridb-wasm/pkg/ridb\_wasm.d.ts:382

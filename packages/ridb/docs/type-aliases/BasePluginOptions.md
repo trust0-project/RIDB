@@ -20,4 +20,4 @@
 
 ## Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:625
+ridb-wasm/pkg/ridb\_wasm.d.ts:541

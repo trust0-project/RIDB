@@ -1,10 +1,10 @@
 use std::collections::HashMap;
-
 use js_sys::Reflect;
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast, JsValue};
 
 use crate::{error::RIDBError, operation::{OpType, Operation}, plugin::BasePlugin, schema::{property_type::PropertyType, Schema}, storages::base::StorageExternal};
+use crate::logger::Logger;
 
 pub mod internals;
 
@@ -170,62 +170,16 @@ impl Storage {
         }
     }
 
-    /// Checks if a value is of the correct type based on the property type.
-    ///
-    /// # Arguments
-    ///
-    /// * `value` - The value to check.
-    /// * `prop_type` - The expected property type.
-    ///
-    /// # Returns
-    ///
-    /// * `bool` - `true` if the value is of the correct type, otherwise `false`.
-    pub fn is_type_correct(&self, value: &JsValue, prop_type: PropertyType) -> bool {
-        match prop_type {
-            PropertyType::String => value.is_string(),
-            PropertyType::Number => value.as_f64().is_some(),
-            PropertyType::Object => value.is_object(),
-            PropertyType::Array => value.is_array(),
-            PropertyType::Boolean => value.is_falsy() || value.is_truthy(),
-            _ => false,
-        }
-    }
-
-    pub fn validate_schema(&self, collection_name: &str, document_without_pk: JsValue) -> Result<JsValue, JsValue> {
-        let document = self.ensure_primary_key(collection_name, document_without_pk)?;
-        let schema = self.get_schema(collection_name)?;
-        let properties = schema.properties.clone();
-        let required = schema.required.clone().unwrap_or(Vec::new());
-        let encrypted = schema.encrypted.clone().unwrap_or(Vec::new());
-
-        for (key, prop) in properties {
-            let value = Reflect::get(&document, &JsValue::from_str(&key))?;
-            if value.is_undefined() {
-                if required.contains(&key) && !encrypted.contains(&key) {
-                    return Err(JsValue::from(RIDBError::error(
-                        &format!("Field {} is required", key),
-                    )));
-                }
-            } else {
-                if !self.is_type_correct(&value, prop.property_type) {
-                    return Err(JsValue::from(RIDBError::error(
-                        &format!("Field {} should match type {:?}", key, prop.property_type),
-                    )));
-                }
-            }
-        }
-        Ok(document)
-    }
-
     pub(crate) async fn write(&self, collection_name: &str, document_without_pk: JsValue) -> Result<JsValue, JsValue> {
         // Move all the preparation logic before the async operation
+        let schema = self.get_schema(collection_name)?;
+        let primary_key = schema.primary_key.clone();
+        let indexes = schema.indexes.clone();
+        let document = self.ensure_primary_key(collection_name, document_without_pk)?;
+
+        schema.validate_document(document.clone())?;
+
         let operation = {
-            let schema = self.get_schema(collection_name)?;
-            let primary_key = schema.primary_key.clone();
-            let indexes = schema.indexes.clone();
-            
-            let document = self.validate_schema(collection_name, document_without_pk)?;
-            
             let indexes = match indexes {
                 Some(mut existing) => {
                     existing.push(primary_key.clone());
@@ -237,14 +191,11 @@ impl Storage {
                     new_index
                 }
             };
-
             let pk = Reflect::get(&document, &JsValue::from_str(primary_key.as_str()))
                 .map_err(|e| JsValue::from(RIDBError::from(e)))?;
-
             // Find existing document
             let existing = self.find_document_by_id(collection_name, pk).await?;
-            
-            let op_type = if existing.is_null() { OpType::CREATE } else { OpType::UPDATE };
+            let op_type = if existing.is_null() | existing.is_undefined() { OpType::CREATE } else { OpType::UPDATE };
 
             Operation {
                 collection: collection_name.to_string(),
@@ -270,20 +221,47 @@ impl Storage {
     }
 
     pub(crate) async fn remove(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, JsValue> {
+        Logger::debug(&JsValue::from(&format!(
+            "Starting remove operation for collection: {}, primary_key: {:?}",
+            collection_name, primary_key
+        )));
+
         let result = self.find_document_by_id(collection_name, primary_key.clone()).await?;
         let schema = self.get_schema(collection_name)?;
-        if result.is_null() {
+
+        Logger::debug(&JsValue::from(&format!(
+            "Found document for removal: {:?}",
+            result
+        )));
+
+        if result.is_undefined() | result.is_null() {
+            Logger::debug(&JsValue::from(
+                "Remove operation failed: Document not found"
+            ));
             Err(JsValue::from_str("Invalid primary key value"))
         } else {
+            let index_name = format!("pk_{}_{}", collection_name, schema.primary_key);
+
             let op = Operation {
                 collection: collection_name.to_string(),
                 op_type: OpType::DELETE,
-                data: result,
+                data: primary_key.clone(),
                 indexes: vec![
-                    schema.primary_key.clone()
+                    index_name
                 ],
             };
+
+            Logger::debug(&JsValue::from(&format!(
+                "DELETE OPERATION {:?} ", op
+            )));
+            
             let result = self.internal.write(op).await;
+            
+            match &result {
+                Ok(_) => Logger::debug(&JsValue::from("Remove operation completed successfully")),
+                Err(e) => Logger::debug(&JsValue::from(&format!("Remove operation failed: {:?}", e))),
+            }
+
             result.map_err(|e| JsValue::from(RIDBError::from(e)))
         }
     }

@@ -33,6 +33,22 @@ impl CoreStorage {
         Self {}
     }
 
+
+    #[wasm_bindgen(js_name = getPrimaryKey)]
+    pub fn  get_primary_key(&self, value:JsValue) -> Result<String, JsValue> {
+        if value.is_undefined() || value.is_null() {
+            return Err(JsValue::from_str("Document must contain a primary key"));
+        }
+        if let Some(s) = value.as_string() {
+            Ok(s)
+        } else if let Some(n) = value.as_f64() {
+            Ok(n.to_string())
+        } else {
+            Err(JsValue::from_str(&format!("Failed to get primary key, must be number or string but is: {:?}", value)))
+        }
+    }
+
+
     #[wasm_bindgen(js_name = matchesQuery)]
     pub fn document_matches_query(
         &self, 

@@ -46,7 +46,7 @@ A promise that resolves to an array of documents.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:169
+ridb-wasm/pkg/ridb\_wasm.d.ts:305
 
 ***
 
@@ -72,7 +72,7 @@ A promise that resolves to the created document.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:191
+ridb-wasm/pkg/ridb\_wasm.d.ts:327
 
 ***
 
@@ -98,7 +98,7 @@ A promise that resolves when the deletion is complete.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:198
+ridb-wasm/pkg/ridb\_wasm.d.ts:334
 
 ***
 
@@ -122,7 +122,7 @@ A promise that resolves to an array of documents.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:163
+ridb-wasm/pkg/ridb\_wasm.d.ts:299
 
 ***
 
@@ -148,7 +148,7 @@ A promise that resolves to the found document.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:176
+ridb-wasm/pkg/ridb\_wasm.d.ts:312
 
 ***
 
@@ -174,4 +174,4 @@ A promise that resolves when the update is complete.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:184
+ridb-wasm/pkg/ridb\_wasm.d.ts:320

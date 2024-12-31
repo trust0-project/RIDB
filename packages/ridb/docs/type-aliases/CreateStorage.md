@@ -32,4 +32,4 @@ A promise that resolves to the created internals record.
 
 ## Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:602
+ridb-wasm/pkg/ridb\_wasm.d.ts:425

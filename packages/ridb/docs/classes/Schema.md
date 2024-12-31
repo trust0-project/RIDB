@@ -28,23 +28,25 @@ The schema type.
 
 ### encrypted?
 
-> `readonly` `optional` **encrypted**: `string`[]
+> `readonly` `optional` **encrypted**: `Extract`\<keyof `T`, `string`\>[]
+
+An optional array of encrypted fields.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:497
+ridb-wasm/pkg/ridb\_wasm.d.ts:628
 
 ***
 
 ### indexes?
 
-> `readonly` `optional` **indexes**: `string`[]
+> `readonly` `optional` **indexes**: `Extract`\<keyof `T`, `string`\>[]
 
 An optional array of indexes.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:493
+ridb-wasm/pkg/ridb\_wasm.d.ts:623
 
 ***
 
@@ -56,7 +58,7 @@ The primary key of the schema.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:483
+ridb-wasm/pkg/ridb\_wasm.d.ts:610
 
 ***
 
@@ -68,17 +70,7 @@ The properties defined in the schema.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:502
-
-***
-
-### required?
-
-> `readonly` `optional` **required**: `string`[]
-
-#### Defined in
-
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:495
+ridb-wasm/pkg/ridb\_wasm.d.ts:633
 
 ***
 
@@ -90,7 +82,7 @@ The schema definition.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:464
+ridb-wasm/pkg/ridb\_wasm.d.ts:591
 
 ***
 
@@ -102,7 +94,7 @@ The type of the schema.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:488
+ridb-wasm/pkg/ridb\_wasm.d.ts:615
 
 ***
 
@@ -114,7 +106,7 @@ The version of the schema.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:478
+ridb-wasm/pkg/ridb\_wasm.d.ts:605
 
 ## Methods
 
@@ -132,7 +124,27 @@ The JSON representation of the schema.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:512
+ridb-wasm/pkg/ridb\_wasm.d.ts:643
+
+***
+
+### validate()
+
+> **validate**(`document`): `boolean`
+
+#### Parameters
+
+##### document
+
+[`Doc`](../type-aliases/Doc.md)\<[`Schema`](Schema.md)\<`T`\>\>
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+ridb-wasm/pkg/ridb\_wasm.d.ts:645
 
 ***
 
@@ -162,4 +174,4 @@ The created `Schema` instance.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:473
+ridb-wasm/pkg/ridb\_wasm.d.ts:600

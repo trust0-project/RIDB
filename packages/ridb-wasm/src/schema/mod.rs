@@ -31,8 +31,6 @@ export type SchemaType = {
      * The type of the schema.
      */
      type: string;
-
-     required?:  string[];
      indexes?:  string[];
      encrypted?:  string[];
     /**
@@ -88,11 +86,6 @@ export class Schema<T extends SchemaType> {
     readonly indexes?: (Extract<keyof T, string>)[];
 
     /**
-     * An optional array of required fields.
-     */
-    readonly required?: (Extract<keyof T, string>)[];
-
-    /**
      * An optional array of encrypted fields.
      */
     readonly encrypted?: (Extract<keyof T, string>)[];
@@ -111,6 +104,8 @@ export class Schema<T extends SchemaType> {
      * @returns {SchemaType} The JSON representation of the schema.
      */
     toJSON(): SchemaType;
+
+    validate(document: Doc<Schema<T>>): boolean;
 }
 "#;
 
@@ -132,8 +127,6 @@ pub struct Schema {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) indexes: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) required: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) encrypted: Option<Vec<String>>
 }
 
@@ -141,22 +134,47 @@ pub struct Schema {
 #[wasm_bindgen]
 impl Schema {
 
-    pub fn validate_schema(&self, document: JsValue) -> Result<(), JsValue> {
-        let required = self.required.clone().unwrap_or(Vec::new());
-        let encrypted = self.encrypted.clone().unwrap_or(Vec::new());
+    #[wasm_bindgen(js_name="validate")]
+    pub fn validate_document(&self, document: JsValue) -> Result<(), JsValue> {
+        let schema_properties = self.properties.clone();
 
+        // Collect required fields
+        let required: Vec<String> = schema_properties
+            .iter()
+            .filter(|(_, prop)| prop.required.unwrap_or(true))
+            .map(|(key, _)| key.clone())
+            .collect();
+
+        let encrypted = self.encrypted.clone().unwrap_or(Vec::new());
         let properties = self.properties.clone();
 
         for (key, prop) in properties {
+
             let value = Reflect::get(&document, &JsValue::from_str(&key))
-                .map_err(|e| JsValue::from_str(&format!("Failed to get property '{}': {:?}", key, e)))?;
+                .map_err(|_e| {
+                    JsValue::from(
+                        RIDBError::validation(
+                            &format!("Missing required property '{}'", key)
+                        )
+                    )
+                })?;
 
             if value.is_undefined() {
+                // If the property is required and not encrypted, it's an error
                 if required.contains(&key) && !encrypted.contains(&key) {
-                    return Err(JsValue::from_str(&format!("Field '{}' is required", key)));
+                    return Err(
+                        JsValue::from(
+                            RIDBError::validation(
+                                &format!("Missing required property '{}'", key)
+                            )
+                        )
+                    );
                 }
             } else {
-                if !self.is_type_correct(&value, prop.property_type) {
+                let res = self.is_type_correct(&key, &value, &prop);
+                if let Err(err) = res {
+                    return Err(err);
+                } else if !res.unwrap() {
                     return Err(JsValue::from_str(&format!(
                         "Field '{}' should be of type '{:?}'",
                         key, prop.property_type
@@ -168,25 +186,70 @@ impl Schema {
     }
 
 
-    fn is_type_correct(&self, value: &JsValue, prop_type: PropertyType) -> bool {
-        match prop_type {
-            PropertyType::String => value.is_string(),
+    fn is_type_correct(&self, key: &String, value: &JsValue, property: &Property) -> Result<bool, JsValue> {
+        match property.property_type {
+            PropertyType::String => {
+                if let Some(string) = value.as_string() {
+                    // Check maxLength and minLength if they exist
+                    if let Some(max_length) = property.max_length {
+                        if string.len() > max_length as usize {
+                            return Err(JsValue::from(
+                                RIDBError::validation(
+                                &format!(
+                                    "Property '{}' exceeds maximum length of '{:?}'",
+                                    key, max_length
+                                )))
+                            );
+                        }
+                    }
+                    if let Some(min_length) = property.min_length {
+                        if string.len() < min_length as usize {
+                            return Err(JsValue::from(
+                                RIDBError::validation(
+                                    &format!(
+                                        "Property '{}' is lower than min length of '{:?}'",
+                                        key, min_length
+                                    )))
+                            );
+                        }
+                    }
+                    return Ok(true);
+                }
+                Ok(false)
+            },
             PropertyType::Number => {
                 // Check if the value can be converted to an f64
-                value.as_f64().is_some()
+                Ok(value.as_f64().is_some())
             },
-            PropertyType::Boolean => value.as_bool().is_some(),
+            PropertyType::Boolean => Ok(value.as_bool().is_some()),
             PropertyType::Object => {
                 // Exclude null, arrays, and functions
-                value.is_object()
+                Ok(value.is_object()
                     && !value.is_null()
-                    && !js_sys::Array::is_array(value)
+                    && !js_sys::Array::is_array(value))
             },
-            PropertyType::Array => js_sys::Array::is_array(value),
+            PropertyType::Array => {
+                let arr = js_sys::Array::from(value);
+                if let Some(max_length) = property.max_items {
+                    let len_js = arr.length();
+                    let length = i32::try_from(len_js).unwrap();
+                    if length > max_length  {
+                        return Err(JsValue::from(
+                            RIDBError::validation(
+                            &format!(
+                                "Property '{}' exceeds maximum items of '{:?}'",
+                                key, max_length
+                            )))
+                        );
+                    }
+                }
+                Ok(true)
+            },
             // Add other property types as needed
-            _ => false,
+            _ => Ok(false),
         }
     }
+    
 
     pub fn is_valid(&self) -> Result<bool, RIDBError> {
         // Check if the schema type is "object"
@@ -263,11 +326,6 @@ impl Schema {
     #[wasm_bindgen(getter, js_name="indexes")]
     pub fn get_indexes(&self) -> Option<Vec<String>> {
         self.indexes.clone()
-    }
-
-    #[wasm_bindgen(getter, js_name="required")]
-    pub fn get_required(&self) -> Option<Vec<String>> {
-        self.required.clone()
     }
 
     #[wasm_bindgen(getter, js_name="encrypted")]
