@@ -29,7 +29,7 @@ export abstract class StorageInternal<Schemas extends SchemaTypeRecord> {
     abstract findDocumentById(
         collectionName: keyof Schemas, 
         id: string
-    ): Promise<Doc<Schemas[keyof Schemas]> | null>;
+    ): Promise<Doc<Schemas[keyof Schemas]> | undefined | null>;
     abstract find(
         collectionName: keyof Schemas, 
         query: QueryType<Schemas[keyof Schemas]>

@@ -149,10 +149,6 @@ impl Storage for IndexDB {
                 if pk_value.is_undefined() || pk_value.is_null() {
                     return Err(JsValue::from_str("Document must contain a primary key"));
                 }
-
-                // Validate document against schema
-                schema.validate_schema(document.clone())?;
-
                 // Store the document and wait for completion
                 let request = store.put_with_key(&document, &pk_value)?;
                 idb_request_result(request).await?;
@@ -258,28 +254,26 @@ impl Storage for IndexDB {
 
     async fn find_document_by_id(&self, collection_name: &str, primary_key_value: JsValue) -> Result<JsValue, JsValue> {
         let store_name = collection_name;
+        if primary_key_value.is_undefined() || primary_key_value.is_null() {
+            return Err(JsValue::from_str("Primary key value is required"));
+        }
+
         let transaction = self.db.transaction_with_str(store_name)?;
         let store = transaction.object_store(store_name)?;
         
+        Logger::debug(&JsValue::from(&format!("Finding document with primary key: {:?}", primary_key_value)));
+
         let request = store.get(&primary_key_value)?;
         
-        let promise = Promise::new(&mut |resolve, reject| {
-            let onsucess = Closure::once(Box::new(move |event: web_sys::Event| {
-                let request: IdbRequest = event.target().unwrap().dyn_into().unwrap();
-                let result = request.result().unwrap();
-                
-                if result.is_undefined() {
-                    reject.call1(&JsValue::undefined(), &JsValue::from_str("Document not found")).unwrap();
-                } else {
-                    resolve.call1(&JsValue::undefined(), &result).unwrap();
-                }
-            }));
-            
-            request.set_onsuccess(Some(onsucess.as_ref().unchecked_ref()));
-            onsucess.forget();
-        });
+        let result = idb_request_result(request).await?;
 
-        JsFuture::from(promise).await
+        if result.is_undefined() || result.is_null() {
+            Logger::debug(&JsValue::from("Document not found"));
+            Ok(JsValue::undefined())
+        } else {
+            Logger::debug(&JsValue::from("Document found"));
+            Ok(result)
+        }
     }
 
     async fn count(&self,collection_name: &str,   query: Query) -> Result<JsValue, JsValue> {

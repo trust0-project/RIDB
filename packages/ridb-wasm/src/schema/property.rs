@@ -36,7 +36,7 @@ export class Property {
     /**
      * An optional array of nested properties for array-type properties.
      */
-    readonly items?: Property[];
+    readonly items?: Property;
 
     /**
      * The maximum number of items for array-type properties, if applicable.
@@ -88,7 +88,7 @@ pub struct Property {
 
     /// Optional nested items for array-type properties.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) items: Option<Vec<Property>>,
+    pub(crate) items: Option<Box<Property>>,
 
     /// Optional maximum number of items for array-type properties.
     #[serde(rename = "maxItems", skip_serializing_if = "Option::is_none")]
@@ -113,6 +113,10 @@ pub struct Property {
     /// Optional default value for the property.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) default: Option<Value>,
+
+    /// Optional default value for the property.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) required: Option<bool>,
 }
 
 #[wasm_bindgen]
@@ -139,27 +143,21 @@ impl Property {
             PropertyType::Number => Ok(true),
             PropertyType::Boolean => Ok(true),
             PropertyType::Array => match self.clone().items {
-                Some(items) => {
-                    let item = items.first();
-                    match item {
-                        Some(p) => {
-                            let is_valid = p.is_valid().unwrap();
-                            match is_valid {
-                                true => {
-                                    let min = self.min_items.unwrap_or_else(|| 0);
-                                    let max = self.max_items.unwrap_or_else(|| -1);
-                                    if min < 0 {
-                                        Err(RIDBError::validation("Min property not valid"))
-                                    } else if min > max && max >= 1 {
-                                        Err(RIDBError::validation("Min higher than max"))
-                                    } else {
-                                        Ok(true)
-                                    }
-                                },
-                                false => Err(RIDBError::validation("Items property not valid"))
+                Some(item) => {
+                    let is_valid = item.is_valid().unwrap();
+                    match is_valid {
+                        true => {
+                            let min = self.min_items.unwrap_or_else(|| 0);
+                            let max = self.max_items.unwrap_or_else(|| -1);
+                            if min < 0 {
+                                Err(RIDBError::validation("Min property not valid"))
+                            } else if min > max && max >= 1 {
+                                Err(RIDBError::validation("Min higher than max"))
+                            } else {
+                                Ok(true)
                             }
                         },
-                        None => Err(RIDBError::validation("Invalid property items"))
+                        false => Err(RIDBError::validation("Items property not valid"))
                     }
                 },
                 None => Err(RIDBError::validation("Items is empty"))
@@ -275,6 +273,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
+            required: Some(true)
         };
         assert_eq!(default_property.property_type, PropertyType::String);
         assert!(default_property.items.is_none());
@@ -297,6 +296,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
+            required: Some(true)
         };
         // Test default values to ensure proper initialization
         assert_eq!(default_property.property_type, PropertyType::Array);
@@ -325,16 +325,18 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
+            required: Some(true)
         };
         let default_property = Property {
             property_type: PropertyType::Array,
-            items: Some(vec![prop]),
+            items: Some(Box::new(prop)),
             max_items: Some(-1),
             min_items: Some(-1),
             max_length: None,
             min_length: None,
             properties: None,
             default: None,
+            required: Some(true)
         };
         let result = default_property.is_valid();
         match result {
@@ -354,17 +356,19 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
+            required: Some(true)
         };
 
         let default_property2 = Property {
             property_type: PropertyType::Array,
-            items: Some(vec![prop]),
+            items: Some(Box::new(prop)),
             max_items: Some(1),
             min_items: Some(2),
             max_length: None,
             min_length: None,
             properties: None,
             default: None,
+            required: Some(true)
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -386,17 +390,19 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
+            required: Some(true)
         };
 
         let default_property2 = Property {
             property_type: PropertyType::Array,
-            items: Some(vec![prop]),
+            items: Some(Box::new(prop)),
             max_items: Some(1),
             min_items: Some(-1),
             max_length: None,
             min_length: None,
             properties: None,
             default: None,
+            required: Some(true)
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -418,6 +424,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
+            required: Some(true)
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -438,6 +445,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
+            required: Some(true)
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -458,6 +466,7 @@ mod tests {
             min_length: Some(2),
             properties: None,
             default: None,
+            required: Some(true)
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -478,6 +487,7 @@ mod tests {
             min_length: Some(-1),
             properties: None,
             default: None,
+            required: Some(true)
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -498,6 +508,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
+            required: Some(true)
         }.is_valid();
         // Check the result for an error message
         match result {
@@ -517,6 +528,7 @@ mod tests {
             min_length: None,
             properties: Some(HashMap::new()),
             default: None,
+            required: Some(true)
         }.is_valid();
         // Check the result for an error message
         match result {

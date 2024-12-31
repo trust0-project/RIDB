@@ -28,4 +28,4 @@ type ArrayType = ExtractType<'array'>; // ArrayType is Array<any>
 
 ## Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:131
+ridb-wasm/pkg/ridb\_wasm.d.ts:261

@@ -10,7 +10,7 @@ PACKAGEJSON=./pkg/package.json
 IMPORTFILE=./pkg/ridb_wasm.js
 
 echo "Building the rust library"
-wasm-pack --log-level error build --target=web --scope trust0
+wasm-pack --log-level error build --target=web --scope trust0 --debug
 
 
 if is_mac; then

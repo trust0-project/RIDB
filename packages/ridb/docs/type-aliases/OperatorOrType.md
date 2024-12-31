@@ -14,4 +14,4 @@
 
 ## Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:96
+ridb-wasm/pkg/ridb\_wasm.d.ts:155

@@ -1,3 +1,4 @@
+use js_sys::{Object, Reflect};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 use crate::schema::Schema;
@@ -207,10 +208,24 @@ impl Collection {
     /// * `document` - A `JsValue` representing the partial document to update.
     #[wasm_bindgen]
     pub async fn update(&mut self, document: JsValue) -> Result<JsValue, JsValue> {
+        let primary_key = self.schema()?.primary_key;
+        let doc_primary_key = Reflect::get(
+            &document,
+            &JsValue::from(primary_key)
+        )?;
+
+        let existing_doc = self.find_by_id(doc_primary_key).await?;
+        let merge_docs = JsValue::from(
+            Object::assign(
+                &Object::from(existing_doc),
+                &Object::from(document)
+            )
+        );
+
         let processed_document = self.storage.call(
             &self.name, 
             HookType::Create,
-            document
+            merge_docs
         ).await?;
         
         let res = match self.storage.write(&self.name, processed_document).await {
@@ -234,12 +249,14 @@ impl Collection {
     /// * `document` - A `JsValue` representing the document to create.
     #[wasm_bindgen]
     pub async fn create(&mut self, document: JsValue) -> Result<JsValue, JsValue> {
+        let schema = self.schema()?;
         let processed_document = self.storage.call(
             &self.name, 
             HookType::Create,
             document
         ).await?;
 
+        schema.validate_document(processed_document.clone())?;
 
         let res = match self.storage.write(&self.name, processed_document).await {
             Ok(result) => Ok(result),

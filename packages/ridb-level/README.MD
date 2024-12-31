@@ -5,7 +5,6 @@
   <h3 align="center">A secure light-weight and dependency free database wrapper for the web.</h3>
 </p>
 
-
 <p align="center">
     <a href="https://github.com/trust0-project/RIDB/releases"><img src="https://img.shields.io/github/v/release/trust0-project/ridb?color=%23ff00a0&include_prereleases&label=version&sort=semver&style=flat-square"></a>
     &nbsp;
@@ -18,3 +17,36 @@
 
 ### Description
 This package is a leveldb wrapper for the ridb database.
+
+## Installation & usage (typescript)
+```bash
+npm install @trust0/ridb-level # or yarn add @trust0/ridb-level
+```
+
+```typescript
+import { RIDB, SchemaFieldType, Doc } from '@trust0/ridb';
+import { LevelDB } from '@trust0/ridb-level';
+const db = new RIDB(
+    {
+        dbName: "test",
+        schemas: {
+            demo: {
+                version: 0,
+                primaryKey: 'id',
+                type: SchemaFieldType.object,
+                properties: {
+                    id: {
+                        type: SchemaFieldType.string,
+                        maxLength: 60
+                    }
+                }
+            }
+        } as const
+    }
+)
+await db.start({
+    storageType: LevelDB,
+    password: "test"
+});
+```
+

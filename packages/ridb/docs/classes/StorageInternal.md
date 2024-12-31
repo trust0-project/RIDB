@@ -36,7 +36,7 @@
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:645
+ridb-wasm/pkg/ridb\_wasm.d.ts:222
 
 ## Methods
 
@@ -50,7 +50,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:645
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:650
+ridb-wasm/pkg/ridb\_wasm.d.ts:227
 
 ***
 
@@ -74,7 +74,7 @@ keyof `Schemas`
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:651
+ridb-wasm/pkg/ridb\_wasm.d.ts:228
 
 ***
 
@@ -98,13 +98,13 @@ keyof `Schemas`
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:659
+ridb-wasm/pkg/ridb\_wasm.d.ts:236
 
 ***
 
 ### findDocumentById()
 
-> `abstract` **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+> `abstract` **findDocumentById**(`collectionName`, `id`): `Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
 #### Parameters
 
@@ -118,11 +118,11 @@ keyof `Schemas`
 
 #### Returns
 
-`Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+`Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:655
+ridb-wasm/pkg/ridb\_wasm.d.ts:232
 
 ***
 
@@ -136,7 +136,7 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:655
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:649
+ridb-wasm/pkg/ridb\_wasm.d.ts:226
 
 ***
 
@@ -156,4 +156,4 @@ node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:649
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:663
+ridb-wasm/pkg/ridb\_wasm.d.ts:240

@@ -6,7 +6,7 @@
 
 # Type Alias: Doc\<T\>
 
-> **Doc**\<`T`\>: \{ \[K in keyof T\["properties"\] as T\["properties"\]\[K\]\["required"\] extends false \| (T\["properties"\]\[K\]\["default"\] extends undefined ? true : false) ? K : never\]?: ExtractType\<T\["properties"\]\[K\]\["type"\]\> \} & `{ [K in keyof T["properties"] as T["properties"][K]["required"] extends false ? never : K]: ExtractType<T["properties"][K]["type"]> }` & `object`
+> **Doc**\<`T`\>: `{ [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends true ? K : never]?: ExtractType<T["properties"][K]["type"]> }` & `{ [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends false ? K : never]: ExtractType<T["properties"][K]["type"]> }` & `object`
 
 Doc is a utility type that transforms a schema type into a document type where each property is mapped to its extracted type.
 
@@ -26,4 +26,4 @@ type Document = Doc<Schema>; // Document is { name: string; age: number; }
 
 ## Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:145
+ridb-wasm/pkg/ridb\_wasm.d.ts:279

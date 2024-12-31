@@ -22,9 +22,9 @@ Our project consists of three main packages, each designed to enhance your datab
 
 | Package Name | Description | Link |
 |--------------|-------------|------|
-| **wasm**     | The rust source for DB, contains its core logic, optimisations, algorithms and cryptography functionality. | [View on GitHub](https://github.com/trust0-project/ridb-wasm) |
-| **ridb**     | Main project with RIDB core functionality. | [View on GitHub](https://github.com/trust0-project/ridb) |
-| **ridb-level** | An Storage for level-based storage (NODEJS). | [View on GitHub](https://github.com/trust0-project/ridb-level) |
+| **wasm**     | The rust source for DB, contains its core logic, optimisations, algorithms and cryptography functionality. | [View on GitHub](https://github.com/trust0-project/RIDB/tree/main/packages/ridb-wasm) |
+| **ridb**     | Main project with RIDB core functionality. | [View on GitHub](https://github.com/trust0-project/RIDB/tree/main/packages/ridb) |
+| **ridb-level** | An Storage for level-based storage (NODEJS). | [View on GitHub](https://github.com/trust0-project/RIDB/tree/main/packages/ridb-level) |
 
 ### Security
 We take security very seriously and have implemented robust measures to ensure data protection. Below are the specifications for our security features:
@@ -48,5 +48,7 @@ By default RIDB is bundled with a default InMemory storage with support for writ
 | **Data Encryption Plugin**     | Secure data with encryption plugins                                         |
 | **Migration Plugin**           | Support for data migrations                                                 |
 | **Integrity Plugin**           | Support for data has not been tampered with                                              |
-| **IndexDB Storage**           | Robust type safe replacement for Dexie          
+| **IndexDB Storage**           | Robust type safe replacement for Dexie        
+| **InMemory Storage**           | Robust type safe implementation of an inMemory storage
+| **LevelDB Storage**           | Robust type safe implementation for LevelDB 'classic-level'                
 

@@ -1,5 +1,6 @@
+use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
-use wasm_bindgen::prelude::wasm_bindgen;
+use std::panic;
 
 pub mod error;
 pub mod utils;
@@ -12,9 +13,9 @@ pub mod query;
 pub mod operation;
 pub mod plugin;
 
-
 #[wasm_bindgen(start)]
 pub fn main_js() -> Result<(), JsValue> {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
     #[cfg(feature = "console_error_panic_hook")]
     console_error_panic_hook::set_once();
     Ok(())
@@ -32,8 +33,12 @@ pub fn is_debug_mode() -> bool {
 }
 
 fn get_debug_mode() -> bool {
+    use wasm_bindgen::prelude::*;
+    use js_sys::Reflect;
+
     if let Some(win) = web_sys::window() {
-        return win.local_storage()
+        // Browser environment
+        win.local_storage()
             .ok()
             .flatten()
             .and_then(|storage| storage.get_item("DEBUG").ok().flatten())
@@ -42,20 +47,33 @@ fn get_debug_mode() -> bool {
                     .split(',')
                     .any(|s| s == "ridb" || s.starts_with("ridb:*"))
             })
-            .unwrap_or(false);
+            .unwrap_or(false)
+    } else {
+        // Node.js environment
+        // Access process.env.DEBUG directly
+        let global = js_sys::global();
+
+        let process = Reflect::get(&global, &JsValue::from_str("process")).ok();
+        let env = process
+            .as_ref()
+            .and_then(|proc| Reflect::get(proc, &JsValue::from_str("env")).ok());
+        let debug_var = env
+            .as_ref()
+            .and_then(|env| Reflect::get(env, &JsValue::from_str("DEBUG")).ok());
+
+        if let Some(debug_js_value) = debug_var {
+            if let Some(debug_str) = debug_js_value.as_string() {
+                debug_str
+                    .split(',')
+                    .any(|s| s == "ridb" || s.starts_with("ridb:*"))
+            } else {
+                false
+            }
+        } else {
+            false
+        }
     }
-
-    return std::env::var("DEBUG")
-        .ok()
-        .map(|debug_var| {
-            debug_var
-                .split(',')
-                .any(|s| s == "ridb" || s.starts_with("ridb:*"))
-        })
-        .unwrap_or(false);
 }
-
-
 
 mod logger {
     use wasm_bindgen::prelude::*;
@@ -67,7 +85,6 @@ mod logger {
         pub fn log(message: &JsValue) {
             Logger::log_1(message);
         }
-
         pub fn debug(message: &JsValue) {
             if crate::is_debug_mode() {
                 Logger::log_1(message);
@@ -75,7 +92,7 @@ mod logger {
         }
 
         fn log_1(message: &JsValue) {
-            console::log_1(&message);
+            console::log_1(message);
         }
     }
 }

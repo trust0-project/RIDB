@@ -18,7 +18,7 @@ Count Operation.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:63
+ridb-wasm/pkg/ridb\_wasm.d.ts:63
 
 ***
 
@@ -30,7 +30,7 @@ Create operation.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:47
+ridb-wasm/pkg/ridb\_wasm.d.ts:47
 
 ***
 
@@ -42,7 +42,7 @@ Delete operation.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:55
+ridb-wasm/pkg/ridb\_wasm.d.ts:55
 
 ***
 
@@ -54,7 +54,7 @@ Query Operation.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:59
+ridb-wasm/pkg/ridb\_wasm.d.ts:59
 
 ***
 
@@ -66,4 +66,4 @@ Update operation.
 
 #### Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:51
+ridb-wasm/pkg/ridb\_wasm.d.ts:51

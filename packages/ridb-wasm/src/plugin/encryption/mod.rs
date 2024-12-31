@@ -426,7 +426,7 @@ mod tests {
                 "number_field": {"type": "number"},
                 "boolean_field": {"type": "boolean"},
                 "object_field": {"type": "object", "properties": {"key":{"type":"string"}}},
-                "array_field": {"type": "array", "items": [{"type": "number"}]}
+                "array_field": {"type": "array", "items": {"type": "number"}}
             }
         }"#;
         let schema_value = JSON::parse(schema_js).unwrap();

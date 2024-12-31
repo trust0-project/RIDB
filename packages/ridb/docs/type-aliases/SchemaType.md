@@ -14,23 +14,21 @@ Represents the type definition for a schema.
 
 ### encrypted?
 
-> `readonly` `optional` **encrypted**: `string`[]
+> `optional` **encrypted**: `string`[]
 
 ### indexes?
 
-> `readonly` `optional` **indexes**: `string`[]
-
-An optional array of indexes.
+> `optional` **indexes**: `string`[]
 
 ### primaryKey
 
-> `readonly` **primaryKey**: `string`
+> **primaryKey**: `string`
 
 The primary key of the schema.
 
 ### properties
 
-> `readonly` **properties**: `object`
+> **properties**: `object`
 
 The properties defined in the schema.
 
@@ -38,24 +36,18 @@ The properties defined in the schema.
 
  \[`name`: `string`\]: [`Property`](../classes/Property.md)
 
-### required?
-
-> `readonly` `optional` **required**: `string`[]
-
-An optional array of required fields.
-
 ### type
 
-> `readonly` **type**: `string`
+> **type**: `string`
 
 The type of the schema.
 
 ### version
 
-> `readonly` **version**: `number`
+> **version**: `number`
 
 The version of the schema.
 
 ## Defined in
 
-node\_modules/@trust0/ridb-wasm/ridb\_wasm.d.ts:421
+ridb-wasm/pkg/ridb\_wasm.d.ts:556
