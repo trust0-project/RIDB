@@ -17,7 +17,10 @@ This package is a leveldb wrapper for the ridb database.
 ## Installation & usage (typescript)
 ```bash
 npm install @trust0/ridb @trust0/ridb-level -S 
-# or yarn add @trust0/ridb @trust0/ridb-level
+```
+Using yarn:
+```bash
+yarn add @trust0/ridb @trust0/ridb-level
 ```
 
 ## Usage
