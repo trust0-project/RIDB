@@ -16,8 +16,13 @@ This package is a leveldb wrapper for the ridb database.
 
 ## Installation & usage (typescript)
 ```bash
-npm install @trust0/ridb-level # or yarn add @trust0/ridb-level
+npm install @trust0/ridb @trust0/ridb-level -S 
+# or yarn add @trust0/ridb @trust0/ridb-level
 ```
+
+## Usage
+
+The following example demonstrates how to create a database with a leveldb storage engine and a simple schema with ID primary key as string.
 
 ```typescript
 import { RIDB, SchemaFieldType, Doc } from '@trust0/ridb';

@@ -48,7 +48,7 @@
 
 #### Defined in
 
-[ridb-level/src/index.ts:44](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb-level/src/index.ts#L44)
+[ridb-level/src/index.ts:47](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L47)
 
 ## Properties
 
@@ -72,7 +72,7 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:199
 
 #### Defined in
 
-[ridb-level/src/index.ts:34](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb-level/src/index.ts#L34)
+[ridb-level/src/index.ts:37](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L37)
 
 ***
 
@@ -134,7 +134,7 @@ Close the database
 
 #### Defined in
 
-[ridb-level/src/index.ts:53](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb-level/src/index.ts#L53)
+[ridb-level/src/index.ts:56](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L56)
 
 ***
 
@@ -164,7 +164,7 @@ keyof `T`
 
 #### Defined in
 
-[ridb-level/src/index.ts:121](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb-level/src/index.ts#L121)
+[ridb-level/src/index.ts:124](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L124)
 
 ***
 
@@ -194,7 +194,7 @@ keyof `T`
 
 #### Defined in
 
-[ridb-level/src/index.ts:141](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb-level/src/index.ts#L141)
+[ridb-level/src/index.ts:144](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L144)
 
 ***
 
@@ -224,7 +224,7 @@ keyof `T`
 
 #### Defined in
 
-[ridb-level/src/index.ts:57](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb-level/src/index.ts#L57)
+[ridb-level/src/index.ts:60](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L60)
 
 ***
 
@@ -292,7 +292,7 @@ Start the database
 
 #### Defined in
 
-[ridb-level/src/index.ts:49](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb-level/src/index.ts#L49)
+[ridb-level/src/index.ts:52](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L52)
 
 ***
 
@@ -318,7 +318,7 @@ Write an operation (insert, update, delete)
 
 #### Defined in
 
-[ridb-level/src/index.ts:78](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb-level/src/index.ts#L78)
+[ridb-level/src/index.ts:81](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L81)
 
 ***
 
@@ -354,4 +354,4 @@ Write an operation (insert, update, delete)
 
 #### Defined in
 
-[ridb-level/src/index.ts:35](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb-level/src/index.ts#L35)
+[ridb-level/src/index.ts:38](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L38)

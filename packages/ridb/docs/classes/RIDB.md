@@ -30,7 +30,7 @@ Creates an instance of RIDB.
 
 #### Defined in
 
-[ridb/src/index.ts:179](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L179)
+[ridb/src/index.ts:179](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L179)
 
 ## Properties
 
@@ -40,7 +40,7 @@ Creates an instance of RIDB.
 
 #### Defined in
 
-[ridb/src/index.ts:172](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L172)
+[ridb/src/index.ts:172](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L172)
 
 ***
 
@@ -50,7 +50,7 @@ Creates an instance of RIDB.
 
 #### Defined in
 
-[ridb/src/index.ts:173](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L173)
+[ridb/src/index.ts:173](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L173)
 
 ***
 
@@ -60,7 +60,7 @@ Creates an instance of RIDB.
 
 #### Defined in
 
-[ridb/src/index.ts:170](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L170)
+[ridb/src/index.ts:170](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L170)
 
 ***
 
@@ -70,7 +70,7 @@ Creates an instance of RIDB.
 
 #### Defined in
 
-[ridb/src/index.ts:171](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L171)
+[ridb/src/index.ts:171](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L171)
 
 ***
 
@@ -80,7 +80,7 @@ Creates an instance of RIDB.
 
 #### Defined in
 
-[ridb/src/index.ts:169](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L169)
+[ridb/src/index.ts:169](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L169)
 
 ## Accessors
 
@@ -100,7 +100,7 @@ The collections object.
 
 #### Defined in
 
-[ridb/src/index.ts:227](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L227)
+[ridb/src/index.ts:227](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L227)
 
 ***
 
@@ -122,7 +122,7 @@ Will throw an error if the database is not started.
 
 #### Defined in
 
-[ridb/src/index.ts:212](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L212)
+[ridb/src/index.ts:212](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L212)
 
 ***
 
@@ -138,7 +138,7 @@ Will throw an error if the database is not started.
 
 #### Defined in
 
-[ridb/src/index.ts:219](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L219)
+[ridb/src/index.ts:219](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L219)
 
 ## Methods
 
@@ -152,7 +152,7 @@ Will throw an error if the database is not started.
 
 #### Defined in
 
-[ridb/src/index.ts:287](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L287)
+[ridb/src/index.ts:287](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L287)
 
 ***
 
@@ -176,7 +176,7 @@ Will throw an error if the database is not started.
 
 #### Defined in
 
-[ridb/src/index.ts:200](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L200)
+[ridb/src/index.ts:200](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L200)
 
 ***
 
@@ -200,7 +200,7 @@ A promise that resolves to the database instance.
 
 #### Defined in
 
-[ridb/src/index.ts:250](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L250)
+[ridb/src/index.ts:250](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L250)
 
 ***
 
@@ -218,4 +218,4 @@ A promise that resolves to the RIDB Rust module.
 
 #### Defined in
 
-[ridb/src/index.ts:236](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L236)
+[ridb/src/index.ts:236](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L236)
