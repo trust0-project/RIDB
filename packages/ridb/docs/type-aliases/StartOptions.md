@@ -28,4 +28,4 @@
 
 ## Defined in
 
-[ridb/src/index.ts:126](https://github.com/elribonazo/RIDB/blob/04c29d6492c780dacdbe8ba762df162b604656ba/packages/ridb/src/index.ts#L126)
+[ridb/src/index.ts:121](https://github.com/elribonazo/RIDB/blob/c2facd49c4ac92f89675d530f538af834dbd30a5/packages/ridb/src/index.ts#L121)
