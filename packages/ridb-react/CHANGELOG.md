@@ -1,3 +1,9 @@
+## @trust0/ridb-react [1.0.0-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.0.0-rc.1...@trust0/ridb-react@1.0.0-rc.2) (2025-01-01)
+
+### Bug Fixes
+
+* improve docs ([f8e9272](https://github.com/trust0-project/RIDB/commit/f8e927291d170af40426042dfb9622a642cbe6fc))
+
 ## @trust0/ridb-react 1.0.0-rc.1 (2025-01-01)
 
 ### Bug Fixes
