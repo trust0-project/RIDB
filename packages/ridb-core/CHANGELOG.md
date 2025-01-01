@@ -1,3 +1,9 @@
+## @trust0/ridb-core [1.1.0-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.1.0-rc.1...@trust0/ridb-core@1.1.0-rc.2) (2025-01-01)
+
+### Bug Fixes
+
+* dependency locks ([84ea40a](https://github.com/trust0-project/RIDB/commit/84ea40acb9a62597dc5fbaa013beed070a995df7))
+
 ## @trust0/ridb-core [1.1.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.0.0...@trust0/ridb-core@1.1.0-rc.1) (2025-01-01)
 
 ### Features
