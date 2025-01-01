@@ -2,7 +2,7 @@ import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 import { SchemaFieldType } from '@trust0/ridb'
 import { describe, expect, it } from 'vitest'
-import { Database, useDatabase } from '..'
+import { Database, useDatabase } from '../..'
 
 const users = {
   version: 0 as const,
