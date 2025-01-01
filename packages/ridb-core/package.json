@@ -1,13 +1,13 @@
 {
-  "name": "@trust0/ridb-wasm",
+  "name": "@trust0/ridb-core",
   "description": "Ridb Wasm",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
   "version": "1.0.0",
-  "main": "./pkg/ridb_wasm.js",
-  "types": "./pkg/ridb_wasm.d.ts",
+  "main": "./pkg/ridb_core.js",
+  "types": "./pkg/ridb_core.d.ts",
   "sideEffects": [
     "./pkg/snippets/*"
   ],
@@ -17,8 +17,8 @@
     "build": "sh build.sh"
   },
   "files": [
-    "./pkg/ridb_wasm_bg.wasm",
-    "./pkg/ridb_wasm.js",
-    "./pkg/ridb_wasm.d.ts"
+    "./pkg/ridb_core_bg.wasm",
+    "./pkg/ridb_core.js",
+    "./pkg/ridb_core.d.ts"
   ]
 }

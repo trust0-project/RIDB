@@ -530,8 +530,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "ridb-wasm"
-version = "1.0.2"
+name = "ridb-core"
+version = "1.0.0"
 dependencies = [
  "aes-gcm",
  "argon2",

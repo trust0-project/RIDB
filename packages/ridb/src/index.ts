@@ -18,10 +18,10 @@
  */
 
 // @ts-ignore @ignore
-import wasmBuffer from "@trust0/ridb-wasm/pkg/ridb_wasm_bg.wasm";
-import { BasePlugin, BaseStorage, Database, MigrationPathsForSchemas, MigrationsParameter, SchemaTypeRecord } from "@trust0/ridb-wasm";
+import wasmBuffer from "@trust0/ridb-core/pkg/ridb_core_bg.wasm";
+import { BasePlugin, BaseStorage, Database, MigrationPathsForSchemas, MigrationsParameter, SchemaTypeRecord } from "@trust0/ridb-core";
 
-let internal: typeof import("@trust0/ridb-wasm") | undefined;
+let internal: typeof import("@trust0/ridb-core") | undefined;
 
 /**
  * Represents a RIDB (Rust IndexedDB) instance.
@@ -161,7 +161,7 @@ export type {
     BasePlugin, 
     SchemaTypeRecord, 
     StorageInternal
-} from "@trust0/ridb-wasm";
+} from "@trust0/ridb-core";
 
 
 export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
@@ -234,7 +234,7 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
      * @private
      */
     static async load() {
-        internal ??= await import("@trust0/ridb-wasm").then(async (module) => {
+        internal ??= await import("@trust0/ridb-core").then(async (module) => {
             const wasmInstance = module.initSync(wasmBuffer);
             await module.default(wasmInstance);
             return module;

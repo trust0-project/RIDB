@@ -7,16 +7,16 @@ is_mac() {
 
 
 PACKAGEJSON=./pkg/package.json
-IMPORTFILE=./pkg/ridb_wasm.js
+IMPORTFILE=./pkg/ridb_core.js
 
 echo "Building the rust library"
 wasm-pack --log-level error build --target=web --scope trust0
 
 
 if is_mac; then
-  sed -i '' 's/"module": "ridb_wasm.js",/"main": "ridb_wasm.js",/' $PACKAGEJSON
+  sed -i '' 's/"module": "ridb_core.js",/"main": "ridb_core.js",/' $PACKAGEJSON
   sed -i '' "/if (typeof input === 'undefined') {/,/}/d" $IMPORTFILE
 else
-  sed -i  's/"module": "ridb_wasm.js",/"main": "ridb_wasm.js",/' $PACKAGEJSON
+  sed -i  's/"module": "ridb_core.js",/"main": "ridb_core.js",/' $PACKAGEJSON
   sed -i "/if (typeof input === 'undefined') {/,/}/d" $IMPORTFILE
 fi
