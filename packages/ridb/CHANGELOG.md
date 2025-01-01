@@ -1,3 +1,28 @@
+## @trust0/ridb [1.1.0](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.0.8...@trust0/ridb@1.1.0) (2025-01-01)
+
+### Features
+
+* fix packages ([b2fb936](https://github.com/trust0-project/RIDB/commit/b2fb9363af688b318f55e713ca81acbf8b041c3c))
+* force package bump ([6abebcd](https://github.com/trust0-project/RIDB/commit/6abebcde029d60681bdc9937c3192c7bd4290481))
+
+### Bug Fixes
+
+* dependency locks ([84ea40a](https://github.com/trust0-project/RIDB/commit/84ea40acb9a62597dc5fbaa013beed070a995df7))
+* move wasm to ridb-core ([964827b](https://github.com/trust0-project/RIDB/commit/964827ba33e65534d6dda12994423272ec9f3acf))
+
+### Miscellaneous Chores
+
+* **release:** 1.0.9-rc.1 [skip ci] ([a37b0e3](https://github.com/trust0-project/RIDB/commit/a37b0e3442b1c007be49a848b8062de629bd3859))
+* **release:** 1.0.9-rc.2 [skip ci] ([15351e1](https://github.com/trust0-project/RIDB/commit/15351e1bcc92a80461e221363c7f8643f56f613d))
+* **release:** 1.1.0-rc.1 [skip ci] ([c997cb9](https://github.com/trust0-project/RIDB/commit/c997cb9621162ade6a8a0c2f857fd2cf121d8279))
+* **release:** 1.1.0-rc.1 [skip ci] ([26b3d7a](https://github.com/trust0-project/RIDB/commit/26b3d7a94092621017918df6fdab2b580b3ba79e))
+* **release:** 1.1.0-rc.2 [skip ci] ([76c8b93](https://github.com/trust0-project/RIDB/commit/76c8b93e6bd7988e3793c0a7a637c1c8eea55cf3))
+
+
+### Dependencies
+
+* **@trust0/ridb-core:** upgraded to 1.1.0
+
 ## @trust0/ridb [1.1.0-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.1.0-rc.1...@trust0/ridb@1.1.0-rc.2) (2025-01-01)
 
 ### Bug Fixes
