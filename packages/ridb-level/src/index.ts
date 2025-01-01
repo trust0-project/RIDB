@@ -19,6 +19,7 @@
  * 
  * # SDK Rerefence
  */
+import path from 'path';
 import { RIDB } from "@trust0/ridb";
 import type { 
     SchemaTypeRecord, 
@@ -46,7 +47,7 @@ export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
     }
     constructor(Level: typeof ClassicLevel, name: string, schemas: T, options: any) {
         super(name, schemas, options);
-        this.db = new Level(name);
+        this.db = new Level(path.resolve(process.cwd(), "./.db/" + name));
     }
     /** Start the database */
     async start(): Promise<void> {
