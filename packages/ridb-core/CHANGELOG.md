@@ -1,3 +1,14 @@
+## @trust0/ridb-core [1.1.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.0.0...@trust0/ridb-core@1.1.0-rc.1) (2025-01-01)
+
+### Features
+
+* fix packages ([b2fb936](https://github.com/trust0-project/RIDB/commit/b2fb9363af688b318f55e713ca81acbf8b041c3c))
+* force package bump ([6abebcd](https://github.com/trust0-project/RIDB/commit/6abebcde029d60681bdc9937c3192c7bd4290481))
+
+### Miscellaneous Chores
+
+* **release:** 1.0.0-rc.2 [skip ci] ([5262d10](https://github.com/trust0-project/RIDB/commit/5262d107eabc65aed469ae4b3cb29cfd5fe8c8b2))
+
 ## @trust0/ridb-core [1.0.0-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.0.0-rc.1...@trust0/ridb-core@1.0.0-rc.2) (2025-01-01)
 
 ### Features
