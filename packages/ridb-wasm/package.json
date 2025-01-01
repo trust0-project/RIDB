@@ -1,7 +1,9 @@
 {
   "name": "@trust0/ridb-wasm",
   "type": "module",
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "1.0.11",
   "main": "./pkg/ridb_wasm.js",
   "types": "./pkg/ridb_wasm.d.ts",
