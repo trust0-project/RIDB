@@ -1,3 +1,14 @@
+## @trust0/ridb [1.0.9-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.0.9-rc.1...@trust0/ridb@1.0.9-rc.2) (2025-01-01)
+
+### Bug Fixes
+
+* move wasm to ridb-core ([964827b](https://github.com/trust0-project/RIDB/commit/964827ba33e65534d6dda12994423272ec9f3acf))
+
+
+### Dependencies
+
+* **@trust0/ridb-core:** upgraded to 1.0.0-rc.1
+
 ## @trust0/ridb [1.0.9-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.0.8...@trust0/ridb@1.0.9-rc.1) (2025-01-01)
 
 
