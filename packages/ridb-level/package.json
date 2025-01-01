@@ -29,7 +29,7 @@
     "test:node": "sh test.sh -e node",
     "test:browser": "sh test.sh -e browser",
     "types": "npm run types:default",
-    "types:default": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/index.d.ts",
+    "types:default": "npx tsc",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {

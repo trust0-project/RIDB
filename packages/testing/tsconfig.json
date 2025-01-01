@@ -16,9 +16,7 @@
     "types": []
   },
   "include": [
-    "src/**/*",
-    "../../node_modules/@trust0/ridb/**/*"
-
+    "src/**/*"
   ],
   "exclude": ["node_modules", "dist"]
 }

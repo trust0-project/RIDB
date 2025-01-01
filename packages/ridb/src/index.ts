@@ -230,10 +230,10 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
 
     /**
      * Loads the RIDB Rust module.
-     * @returns {Promise<typeof import("@trust0/ridb-wasm")>} A promise that resolves to the RIDB Rust module.
+     * @returns {Promise<typeof import("@trust0/ridb")>} A promise that resolves to the RIDB Rust module.
      * @private
      */
-    static async load(): Promise<typeof import("@trust0/ridb-wasm")> {
+    static async load() {
         internal ??= await import("@trust0/ridb-wasm").then(async (module) => {
             const wasmInstance = module.initSync(wasmBuffer);
             await module.default(wasmInstance);

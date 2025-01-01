@@ -14,7 +14,7 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     env:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
