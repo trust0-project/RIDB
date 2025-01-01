@@ -1,3 +1,26 @@
+## @trust0/ridb-wasm 1.0.0 (2025-01-01)
+
+### Features
+
+* disable wee alloc, no longer maintained ([54bff08](https://github.com/trust0-project/RIDB/commit/54bff08b9a2580f9b20f1c0c26ccdae87801f055))
+
+### Bug Fixes
+
+* add wasm project in mono repo ([d9c6af0](https://github.com/trust0-project/RIDB/commit/d9c6af07ba837103b2722ec2e0a30bf4dea9533f))
+* improve rust build and reduce bundle size ([3be0072](https://github.com/trust0-project/RIDB/commit/3be0072efb4f13123237b6c4f18849daaa978353))
+* improve schema field validation ([07596fb](https://github.com/trust0-project/RIDB/commit/07596fb5c293c431a7518cf3bd0978fa3d4d8ae9))
+* improve the declarative schema generation types and general improvements ([2e34762](https://github.com/trust0-project/RIDB/commit/2e3476226d70c579fd868360f51acad831f05352))
+* publish wasm package when required ([43b8ef4](https://github.com/trust0-project/RIDB/commit/43b8ef424fe4b20195bb9793b49292bb83144b88))
+* release ([c90d098](https://github.com/trust0-project/RIDB/commit/c90d09894017edca2c3bf84fb7d377ccd2f726ba))
+* set version type ([c2a999d](https://github.com/trust0-project/RIDB/commit/c2a999d3194cc8843c5676c48a4c339f21c2abab))
+
+### Miscellaneous Chores
+
+* **docs:** updating main readme [skip ci] ([c2facd4](https://github.com/trust0-project/RIDB/commit/c2facd49c4ac92f89675d530f538af834dbd30a5))
+* **docs:** updating main readme [skip ci] ([8bb6249](https://github.com/trust0-project/RIDB/commit/8bb6249c3e1614ef0f8f5e058e0c05883311830f))
+* improve readme [skip ci] ([b28b0b7](https://github.com/trust0-project/RIDB/commit/b28b0b719e467bd7324ebf7597b93fa48be5c6ad))
+* **release:** 1.0.0-rc.1 [skip ci] ([2f1783b](https://github.com/trust0-project/RIDB/commit/2f1783b0db173b72d623072a88a5f75caed2810b))
+
 ## @trust0/ridb-wasm 1.0.0-rc.1 (2025-01-01)
 
 ### Features
