@@ -12,7 +12,7 @@ log = "0.4.20"
 wasm-bindgen = { version = "0.2.90", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4.40"
 console_error_panic_hook = { version = "0.1.1", optional = true }
-wee_alloc = { version = "0.4.2", optional = true }
+wee_alloc = { version = "0.4.5", optional = true }
 js-sys = {version="0.3.69", features = []}
 serde = { version = "1.0.195", features = ["derive"] }
 serde-wasm-bindgen = "0.6.3"
@@ -40,7 +40,7 @@ typescript = true
 wasm-opt = false
 
 [features]
-default = ["console_error_panic_hook"]
+default = ["console_error_panic_hook", 'wee_alloc']
 browser = []
 node = []
 
