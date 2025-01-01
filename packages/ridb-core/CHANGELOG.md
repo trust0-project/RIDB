@@ -1,3 +1,9 @@
+## @trust0/ridb-core 1.0.0-rc.1 (2025-01-01)
+
+### Bug Fixes
+
+* move wasm to ridb-core ([964827b](https://github.com/trust0-project/RIDB/commit/964827ba33e65534d6dda12994423272ec9f3acf))
+
 ## @trust0/ridb-wasm 1.0.0 (2025-01-01)
 
 ### Features
