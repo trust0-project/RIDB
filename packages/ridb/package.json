@@ -1,6 +1,6 @@
 {
     "name": "@trust0/ridb",
-    "version": "1.0.5",
+    "version": "1.0.7",
     "description": "Dependency free wasm db encrypted and secure database wrapper for web and node.",
     "main": "./build/index.js",
     "types": "./build/index.d.ts",
