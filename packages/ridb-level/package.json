@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-level",
-  "version": "1.0.10-rc.2",
+  "version": "1.0.9",
   "description": "Level DB wrapper for RIDB.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -64,7 +64,7 @@
   },
   "peerDependencies": {
     "classic-level": "^2.0.0",
-    "@trust0/ridb": "1.0.9-rc.2"
+    "@trust0/ridb": "1.0.9-rc.3"
   },
   "optionalDependencies": {
     "@esbuild/darwin-arm64": "0.15.18",
