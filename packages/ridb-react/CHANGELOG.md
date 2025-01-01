@@ -1,3 +1,19 @@
+## @trust0/ridb-react [1.1.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.0.1-rc.1...@trust0/ridb-react@1.1.0-rc.1) (2025-01-01)
+
+### Features
+
+* fix packages ([b2fb936](https://github.com/trust0-project/RIDB/commit/b2fb9363af688b318f55e713ca81acbf8b041c3c))
+* force package bump ([6abebcd](https://github.com/trust0-project/RIDB/commit/6abebcde029d60681bdc9937c3192c7bd4290481))
+
+### Bug Fixes
+
+* dependency locks ([84ea40a](https://github.com/trust0-project/RIDB/commit/84ea40acb9a62597dc5fbaa013beed070a995df7))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.1.0-rc.2
+
 ## @trust0/ridb-react [1.0.1-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.0.0...@trust0/ridb-react@1.0.1-rc.1) (2025-01-01)
 
 
