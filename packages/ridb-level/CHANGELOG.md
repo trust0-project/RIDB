@@ -1,3 +1,25 @@
+## @trust0/ridb-level [1.1.0](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.0.9...@trust0/ridb-level@1.1.0) (2025-01-01)
+
+### Features
+
+* fix packages ([b2fb936](https://github.com/trust0-project/RIDB/commit/b2fb9363af688b318f55e713ca81acbf8b041c3c))
+
+### Bug Fixes
+
+* dependency locks ([84ea40a](https://github.com/trust0-project/RIDB/commit/84ea40acb9a62597dc5fbaa013beed070a995df7))
+* move wasm to ridb-core ([964827b](https://github.com/trust0-project/RIDB/commit/964827ba33e65534d6dda12994423272ec9f3acf))
+
+### Miscellaneous Chores
+
+* **release:** 1.0.10-rc.1 [skip ci] ([d01ebc7](https://github.com/trust0-project/RIDB/commit/d01ebc715e522a341211cd8ae24077b674b96539))
+* **release:** 1.0.10-rc.2 [skip ci] ([8c60c43](https://github.com/trust0-project/RIDB/commit/8c60c43f54b0b8ef692c28d9f88b977f71a0d808))
+* **release:** 1.1.0-rc.1 [skip ci] ([5e1d162](https://github.com/trust0-project/RIDB/commit/5e1d162e51b5084e0d8c2e5aeb7e89f4053bd218))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.1.0
+
 ## @trust0/ridb-level [1.1.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.0.10-rc.2...@trust0/ridb-level@1.1.0-rc.1) (2025-01-01)
 
 ### Features
