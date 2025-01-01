@@ -1,5 +1,6 @@
 {
   "name": "@trust0/ridb-wasm",
+  "description": "Ridb Wasm",
   "type": "module",
   "publishConfig": {
     "access": "public"
