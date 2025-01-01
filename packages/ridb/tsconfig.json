@@ -3,9 +3,7 @@
   "compilerOptions": {
     "outDir": "build",
     "rootDir": "src",
-    "paths": {
-      "ridb-rust": ["../pkg"]
-    }
+    "skipLibCheck": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "build"]

@@ -10,7 +10,7 @@
     "moduleDetection": "force",
     "strict": true,
     "allowJs": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "lib": ["ES2022", "DOM"],
   }
 }

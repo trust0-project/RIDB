@@ -22,18 +22,17 @@
         "build/**/*"
     ],
     "devDependencies": {
-        "@testing-library/dom": "^10.4.0",
         "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/dom": "^10.4.0",
         "@testing-library/react": "^16.1.0",
-        "@testing-library/user-event": "^14.5.2",
         "@types/react": "^18.2.8",
         "@types/react-dom": "^18.2.4",
-        "@vitejs/plugin-react": "^4.3.4",
+        "@vitejs/plugin-react-swc": "^3.7.2",
         "esbuild-node-externals": "^1.16.0",
         "esbuild-plugin-glob": "^2.2.3",
+        "jsdom": "^25.0.1",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
-        "jsdom": "^25.0.1",
         "typescript": "^5.7.2",
         "vite": "^5.0.0",
         "vitest": "^1.6.0"
