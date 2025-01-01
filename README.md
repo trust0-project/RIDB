@@ -22,7 +22,7 @@ Our project consists of three main packages, each designed to enhance your datab
 
 | Package Name | Description | Link |
 |--------------|-------------|------|
-| **wasm**     | The rust source for DB, contains its core logic, optimisations, algorithms and cryptography functionality. | [View on GitHub](./packages/ridb-wasm/README.md) |
+| **wasm**     | The rust source for DB, contains its core logic, optimisations, algorithms and cryptography functionality. | [View on GitHub](./packages/ridb-core/README.md) |
 | **ridb**     | Main project with RIDB core functionality. | [View on GitHub](./packages/ridb/README.md) |
 | **ridb-level** | An Storage for level-based storage (NODEJS). | [View on GitHub](./packages/ridb-level/README.md) |
 | **ridb-react** | Use RIDB in react directly with JSX. | [View on GitHub](./packages/ridb-react/README.md) |
