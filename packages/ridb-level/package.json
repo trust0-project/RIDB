@@ -1,7 +1,7 @@
 {
   "name": "@trust0/ridb-level",
   "version": "1.0.9",
-  "description": "Level DB wrapper for RIDB.",
+  "description": "Level DB wrapper for @trust0/ridb.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
   "type": "module",
