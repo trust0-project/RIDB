@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-level",
-  "version": "1.0.9",
+  "version": "1.1.0-rc.1",
   "description": "Level DB wrapper for @trust0/ridb.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -57,14 +57,14 @@
     "vite-plugin-wasm": "^3.3.0",
     "vitest": "^1.6.0",
     "webdriverio": "^9.0.9",
-    "@trust0/ridb": "1.0.9-rc.2",
+    "@trust0/ridb": "1.1.0-rc.2",
     "vite": "^5.0.0",
     "classic-level": "^2.0.0",
     "@trust0/ridb-testing": "^0.0.1"
   },
   "peerDependencies": {
     "classic-level": "^2.0.0",
-    "@trust0/ridb": "1.0.9-rc.3"
+    "@trust0/ridb": "1.1.0-rc.2"
   },
   "optionalDependencies": {
     "@esbuild/darwin-arm64": "0.15.18",
