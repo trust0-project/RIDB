@@ -22,7 +22,7 @@ npm i @trust0/ridb-react
 ## Usage
 ```typescript
 import React from 'react'
-import { Database, useDatabase } from '@trust0/ridb-react'
+import { Database, useDatabase, DatabaseProvider } from '@trust0/ridb-react'
 ```
 
 Create your schemas and type them for better inference.
@@ -74,6 +74,14 @@ const MyComponent: React.FC = () => {
         <div> <h1>My Component</h1> </div>
     );
 };
+```
+
+Wrap your component with the `DatabaseProvider` component to provide the database instance to your component.
+
+```typescript
+<DatabaseProvider>
+    <MyComponent />
+</DatabaseProvider>
 ```
 
 All the database methods and operations from RIDB are supported, for more details check the [RIDB documentation](https://github.com/trust0-project/RIDB/packages/ridb/README.md)

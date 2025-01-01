@@ -1,5 +1,6 @@
 {
     "name": "@trust0/ridb-react",
+    "description": "React bindings for RIDB, use RIDB on React seemlessly",
     "version": "0.0.1",
     "author": "elribonazo@gmail.com",
     "repository": {
