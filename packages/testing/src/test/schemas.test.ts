@@ -7,6 +7,7 @@ import { StoragesType } from '..';
 export default (platform: string, storages: StoragesType[]) => {
     return describe(`[${platform}] Testing`, () => {
         storages.forEach(({ name, storage }) => {
+
             describe(`[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}] Testing Storage`, () => {
                 it('It should be able to create a new document from JSON schema', async () => {
                     const db = new RIDB(
@@ -540,7 +541,7 @@ export default (platform: string, storages: StoragesType[]) => {
                             }
                         }
                     }
-                    
+
                     const db = new RIDB(
                         {
                             dbName: "test" + uuidv4(),
@@ -872,6 +873,135 @@ export default (platform: string, storages: StoragesType[]) => {
                     });
                     expect(results.length).to.equal(1);
                     expect(results[0].id).to.equal('u3');
+                });
+            });
+
+
+            describe(`[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}] Performance & Stress Tests`, () => {
+
+                // Step 1: Measure bulk insertion performance
+                it('should measure bulk insertion performance', async () => {
+                    // Setup DB instance
+                    const db = new RIDB({
+                        dbName: "stress_test_db_" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    data: { type: SchemaFieldType.string }
+                                }
+                            }
+                        } as const
+                    });
+
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+
+                    const collection = db.collections.demo;
+                    const testCount = 1000;
+
+                    // Measure creation time
+                    const startTime = performance.now();
+                    for (let i = 0; i < testCount; i++) {
+                        await collection.create({ id: `doc_${i}`, data: `Some data #${i}` });
+                    }
+                    const endTime = performance.now();
+
+                    const durationMs = endTime - startTime;
+                    const opsPerSecond = (testCount / (durationMs / 1000)).toFixed(2);
+
+                    console.log(
+                        `[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}] Inserted ${testCount} documents in ${durationMs.toFixed(2)} ms ` +
+                        `(${opsPerSecond} ops/sec)`
+                    );
+
+                    const countInDb = await collection.count({});
+                    expect(countInDb).toEqual(testCount);
+                });
+
+                // Step 2: Measure query performance on a large dataset
+                it('should measure query performance on large dataset', async () => {
+                    const db = new RIDB({
+                        dbName: "query_test_db_" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    age: { type: SchemaFieldType.number }
+                                }
+                            }
+                        } as const
+                    });
+
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+
+                    const collection = db.collections.demo;
+                    const testCount = 5000;
+
+                    // Bulk insert
+                    for (let i = 0; i < testCount; i++) {
+                        await collection.create({
+                            id: `doc_${i}`,
+                            age: Math.floor(Math.random() * 100)
+                        });
+                    }
+
+                    // Measure query performance
+                    const startTime = performance.now();
+                    const results = await collection.find({
+                        $and: [
+                            { age: { $gte: 30 } },
+                            { age: { $lte: 50 } }
+                        ]
+                    });
+                    const endTime = performance.now();
+
+                    const queryTimeMs = (endTime - startTime).toFixed(2);
+                    console.log(`[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}] Query completed in ${queryTimeMs} ms. Found ${results.length} docs.`);
+
+                    expect(results).toBeDefined();
+                });
+
+                // Step 3: Ensure accurate deletion of documents
+                it('should handle deletion of documents', async () => {
+                    const db = new RIDB({
+                        dbName: "deletion_test_db_" + uuidv4(),
+                        schemas: {
+                            demo: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    data: { type: SchemaFieldType.string }
+                                }
+                            }
+                        } as const
+                    });
+
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+
+                    const collection = db.collections.demo;
+                    await collection.create({ id: "12345", data: "Sample data" });
+
+                    await collection.delete("12345");
+                    const found = await collection.findById("12345");
+
+                    expect(found).toBeUndefined();
                 });
             });
         });
