@@ -1,3 +1,13 @@
+## @trust0/ridb-level [1.0.9](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.0.8...@trust0/ridb-level@1.0.9) (2025-01-01)
+
+### Bug Fixes
+
+* improve testing for leveldb package ([a28b26f](https://github.com/trust0-project/RIDB/commit/a28b26f6d80bb83c7d8b4cdd0fa537e5cbf3d353))
+
+### Miscellaneous Chores
+
+* **release:** 1.0.9-rc.1 [skip ci] ([18a4a66](https://github.com/trust0-project/RIDB/commit/18a4a66d40b0a271e386e7ba2dd2ec7fdf6f3364))
+
 ## @trust0/ridb-level [1.0.9-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.0.8...@trust0/ridb-level@1.0.9-rc.1) (2025-01-01)
 
 ### Bug Fixes
