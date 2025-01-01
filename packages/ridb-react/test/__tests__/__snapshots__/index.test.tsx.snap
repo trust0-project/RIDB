@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MyComponent > renders correctly when db is ready 1`] = `
+<DocumentFragment>
+  <div>
+     
+    <h1>
+      My Component
+    </h1>
+     
+  </div>
+</DocumentFragment>
+`;
+
+exports[`MyComponent > renders correctly while db is loading 1`] = `
+<DocumentFragment>
+  <div>
+    Loading...
+  </div>
+</DocumentFragment>
+`;

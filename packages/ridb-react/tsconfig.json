@@ -4,7 +4,8 @@
     "module": "es2022",
     "moduleResolution": "node",
     "declaration": true,
-    "emitDeclarationOnly": false,
+    "emitDeclarationOnly": true,
+    "declarationDir": "./build",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "moduleDetection": "force",
@@ -12,5 +13,10 @@
     "allowJs": true,
     "skipLibCheck": true,
     "lib": ["ES2022", "DOM"],
-  }
+    "jsx": "react",    
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": ["node_modules", "build", "src/__tests__"]
 }

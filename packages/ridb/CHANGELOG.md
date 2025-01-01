@@ -1,3 +1,16 @@
+## @trust0/ridb [1.0.8-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.0.7...@trust0/ridb@1.0.8-rc.1) (2025-01-01)
+
+### Bug Fixes
+
+* correct package dependency issue with swc, react and testing library ([d01e83d](https://github.com/trust0-project/RIDB/commit/d01e83d48da431bf2633cb1d11f4fad88c03c1c5))
+* fix package json ([f57ec04](https://github.com/trust0-project/RIDB/commit/f57ec041ab2f0c825eea864e94151780fc1cdd31))
+* package json improvement and release pipeline ([69a64b9](https://github.com/trust0-project/RIDB/commit/69a64b92694b13d6d42dc2f27ab3f12422e391f3))
+
+### Miscellaneous Chores
+
+* improve docs [skip ci] ([5c0b205](https://github.com/trust0-project/RIDB/commit/5c0b20533b5a1ea672c69133eabe3d8d13c3f34b))
+* improve readme [skip ci] ([b28b0b7](https://github.com/trust0-project/RIDB/commit/b28b0b719e467bd7324ebf7597b93fa48be5c6ad))
+
 # @trust0/ridb 1.0.0-rc.1 (2024-12-26)
 
 

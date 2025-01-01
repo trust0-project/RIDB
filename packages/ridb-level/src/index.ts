@@ -25,8 +25,8 @@ import type {
     Doc, 
     Operation,
     QueryType,
+    BaseStorage as BaseStorageWasm
  } from "@trust0/ridb-wasm";
-import type { BaseStorage as BaseStorageWasm} from "@trust0/ridb-wasm";
 import type { ClassicLevel } from "classic-level";
 type Level = ClassicLevel<string, string>
 
