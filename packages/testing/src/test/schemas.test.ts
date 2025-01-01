@@ -1,18 +1,33 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach, beforeEach, afterAll } from 'vitest';
+import path from 'path';
+import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { RIDB, SchemaFieldType, Doc } from '@trust0/ridb';
-import { StoragesType } from '..';
+import { StoragesType, TestPlatform } from '..';
 
 
 export default (platform: string, storages: StoragesType[]) => {
     return describe(`[${platform}] Testing`, () => {
+        let dbName: string;
+
+        beforeEach(() => {
+            dbName = "test" + uuidv4();
+        })
+
+        afterAll(() => {
+            if (platform === TestPlatform.NODE) {
+                fs.rmSync(path.resolve(process.cwd(), `./.db`), { recursive: true, force: true });
+            }
+        })
+
         storages.forEach(({ name, storage }) => {
 
             describe(`[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}] Testing Storage`, () => {
+  
                 it('It should be able to create a new document from JSON schema', async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -49,7 +64,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("should allow optional fields", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -95,7 +110,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should allow updating multi model encrypted document", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo2: {
                                     version: 0,
@@ -170,7 +185,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should be able to create a default database with a valid schema", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -195,7 +210,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should be able to find a created schema entry", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -248,7 +263,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should be able to count a created schema entry", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -304,7 +319,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error with a schema with invalid type", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -323,7 +338,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error when schema properties type is invalid", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -347,7 +362,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error when the minLength is lower than 0", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -371,7 +386,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error when schemaType with a property that has min higher than max", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -396,7 +411,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error if migrations are declared wrong", () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: {
                                     version: 1,
@@ -429,7 +444,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should handle multiple collections independently", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 users: {
                                     version: 0,
@@ -490,7 +505,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it("Should handle migrations and integrity with default fields", async () => {
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: {
                                     version: 0,
@@ -544,7 +559,7 @@ export default (platform: string, storages: StoragesType[]) => {
 
                     const db = new RIDB(
                         {
-                            dbName: "test" + uuidv4(),
+                            dbName,
                             schemas: {
                                 demo: schema
                             } as const,
@@ -579,7 +594,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 })
                 it('Should handle array types in schema', async () => {
                     const db = new RIDB({
-                        dbName: "test" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
@@ -609,7 +624,7 @@ export default (platform: string, storages: StoragesType[]) => {
 
                 it('Should handle nested object properties', async () => {
                     const db = new RIDB({
-                        dbName: "test" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
@@ -648,7 +663,7 @@ export default (platform: string, storages: StoragesType[]) => {
 
                 it('Should throw error when required property is missing', async () => {
                     const db = new RIDB({
-                        dbName: "test" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
@@ -672,7 +687,7 @@ export default (platform: string, storages: StoragesType[]) => {
 
                 it('Should support boolean types in schema', async () => {
                     const db = new RIDB({
-                        dbName: "test" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
@@ -699,7 +714,7 @@ export default (platform: string, storages: StoragesType[]) => {
 
                 it('Should apply default values when creating documents', async () => {
                     const db = new RIDB({
-                        dbName: "test" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
@@ -725,7 +740,7 @@ export default (platform: string, storages: StoragesType[]) => {
 
                 it('Should handle updates without affecting unspecified fields', async () => {
                     const db = new RIDB({
-                        dbName: "test" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
@@ -760,7 +775,7 @@ export default (platform: string, storages: StoragesType[]) => {
 
                 it('Should validate maxItems constraint on arrays', async () => {
                     const db = new RIDB({
-                        dbName: "test" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
@@ -789,7 +804,7 @@ export default (platform: string, storages: StoragesType[]) => {
 
                 it('Should handle deletion of documents', async () => {
                     const db = new RIDB({
-                        dbName: "test" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
@@ -817,7 +832,7 @@ export default (platform: string, storages: StoragesType[]) => {
 
                 it('Should enforce maxLength on string properties', async () => {
                     const db = new RIDB({
-                        dbName: "test" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
@@ -843,7 +858,7 @@ export default (platform: string, storages: StoragesType[]) => {
 
                 it('Should handle querying with complex conditions', async () => {
                     const db = new RIDB({
-                        dbName: "test" + uuidv4(),
+                        dbName,
                         schemas: {
                             users: {
                                 version: 0,
@@ -883,7 +898,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 it('should measure bulk insertion performance', async () => {
                     // Setup DB instance
                     const db = new RIDB({
-                        dbName: "stress_test_db_" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
@@ -927,7 +942,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 // Step 2: Measure query performance on a large dataset
                 it('should measure query performance on large dataset', async () => {
                     const db = new RIDB({
-                        dbName: "query_test_db_" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
@@ -976,7 +991,7 @@ export default (platform: string, storages: StoragesType[]) => {
                 // Step 3: Ensure accurate deletion of documents
                 it('should handle deletion of documents', async () => {
                     const db = new RIDB({
-                        dbName: "deletion_test_db_" + uuidv4(),
+                        dbName,
                         schemas: {
                             demo: {
                                 version: 0,
