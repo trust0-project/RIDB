@@ -394,25 +394,132 @@ impl Storage for InMemory {
     }
 
     async fn count(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
-        let schema = self.base.schemas.get(collection_name).ok_or_else(|| JsValue::from( format!("Collection {} not found in count", collection_name)))?;
-        let normalized_query = query.parse()?;
+        let normalized_query = query.clone().query;
+        let read_lock = self.by_index.read()
+            .map_err(|_| JsValue::from_str("Failed to acquire read lock"))?;
+
+        Logger::debug(
+            "InMemory-Count",
+            &JsValue::from(
+                format!("Starting count method for collection '{}' and query {:?}", collection_name, normalized_query)
+            )
+        );
+
+        let schema = self.base.schemas.get(collection_name)
+            .ok_or_else(|| JsValue::from(format!("Collection '{}' not found", collection_name)))?;
+
         let mut count = 0;
-
         let primary_key = schema.primary_key.clone();
-        let index_name = format!("pk_{}_{}", collection_name, primary_key);
 
-        if let Some(index) = self.by_index.read().unwrap().get(&index_name) {
-            for (_pk, doc) in index.iter() {
-                let item_query = Query::new(
-                    normalized_query.clone(),
-                    schema.clone()
-                )?;
-                let matches = self.core.document_matches_query(doc, &item_query)?;
-                if matches {
-                    count += 1;
+        let index_name = if !collection_name.starts_with("idx") {
+            format!("pk_{}_{}", collection_name, primary_key)
+        } else {
+            collection_name.to_string()
+        };
+
+        Logger::debug(
+            "InMemory-Count",
+            &JsValue::from(
+                format!("Parsed query '{:?}'", JsValue::from(normalized_query.clone()))
+            )
+        );
+
+        if let Some(index) = read_lock.get(&index_name) {
+            Logger::debug(
+                "InMemory-Count",
+                &JsValue::from(
+                    &format!("Index '{}' found with {} documents", index_name, index.len())
+                )
+            );
+
+            for (pk, doc) in index.iter() {
+                if pk.starts_with("idx_") {
+                    Logger::debug(
+                        "InMemory-Count",
+                        &JsValue::from(
+                            &format!("Handling indexed collection '{}'", index_name)
+                        )
+                    );
+
+                    let items_js = Reflect::get(doc, &JsValue::from_str("items"))?;
+                    let items: Array = if items_js.is_array() {
+                        Array::from(&items_js)
+                    } else {
+                        Array::new()
+                    };
+
+                    Logger::debug(
+                        "InMemory-Count",
+                        &JsValue::from(
+                            &format!("Found {} items in index", items.length())
+                        )
+                    );
+
+                    let re = Regex::new(r"^[^_]*_([^_]+)_[^_]*$").unwrap();
+                    if let Some(caps) = re.captures(collection_name) {
+                        let extract_collection = caps.get(1).unwrap().as_str();
+                        Logger::debug(
+                            "InMemory-Count",
+                            &JsValue::from(
+                                &format!("Extracted collection name '{}'", extract_collection)
+                            )
+                        );
+
+                        for item in items.iter() {
+                            let indexed_document = self.find_document_by_id(
+                                extract_collection,
+                                item
+                            ).await?;
+
+                            if indexed_document.is_null() || indexed_document.is_undefined() {
+                                Logger::debug(
+                                    "InMemory-Count",
+                                    &JsValue::from("Indexed document is null or undefined")
+                                );
+                            } else {
+                                let matches = self.core.document_matches_query(
+                                    &indexed_document,
+                                    &query
+                                )?;
+
+                                if matches {
+                                    count += 1;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Logger::debug(
+                        "InMemory-Count",
+                        &JsValue::from(
+                            &format!("Evaluating document with primary key '{}'", pk)
+                        )
+                    );
+                    let matches = self.core.document_matches_query(doc, &query)?;
+                    if matches {
+                        count += 1;
+                        Logger::debug(
+                            "InMemory-Count",
+                            &JsValue::from("Document counted")
+                        );
+                    }
                 }
             }
+        } else {
+            Logger::debug(
+                "InMemory-Count",
+                &JsValue::from(
+                    &format!("Index '{}' not found", index_name)
+                )
+            );
         }
+
+        Logger::debug(
+            "InMemory-Count",
+            &JsValue::from(
+                &format!("Count method completed with count {}", count)
+            )
+        );
 
         Ok(JsValue::from_f64(count as f64))
     }

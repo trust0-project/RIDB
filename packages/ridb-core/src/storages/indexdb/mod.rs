@@ -161,24 +161,11 @@ impl Storage for IndexDB {
                     return Err(JsValue::from_str("Primary key value is required for delete operation"));
                 }
 
-                // Delete the document and wait for completion
+                // Delete the document using the primary key
                 let request = store.delete(&pk_value)?;
-                let promise = Promise::new(&mut |resolve, reject| {
-                    let onsucess = Closure::once(Box::new(move |_event: web_sys::Event| {
-                        resolve.call1(&JsValue::undefined(), &JsValue::from_str("Document deleted")).unwrap();
-                    }));
-                    
-                    let onerror = Closure::once(Box::new(move |e: web_sys::Event| {
-                        reject.call1(&JsValue::undefined(), &e).unwrap();
-                    }));
-                    
-                    request.set_onsuccess(Some(onsucess.as_ref().unchecked_ref()));
-                    request.set_onerror(Some(onerror.as_ref().unchecked_ref()));
-                    onsucess.forget();
-                    onerror.forget();
-                });
+                idb_request_result(request).await?;
 
-                JsFuture::from(promise).await
+                Ok(JsValue::from_str("Document deleted"))
             },
             _ => Err(JsValue::from_str("Unsupported operation type")),
         }

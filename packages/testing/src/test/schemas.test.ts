@@ -1046,6 +1046,72 @@ export default (platform: string, storages: StoragesType[]) => {
                     });
                     expect(notFound.length).to.eq(0);
                 });
+
+                it('Should correctly count documents using advanced indexing', async () => {
+                    // Define the schema with indexes
+                    const db = new RIDB({
+                        dbName,
+                        schemas: {
+                            users: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                indexes: ['age', 'name'],
+                                properties: {
+                                    id: { type: SchemaFieldType.string },
+                                    age: { type: SchemaFieldType.number },
+                                    name: { type: SchemaFieldType.string }
+                                }
+                            }
+                        } as const
+                    });
+
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+
+                    const usersCollection = db.collections.users;
+
+                    // Insert multiple users with different ages and names
+                    await usersCollection.create({ id: 'u1', age: 25, name: 'Alice' });
+                    await usersCollection.create({ id: 'u2', age: 30, name: 'Bob' });
+                    await usersCollection.create({ id: 'u3', age: 35, name: 'Charlie' });
+                    await usersCollection.create({ id: 'u4', age: 30, name: 'David' });
+                    await usersCollection.create({ id: 'u5', age: 25, name: 'Eve' });
+
+                    // Use count method with advanced queries utilizing indexes
+                    const countAge25 = await usersCollection.count({ age: 25 });
+                    expect(countAge25).to.eq(2);
+
+                    const countAge30 = await usersCollection.count({ age: 30 });
+                    expect(countAge30).to.eq(2);
+
+                    const countNameBob = await usersCollection.count({ name: 'Bob' });
+                    expect(countNameBob).to.eq(1);
+
+                    const countAgeGreaterThan25 = await usersCollection.count({ age: { $gt: 25 } });
+                    expect(countAgeGreaterThan25).to.eq(3);
+
+                    const countAge25OrNameEve = await usersCollection.count({
+                        $or: [
+                            { age: 25 },
+                            { name: 'Eve' }
+                        ]
+                    });
+                    expect(countAge25OrNameEve).to.eq(2);
+
+                    const countComplexQuery = await usersCollection.count({
+                        $and: [
+                            { age: { $gte: 30 } },
+                            { name: 'David'  }
+                        ]
+                    });
+                    expect(countComplexQuery).to.eq(1); // Only 'u3' matches
+
+                    // Clean up
+                    await db.close();
+                });
             });
 
 
