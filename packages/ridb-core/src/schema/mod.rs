@@ -436,4 +436,3 @@ fn test_invalid_schema() {
 
     assert!(result.is_err());
 }
-

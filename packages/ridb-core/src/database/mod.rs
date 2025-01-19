@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use js_sys::{Array, Object, Reflect};
-use wasm_bindgen::{ JsCast, JsValue};
+use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::collection::Collection;
 use crate::error::RIDBError;
@@ -145,26 +145,26 @@ pub struct Database {
 
 #[wasm_bindgen]
 impl Database {
+
     #[wasm_bindgen(js_name = "start")]
     pub async fn start(&mut self) -> Result<JsValue, JsValue> {
-        Logger::log(&"Starting the database...".into());
+        Logger::debug("DB", &"Starting the database...".into());
         if !self.started {
             let res = self.storage.internal.start().await?;
             self.started = true;
-            Logger::log(&"Database started successfully.".into());
-            return Ok(res);
+            Logger::debug("DB", &"Database started successfully.".into());
+            Ok(res)
+        } else {
+            Ok(JsValue::from_str("Database already started"))
         }
-        return Ok(
-            JsValue::from_str("Database already started")
-        );
     }
 
     #[wasm_bindgen(js_name = "close")]
     pub async fn close(mut self) -> Result<JsValue, JsValue> {
-        Logger::debug(&"Closing the database...".into());
+        Logger::debug("DB",&"Closing the database...".into());
         let res = self.storage.internal.close().await;
         self.started = false;
-        Logger::debug(&"Database closed successfully.".into());
+        Logger::debug("DB",&"Database closed successfully.".into());
         res
     }
 
@@ -172,7 +172,6 @@ impl Database {
     pub fn started(&self) -> bool {
         self.started
     }
-
 
     /// Retrieves the collections in the database.
     ///
@@ -183,29 +182,22 @@ impl Database {
     /// * `Result<Object, JsValue>` - A result containing an `Object` with the collections or an error.
     #[wasm_bindgen(getter)]
     pub fn collections(&self) -> Result<Object, JsValue> {
-        Logger::debug(&"Retrieving collections...".into());
-        let mut collections: HashMap<String, Collection> = HashMap::new();
+        Logger::debug("DB",&"Retrieving collections...".into());
+        let object = Object::new();
         for (key, _) in self.storage.schemas.iter() {
-            Logger::debug(&format!("Processing collection: {}", key).into());
+            Logger::debug("DB",&format!("Processing collection: {}", key).into());
             let storage = self.storage.clone();
             let collection = Collection::from(
                 key.clone(),
                 storage
             );
-            collections.insert(
-                key.clone(), 
-                collection
-            );
-        }
-        let object = Object::new();
-        for (key, collection) in collections {
             Reflect::set(
                 &object,
                 &JsValue::from_str(key.as_str()),
                 &JsValue::from(collection)
             ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
         }
-        Logger::debug(&"Collections retrieved successfully.".into());
+        Logger::debug("DB",&"Collections retrieved successfully.".into());
         Ok(object)
     }
 
@@ -219,43 +211,15 @@ impl Database {
         password: Option<String>,
         storage: Option<StorageExternal>
     ) -> Result<Database, JsValue> {
-        Logger::debug(&format!("Creating database: {}", db_name).into());
-        let storage: StorageExternal = if let Some(storage) = storage {
-            Logger::debug(&"Using provided storage.".into());
-            storage.into()
-        } else {
-            Logger::debug(&"Creating InMemory storage.".into());
-            JsValue::from(InMemory::create(db_name, schemas_js.clone()).await?).into()
-        };
 
-
-        let vec_plugins_js: Vec<JsValue> = module.apply(plugins)?;
-        Logger::debug(&"Plugins applied.".into());
-        let mut vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
-            .map(|plugin| plugin.unchecked_into::<BasePlugin>())
-            .collect();
-
-        Logger::debug(&"Adding defaults plugin.".into());
-        vec_plugins.push(DefaultsPlugin::new()?.base.clone());
-
-        Logger::debug(&"Adding migration plugin.".into());
-        vec_plugins.push(MigrationPlugin::new()?.base.clone());
-
-        Logger::debug(&"Adding integrity plugin.".into());
-        vec_plugins.push(IntegrityPlugin::new()?.base.clone());
-
-        if let Some(pass) = password {
-            Logger::debug(&"Adding encryption plugin.".into());
-            let encryption = EncryptionPlugin::new(pass)?;
-            vec_plugins.push(encryption.base.clone());
-        }
-
+        Logger::log("DB",&format!("Creating database: {}", db_name).into());
         let mut schemas: HashMap<String, Schema> = HashMap::new();
         let mut migrations: HashMap<String, JsValue> = HashMap::new();
         let keys = Object::keys(&schemas_js.clone()).into_iter();
+
         for collection in keys {
             let collection_string: String = collection.as_string().ok_or("Invalid collection name")?;
-            Logger::debug(&format!("Processing schema for collection: {}", collection_string).into());
+            Logger::debug("DB",&format!("Processing schema for collection: {}", collection_string).into());
             let schema_type = Reflect::get(&schemas_js.clone(), &collection)?;
             let schema = Schema::create(schema_type)?;
             let migration = Reflect::get(&migrations_js.clone(), &collection)?;
@@ -266,7 +230,7 @@ impl Database {
                     .map_err(|e| RIDBError::from(e))?;
 
                 if function.is_undefined() {
-                    Logger::debug(&format!("Migration path undefined for collection: {}, version: {}", collection_string, version).into());
+                    Logger::debug("DB",&format!("Migration path undefined for collection: {}, version: {}", collection_string, version).into());
                     return Err(
                         JsValue::from(
                             format!("Required Schema {} migration path {} to not be undefined", collection_string, version)
@@ -275,11 +239,44 @@ impl Database {
                 }
             }
 
-            schemas.insert(collection_string.clone(), schema);
-            migrations.insert(collection_string, migration);
+            schemas.insert(collection_string.clone(), schema.clone());
+            migrations.insert(collection_string.clone(), migration);
+
         }
 
-        Logger::debug(&"Creating storage with schemas and migrations.".into());
+
+        let storage: StorageExternal = if let Some(storage) = storage {
+            Logger::debug("DB",&"Using provided storage.".into());
+            storage.into()
+        } else {
+            Logger::debug("DB",&"Creating InMemory storage.".into());
+            JsValue::from(InMemory::create(db_name, schemas_js.clone()).await?).into()
+        };
+
+        let vec_plugins_js: Vec<JsValue> = module.apply(plugins)?;
+        Logger::debug("DB",&"Plugins applied.".into());
+        let mut vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
+            .map(|plugin| plugin.unchecked_into::<BasePlugin>())
+            .collect();
+
+        Logger::debug("DB",&"Adding defaults plugin.".into());
+        vec_plugins.push(DefaultsPlugin::new()?.base.clone());
+
+        Logger::debug("DB",&"Adding migration plugin.".into());
+        vec_plugins.push(MigrationPlugin::new()?.base.clone());
+
+        Logger::debug("DB",&"Adding integrity plugin.".into());
+        vec_plugins.push(IntegrityPlugin::new()?.base.clone());
+
+        if let Some(pass) = password {
+            Logger::debug("DB",&"Adding encryption plugin.".into());
+            let encryption = EncryptionPlugin::new(pass)?;
+            vec_plugins.push(encryption.base.clone());
+        }
+
+
+
+        Logger::debug("DB",&"Creating storage with schemas and migrations.".into());
         let mounted_storage = Storage::create(
             schemas,
             migrations,
@@ -287,10 +284,10 @@ impl Database {
             storage.clone()
         ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
-        Logger::debug(&"Database created successfully.".into());
+        Logger::log("DB",&"Database created successfully.".into());
         let db = Database { storage:mounted_storage, started: false };
         
-        storage.start().await.unwrap();
+        storage.start().await?;
 
         Ok(db)
     }

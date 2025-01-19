@@ -889,6 +889,163 @@ export default (platform: string, storages: StoragesType[]) => {
                     expect(results.length).to.equal(1);
                     expect(results[0].id).to.equal('u3');
                 });
+
+                it('Should create and verify index collections', async () => {
+                    const usersSchema = {
+                        version: 0 as const,
+                        primaryKey: 'id',
+                        type: SchemaFieldType.object,
+                        indexes: ['age'],
+                        properties: {
+                            id: {
+                                type: SchemaFieldType.string,
+                                maxLength: 60
+                            },
+                            name: {
+                                type: SchemaFieldType.string,
+                                maxLength: 100
+                            },
+                            age: {
+                                type: SchemaFieldType.number
+                            }
+                        }
+                    }
+               
+                    const db = new RIDB({
+                        dbName,
+                        schemas: {
+                            users: usersSchema
+                        }
+                    });
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+
+                    // Verify main collection exists
+                    expect(db.collections).to.haveOwnProperty("users");
+
+                    // Create a user and verify indexes are maintained
+                    await db.collections.users.create({
+                        id: "user1",
+                        name: "John Doe",
+                        age: 30
+                    });
+
+                    await db.collections.users.create({
+                        id: "user2",
+                        name: "Doe John",
+                        age: 35
+                    });
+
+                    const usersAge30 = await db.collections.users.find({
+                        age: 30
+                    });
+
+                    expect(usersAge30.length).to.eq(1);
+
+                    const usersAgeOlderThan20 = await db.collections.users.find({
+                        age: { $gt: 20 }
+                    });
+
+                    expect(usersAgeOlderThan20.length).to.eq(2);
+                });
+
+                it('Should work correctly without indexes', async () => {
+                    const db = new RIDB({
+                        dbName,
+                        schemas: {
+                            users: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                properties: {
+                                    id: {
+                                        type: SchemaFieldType.string,
+                                        maxLength: 60
+                                    },
+                                    name: {
+                                        type: SchemaFieldType.string,
+                                        maxLength: 100
+                                    }
+                                }
+                            }
+                        } as const
+                    });
+
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+
+                    // Verify main collection exists
+                    expect(db.collections).to.haveOwnProperty("users");
+
+                    // Create a user
+                    const user = await db.collections.users.create({
+                        id: "user1",
+                        name: "John Doe"
+                    });
+
+                    expect(user).to.not.be.undefined;
+                    expect(user.id).to.eq("user1");
+                });
+
+                it('Should maintain index integrity during CRUD operations', async () => {
+                    const db = new RIDB({
+                        dbName,
+                        schemas: {
+                            users: {
+                                version: 0,
+                                primaryKey: 'id',
+                                type: SchemaFieldType.object,
+                                indexes: ['name'],
+                                properties: {
+                                    id: {
+                                        type: SchemaFieldType.string,
+                                        maxLength: 60
+                                    },
+                                    name: {
+                                        type: SchemaFieldType.string,
+                                        maxLength: 100
+                                    }
+                                }
+                            }
+                        } as const
+                    });
+
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+
+                    // Create
+                    const user = await db.collections.users.create({
+                        id: "user1",
+                        name: "John Doe"
+                    });
+                    expect(user).to.not.be.undefined;
+
+                    // Update
+                    await db.collections.users.update({
+                        id: "user1",
+                        name: "Jane Doe"
+                    });
+
+                    // Find by index
+                    const found = await db.collections.users.find({
+                        name: "Jane Doe"
+                    });
+                    expect(found.length).to.eq(1);
+                    expect(found[0].id).to.eq("user1");
+
+                    // Delete
+                    await db.collections.users.delete("user1");
+                    const notFound = await db.collections.users.find({
+                        name: "Jane Doe"
+                    });
+                    expect(notFound.length).to.eq(0);
+                });
             });
 
 

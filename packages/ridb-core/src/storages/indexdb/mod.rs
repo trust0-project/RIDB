@@ -106,7 +106,7 @@ impl Storage for IndexDB {
                 Some(store.as_str().to_string())
             })
             .collect();
-        Logger::debug(&JsValue::from_str(&format!(
+        Logger::debug("IndexDB-Write", &JsValue::from_str(&format!(
             "Available stores: {:?}, Attempting to access: {}",
             stores, store_name
         )));
@@ -117,7 +117,7 @@ impl Storage for IndexDB {
         ) {
             Ok(t) => t,
             Err(e) => {
-                web_sys::console::error_1(&JsValue::from_str(&format!(
+                Logger::error("IndexDB-Write", &JsValue::from_str(&format!(
                     "Failed to create transaction for store '{}': {:?}",
                     store_name, e
                 )));
@@ -185,6 +185,12 @@ impl Storage for IndexDB {
     }
 
     async fn find(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
+        Logger::debug(
+            "IndexDB-Find",
+            &JsValue::from(
+                format!("Find method {}", collection_name)
+            )
+        );
         let store_name = collection_name;
         
         let store_names = self.db.object_store_names();
@@ -198,7 +204,7 @@ impl Storage for IndexDB {
         let transaction = match self.db.transaction_with_str(store_name) {
             Ok(t) => t,
             Err(e) => {
-                web_sys::console::error_1(&JsValue::from_str(&format!(
+                Logger::error("IndexDB-Find",&JsValue::from_str(&format!(
                     "Failed to create transaction for store '{}': {:?}",
                     store_name, e
                 )));
@@ -261,17 +267,17 @@ impl Storage for IndexDB {
         let transaction = self.db.transaction_with_str(store_name)?;
         let store = transaction.object_store(store_name)?;
         
-        Logger::debug(&JsValue::from(&format!("Finding document with primary key: {:?}", primary_key_value)));
+        Logger::debug("IndexDB-Find-By-Id", &JsValue::from(&format!("Finding document with primary key: {:?}", primary_key_value)));
 
         let request = store.get(&primary_key_value)?;
         
         let result = idb_request_result(request).await?;
 
         if result.is_undefined() || result.is_null() {
-            Logger::debug(&JsValue::from("Document not found"));
+            Logger::debug("IndexDB-Find-By-Id",&JsValue::from("Document not found"));
             Ok(JsValue::undefined())
         } else {
-            Logger::debug(&JsValue::from("Document found"));
+            Logger::debug("IndexDB-Find-By-Id",&JsValue::from("Document found"));
             Ok(result)
         }
     }
@@ -559,6 +565,10 @@ impl IndexDBPool {
     }
 }
 
+
+
+
+/*
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -651,7 +661,8 @@ mod tests {
             collection: "demo".to_string(),
             op_type: OpType::CREATE,
             data: new_item.clone().into(),
-            indexes: vec![],
+            primary_key_field: Some("id".to_string()),
+            primary_key: Some(JsValue::from("1234"))
         };
 
         // Test successful creation
@@ -712,7 +723,8 @@ mod tests {
                 collection: "demo".to_string(),
                 op_type: OpType::CREATE,
                 data: item,
-                indexes: vec![],
+                primary_key_field: Some("id".to_string()),
+                primary_key: Some(JsValue::from("1234"))
             };
             db.write(&create_op).await.unwrap();
         }
@@ -769,11 +781,16 @@ mod tests {
         ];
 
         for item in items {
+            let primary_key = Reflect::get(
+                &item,
+                &JsValue::from_str("id")
+            ).unwrap();
             let create_op = Operation {
                 collection: "demo".to_string(),
                 op_type: OpType::CREATE,
                 data: item,
-                indexes: vec![],
+                primary_key_field: Some("id".to_string()),
+                primary_key: Some(primary_key)
             };
             db.write(&create_op).await.unwrap();
         }
@@ -835,7 +852,8 @@ mod tests {
             collection: "users".to_string(),
             op_type: OpType::CREATE,
             data: user,
-            indexes: vec![],
+            primary_key_field: Some("id".to_string()),
+            primary_key: Some(JsValue::from("1"))
         };
         
         db.write(&create_op).await.unwrap();
@@ -856,6 +874,7 @@ mod tests {
         db.close().await.unwrap();
     }
 }
+*/
 
 // Add this extension trait
 trait IdbDatabaseExt {

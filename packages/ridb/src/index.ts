@@ -242,6 +242,38 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
         return internal!;
     }
 
+    private mountSchemas() {
+        const schemas:SchemaTypeRecord = this.schemas;
+        for (const [collection, schema] of Object.entries(schemas)) {
+            if (schema.indexes) {
+                for (const index of schema.indexes) {
+                    const indexName = `idx_${collection}_${index}`;
+                    const property_type = schema.properties[index].type;
+                    const item_type = schema.properties[schema.primaryKey].type;
+                    schemas[indexName] = {
+                        version: 0,
+                        indexes: [],
+                        encrypted: [],
+                        primaryKey: "id",
+                        type: "object",
+                        properties: {
+                            id: {
+                                type: property_type
+                            },
+                            items: {
+                                type: "array",
+                                items: {
+                                    type: item_type
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return schemas as T;
+    }
+
     /**
      * Starts the database.
      * @returns {Promise<Database<T>>} A promise that resolves to the database instance.
@@ -260,14 +292,16 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
             if (StorageClass && !StorageClass.create) {
                 throw new Error("Your storage does not have an async create function, please check documentation")
             }
+
+            const mountedSchemas = this.mountSchemas();
             
             const storage = StorageClass ? 
-                await StorageClass.create(this.dbName, this.schemas, options) :
+                await StorageClass.create(this.dbName, mountedSchemas, options) :
                 undefined;
 
             this._db ??= await Database.create<T>(
                 this.dbName,
-                this.schemas,
+                mountedSchemas,
                 this.migrations,
                 this.plugins,
                 {

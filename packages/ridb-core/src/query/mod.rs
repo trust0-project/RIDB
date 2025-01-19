@@ -38,7 +38,7 @@ export class Query<T extends SchemaType> {
 #[wasm_bindgen(skip_typescript)]
 pub struct Query {
     pub(crate) query: JsValue,
-    pub(crate) schema: Schema,
+    pub(crate) schema: Schema
 }
 
 #[wasm_bindgen]
@@ -113,7 +113,7 @@ impl Query {
         self.process_query(&self.query)
     }
 
-    fn extract_properties(&self, properties_jsvalue: &JsValue) -> Result<HashMap<String, String>, JsValue> {
+     fn extract_properties(&self, properties_jsvalue: &JsValue) -> Result<HashMap<String, String>, JsValue> {
         if !properties_jsvalue.is_object() {
             return Err(JsValue::from_str("Properties is not an object"));
         }
@@ -135,47 +135,71 @@ impl Query {
         Ok(properties)
     }
 
-    fn process_query(&self, query: &JsValue) -> Result<JsValue, JsValue> {
-        // Get properties from the schema
+    pub fn process_query(&self, query: &JsValue) -> Result<JsValue, JsValue> {
+
         let properties_jsvalue = self.schema.get_properties()?;
 
-        // Extract properties and their types from the properties_jsvalue
+
         let properties = self.extract_properties(&properties_jsvalue)?;
 
+
         if !query.is_object() {
+
             return Err(JsValue::from_str("Query must be an object"));
         }
+
         let result = Object::new();
         let keys = Object::keys(&Object::from(query.clone()));
 
         for i in 0..keys.length() {
             let key = keys.get(i).as_string().unwrap_or_default();
             let value = Reflect::get(query, &JsValue::from_str(&key))?;
+
+
             if key == "$and" || key == "$or" {
-                // Handle logical operators
+
                 if !Array::is_array(&value) {
+
                     return Err(JsValue::from_str(&format!("{} must be an array", key)));
                 }
                 let arr = Array::from(&value);
                 let processed_arr = Array::new();
+
                 for j in 0..arr.length() {
+
                     let item = arr.get(j);
                     let processed_item = self.process_query(&item)?;
                     processed_arr.push(&processed_item);
                 }
                 Reflect::set(&result, &JsValue::from_str(&key), &processed_arr)?;
             } else {
-                // Check if key is a valid property
+
                 if let Some(property_type) = properties.get(&key) {
-                    // Process the value
+
                     let processed_value = self.process_value(&value, property_type)?;
                     Reflect::set(&result, &JsValue::from_str(&key), &processed_value)?;
+                } else if properties.get("id").is_some() && self.schema.clone().indexes.is_some() {
+
+                    if let Some(property_type) = properties.get("id") {
+
+                        let processed_value = self.process_value(&value, property_type)?;
+                        Reflect::set(&result, &JsValue::from_str(&key), &processed_value)?;
+                    } else {
+
+                        return Err(JsValue::from_str(&format!("Invalid property: {} does not exist", key)));
+                    }
                 } else {
-                    return Err(JsValue::from_str(&format!("Invalid property: {}", key)));
+
+                    return Err(JsValue::from_str(&format!("Invalid property: {} does not exist", key)));
                 }
             }
         }
-        Ok(result.into())
+
+        Ok(
+            JsValue::from(
+                result
+            )
+        )
     }
 
     fn process_value(&self, value: &JsValue, property_type: &str) -> Result<JsValue, JsValue> {
@@ -312,7 +336,7 @@ fn test_query_parse_invalid_property() {
     assert!(result.is_err());
     assert_eq!(
         result.err().unwrap().as_string().unwrap(),
-        "Invalid property: nonexistent"
+        "Invalid property: nonexistent does not exist"
     );
 }
 
@@ -720,6 +744,27 @@ fn test_query_parse_empty_query() {
     let result = query.parse();
     assert!(result.is_ok());
 }
+
+#[wasm_bindgen_test]
+fn test_query_parse_age_query() {
+    let schema_str = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "age": { "type": "number" }
+        }
+    }"#;
+    let query_str = r#"{
+        "age":25
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_str).unwrap()).unwrap();
+    let query = Query::new(JSON::parse(query_str).unwrap(), schema).unwrap();
+    let result = query.parse();
+    assert!(result.is_ok());
+}
+
 
 #[wasm_bindgen_test]
 fn test_query_parse_non_object_query() {
