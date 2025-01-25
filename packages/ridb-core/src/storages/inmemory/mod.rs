@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
@@ -371,13 +371,13 @@ impl Storage for InMemory {
 impl InMemory {
 
     /// Shared logic to gather all documents matching a given query from a specific collection.
-    /// This is used by both `find` and `count` so we don't duplicate logic.
+    /// This version retrieves document IDs from each matching index and intersects them before
+    /// performing a final document filter based on the full query.
     async fn get_matching_documents(
         &self,
         collection_name: &str,
         query: &Query
     ) -> Result<Vec<JsValue>, JsValue> {
-        // Already has some logging, we keep it as is and allow existing logs to show verbosity too.
         Logger::log(
             "InMemory::get_matching_documents",
             &JsValue::from_str(&format!(
@@ -423,7 +423,8 @@ impl InMemory {
             ))
         );
 
-        // If no indexed fields match the query, do a full table scan
+        // If no indexed fields match the query, do a full table scan.
+        // Otherwise, gather an intersection of document IDs from all relevant indexes.
         if query_properties_with_index.is_empty() {
             Logger::log(
                 "InMemory::get_matching_documents",
@@ -432,44 +433,61 @@ impl InMemory {
             let table_name = format!("pk_{}_{}", collection_name, primary_key);
             if let Some(documents) = read_lock.get(&table_name) {
                 for (_, document) in documents.iter() {
-                    let matches = self.core.document_matches_query(&document, query)?;
+                    let matches = self.core.document_matches_query(document, query)?;
                     if matches {
                         matched_docs.push(document.clone());
                     }
                 }
             }
         } else {
-            // Use the first indexed property to filter results
-            let indexed_property = query_properties_with_index.first().unwrap();
-            Logger::log(
-                "InMemory::get_matching_documents",
-                &JsValue::from_str(&format!(
-                    "Using indexed property '{}' for retrieval",
-                    indexed_property
-                ))
-            );
+            // For each indexed property, gather a set of all doc IDs that match that single index.
+            let mut doc_id_sets: Vec<HashSet<String>> = Vec::new();
 
-            let index_table_name = format!("idx_{}_{}", collection_name, indexed_property);
-            let table_name = format!("pk_{}_{}", collection_name, primary_key);
+            for indexed_property in &query_properties_with_index {
+                let index_table_name = format!("idx_{}_{}", collection_name, indexed_property);
+                let mut this_index_doc_ids = HashSet::new();
 
-            if let Some(index_document) = read_lock.get(&index_table_name) {
-                // For each index entry, gather the documents that match
-                for idx_value in index_document.values() {
-                    // 'items' is the array of primary-key strings for docs matching that index
-                    let index_items = js_sys::Reflect::get(idx_value, &JsValue::from_str("items"))
-                        .unwrap_or_else(|_| JsValue::from(js_sys::Array::new()));
-                    let document_ids = js_sys::Array::from(&index_items);
-                    for document_id_js in document_ids.iter() {
-                        // Look up actual documents in the primary key index
-                        if let Some(rows) = read_lock.get(&table_name) {
-                            if let Some(document_id) = document_id_js.as_string() {
-                                if let Some(doc) = rows.get(&document_id) {
-                                    let matches = self.core.document_matches_query(doc, query)?;
-                                    if matches {
-                                        matched_docs.push(doc.clone());
-                                    }
-                                }
+                if let Some(index_document) = read_lock.get(&index_table_name) {
+                    // For each index entry, gather the relevant document primary keys
+                    for idx_value in index_document.values() {
+                        let index_items = Reflect::get(idx_value, &JsValue::from_str("items"))
+                            .unwrap_or_else(|_| JsValue::from(Array::new()));
+                        let document_ids = Array::from(&index_items);
+
+                        for document_id_js in document_ids.iter() {
+                            if let Some(document_id_str) = document_id_js.as_string() {
+                                this_index_doc_ids.insert(document_id_str);
                             }
+                        }
+                    }
+                }
+                doc_id_sets.push(this_index_doc_ids);
+            }
+
+            // Intersect all sets to ensure the documents match *all* indexed query parts.
+            // If there's only one set, the intersection is just that set.
+            let mut intersection_ids = if let Some(first_set) = doc_id_sets.clone().into_iter().next() {
+                first_set
+            } else {
+                HashSet::new()
+            };
+
+            // Intersect with the remaining sets
+            for set in doc_id_sets.clone().into_iter() {
+                intersection_ids = intersection_ids
+                    .intersection(&set)
+                    .cloned()
+                    .collect::<HashSet<String>>();
+            }
+
+            // Now fetch the actual documents from the primary-key table
+            // and do a final match against the full query conditions.
+            let table_name = format!("pk_{}_{}", collection_name, primary_key);
+            if let Some(pk_map) = read_lock.get(&table_name) {
+                for doc_id in intersection_ids {
+                    if let Some(doc) = pk_map.get(&doc_id) {
+                        if self.core.document_matches_query(doc, query)? {
+                            matched_docs.push(doc.clone());
                         }
                     }
                 }
