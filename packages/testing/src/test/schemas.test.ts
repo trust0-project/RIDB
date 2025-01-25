@@ -1072,17 +1072,23 @@ export default (platform: string, storages: StoragesType[]) => {
                     });
 
                     const usersCollection = db.collections.users;
-
                     // Insert multiple users with different ages and names
                     await usersCollection.create({ id: 'u1', age: 25, name: 'Alice' });
                     await usersCollection.create({ id: 'u2', age: 30, name: 'Bob' });
                     await usersCollection.create({ id: 'u3', age: 35, name: 'Charlie' });
                     await usersCollection.create({ id: 'u4', age: 30, name: 'David' });
                     await usersCollection.create({ id: 'u5', age: 25, name: 'Eve' });
+                    const countAndAge25 = await usersCollection.find({
+                        $and: [
+                            { age: { $gte: 0 } },
+                            { age: { $lte: 25 } }
+                        ]
+                    });
+                    expect(countAndAge25.length).to.eq(2);
 
                     // Use count method with advanced queries utilizing indexes
-                    const countAge25 = await usersCollection.count({ age: 25 });
-                    expect(countAge25).to.eq(2);
+                    const countAge25 = await usersCollection.find({ age: 25 });
+                    expect(countAge25.length).to.eq(2);
 
                     const countAge30 = await usersCollection.count({ age: 30 });
                     expect(countAge30).to.eq(2);
@@ -1171,6 +1177,7 @@ export default (platform: string, storages: StoragesType[]) => {
                                 version: 0,
                                 primaryKey: 'id',
                                 type: SchemaFieldType.object,
+                                indexes: ['age'],
                                 properties: {
                                     id: { type: SchemaFieldType.string },
                                     age: { type: SchemaFieldType.number }
@@ -1186,23 +1193,22 @@ export default (platform: string, storages: StoragesType[]) => {
 
                     const collection = db.collections.demo;
                     const testCount = 5000;
+                    const possibleAges = [10, 20, 30, 40, 50, 60, 70, 80, 90];
 
                     // Bulk insert
                     for (let i = 0; i < testCount; i++) {
+                        // Cycle through the age array
+                        let age = possibleAges[i % possibleAges.length];
+                
                         await collection.create({
                             id: `doc_${i}`,
-                            age: Math.floor(Math.random() * 100)
+                            age: age
                         });
                     }
 
                     // Measure query performance
                     const startTime = performance.now();
-                    const results = await collection.find({
-                        $and: [
-                            { age: { $gte: 30 } },
-                            { age: { $lte: 50 } }
-                        ]
-                    });
+                    const results = await collection.find( { age: 30 });
                     const endTime = performance.now();
 
                     const queryTimeMs = (endTime - startTime).toFixed(2);

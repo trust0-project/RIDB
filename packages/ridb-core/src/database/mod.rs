@@ -212,7 +212,7 @@ impl Database {
         storage: Option<StorageExternal>
     ) -> Result<Database, JsValue> {
 
-        Logger::log("DB",&format!("Creating database: {}", db_name).into());
+        Logger::debug("DB",&format!("Creating database: {}", db_name).into());
         let mut schemas: HashMap<String, Schema> = HashMap::new();
         let mut migrations: HashMap<String, JsValue> = HashMap::new();
         let keys = Object::keys(&schemas_js.clone()).into_iter();
@@ -284,7 +284,7 @@ impl Database {
             storage.clone()
         ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
-        Logger::log("DB",&"Database created successfully.".into());
+        Logger::debug("DB",&"Database created successfully.".into());
         let db = Database { storage:mounted_storage, started: false };
         
         storage.start().await?;

@@ -3,6 +3,8 @@ use std::collections::HashMap;
 use js_sys::{Object, Reflect};
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
+use crate::schema::property::Property;
+use crate::schema::property_type::PropertyType;
 use crate::schema::Schema;
 
 use super::core::CoreStorage;
@@ -24,13 +26,11 @@ export class BaseStorage<Schemas extends SchemaTypeRecord> extends StorageIntern
             SchemasCreate
         >
     >;
-    
     constructor(
         dbName: string, 
         schemas: Schemas, 
         options?: BaseStorageOptions
     );
-
     readonly dbName: string;
     readonly schemas: Record<keyof Schemas, Schema<Schemas[keyof Schemas]>>;
     readonly options: BaseStorageOptions;
@@ -41,10 +41,10 @@ export class BaseStorage<Schemas extends SchemaTypeRecord> extends StorageIntern
     findDocumentById(collectionName: keyof Schemas, id: string): Promise<Doc<Schemas[keyof Schemas]> | null | undefined>;
     find(collectionName: keyof Schemas, query: QueryType<Schemas[keyof Schemas]>): Promise<Doc<Schemas[keyof Schemas]>[]>;
     write(op: Operation<Schemas[keyof Schemas]>): Promise<Doc<Schemas[keyof Schemas]>>;
-
     getOption(name: string): string | boolean | number | undefined;
     getSchema(name: string): Schema<any>;
-
+    //Call addIndexSchemas if you need extra indexing schemas for your database
+    addIndexSchemas(): null
 }
 "#;
 
@@ -89,6 +89,98 @@ impl BaseStorage {
             core: CoreStorage::new()
         };
         Ok(base_storage)
+    }
+
+     fn get_index_schemas(&mut self) -> Result<HashMap<String, Schema>, JsValue> {
+        let mut new_schemas: HashMap<String, Schema> = HashMap::new();
+        for (collection_name, schema) in self.clone().schemas.into_iter() {
+            if schema.indexes.is_some() {
+                let indexes = schema.indexes.unwrap();
+                for index in indexes {
+                    let index_name = format!(
+                        "idx_{}_{}",
+                        &collection_name,
+                        index
+                    );
+                    let property_type = schema.properties.get(&index).unwrap().property_type;
+                    let item_type = schema.properties.get(&schema.primary_key).unwrap().property_type;
+                    let empty_vec: Vec<String> = Vec::new();
+                    let mut properties:HashMap<String, Property> = HashMap::new();
+                    properties.insert(
+                        "id".to_string(),
+                        Property {
+                            property_type,
+                            items:None,
+                            max_items: None,
+                            min_length: None,
+                            min_items: None,
+                            properties: None,
+                            default: None,
+                            required: None,
+                            max_length: None,
+                        }
+                    );
+                    properties.insert(
+                        "items".to_string(),
+                        Property {
+                            property_type: PropertyType::Array,
+                            items:Some(
+                                Box::from(
+                                    Property {
+                                        property_type: item_type,
+                                        items: None,
+                                        max_items: None,
+                                        min_length: None,
+                                        min_items: None,
+                                        properties: None,
+                                        default: None,
+                                        required: None,
+                                        max_length: None,
+                                    }
+                                )
+                            ),
+                            max_items: None,
+                            min_length: None,
+                            min_items: None,
+                            properties: None,
+                            default: None,
+                            required: None,
+                            max_length: None,
+                        }
+                    );
+
+                    let index_schema = Schema {
+                        version: 0,
+                        indexes: Some(empty_vec.clone()),
+                        encrypted:  Some(empty_vec.clone()),
+                        primary_key: "id".to_string(),
+                        schema_type: "object".to_string(),
+                        properties,
+                    };
+
+                    new_schemas.insert(
+                        index_name,
+                        index_schema
+                    );
+
+                }
+            }
+        }
+        Ok(
+            new_schemas
+        )
+    }
+
+    #[wasm_bindgen(js_name = addIndexSchemas)]
+    pub fn add_index_schemas(&mut self) -> Result<JsValue, JsValue> {
+        let index_schemas = self.get_index_schemas()?;
+        for (collection_name, schema) in index_schemas.into_iter() {
+            self.schemas.insert(
+                collection_name,
+                schema
+            );
+        }
+        Ok(JsValue::null())
     }
 
     #[wasm_bindgen(js_name = getOption)]

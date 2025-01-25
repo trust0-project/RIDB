@@ -1,7 +1,8 @@
 use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
-use crate::logger::Logger;
+use crate::operation::Operation;
 use crate::query::Query;
+use crate::schema::Schema;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -12,11 +13,10 @@ export class CoreStorage {
     * @returns {boolean}
     */
     matchesQuery(document: any, query: Query<any>): boolean;
+    getPrimaryKeyTyped(value: any): string | number;
+    getIndexes(schema: Schema<any>, op: Operation): string[];
 }
 "#;
-
-
-
 
 
 #[derive(Debug, Clone)]
@@ -34,8 +34,8 @@ impl CoreStorage {
     }
 
 
-    #[wasm_bindgen(js_name = getPrimaryKey)]
-    pub fn  get_primary_key(&self, value:JsValue) -> Result<String, JsValue> {
+    #[wasm_bindgen(js_name = getPrimaryKeyTyped)]
+    pub fn  get_primary_key_typed(&self, value:JsValue) -> Result<String, JsValue> {
         if value.is_undefined() || value.is_null() {
             return Err(JsValue::from_str("Document must contain a primary key"));
         }
@@ -49,6 +49,33 @@ impl CoreStorage {
     }
 
 
+    #[wasm_bindgen(js_name = getIndexes)]
+    pub fn schema_indexes(
+        &self,
+        schema: &Schema,
+        op: &Operation
+    ) -> Result<Vec<String>, JsValue> {
+        let primary_key = schema.primary_key.clone();
+
+        let mut indexes = schema.indexes.clone()
+            .unwrap_or_default()
+            .into_iter()
+            .map(|index| format!("idx_{}_{}", op.collection, index))
+            .collect::<Vec<String>>();
+
+        let primary_index_name = format!("pk_{}_{}", op.collection, &primary_key);
+
+        if !indexes.contains(&primary_index_name) {
+            indexes.push(primary_index_name.clone());
+        }
+
+        Ok(
+            indexes
+        )
+
+    }
+
+
     #[wasm_bindgen(js_name = matchesQuery)]
     pub fn document_matches_query(
         &self, 
@@ -56,15 +83,17 @@ impl CoreStorage {
         query: &Query
     ) -> Result<bool, JsValue> {
 
+        if !document.is_object() {
+            return Ok(false);
+        }
+
         let user_query = query.get_query()?;
         let keys = Object::keys(&Object::from(user_query.clone()));
 
         for i in 0..keys.length() {
             let key = keys.get(i).as_string().unwrap_or_default();
-            let value = Reflect::get(
-                &user_query.clone(),
-                &JsValue::from_str(&key)
-            ).map_err(|e| JsValue::from(format!("Failed to get the query value, err {:?}", e)))?;
+            let value = Reflect::get(&user_query.clone(), &JsValue::from_str(&key))
+                .map_err(|e| JsValue::from(format!("Failed to get the query value, err {:?}", e)))?;
 
             if key == "$and" {
                 // $and operator: all conditions must be true
@@ -81,6 +110,7 @@ impl CoreStorage {
                     }
                 }
                 return Ok(true);
+
             } else if key == "$or" {
                 // $or operator: at least one condition must be true
                 if !Array::is_array(&value) {
@@ -96,12 +126,9 @@ impl CoreStorage {
                     }
                 }
                 return Ok(false);
+
             } else {
-                let matches = self.evaluate_condition(
-                    &document,
-                    key,
-                    &value
-                )?;
+                let matches = self.evaluate_condition(document, key, &value)?;
                 if !matches {
                     return Ok(false);
                 }
@@ -126,25 +153,7 @@ impl CoreStorage {
         condition_key: String,
         condition: &JsValue
     ) -> Result<bool, JsValue> {
-
-        Logger::debug(
-            "Core-evaluate-condition",
-            &JsValue::from(
-                &format!(
-                    "Finding key {:?} in document {:?}",
-                    document,
-                    condition_key,
-                )
-            )
-        );
-
-
-        let document_field = Reflect::get(
-            &document,
-            &JsValue::from(condition_key.clone())
-        )?;
-
-
+        let document_field = Reflect::get(document, &JsValue::from(condition_key.clone()))?;
 
         if condition.is_object() && !Array::is_array(condition) {
             // Condition is an object with operators
@@ -157,9 +166,9 @@ impl CoreStorage {
                     "$gt" | "$gte" | "$lt" | "$lte" => {
                         let cmp = self.get_cmp(key)?;
                         let res = self.compare_values(
-                            &document_field.clone(),
+                            &document_field,
                             condition_key.clone(),
-                            &condition_value.clone(),
+                            &condition_value,
                             cmp
                         )?;
                         if !res {
@@ -167,14 +176,14 @@ impl CoreStorage {
                         }
                     }
                     "$in" => {
-                        if !Array::is_array(&condition_value.clone()) {
+                        if !Array::is_array(&condition_value) {
                             return Err(JsValue::from_str("$in value must be an array"));
                         }
-                        let arr = Array::from(&condition_value.clone());
+                        let arr = Array::from(&condition_value);
                         let mut found = false;
                         for j in 0..arr.length() {
                             let item = arr.get(j);
-                            if self.values_equal(&document_field.clone(), &item)? {
+                            if self.values_equal(&document_field, &item)? {
                                 found = true;
                                 break;
                             }
@@ -183,13 +192,17 @@ impl CoreStorage {
                             return Ok(false);
                         }
                     }
-                    _ => return Err(JsValue::from_str(&format!("Unsupported operator: {}", key))),
+                    _ => {
+                        return Err(JsValue::from_str(
+                            &format!("Unsupported operator: {}", key)
+                        ));
+                    }
                 };
             }
             Ok(true)
         } else {
             // Direct value comparison
-            self.values_equal(&document_field.clone(), condition)
+            self.values_equal(&document_field, condition)
         }
     }
 

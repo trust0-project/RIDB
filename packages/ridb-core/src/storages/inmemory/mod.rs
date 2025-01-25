@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use js_sys::{Array, Object, Reflect, JSON};
+use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::operation::{OpType, Operation};
@@ -7,7 +7,6 @@ use crate::query::Query;
 use crate::storage::internals::base_storage::BaseStorage;
 use crate::storage::internals::core::CoreStorage;
 use std::sync::RwLock;
-use regex::Regex;
 use crate::logger::Logger;
 use super::base::Storage;
 
@@ -47,296 +46,211 @@ pub struct InMemory {
 impl Storage for InMemory {
 
     async fn write(&self, op: &Operation) -> Result<JsValue, JsValue> {
-        
+        Logger::log(
+            "InMemory::write",
+            &JsValue::from_str(&format!(
+                "Write operation started. Collection: '{}', OpType: '{:?}', Primary Key Field: '{:?}'",
+                op.collection, op.op_type, op.primary_key_field
+            ))
+        );
+
         let schema = self.base.schemas
             .get(op.collection.as_str())
-            .ok_or_else(|| JsValue::from_str("Collection not found"))?;
+            .ok_or_else(|| {
+                let msg = "Collection not found".to_string();
+                Logger::log(
+                    "InMemory::write",
+                    &JsValue::from_str(&format!("Error: {}", msg))
+                );
+                JsValue::from_str(&msg)
+            })?;
 
         let primary_key = schema.primary_key.clone();
-
         let index_name = format!(
             "pk_{}_{}",
             op.collection,
             primary_key.clone()
         );
-        Logger::debug("InMemory-Write",&JsValue::from(&format!("Attempting to acquire write lock for index: {}", index_name)));
 
-        let mut index_guard = self.by_index.write().map_err(|_| JsValue::from_str("Failed to acquire write lock"))?;
-        let index = index_guard
-            .entry(index_name.clone())
-            .or_insert_with(HashMap::new);
-
+        let mut index_guard = self.by_index.write().map_err(|_| {
+            let msg = "Failed to acquire write lock".to_string();
+            Logger::log(
+                "InMemory::write",
+                &JsValue::from_str(&format!("Error: {}", msg))
+            );
+            JsValue::from_str(&msg)
+        })?;
+        
         match op.op_type {
             OpType::CREATE | OpType::UPDATE => {
                 let document = op.data.clone();
-
-                // Extract primary key
                 let pk_value = Reflect::get(&document, &JsValue::from_str(&primary_key))
-                    .map_err(|e| JsValue::from_str(&format!("Failed to get primary key: {:?}", e)))?;
-
-                let pk_str = self.core.get_primary_key(pk_value.clone())?;
-
-                Logger::debug("InMemory-Write",&JsValue::from(&format!("Primary key extracted: {}", pk_str)));
-
+                    .map_err(|e| {
+                        let msg = format!("Failed to get primary key: {:?}", e);
+                        Logger::log("InMemory::write", &JsValue::from_str(&format!("Error: {}", msg)));
+                        JsValue::from_str(&msg)
+                    })?;
+                let pk_str = self.core.get_primary_key_typed(pk_value.clone())?;
                 match op.op_type {
                     OpType::CREATE => {
-                        Logger::debug("InMemory-Write",&JsValue::from(&format!("Creating document with primary key: {}", pk_str)));
-
-                        if index.contains_key(&pk_str) {
-                            Logger::debug("InMemory-Write",&JsValue::from("Document with this primary key already exists"));
-                            return Err(JsValue::from_str("Document with this primary key already exists"));
-                        }
-                        
-                        index.insert(pk_str.clone(), document.clone());
-                        Logger::debug("InMemory-Write",&JsValue::from(&format!("Document created with primary key: {}", pk_str)));
-
-                        let mut indexes = schema.indexes.clone()
-                            .unwrap_or_default()
-                            .into_iter()
-                            .map(|index| format!("idx_{}_{}", op.collection, index))
-                            .collect::<Vec<String>>();
-
-                        let primary_index_name = format!("pk_{}_{}", op.collection, &primary_key);
-                        if !indexes.contains(&primary_index_name) {
-                            Logger::debug("InMemory-Write",&JsValue::from(
-                                &format!("ADDING primary index '{}' to indexes", primary_index_name)
-                            ));
-                            indexes.push(primary_index_name.clone());
-                            Logger::debug("InMemory-Write",&JsValue::from(
-                                &format!("ADDED primary index '{}' to indexes", primary_index_name)
-                            ));
-                        }
-
-                        Logger::debug("InMemory-Write",&JsValue::from(
-                            &format!("Indexes for collection '{}': {:?}", op.collection, indexes)
-                        ));
-
-                        for collection_index in indexes {
-                            if collection_index == primary_index_name {
-                                Logger::debug("InMemory-Write",&JsValue::from(
-                                    &format!("Skipping primary index '{}'", collection_index)
-                                ));
-                                continue; // Skip the primary index
+                        Logger::log(
+                            "InMemory::write",
+                            &JsValue::from_str(&format!("CREATE operation for primary key: '{}'", pk_str))
+                        );
+                        {
+                            let pk_map = index_guard
+                                .entry(index_name.clone())
+                                .or_insert_with(HashMap::new);
+                            if pk_map.contains_key(&pk_str) {
+                                let msg = "Document with this primary key already exists".to_string();
+                                Logger::log(
+                                    "InMemory::write",
+                                    &JsValue::from_str(&format!("Error: {}", msg))
+                                );
+                                return Err(JsValue::from_str(&msg));
                             }
-
-                            let new_index_items = index.get(&collection_index)
-                                .map(|js_value| Array::from(&js_value))
-                                .unwrap_or_else(Array::new);
-
-                            new_index_items.push(
-                                &pk_value.clone()
-                            );
-
-                            Logger::debug("InMemory-Write",&JsValue::from(
-                                &format!(
-                                    "Updating Collection {}, index {}, for document with pk {:?}, result = {:?}",
-                                    op.collection,
-                                    collection_index,
-                                    pk_value.clone(),
-                                    JsValue::from(
-                                        new_index_items.clone()
-                                    )
-                                )
-                            ));
-
-                            index.insert(
-                                collection_index,
-                                JsValue::from(
-                                    new_index_items
-                                )
-                            );
+                            pk_map.insert(pk_str.clone(), document.clone());
                         }
 
+                        let primary_index_name = op.primary_key_index()?;
+                        let indexed_fields = schema.clone().indexes.unwrap_or(Vec::new());
+                        for indexed_field in indexed_fields {
+                            let collection_name = format!("idx_{}_{}", op.collection, indexed_field);
+                            if collection_name == primary_index_name {
+                                continue;
+                            }
+                            let indexed_value = Reflect::get(
+                                &document,
+                                &JsValue::from(indexed_field.clone())
+                            )?;
+
+                            if !indexed_value.is_null() && !indexed_value.is_undefined() {
+                                let indexed_value_str = indexed_value
+                                    .as_string()
+                                    .unwrap_or_else(|| {
+                                        indexed_value.as_f64().map(|num| num.to_string()).unwrap_or_default()
+                                    });
+
+                                let collection_index = index_guard
+                                    .entry(collection_name.clone())
+                                    .or_insert_with(HashMap::new);
+
+                                let existing_entry = collection_index.get(&indexed_value_str);
+                                let new_index_items = if let Some(existing_entry) = existing_entry {
+                                    let items_val = Reflect::get(
+                                        existing_entry,
+                                        &JsValue::from_str("items")
+                                    ).unwrap_or_else(|_| JsValue::from(js_sys::Array::new()));
+                                    js_sys::Array::from(&items_val)
+                                } else {
+                                    js_sys::Array::new()
+                                };
+
+                                new_index_items.push(&pk_value.clone());
+
+                                let item = js_sys::Object::new();
+                                Reflect::set(
+                                    &item,
+                                    &JsValue::from("id"),
+                                    &JsValue::from_str(&indexed_value_str)
+                                )?;
+                                Reflect::set(
+                                    &item,
+                                    &JsValue::from("items"),
+                                    &JsValue::from(&new_index_items)
+                                )?;
+
+                                collection_index.insert(
+                                    indexed_value_str,
+                                    JsValue::from(&item)
+                                );
+                            }
+                        }
+                        Logger::log(
+                            "InMemory::write",
+                            &JsValue::from_str("CREATE operation completed successfully.")
+                        );
                         Ok(document)
                     }
                     OpType::UPDATE => {
-                        Logger::debug("InMemory-Write",&JsValue::from(&format!("Updating document with primary key: {}", pk_str)));
+                        Logger::log(
+                            "InMemory::write",
+                            &JsValue::from_str(&format!("UPDATE operation for primary key: '{}'", pk_str))
+                        );
+
+                        let index = index_guard
+                            .entry(index_name.clone())
+                            .or_insert_with(HashMap::new);
+
                         if !index.contains_key(&pk_str) {
-                            Logger::debug("InMemory-Write",&JsValue::from("Document with this primary key does not exist"));
-                            return Err(JsValue::from_str("Document with this primary key does not exist"));
+                            let msg = "Document with this primary key does not exist".to_string();
+                            Logger::log("InMemory::write", &JsValue::from_str(&format!("Error: {}", msg)));
+                            return Err(JsValue::from_str(&msg));
                         }
                         index.insert(pk_str.clone(), document.clone());
-                        Logger::debug("InMemory-Write",&JsValue::from(&format!("Document updated with primary key: {}", pk_str)));
+                        Logger::log("InMemory::write", &JsValue::from_str("UPDATE operation completed successfully."));
                         Ok(document)
                     }
-                    _ => Err(JsValue::from_str("Unsupported operation type for this data"))
+                    _ => {
+                        let msg = "Unsupported operation type for this data".to_string();
+                        Logger::log("InMemory::write", &JsValue::from_str(&format!("Error: {}", msg)));
+                        Err(JsValue::from_str(&msg))
+                    }
                 }
             }
             OpType::DELETE => {
-                Logger::debug("InMemory-Write",&JsValue::from(&format!("Deleting document with primary key: {}", primary_key)));
-                let pk_str = self.core.get_primary_key(op.data.clone())?;
-                if index.remove(&pk_str).is_some() {
-                    Logger::debug("InMemory-Write",&JsValue::from(&format!("Document deleted with primary key: {}", pk_str)));
-                    Ok(JsValue::from_str("Document deleted"))
+                Logger::log(
+                    "InMemory::write",
+                    &JsValue::from_str("DELETE operation")
+                );
+                let pk_str = self.core.get_primary_key_typed(op.data.clone())?;
+                if let Some(index) = index_guard.get_mut(&index_name) {
+                    if index.remove(&pk_str).is_some() {
+                        Logger::log("InMemory::write", &JsValue::from_str("DELETE operation completed successfully."));
+                        Ok(JsValue::from_str("Document deleted"))
+                    } else {
+                        let msg = "Document with this primary key does not exist".to_string();
+                        Logger::log("InMemory::write", &JsValue::from_str(&format!("Error: {}", msg)));
+                        Err(JsValue::from_str(&msg))
+                    }
                 } else {
-                    Logger::debug("InMemory-Write",&JsValue::from("Document with this primary key does not exist"));
-                    Err(JsValue::from_str("Document with this primary key does not exist"))
+                    let msg = "Document with this primary key does not exist".to_string();
+                    Logger::log("InMemory::write", &JsValue::from_str(&format!("Error: {}", msg)));
+                    Err(JsValue::from_str(&msg))
                 }
             }
-            _ => Err(JsValue::from_str("Unsupported operation type"))
+            _ => {
+                let msg = "Unsupported operation type".to_string();
+                Logger::log("InMemory::write", &JsValue::from_str(&format!("Error: {}", msg)));
+                Err(JsValue::from_str(&msg))
+            }
         }
     }
 
     async fn find(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
-        let normalized_query = query.clone().query;
-        let read_lock = self.by_index.read()
-            .map_err(|_| JsValue::from_str("Failed to acquire read lock"))?;
-
-        Logger::debug(
-            "InMemory-Find",
-            &JsValue::from(
-                format!(">>>>>>>>>>>>>>> Starting find method for collection '{}' and query {:?}", collection_name, normalized_query)
-            )
+        Logger::log(
+            "InMemory::find",
+            &JsValue::from_str(&format!(
+                "Find called for collection '{}', query: {:?}",
+                collection_name,
+                query
+            ))
         );
+        let documents = self.get_matching_documents(collection_name, &query).await?;
+        let results_array = Array::new();
 
-        let schema = self.base.schemas.get(collection_name)
-            .ok_or_else(|| JsValue::from(format!("Collection '{}' not found", collection_name)))?;
-
-        let results = Array::new();
-        let primary_key = schema.primary_key.clone();
-
-        let index_name = if !collection_name.starts_with("idx") {
-            format!("pk_{}_{}", collection_name, primary_key)
-        } else {
-            collection_name.to_string()
-        };
-
-
-
-        Logger::debug(
-            "InMemory-Find",
-            &JsValue::from(
-                format!("Parsed query '{:?}'", JsValue::from(normalized_query.clone()))
-            )
-        );
-
-        if let Some(index) = read_lock.get(&index_name.clone()) {
-
-            Logger::debug(
-                "InMemory-Find",
-                &JsValue::from(
-                    &format!("Index '{}' found with {} documents", index_name, index.len())
-                )
-            );
-
-            let item_query = Query::new(
-                normalized_query.clone(),
-                schema.clone()
-            )?;
-
-            for (pk, doc) in index.iter() {
-                if pk.starts_with("idx_") {
-                    Logger::debug(
-                        "InMemory-Find",
-                        &JsValue::from(
-                            &format!("Handling indexed collection '{}'", index_name)
-                        )
-                    );
-
-                    let items_js = Reflect::get(&doc, &JsValue::from_str("items"))?;
-                    let items: Array = if items_js.is_array() {
-                        Array::from(&items_js)
-                    } else {
-                        Array::new()
-                    };
-
-                    Logger::debug(
-                        "InMemory-Find",
-                        &JsValue::from(
-                            &format!("Found {} items in index", items.length())
-                        )
-                    );
-
-                    let re = Regex::new(r"^[^_]*_([^_]+)_[^_]*$").unwrap();
-                    if let Some(caps) = re.captures(collection_name) {
-                        let extract_collection = caps.get(1).unwrap().as_str();
-                        Logger::debug(
-                            "InMemory-Find",
-                            &JsValue::from(
-                                &format!("Extracted collection name '{}'", extract_collection)
-                            )
-                        );
-
-                        for item in items.iter() {
-                            let indexed_document = self.find_document_by_id(
-                                extract_collection,
-                                item
-                            ).await?;
-
-                            if indexed_document.is_null() || indexed_document.is_undefined() {
-                                Logger::debug(
-                                    "InMemory-Find",
-                                    &JsValue::from("Indexed document is null or undefined")
-                                );
-                            } else {
-                                Logger::debug(
-                                    "InMemory-Find",
-                                    &JsValue::from(
-                                        format!(
-                                            "Found indexed document {:?} with query {:?} Item query {:?}\n Normalised {:?}",
-                                            indexed_document,
-                                            query,
-                                            item_query,
-                                            JSON::stringify(&normalized_query)
-                                        )
-                                    )
-                                );
-                                let matches = self.core.document_matches_query(
-                                    &indexed_document,
-                                    &query
-                                )?;
-
-                                if matches {
-                                    results.push(&indexed_document);
-                                }
-                            }
-                        }
-                    }
-
-                } else {
-                    Logger::debug(
-                        "InMemory-Find",
-                        &JsValue::from(
-                            &format!("Evaluating document with primary key '{}'", pk)
-                        )
-                    );
-                    let matches = self.core.document_matches_query(doc, &query)?;
-                    Logger::debug(
-                        "InMemory-Find",
-                        &JsValue::from(
-                            &format!("Document matches query: {}", matches)
-                        )
-                    );
-                    if matches {
-                        results.push(doc);
-                        Logger::debug(
-                            "InMemory-Find",
-                            &JsValue::from("Document added to results")
-                        );
-                    }
-                }
-            }
-        } else {
-            Logger::debug(
-                "InMemory-Find",
-                &JsValue::from(
-                    &format!("Index '{}' not found", index_name)
-                )
-            );
+        for doc in documents {
+            results_array.push(&doc);
         }
 
-        Logger::debug(
-            "InMemory-Find",
-            &JsValue::from(
-                &format!("Find method completed with {} results", results.length())
-            )
+        Logger::log(
+            "InMemory::find",
+            &JsValue::from_str(&format!(
+                "Find completed. Number of documents found: {}",
+                results_array.length()
+            ))
         );
-
-        Ok(
-            JsValue::from(
-                results
-            )
-        )
+        Ok(JsValue::from(results_array))
     }
 
     async fn find_document_by_id(
@@ -344,7 +258,21 @@ impl Storage for InMemory {
         collection_name: &str,
         primary_key_value: JsValue,
     ) -> Result<JsValue, JsValue> {
-        let schema = self.base.schemas.get(collection_name).ok_or_else(|| JsValue::from( format!("Collection {} not found in findDocumentById", collection_name)))?;
+        Logger::log(
+            "InMemory::find_document_by_id",
+            &JsValue::from_str(&format!(
+                "Find document by ID called for collection '{}'.",
+                collection_name
+            ))
+        );
+        let schema = self.base.schemas.get(collection_name).ok_or_else(|| {
+            let msg = format!("Collection {} not found in findDocumentById", collection_name);
+            Logger::log(
+                "InMemory::find_document_by_id",
+                &JsValue::from_str(&format!("Error: {}", msg))
+            );
+            JsValue::from(msg)
+        })?;
         let primary_key = schema.primary_key.clone();
 
         let index_name = if collection_name.starts_with("idx_") {
@@ -353,257 +281,275 @@ impl Storage for InMemory {
             format!("pk_{}_{}", collection_name, primary_key)
         };
 
-        Logger::debug(
-            "InMemory-Find-By-Id",
-            &JsValue::from(
-                &format!("finding index {}", index_name)
-            )
-        );
-
-        let current_index_keys: Vec<String> = self.by_index.read().unwrap().keys().cloned().collect();
-        Logger::debug(
-            "InMemory-Find-By-Id",
-            &JsValue::from(
-                &format!("Current index keys: {:?}", current_index_keys)
-            )
-        );
-
-        // Retrieve the index
         if let Some(index) = self.by_index.read().unwrap().get(&index_name) {
-            let pk_str = self.core.get_primary_key(primary_key_value.clone())?;
+            let pk_str = self.core.get_primary_key_typed(primary_key_value.clone())?;
             if let Some(doc) = index.get(&pk_str) {
-                return Ok(doc.clone());
-            } else {
-                Logger::debug(
-                    "InMemory-Find-By-Id",
-                    &JsValue::from(
-                        &format!("Searching index {}, primary key  {:?} not found", index_name, pk_str)
-                    )
+                Logger::log(
+                    "InMemory::find_document_by_id",
+                    &JsValue::from_str("Document found.")
                 );
+                return Ok(doc.clone());
             }
-        } else {
-            Logger::debug(
-                "InMemory-Find-By-Id",
-                &JsValue::from(
-                    &format!("finding index {} not found", index_name)
-                )
-            );
         }
-
+        Logger::log(
+            "InMemory::find_document_by_id",
+            &JsValue::from_str("Document not found.")
+        );
         Ok(JsValue::undefined())
     }
 
     async fn count(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
-        let normalized_query = query.clone().query;
-        let read_lock = self.by_index.read()
-            .map_err(|_| JsValue::from_str("Failed to acquire read lock"))?;
-
-        Logger::debug(
-            "InMemory-Count",
-            &JsValue::from(
-                format!("Starting count method for collection '{}' and query {:?}", collection_name, normalized_query)
-            )
+        Logger::log(
+            "InMemory::count",
+            &JsValue::from_str(&format!(
+                "Count called for collection '{}', query: {:?}",
+                collection_name,
+                query
+            ))
         );
-
-        let schema = self.base.schemas.get(collection_name)
-            .ok_or_else(|| JsValue::from(format!("Collection '{}' not found", collection_name)))?;
-
-        let mut count = 0;
-        let primary_key = schema.primary_key.clone();
-
-        let index_name = if !collection_name.starts_with("idx") {
-            format!("pk_{}_{}", collection_name, primary_key)
-        } else {
-            collection_name.to_string()
-        };
-
-        Logger::debug(
-            "InMemory-Count",
-            &JsValue::from(
-                format!("Parsed query '{:?}'", JsValue::from(normalized_query.clone()))
-            )
+        let documents = self.get_matching_documents(collection_name, &query).await?;
+        Logger::log(
+            "InMemory::count",
+            &JsValue::from_str(&format!(
+                "Count completed. Number of documents matching: {}",
+                documents.len()
+            ))
         );
-
-        if let Some(index) = read_lock.get(&index_name) {
-            Logger::debug(
-                "InMemory-Count",
-                &JsValue::from(
-                    &format!("Index '{}' found with {} documents", index_name, index.len())
-                )
-            );
-
-            for (pk, doc) in index.iter() {
-                if pk.starts_with("idx_") {
-                    Logger::debug(
-                        "InMemory-Count",
-                        &JsValue::from(
-                            &format!("Handling indexed collection '{}'", index_name)
-                        )
-                    );
-
-                    let items_js = Reflect::get(doc, &JsValue::from_str("items"))?;
-                    let items: Array = if items_js.is_array() {
-                        Array::from(&items_js)
-                    } else {
-                        Array::new()
-                    };
-
-                    Logger::debug(
-                        "InMemory-Count",
-                        &JsValue::from(
-                            &format!("Found {} items in index", items.length())
-                        )
-                    );
-
-                    let re = Regex::new(r"^[^_]*_([^_]+)_[^_]*$").unwrap();
-                    if let Some(caps) = re.captures(collection_name) {
-                        let extract_collection = caps.get(1).unwrap().as_str();
-                        Logger::debug(
-                            "InMemory-Count",
-                            &JsValue::from(
-                                &format!("Extracted collection name '{}'", extract_collection)
-                            )
-                        );
-
-                        for item in items.iter() {
-                            let indexed_document = self.find_document_by_id(
-                                extract_collection,
-                                item
-                            ).await?;
-
-                            if indexed_document.is_null() || indexed_document.is_undefined() {
-                                Logger::debug(
-                                    "InMemory-Count",
-                                    &JsValue::from("Indexed document is null or undefined")
-                                );
-                            } else {
-                                let matches = self.core.document_matches_query(
-                                    &indexed_document,
-                                    &query
-                                )?;
-
-                                if matches {
-                                    count += 1;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Logger::debug(
-                        "InMemory-Count",
-                        &JsValue::from(
-                            &format!("Evaluating document with primary key '{}'", pk)
-                        )
-                    );
-                    let matches = self.core.document_matches_query(doc, &query)?;
-                    if matches {
-                        count += 1;
-                        Logger::debug(
-                            "InMemory-Count",
-                            &JsValue::from("Document counted")
-                        );
-                    }
-                }
-            }
-        } else {
-            Logger::debug(
-                "InMemory-Count",
-                &JsValue::from(
-                    &format!("Index '{}' not found", index_name)
-                )
-            );
-        }
-
-        Logger::debug(
-            "InMemory-Count",
-            &JsValue::from(
-                &format!("Count method completed with count {}", count)
-            )
-        );
-
-        Ok(JsValue::from_f64(count as f64))
+        Ok(JsValue::from_f64(documents.len() as f64))
     }
 
     async fn close(&mut self) -> Result<JsValue, JsValue> {
-        // Clear all data from the storage and reset internal state
+        Logger::log(
+            "InMemory::close",
+            &JsValue::from_str("Close operation called.")
+        );
         let mut index_guard = self.by_index.write()
-            .map_err(|_| JsValue::from_str("Failed to acquire write lock"))?;
+            .map_err(|_| {
+                let msg = "Failed to acquire write lock".to_string();
+                Logger::log(
+                    "InMemory::close",
+                    &JsValue::from_str(&format!("Error: {}", msg))
+                );
+                JsValue::from_str(&msg)
+            })?;
         index_guard.clear();
 
-        // Reset any other internal states if necessary
         self.started = false;
 
+        Logger::log(
+            "InMemory::close",
+            &JsValue::from_str("In-memory database closed and reset.")
+        );
         Ok(JsValue::from_str("In-memory database closed and reset"))
     }
 
     async fn start(&mut self) -> Result<JsValue, JsValue> {
-        // Reinitialize any internal states if necessary
+        Logger::log(
+            "InMemory::start",
+            &JsValue::from_str("Start operation called.")
+        );
         if self.started {
+            Logger::log(
+                "InMemory::start",
+                &JsValue::from_str("In-memory database already started.")
+            );
             return Ok(JsValue::from_str("In-memory database already started"));
         }
 
         self.started = true;
 
+        Logger::log(
+            "InMemory::start",
+            &JsValue::from_str("In-memory database started.")
+        );
         Ok(JsValue::from_str("In-memory database started"))
     }
-    
 }
 
 
 #[wasm_bindgen]
 impl InMemory {
 
+    /// Shared logic to gather all documents matching a given query from a specific collection.
+    /// This is used by both `find` and `count` so we don't duplicate logic.
+    async fn get_matching_documents(
+        &self,
+        collection_name: &str,
+        query: &Query
+    ) -> Result<Vec<JsValue>, JsValue> {
+        // Already has some logging, we keep it as is and allow existing logs to show verbosity too.
+        Logger::log(
+            "InMemory::get_matching_documents",
+            &JsValue::from_str(&format!(
+                "Called with collection_name='{}', query={:?}",
+                collection_name,
+                query
+            ))
+        );
+
+        let read_lock = self.by_index.read()
+            .map_err(|_| JsValue::from_str("Failed to acquire read lock"))?;
+
+        let schema = self.base.schemas
+            .get(collection_name)
+            .ok_or_else(|| {
+                let msg = format!("Collection '{}' not found", collection_name);
+                Logger::log(
+                    "InMemory::get_matching_documents",
+                    &JsValue::from_str(&format!("Error: {}", msg))
+                );
+                JsValue::from(msg)
+            })?;
+
+        let primary_key = schema.primary_key.clone();
+        let mut matched_docs = Vec::new();
+
+        // Identify any query properties that have an index
+        let query_properties_with_index: Vec<String> = query
+            .clone()
+            .get_properties()?
+            .into_iter()
+            .filter(|key| {
+                let index_table = format!("idx_{}_{}", collection_name, key);
+                read_lock.get(&index_table).is_some()
+            })
+            .collect();
+
+        Logger::log(
+            "InMemory::get_matching_documents",
+            &JsValue::from_str(&format!(
+                "Indexed properties in use: {:?}",
+                query_properties_with_index
+            ))
+        );
+
+        // If no indexed fields match the query, do a full table scan
+        if query_properties_with_index.is_empty() {
+            Logger::log(
+                "InMemory::get_matching_documents",
+                &JsValue::from_str("No indexed fields match. Performing full table scan.")
+            );
+            let table_name = format!("pk_{}_{}", collection_name, primary_key);
+            if let Some(documents) = read_lock.get(&table_name) {
+                for (_, document) in documents.iter() {
+                    let matches = self.core.document_matches_query(&document, query)?;
+                    if matches {
+                        matched_docs.push(document.clone());
+                    }
+                }
+            }
+        } else {
+            // Use the first indexed property to filter results
+            let indexed_property = query_properties_with_index.first().unwrap();
+            Logger::log(
+                "InMemory::get_matching_documents",
+                &JsValue::from_str(&format!(
+                    "Using indexed property '{}' for retrieval",
+                    indexed_property
+                ))
+            );
+
+            let index_table_name = format!("idx_{}_{}", collection_name, indexed_property);
+            let table_name = format!("pk_{}_{}", collection_name, primary_key);
+
+            if let Some(index_document) = read_lock.get(&index_table_name) {
+                // For each index entry, gather the documents that match
+                for idx_value in index_document.values() {
+                    // 'items' is the array of primary-key strings for docs matching that index
+                    let index_items = js_sys::Reflect::get(idx_value, &JsValue::from_str("items"))
+                        .unwrap_or_else(|_| JsValue::from(js_sys::Array::new()));
+                    let document_ids = js_sys::Array::from(&index_items);
+                    for document_id_js in document_ids.iter() {
+                        // Look up actual documents in the primary key index
+                        if let Some(rows) = read_lock.get(&table_name) {
+                            if let Some(document_id) = document_id_js.as_string() {
+                                if let Some(doc) = rows.get(&document_id) {
+                                    let matches = self.core.document_matches_query(doc, query)?;
+                                    if matches {
+                                        matched_docs.push(doc.clone());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Logger::log(
+            "InMemory::get_matching_documents",
+            &JsValue::from_str(&format!(
+                "Found {} matching documents.",
+                matched_docs.len()
+            ))
+        );
+        
+        Ok(matched_docs)
+    }
     
     #[wasm_bindgen]
     pub async fn create(name: &str, schemas_js: Object) -> Result<InMemory, JsValue> {
+        Logger::log(
+            "InMemory::create",
+            &JsValue::from_str(&format!(
+                "Creating a new InMemory instance with DB name '{}'",
+                name
+            ))
+        );
         let base_res = BaseStorage::new(
             name.to_string(),
             schemas_js,
             None
         );
-        match base_res {
-            Ok(base) => Ok(
-                InMemory {
-                    base,
-                    by_index: RwLock::new(HashMap::new()),
-                    core: CoreStorage {},
-                    started: false,
-                }
-            ),
-            Err(e) => Err(e)
-        }
-    }
 
-    #[wasm_bindgen(getter)]
-    pub fn by_index(&self) -> Result<JsValue, JsValue> {
-        let guard = self.by_index.read().map_err(|_| JsValue::from_str("Failed to acquire read lock"))?;
-        let outer_obj = Object::new();
-        for (outer_key, inner_map) in &*guard {
-            let inner_obj = Object::new();
-            for (inner_key, value) in inner_map {
-                Reflect::set(&inner_obj, &JsValue::from_str(inner_key), value)
-                    .map_err(|_| {
-                        JsValue::from_str("Failed to set inner object property")
-                    })?;
+        match base_res {
+            Ok(mut base) => {
+                //Adds extra index schemas
+                base.add_index_schemas()?;
+                Logger::log(
+                    "InMemory::create",
+                    &JsValue::from_str("Successfully created BaseStorage and added index schemas.")
+                );
+                Ok(
+                    InMemory {
+                        base,
+                        by_index: RwLock::new(HashMap::new()),
+                        core: CoreStorage {},
+                        started: false,
+                    }
+                )
+            },
+            Err(e) => {
+                Logger::log(
+                    "InMemory::create",
+                    &JsValue::from_str(&format!(
+                        "Error creating BaseStorage: {:?}",
+                        e
+                    ))
+                );
+                Err(e)
             }
-            Reflect::set(
-                &outer_obj,
-                &JsValue::from_str(outer_key),
-                &JsValue::from(inner_obj),
-            ).map_err(|_| {
-                JsValue::from_str("Failed to set outer object property")
-            })?;
         }
-        Ok(JsValue::from(outer_obj))
     }
 
     #[wasm_bindgen(js_name = "write")]
     pub async fn write_js(&self, op: &Operation) -> Result<JsValue, JsValue> {
+        Logger::log(
+            "InMemory::write_js",
+            &JsValue::from_str("write_js called.")
+        );
         self.write(op).await
     }
 
     #[wasm_bindgen(js_name = "find")]
     pub async fn find_js(&self, collection_name: &str, query_js: JsValue) -> Result<JsValue, JsValue> {
+        Logger::log(
+            "InMemory::find_js",
+            &JsValue::from_str(&format!(
+                "find_js called for collection '{}'",
+                collection_name
+            ))
+        );
         let schema = self.base.schemas.get(collection_name)
             .ok_or_else(|| JsValue::from( format!("Collection {} not found in find", collection_name)))?;
         let query = Query::new(query_js.clone(), schema.clone())?;
@@ -616,11 +562,25 @@ impl InMemory {
         collection_name: &str,
         primary_key: JsValue,
     ) -> Result<JsValue, JsValue> {
+        Logger::log(
+            "InMemory::find_document_by_id_js",
+            &JsValue::from_str(&format!(
+                "findDocumentById called for collection '{}'",
+                collection_name
+            ))
+        );
         self.find_document_by_id(collection_name, primary_key).await
     }
 
     #[wasm_bindgen(js_name = "count")]
     pub async fn count_js(&self, collection_name: &str, query_js: JsValue) -> Result<JsValue, JsValue> {
+        Logger::log(
+            "InMemory::count_js",
+            &JsValue::from_str(&format!(
+                "count_js called for collection '{}'",
+                collection_name
+            ))
+        );
         let schema = self.base.schemas.get(collection_name).ok_or_else(|| JsValue::from( format!("Collection {} not found in count", collection_name)))?;
         let query = Query::new(query_js, schema.clone())?;
         self.count(collection_name, query).await
@@ -628,11 +588,19 @@ impl InMemory {
 
     #[wasm_bindgen(js_name = "close")]
     pub async fn close_js(&mut self) -> Result<JsValue, JsValue> {
+        Logger::log(
+            "InMemory::close_js",
+            &JsValue::from_str("close_js called.")
+        );
         self.close().await
     }
 
     #[wasm_bindgen(js_name = "start")]
     pub async fn start_js(&mut self) -> Result<JsValue, JsValue> {
+        Logger::log(
+            "InMemory::start_js",
+            &JsValue::from_str("start_js called.")
+        );
         self.start().await
     }
 

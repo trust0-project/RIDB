@@ -24,10 +24,8 @@ export type Operation<T extends SchemaType> = {
      */
     data: Doc<T>,
 
-    /**
-     * An array of indexes related to the operation.
-     */
-    indexes: Array<string>
+    primaryKeyField?: string,
+    primaryKey?: string
 }
 "#;
 
@@ -127,6 +125,24 @@ impl Operation {
             )
         } else {
             JsValue::undefined()
+        }
+    }
+
+    #[wasm_bindgen(getter, js_name="primaryKeyIndex")]
+    pub fn primary_key_index(&self) -> Result<String, JsValue> {
+        match &self.primary_key_field {
+            Some(primary_key_field) => Ok(
+                format!(
+                    "pk_{}_{}",
+                    self.collection, 
+                    &primary_key_field
+                )
+            ),
+            None => Err(
+                JsValue::from(
+                    format!("Unable to create default index, Primary Key not available in current OP")
+                )
+            ),
         }
     }
 }

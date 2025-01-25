@@ -30,7 +30,6 @@ hex = "0.4"
 argon2 = "0.5.3"
 aes-gcm = "0.10.3"
 pbkdf2 = "0.12.2"
-regex = "1.11.1"
 
 [package.metadata.wasm-bindgen]
 typescript = true
