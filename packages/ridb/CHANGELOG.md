@@ -1,3 +1,23 @@
+## @trust0/ridb [1.2.0](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.1.0...@trust0/ridb@1.2.0) (2025-01-26)
+
+### Features
+
+* advanced indexing ([1a26e79](https://github.com/trust0-project/RIDB/commit/1a26e798a541762f1876184187f9d9ccd1f72f96))
+
+### Bug Fixes
+
+* documentation ([fbba7c0](https://github.com/trust0-project/RIDB/commit/fbba7c09852cd1fcf72abefa308419d401f835c7))
+* implement indexing in InMemory, IndexDB, find and count methods ([fe41c7c](https://github.com/trust0-project/RIDB/commit/fe41c7c0d7929369bf0c7d817ae7ee7c131ced97))
+
+### Miscellaneous Chores
+
+* **release:** 1.2.0-rc.1 [skip ci] ([8827973](https://github.com/trust0-project/RIDB/commit/882797350276faa125992358377440f5055d3fe1))
+
+
+### Dependencies
+
+* **@trust0/ridb-core:** upgraded to 1.2.0
+
 ## @trust0/ridb [1.2.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.1.0...@trust0/ridb@1.2.0-rc.1) (2025-01-26)
 
 ### Features
