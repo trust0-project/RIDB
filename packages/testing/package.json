@@ -30,8 +30,8 @@
     "vite-plugin-top-level-await": "^1.4.1",
     "vite-plugin-wasm": "^3.3.0",
     "vitest": "^1.6.0",
-    "webdriverio": "^9.0.9",
-    "vite": "^5.0.0",
+    "webdriverio": "^9.7.1",
+    "vite": "^5.4.12",
     "@trust0/ridb": "^1.0.9-rc.3"
   },
   "optionalDependencies": {

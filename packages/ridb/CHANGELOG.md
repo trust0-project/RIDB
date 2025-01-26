@@ -1,3 +1,9 @@
+## @trust0/ridb [1.2.2-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.2.1...@trust0/ridb@1.2.2-rc.1) (2025-01-26)
+
+### Bug Fixes
+
+* vuln dependency check ([c590170](https://github.com/trust0-project/RIDB/commit/c59017092f410aab93dd84f0911769bad9f81c7f))
+
 ## @trust0/ridb [1.2.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.2.0...@trust0/ridb@1.2.1) (2025-01-26)
 
 ### Bug Fixes
