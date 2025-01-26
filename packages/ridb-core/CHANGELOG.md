@@ -1,3 +1,9 @@
+## @trust0/ridb-core [1.3.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.2.0...@trust0/ridb-core@1.3.0-rc.1) (2025-01-26)
+
+### Features
+
+* adding $nin operator to match array elements with negative criteria ([56df6bd](https://github.com/trust0-project/RIDB/commit/56df6bd3359709e04686365976e2362ca0f2a5ff))
+
 ## @trust0/ridb-core [1.2.0](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.1.0...@trust0/ridb-core@1.2.0) (2025-01-26)
 
 ### Features
