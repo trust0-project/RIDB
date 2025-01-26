@@ -1,3 +1,14 @@
+## @trust0/ridb-level [1.1.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.0...@trust0/ridb-level@1.1.1) (2025-01-26)
+
+### Miscellaneous Chores
+
+* **release:** 1.1.1-rc.1 [skip ci] ([66ae0b4](https://github.com/trust0-project/RIDB/commit/66ae0b49ebf8fd3257d140d9294526b51635ad75))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.2.0
+
 ## @trust0/ridb-level [1.1.1-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.0...@trust0/ridb-level@1.1.1-rc.1) (2025-01-26)
 
 
