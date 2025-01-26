@@ -6,6 +6,8 @@
 
 # Class: LevelDB\<T\>
 
+Defined in: [ridb-level/src/index.ts:37](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb-level/src/index.ts#L37)
+
 ## Extends
 
 - `BaseStorage`\<`T`\>
@@ -19,6 +21,8 @@
 ### new LevelDB()
 
 > **new LevelDB**\<`T`\>(`Level`, `name`, `schemas`, `options`): [`LevelDB`](LevelDB.md)\<`T`\>
+
+Defined in: [ridb-level/src/index.ts:48](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb-level/src/index.ts#L48)
 
 #### Parameters
 
@@ -46,23 +50,17 @@
 
 `BaseStorage<T>.constructor`
 
-#### Defined in
-
-[ridb-level/src/index.ts:47](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L47)
-
 ## Properties
 
 ### core
 
 > `readonly` **core**: `CoreStorage`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:115
+
 #### Inherited from
 
 `BaseStorage.core`
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:199
 
 ***
 
@@ -70,9 +68,7 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:199
 
 > `private` **db**: `Level`
 
-#### Defined in
-
-[ridb-level/src/index.ts:37](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L37)
+Defined in: [ridb-level/src/index.ts:38](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb-level/src/index.ts#L38)
 
 ***
 
@@ -80,13 +76,11 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:199
 
 > `readonly` **dbName**: `string`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:112
+
 #### Inherited from
 
 `BaseStorage.dbName`
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:196
 
 ***
 
@@ -94,13 +88,11 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:196
 
 > `readonly` **options**: `BaseStorageOptions`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:114
+
 #### Inherited from
 
 `BaseStorage.options`
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:198
 
 ***
 
@@ -108,19 +100,35 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:198
 
 > `readonly` **schemas**: `Record`\<keyof `T`, `Schema`\<`T`\[keyof `T`\]\>\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:113
+
 #### Inherited from
 
 `BaseStorage.schemas`
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:197
-
 ## Methods
+
+### addIndexSchemas()
+
+> **addIndexSchemas**(): `null`
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:125
+
+#### Returns
+
+`null`
+
+#### Inherited from
+
+`BaseStorage.addIndexSchemas`
+
+***
 
 ### close()
 
 > **close**(): `Promise`\<`void`\>
+
+Defined in: [ridb-level/src/index.ts:57](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb-level/src/index.ts#L57)
 
 Close the database
 
@@ -132,15 +140,13 @@ Close the database
 
 `BaseStorage.close`
 
-#### Defined in
-
-[ridb-level/src/index.ts:56](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L56)
-
 ***
 
 ### count()
 
 > **count**(`collectionName`, `query`): `Promise`\<`number`\>
+
+Defined in: [ridb-level/src/index.ts:125](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb-level/src/index.ts#L125)
 
 Count documents matching a query
 
@@ -162,15 +168,13 @@ keyof `T`
 
 `BaseStorage.count`
 
-#### Defined in
-
-[ridb-level/src/index.ts:124](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L124)
-
 ***
 
 ### find()
 
 > **find**(`collectionName`, `query`): `Promise`\<`Doc`\<`T`\[keyof `T`\]\>[]\>
+
+Defined in: [ridb-level/src/index.ts:145](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb-level/src/index.ts#L145)
 
 Find documents matching a query
 
@@ -192,15 +196,13 @@ keyof `T`
 
 `BaseStorage.find`
 
-#### Defined in
-
-[ridb-level/src/index.ts:144](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L144)
-
 ***
 
 ### findDocumentById()
 
 > **findDocumentById**(`collectionName`, `id`): `Promise`\<`undefined` \| `Doc`\<`T`\[keyof `T`\]\>\>
+
+Defined in: [ridb-level/src/index.ts:61](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb-level/src/index.ts#L61)
 
 Find a document by its ID
 
@@ -222,15 +224,13 @@ keyof `T`
 
 `BaseStorage.findDocumentById`
 
-#### Defined in
-
-[ridb-level/src/index.ts:60](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L60)
-
 ***
 
 ### getOption()
 
 > **getOption**(`name`): `undefined` \| `string` \| `number` \| `boolean`
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:122
 
 #### Parameters
 
@@ -246,15 +246,13 @@ keyof `T`
 
 `BaseStorage.getOption`
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:207
-
 ***
 
 ### getSchema()
 
 > **getSchema**(`name`): `Schema`\<`any`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:123
 
 #### Parameters
 
@@ -270,15 +268,13 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:207
 
 `BaseStorage.getSchema`
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:208
-
 ***
 
 ### start()
 
 > **start**(): `Promise`\<`void`\>
+
+Defined in: [ridb-level/src/index.ts:53](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb-level/src/index.ts#L53)
 
 Start the database
 
@@ -290,15 +286,13 @@ Start the database
 
 `BaseStorage.start`
 
-#### Defined in
-
-[ridb-level/src/index.ts:52](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L52)
-
 ***
 
 ### write()
 
 > **write**(`op`): `Promise`\<`Doc`\<`T`\[keyof `T`\]\>\>
+
+Defined in: [ridb-level/src/index.ts:82](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb-level/src/index.ts#L82)
 
 Write an operation (insert, update, delete)
 
@@ -316,15 +310,13 @@ Write an operation (insert, update, delete)
 
 `BaseStorage.write`
 
-#### Defined in
-
-[ridb-level/src/index.ts:81](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L81)
-
 ***
 
 ### create()
 
 > `static` **create**\<`SchemasCreate`\>(`name`, `schemas`, `options`): `Promise`\<`BaseStorage`\<`SchemasCreate`\>\>
+
+Defined in: [ridb-level/src/index.ts:39](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb-level/src/index.ts#L39)
 
 #### Type Parameters
 
@@ -351,7 +343,3 @@ Write an operation (insert, update, delete)
 #### Overrides
 
 `BaseStorage.create`
-
-#### Defined in
-
-[ridb-level/src/index.ts:38](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb-level/src/index.ts#L38)
