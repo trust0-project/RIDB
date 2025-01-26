@@ -44,7 +44,18 @@ export type SchemaType = {
 
 /**
  * Represents a schema, including its definition and related methods.
- *
+ * You may be trying to build a storage, in any other can u won't need access tho this class.
+ * Check this example 
+ * 
+ * ```typescript
+ * class MyStorage extends <T extends SchemaTypeRecord> extends BaseStorage<T> {
+ *  example() {
+ *    const schema: Schema<any> = this.getSchema("mySchema")
+ *  }
+ * }
+ * ```
+ * You alwayswill have access to getSchema through the Storage class.
+ * 
  * @template T - The schema type.
  */
 export class Schema<T extends SchemaType> {
