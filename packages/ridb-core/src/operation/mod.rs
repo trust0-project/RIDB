@@ -1,7 +1,5 @@
-use serde_wasm_bindgen::to_value;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
-use crate::error::RIDBError;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -26,10 +24,8 @@ export type Operation<T extends SchemaType> = {
      */
     data: Doc<T>,
 
-    /**
-     * An array of indexes related to the operation.
-     */
-    indexes: Array<string>
+    primaryKeyField?: string,
+    primaryKey?: string
 }
 "#;
 
@@ -43,8 +39,10 @@ pub struct Operation {
     pub(crate) op_type: OpType,
     /// The data involved in the operation.
     pub(crate) data: JsValue,
-    /// The indexes related to the operation.
-    pub(crate) indexes: Vec<String>
+    /// The primary key field of the current collection
+    pub(crate) primary_key_field: Option<String>,
+    /// The primary key value of the current data
+    pub(crate) primary_key: Option<JsValue>
 }
 
 #[derive(Debug, Clone)]
@@ -96,14 +94,55 @@ impl Operation {
         self.data.clone()
     }
 
-    /// Retrieves the indexes related to the operation.
+    /// Retrieves the primary key field of the current collection.
     ///
     /// # Returns
     ///
-    /// * `Result<JsValue, JsValue>` - A result containing the indexes as a `JsValue` or an error.
-    #[wasm_bindgen(getter)]
-    pub fn indexes(&self) -> Result<JsValue, JsValue> {
-        to_value(&self.indexes.clone())
-            .map_err(|e| JsValue::from(RIDBError::from(e)))
+    /// * `Option<String>` - The primary key field of the current collection.
+    #[wasm_bindgen(getter, js_name="primaryKeyField")]
+    pub fn primary_key_field(&self) -> JsValue {
+        let primary_key_field = self.primary_key_field.clone();
+        if primary_key_field.is_some() {
+            JsValue::from(
+                primary_key_field.unwrap()
+            )
+        } else {
+            JsValue::undefined()
+        }
+    }
+
+    /// Retrieves the primary key value of the current data.
+    ///
+    /// # Returns
+    ///
+    /// * `Option<JsValue>` - The primary key value of the current data.
+    #[wasm_bindgen(getter, js_name="primaryKey")]
+    pub fn primary_key(&self) -> JsValue {
+        let primary_key = self.primary_key.clone();
+        if primary_key.is_some() {
+            JsValue::from(
+                primary_key.unwrap()
+            )
+        } else {
+            JsValue::undefined()
+        }
+    }
+
+    #[wasm_bindgen(getter, js_name="primaryKeyIndex")]
+    pub fn primary_key_index(&self) -> Result<String, JsValue> {
+        match &self.primary_key_field {
+            Some(primary_key_field) => Ok(
+                format!(
+                    "pk_{}_{}",
+                    self.collection, 
+                    &primary_key_field
+                )
+            ),
+            None => Err(
+                JsValue::from(
+                    format!("Unable to create default index, Primary Key not available in current OP")
+                )
+            ),
+        }
     }
 }
