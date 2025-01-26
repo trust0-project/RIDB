@@ -1,3 +1,19 @@
+## @trust0/ridb [1.2.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.2.2...@trust0/ridb@1.2.3) (2025-01-26)
+
+### Bug Fixes
+
+* add data structure and validation for QueryOptions ([89f65b7](https://github.com/trust0-project/RIDB/commit/89f65b7b34fddaf203159e29f4a2348d1e48f79a))
+* improve examples [skip ci] ([de6651e](https://github.com/trust0-project/RIDB/commit/de6651e3d03fe56240a0c87afca46e5b894248d3))
+
+### Miscellaneous Chores
+
+* **release:** 1.2.3-rc.1 [skip ci] ([4eb2bb1](https://github.com/trust0-project/RIDB/commit/4eb2bb15d4ba6341ae619e48706241688e78ed56))
+
+
+### Dependencies
+
+* **@trust0/ridb-core:** upgraded to 1.3.0
+
 ## @trust0/ridb [1.2.3-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.2.2...@trust0/ridb@1.2.3-rc.1) (2025-01-26)
 
 
