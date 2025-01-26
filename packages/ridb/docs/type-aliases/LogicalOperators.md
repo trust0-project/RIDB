@@ -8,6 +8,8 @@
 
 > **LogicalOperators**\<`T`\>: `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:74
+
 ## Type Parameters
 
 • **T** *extends* [`SchemaType`](SchemaType.md)
@@ -21,7 +23,3 @@
 ### $or?
 
 > `optional` **$or**: `Partial`\<[`QueryType`](QueryType.md)\<`T`\>\>[]
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:156

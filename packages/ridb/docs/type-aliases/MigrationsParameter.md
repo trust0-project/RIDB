@@ -8,10 +8,8 @@
 
 > **MigrationsParameter**\<`T`\>: [`AnyVersionGreaterThan1`](AnyVersionGreaterThan1.md)\<`T`\> *extends* `true` ? `object` : `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:416
+
 ## Type Parameters
 
 • **T** *extends* [`SchemaTypeRecord`](SchemaTypeRecord.md)
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:136

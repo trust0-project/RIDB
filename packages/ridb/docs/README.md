@@ -16,7 +16,80 @@
   <a href="https://raw.githubusercontent.com/trust0-project/RIDB/refs/heads/main/LICENSE"><img src="https://img.shields.io/github/license/trust0-project/ridb?style=flat-square"></a>
   <a href="https://www.npmjs.com/package/@trust0/ridb"><img src="https://img.shields.io/npm/dm/@trust0/ridb?color=c63a3b&style=flat-square"></a>   
 </p>
+<h1>Introduction</h1>
 
+### Usage
+```typescript
+const db = new RIDB(
+    {
+        schemas: {
+            demo: {
+                version: 0,
+                primaryKey: 'id',
+                type: SchemaFieldType.object,
+                properties: {
+                    id: {
+                        type: SchemaFieldType.string,
+                        maxLength: 60
+                    }
+                }
+            }
+        } as const
+    }
+)
+```
+
+### Starting the database
+```typescript    
+await db.start({dbName: "demo"})
+```
+
+### Using with encryption plugin
+You can also optionally specify storageType with a compatible storage of your choice and an optional password to enable encryption plugin
+```typescript
+await db.start({
+    password: "my-password"
+    db
+})
+```
+
+A compatible storage should be a class implementing [StorageInternal<SchemaType> ](../docs/namespaces/RIDBTypes/classes/StorageInternal.md) and its methods.
+
+### Using with migration plugin
+The migration plugin will automatically migrate your documents for you as you upgrade and change your schemas over the time. 
+
+```typescript
+const db = new RIDB(
+    {
+        schemas: {
+            demo: {
+                version: 1,
+                primaryKey: 'id',
+                type: SchemaFieldType.object,
+                required:['id', 'age'],
+                properties: {
+                    id: {
+                        type: SchemaFieldType.string,
+                        maxLength: 60
+                    },
+                    age: {
+                        type: SchemaFieldType.number,
+                    }
+                }
+            }
+        } as const,
+        migrations: {
+            demo: {
+                1: function (doc) {
+                    return doc
+                }
+            }
+        }
+    }
+)
+
+await db.start({dbName: "demo"})
+```
 # SDK Rerefence
 
 ## Enumerations

@@ -8,10 +8,8 @@
 
 > **InternalsRecord**: `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:548
+
 ## Index Signature
 
- \[`name`: `string`\]: [`BaseStorage`](../classes/BaseStorage.md)\<[`SchemaTypeRecord`](SchemaTypeRecord.md)\>
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:246
+\[`name`: `string`\]: [`BaseStorage`](../classes/BaseStorage.md)\<[`SchemaTypeRecord`](SchemaTypeRecord.md)\>

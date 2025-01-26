@@ -8,6 +8,8 @@
 
 > **Operators**: `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:66
+
 ## Type declaration
 
 ### $gt?
@@ -25,7 +27,3 @@
 ### $lte?
 
 > `optional` **$lte**: `number`
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:148

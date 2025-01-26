@@ -8,6 +8,8 @@
 
 > **CreateStorage**: \<`T`\>(`records`) => `Promise`\<[`BaseStorage`](../classes/BaseStorage.md)\<`T`\>\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:531
+
 Represents a function type for creating storage with the provided schema type records.
 
 ## Type Parameters
@@ -29,7 +31,3 @@ The schema type records.
 `Promise`\<[`BaseStorage`](../classes/BaseStorage.md)\<`T`\>\>
 
 A promise that resolves to the created internals record.
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:425

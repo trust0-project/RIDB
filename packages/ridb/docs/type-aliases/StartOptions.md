@@ -8,6 +8,8 @@
 
 > **StartOptions**\<`T`\>: `object`
 
+Defined in: [ridb/src/index.ts:112](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L112)
+
 ## Type Parameters
 
 • **T** *extends* [`SchemaTypeRecord`](SchemaTypeRecord.md)
@@ -16,7 +18,7 @@
 
 ## Index Signature
 
- \[`name`: `string`\]: `any`
+\[`name`: `string`\]: `any`
 
 ### password?
 
@@ -25,7 +27,3 @@
 ### storageType?
 
 > `optional` **storageType**: `StorageClass`\<`T`\> \| [`StorageType`](../enumerations/StorageType.md)
-
-## Defined in
-
-[ridb/src/index.ts:121](https://github.com/elribonazo/RIDB/blob/b28b0b719e467bd7324ebf7597b93fa48be5c6ad/packages/ridb/src/index.ts#L121)

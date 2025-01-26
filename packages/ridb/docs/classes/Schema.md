@@ -6,7 +6,20 @@
 
 # Class: Schema\<T\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:294
+
 Represents a schema, including its definition and related methods.
+You may be trying to build a storage, in any other can u won't need access tho this class.
+Check this example 
+
+```typescript
+class MyStorage extends <T extends SchemaTypeRecord> extends BaseStorage<T> {
+ example() {
+   const schema: Schema<any> = this.getSchema("mySchema")
+ }
+}
+```
+You alwayswill have access to getSchema through the Storage class.
 
 ## Type Parameters
 
@@ -30,11 +43,9 @@ The schema type.
 
 > `readonly` `optional` **encrypted**: `Extract`\<keyof `T`, `string`\>[]
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:335
+
 An optional array of encrypted fields.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:628
 
 ***
 
@@ -42,11 +53,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:628
 
 > `readonly` `optional` **indexes**: `Extract`\<keyof `T`, `string`\>[]
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:330
+
 An optional array of indexes.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:623
 
 ***
 
@@ -54,11 +63,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:623
 
 > `readonly` **primaryKey**: `string`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:317
+
 The primary key of the schema.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:610
 
 ***
 
@@ -66,11 +73,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:610
 
 > `readonly` **properties**: \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false \| (T\["properties"\]\[K\]\["default"\] extends undefined ? true : false) ? K : never\]?: T\["properties"\]\[K\] \} & \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false ? never : K\]: T\["properties"\]\[K\] \}
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:340
+
 The properties defined in the schema.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:633
 
 ***
 
@@ -78,11 +83,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:633
 
 > **schema**: [`Schema`](Schema.md)\<`T`\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:298
+
 The schema definition.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:591
 
 ***
 
@@ -90,11 +93,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:591
 
 > `readonly` **type**: `string`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:322
+
 The type of the schema.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:615
 
 ***
 
@@ -102,17 +103,17 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:615
 
 > `readonly` **version**: `number`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:312
+
 The version of the schema.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:605
 
 ## Methods
 
 ### toJSON()
 
 > **toJSON**(): [`SchemaType`](../type-aliases/SchemaType.md)
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:350
 
 Converts the schema to a JSON representation.
 
@@ -122,15 +123,13 @@ Converts the schema to a JSON representation.
 
 The JSON representation of the schema.
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:643
-
 ***
 
 ### validate()
 
 > **validate**(`document`): `boolean`
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:352
 
 #### Parameters
 
@@ -142,15 +141,13 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:643
 
 `boolean`
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:645
-
 ***
 
 ### create()
 
 > `static` **create**\<`TS`\>(`definition`): [`Schema`](Schema.md)\<`TS`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:307
 
 Creates a new `Schema` instance from the provided definition.
 
@@ -171,7 +168,3 @@ The schema type.
 [`Schema`](Schema.md)\<`TS`\>
 
 The created `Schema` instance.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:600

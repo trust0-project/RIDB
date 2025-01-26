@@ -6,6 +6,8 @@
 
 # Class: `abstract` StorageInternal\<Schemas\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:201
+
 ## Extended by
 
 - [`BaseStorage`](BaseStorage.md)
@@ -19,6 +21,8 @@
 ### new StorageInternal()
 
 > **new StorageInternal**\<`Schemas`\>(`name`, `schemas`): [`StorageInternal`](StorageInternal.md)\<`Schemas`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:202
 
 #### Parameters
 
@@ -34,29 +38,25 @@
 
 [`StorageInternal`](StorageInternal.md)\<`Schemas`\>
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:222
-
 ## Methods
 
 ### close()
 
 > `abstract` **close**(): `Promise`\<`void`\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:207
+
 #### Returns
 
 `Promise`\<`void`\>
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:227
 
 ***
 
 ### count()
 
 > `abstract` **count**(`colectionName`, `query`): `Promise`\<`number`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:208
 
 #### Parameters
 
@@ -72,15 +72,13 @@ keyof `Schemas`
 
 `Promise`\<`number`\>
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:228
-
 ***
 
 ### find()
 
 > `abstract` **find**(`collectionName`, `query`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>[]\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:216
 
 #### Parameters
 
@@ -96,15 +94,13 @@ keyof `Schemas`
 
 `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>[]\>
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:236
-
 ***
 
 ### findDocumentById()
 
 > `abstract` **findDocumentById**(`collectionName`, `id`): `Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:212
 
 #### Parameters
 
@@ -120,29 +116,25 @@ keyof `Schemas`
 
 `Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:232
-
 ***
 
 ### start()
 
 > `abstract` **start**(): `Promise`\<`void`\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:206
+
 #### Returns
 
 `Promise`\<`void`\>
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:226
 
 ***
 
 ### write()
 
 > `abstract` **write**(`op`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:220
 
 #### Parameters
 
@@ -153,7 +145,3 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:226
 #### Returns
 
 `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:240

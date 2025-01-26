@@ -8,10 +8,8 @@
 
 > **BaseStorageOptions**: `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:93
+
 ## Index Signature
 
- \[`name`: `string`\]: `string` \| `number` \| `boolean`
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:175
+\[`name`: `string`\]: `string` \| `number` \| `boolean`

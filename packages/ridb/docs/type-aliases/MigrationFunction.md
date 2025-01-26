@@ -8,6 +8,8 @@
 
 > **MigrationFunction**\<`T`\>: (`doc`) => [`Doc`](Doc.md)\<`T`\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:401
+
 ## Type Parameters
 
 • **T** *extends* [`SchemaType`](SchemaType.md)
@@ -21,7 +23,3 @@
 ## Returns
 
 [`Doc`](Doc.md)\<`T`\>
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:121

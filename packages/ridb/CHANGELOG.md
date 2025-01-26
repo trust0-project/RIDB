@@ -1,3 +1,9 @@
+## @trust0/ridb [1.2.1-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.2.1-rc.2...@trust0/ridb@1.2.1-rc.3) (2025-01-26)
+
+### Bug Fixes
+
+* change package descriptions ([99c6507](https://github.com/trust0-project/RIDB/commit/99c65071b9fa26908fb7a847098f8c5c3969f24b))
+
 ## @trust0/ridb [1.2.1-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.2.1-rc.1...@trust0/ridb@1.2.1-rc.2) (2025-01-26)
 
 ### Bug Fixes

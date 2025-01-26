@@ -6,6 +6,8 @@
 
 # Enumeration: OpType
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:43
+
 Represents the type of operation to be performed on the collection.
 
 ## Enumeration Members
@@ -14,11 +16,9 @@ Represents the type of operation to be performed on the collection.
 
 > **COUNT**: `4`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:63
+
 Count Operation.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:63
 
 ***
 
@@ -26,11 +26,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:63
 
 > **CREATE**: `0`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:47
+
 Create operation.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:47
 
 ***
 
@@ -38,11 +36,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:47
 
 > **DELETE**: `2`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:55
+
 Delete operation.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:55
 
 ***
 
@@ -50,11 +46,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:55
 
 > **QUERY**: `3`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:59
+
 Query Operation.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:59
 
 ***
 
@@ -62,8 +56,6 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:59
 
 > **UPDATE**: `1`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:51
+
 Update operation.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:51
