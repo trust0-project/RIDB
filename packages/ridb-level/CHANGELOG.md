@@ -1,3 +1,22 @@
+## @trust0/ridb-level [1.1.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.1...@trust0/ridb-level@1.1.2) (2025-01-26)
+
+### Bug Fixes
+
+* capture docs on release ([7fe4b63](https://github.com/trust0-project/RIDB/commit/7fe4b63e77b35332fdbe3f8348d3d38a9ca80e59))
+* change package descriptions ([99c6507](https://github.com/trust0-project/RIDB/commit/99c65071b9fa26908fb7a847098f8c5c3969f24b))
+* docs prepublish ([2291750](https://github.com/trust0-project/RIDB/commit/2291750c059ed63ecbb4cddef6e4f33bf4d02013))
+
+### Miscellaneous Chores
+
+* **release:** 1.1.2-rc.1 [skip ci] ([71a2ce0](https://github.com/trust0-project/RIDB/commit/71a2ce091830309594bb20bdd4ea08f3ea0c9d24))
+* **release:** 1.1.2-rc.2 [skip ci] ([79a8c2a](https://github.com/trust0-project/RIDB/commit/79a8c2ae97c2ce424788258136534d8573e2c788))
+* **release:** 1.1.2-rc.3 [skip ci] ([65512b9](https://github.com/trust0-project/RIDB/commit/65512b9c8bf6c13fb4f19d3d9a41bc429107cd28))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.2.1
+
 ## @trust0/ridb-level [1.1.2-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.2-rc.2...@trust0/ridb-level@1.1.2-rc.3) (2025-01-26)
 
 ### Bug Fixes
