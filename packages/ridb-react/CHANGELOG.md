@@ -1,3 +1,16 @@
+## @trust0/ridb-react [1.1.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.1...@trust0/ridb-react@1.1.2) (2025-01-26)
+
+### Miscellaneous Chores
+
+* **release:** 1.1.2-rc.1 [skip ci] ([619d410](https://github.com/trust0-project/RIDB/commit/619d4100ae05f98764e7aa0a9dac628b03f24e8c))
+* **release:** 1.1.2-rc.2 [skip ci] ([47fd03e](https://github.com/trust0-project/RIDB/commit/47fd03effd586ac4bfe5940e9c0263896a62d63c))
+* **release:** 1.1.2-rc.3 [skip ci] ([d6aa251](https://github.com/trust0-project/RIDB/commit/d6aa25107d6307eb03fe26cb44bb8b70e358e5af))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.2.1
+
 ## @trust0/ridb-react [1.1.2-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.2-rc.2...@trust0/ridb-react@1.1.2-rc.3) (2025-01-26)
 
 
