@@ -7,12 +7,13 @@ use crate::query::Query;
 use crate::storage::internals::base_storage::BaseStorage;
 use crate::storage::internals::core::CoreStorage;
 use crate::operation::{OpType, Operation};
-use web_sys::{IdbDatabase, IdbObjectStore, IdbOpenDbRequest, IdbRequest};
+use web_sys::{IdbDatabase, IdbIndex, IdbIndexParameters, IdbKeyRange, IdbObjectStore, IdbOpenDbRequest, IdbRequest};
 use std::sync::Arc;
 use parking_lot::Mutex;
 use std::collections::HashMap;
 use std::sync::Weak;
 use lazy_static::lazy_static;
+use crate::query::options::QueryOptions;
 use crate::schema::Schema;
 use super::base::Storage;
 
@@ -47,7 +48,7 @@ pub struct IndexDB {
     db: IdbDatabase,
     _error_handler: Option<Closure<dyn FnMut(web_sys::Event)>>,
     _success_handler: Option<Closure<dyn FnMut(web_sys::Event)>>,
-} 
+}
 
 impl Drop for IndexDB {
     fn drop(&mut self) {
@@ -65,7 +66,7 @@ async fn idb_request_result(request: IdbRequest) -> Result<JsValue, JsValue> {
                 .unwrap()
                 .dyn_into()
                 .unwrap();
-            
+
             match request.result() {
                 Ok(result) => resolve.call1(&JsValue::undefined(), &result).unwrap(),
                 Err(e) => reject.call1(&JsValue::undefined(), &e).unwrap(),
@@ -77,7 +78,7 @@ async fn idb_request_result(request: IdbRequest) -> Result<JsValue, JsValue> {
                 .unwrap()
                 .dyn_into()
                 .unwrap();
-            
+
             let error = request.error().unwrap();
             reject2.call1(&JsValue::undefined(), &error.unwrap()).unwrap();
         }));
@@ -102,7 +103,7 @@ impl Storage for IndexDB {
         match op.op_type {
             OpType::CREATE | OpType::UPDATE => {
                 let document = op.data.clone();
-                
+
                 // Extract primary key
                 let primary_key = schema.primary_key.clone();
                 let pk_value = match Reflect::get(&document, &JsValue::from_str(&primary_key)) {
@@ -134,14 +135,14 @@ impl Storage for IndexDB {
         }
     }
 
-    async fn find(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
+    async fn find(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue> {
         Logger::debug(
             "IndexDB-Find",
             &JsValue::from(format!("Find method {}", collection_name)),
         );
 
         let filtered_docs = self
-            .collect_documents_for_query(collection_name, query)
+            .collect_documents_for_query(collection_name, query, options)
             .await?;
         Ok(filtered_docs.into())
     }
@@ -169,9 +170,9 @@ impl Storage for IndexDB {
         }
     }
 
-    async fn count(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
+    async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue> {
         let filtered_docs = self
-            .collect_documents_for_query(collection_name, query)
+            .collect_documents_for_query(collection_name, query, options)
             .await?;
         Ok(JsValue::from_f64(filtered_docs.length() as f64))
     }
@@ -270,7 +271,7 @@ async fn create_database(name: &str, schemas: &HashMap<String, Schema>) -> Resul
                     // If there are indexes, create them
                     if let Some(indexes) = &schema.indexes {
                         for index_name in indexes {
-                            let mut index_params = web_sys::IdbIndexParameters::new();
+                            let mut index_params = IdbIndexParameters::new();
                             index_params.unique(false);
                             index_params.multi_entry(false);
                             Logger::debug(
@@ -326,14 +327,15 @@ async fn create_database(name: &str, schemas: &HashMap<String, Schema>) -> Resul
 
 #[wasm_bindgen]
 impl IndexDB {
-
-    /// A helper function to collect and filter documents for a given query.
-    /// This is used by both the `find` and `count` methods to reduce duplicated logic.
+    /// A helper function to collect and filter documents for a given query,
+    /// respecting offsets and limits to avoid wasting time and resources.
     async fn collect_documents_for_query(
         &self,
         collection_name: &str,
-        query: Query,
+        query: &Query,
+        options: &QueryOptions
     ) -> Result<Array, JsValue> {
+        // Acquire references to the object store and schema
         let store = self.get_store(collection_name)?;
         let schema = self
             .base
@@ -341,83 +343,249 @@ impl IndexDB {
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?;
 
+        // Attempt to figure out if we can leverage a single index
+        let index_name_option = can_use_single_index_lookup(query, schema)?;
+
+        // Determine offset and limit
+        let offset = options.offset.unwrap_or(0);
+        let limit = options.limit.unwrap_or(u32::MAX);
+
+        // Clone the query data for filtering
         let core = self.core.clone();
         let normalized_query = query.parse()?;
-        let should_use_index = can_use_single_index_lookup(&query, schema)?;
 
-        // Attempt to do an indexed lookup if there's a suitable single index
-        let documents = if let Some(index_name) = should_use_index {
+        // Build a "value_query" for final in-memory filter
+        let value_query = Query::new(normalized_query.clone(), query.schema.clone())?;
 
+        // Prepare the final, filtered documents array
+        // but efficiently fetch them using a cursor approach.
+        let documents = if let Some(index_name) = index_name_option {
+            // There's a single suitable index
             let index_value = query.get(index_name.as_str())?;
             if let Ok(index) = store.index(&index_name) {
-                // If index_value is an array, fetch documents for each key and merge
+                // If "index_value" is an array of keys, we merge from multiple cursors
                 if Array::is_array(&index_value) {
                     let key_array = Array::from(&index_value);
                     let merged_docs = Array::new();
-
                     for i in 0..key_array.length() {
                         let key = key_array.get(i);
-
-                        let request = match index.get_all_with_key(&key) {
-                            Ok(r) => r,
-                            // Fallback to store.get_all on error
-                            Err(_) => store.get_all()?,
-                        };
-
-                        let result = idb_request_result(request).await?;
-                        if !result.is_undefined() && !result.is_null() {
-                            let docs = Array::from(&result);
-                            for j in 0..docs.length() {
-                                merged_docs.push(&docs.get(j));
-                            }
+                        let partial_result = self
+                            .cursor_fetch_and_filter(
+                                Some(&index),
+                                None,
+                                &key,
+                                &core,
+                                &value_query,
+                                offset,
+                                limit,
+                            )
+                            .await?;
+                        // Merge partial_result into merged_docs
+                        for j in 0..partial_result.length() {
+                            merged_docs.push(&partial_result.get(j));
                         }
                     }
                     merged_docs
                 } else {
-                    // Single key fetch
-                    let request = match index.get_all_with_key(&index_value) {
-                        Ok(r) => r,
-                        Err(_) => store.get_all()?,
-                    };
-                    let result = idb_request_result(request).await?;
-                    if result.is_undefined() || result.is_null() {
-                        Array::new()
-                    } else {
-                        Array::from(&result)
-                    }
+                    // Single key fetch from this index
+                    self.cursor_fetch_and_filter(
+                        Some(&index),
+                        None,
+                        &index_value,
+                        &core,
+                        &value_query,
+                        offset,
+                        limit,
+                    )
+                    .await?
                 }
             } else {
-                // If we couldn't get the index, return all documents
-                let result = idb_request_result(store.get_all()?).await?;
-                if result.is_undefined() || result.is_null() {
-                    Array::new()
-                } else {
-                    Array::from(&result)
-                }
+                // If we couldn't get the index, do a cursor fetch for the entire store
+                self.cursor_fetch_and_filter(
+                    None,
+                    Some(&store),
+                    &JsValue::undefined(),
+                    &core,
+                    &value_query,
+                    offset,
+                    limit,
+                )
+                .await?
             }
         } else {
-            // If no single index is usable, fetch all documents
-            let result = idb_request_result(store.get_all()?).await?;
-            if result.is_undefined() || result.is_null() {
-                Array::new()
-            } else {
-                Array::from(&result)
-            }
+            // No single index is usable; fetch everything via cursor on the store
+            self.cursor_fetch_and_filter(
+                None,
+                Some(&store),
+                &JsValue::undefined(),
+                &core,
+                &value_query,
+                offset,
+                limit,
+            )
+            .await?
         };
 
-        // Filter the documents according to any additional query requirements
-        let value_query = Query::new(normalized_query.clone(), query.schema.clone())?;
-        let filtered = Array::new();
-        for i in 0..documents.length() {
-            let doc = documents.get(i);
-            if let Ok(matches) = core.document_matches_query(&doc, &value_query) {
-                if matches {
-                    filtered.push(&doc);
+        Ok(documents)
+    }
+
+    /// Fetch documents by opening an IndexedDB cursor (on an index or store),
+    /// then apply inline filtering and offset/limit constraints.
+    async fn cursor_fetch_and_filter(
+        &self,
+        index: Option<&web_sys::IdbIndex>,
+        store: Option<&web_sys::IdbObjectStore>,
+        key_value: &JsValue,
+        core: &CoreStorage,
+        value_query: &Query,
+        offset: u32,
+        limit: u32,
+    ) -> Result<Array, JsValue> {
+        use std::cell::RefCell;
+        use std::rc::Rc;
+
+        let result_array = Rc::new(RefCell::new(Array::new()));
+        let skipped_count = Rc::new(RefCell::new(0u32));
+        let matched_count = Rc::new(RefCell::new(0u32));
+
+        let promise = Promise::new(&mut |resolve, reject| {
+            // Put `resolve` and `reject` into reference-counted pointers
+            let resolve_rc = Rc::new(resolve);
+            let reject_rc = Rc::new(reject);
+
+            let result_array_cloned = result_array.clone();
+            let skipped_count_cloned = skipped_count.clone();
+            let matched_count_cloned = matched_count.clone();
+            let core_cloned = core.clone();
+            let value_query_cloned = value_query.clone();
+
+            // Clone the Rc references so each closure can access them without moving.
+            let resolve_for_success = Rc::clone(&resolve_rc);
+            let reject_for_success = Rc::clone(&reject_rc);
+
+            // On success callback: potentially invoked multiple times as we move the cursor
+            let on_success = Closure::wrap(Box::new(move |evt: web_sys::Event| {
+                let target: web_sys::IdbRequest = match evt.target().and_then(|t| t.dyn_into().ok()) {
+                    Some(req) => req,
+                    None => {
+                        let _ = reject_for_success.call1(
+                            &JsValue::NULL,
+                            &JsValue::from_str("Failed to cast event target to IdbRequest."),
+                        );
+                        return;
+                    }
+                };
+
+                let cursor_value = target.result();
+                if cursor_value.is_err()
+                    || cursor_value.as_ref().unwrap().is_null()
+                    || cursor_value.as_ref().unwrap().is_undefined()
+                {
+                    // Cursor finished: resolve with the final array
+                    let _ = resolve_for_success.call1(
+                        &JsValue::NULL,
+                        &result_array_cloned.borrow(),
+                    );
+                    return;
+                }
+
+                let cursor: web_sys::IdbCursorWithValue = match cursor_value.unwrap().dyn_into() {
+                    Ok(c) => c,
+                    Err(_) => {
+                        let _ = reject_for_success.call1(
+                            &JsValue::NULL,
+                            &JsValue::from_str("Failed to cast cursor to IdbCursorWithValue."),
+                        );
+                        return;
+                    }
+                };
+
+                let doc = match cursor.value() {
+                    Ok(val) => val,
+                    Err(err) => {
+                        let _ = reject_for_success.call1(&JsValue::NULL, &err);
+                        return;
+                    }
+                };
+
+                // Filter in-memory based on the original query
+                if core_cloned
+                    .document_matches_query(&doc, &value_query_cloned)
+                    .unwrap_or(false)
+                {
+                    let mut skip_ref = skipped_count_cloned.borrow_mut();
+                    let mut match_ref = matched_count_cloned.borrow_mut();
+
+                    if *skip_ref < offset {
+                        *skip_ref += 1;
+                    } else if *match_ref < limit {
+                        result_array_cloned.borrow().push(&doc);
+                        *match_ref += 1;
+                    }
+                    if *match_ref >= limit {
+                        // Found enough docs: resolve immediately
+                        let _ = resolve_for_success.call1(
+                            &JsValue::NULL,
+                            &result_array_cloned.borrow(),
+                        );
+                        return;
+                    }
+                }
+
+                // Advance cursor
+                if let Err(err) = cursor.continue_() {
+                    let _ = reject_for_success.call1(&JsValue::NULL, &err);
+                }
+            }) as Box<dyn FnMut(_)>);
+
+            // Clone again for on_error closure
+            let reject_for_error = Rc::clone(&reject_rc);
+            let on_error = Closure::wrap(Box::new(move |evt: web_sys::Event| {
+                let _ = reject_for_error.call1(&JsValue::NULL, &evt);
+            }) as Box<dyn FnMut(_)>);
+
+            // Decide how to open the cursor
+            let request_result = if let Some(idx) = index {
+                if !key_value.is_null() && !key_value.is_undefined() {
+                    match IdbKeyRange::only(key_value) {
+                        Ok(range) => idx.open_cursor_with_range(&range),
+                        Err(_) => idx.open_cursor(),
+                    }
+                } else {
+                    idx.open_cursor()
+                }
+            } else if let Some(st) = store {
+                if !key_value.is_null() && !key_value.is_undefined() {
+                    match IdbKeyRange::only(key_value) {
+                        Ok(range) => st.open_cursor_with_range(&range),
+                        Err(_) => st.open_cursor(),
+                    }
+                } else {
+                    st.open_cursor()
+                }
+            } else {
+                Err(JsValue::from_str("No index or store provided to open cursor."))
+            };
+
+            // Attach success/error closures to the request
+            match request_result {
+                Ok(request) => {
+                    request.set_onsuccess(Some(on_success.as_ref().unchecked_ref()));
+                    request.set_onerror(Some(on_error.as_ref().unchecked_ref()));
+
+                    // Keep the closures alive for multiple invocations
+                    on_success.forget();
+                    on_error.forget();
+                }
+                Err(e) => {
+                    let _ = reject_rc.call1(&JsValue::NULL, &e);
                 }
             }
-        }
+        });
 
-        Ok(filtered)
+        // Await the promise, then convert the result to an Array
+        let js_result = wasm_bindgen_futures::JsFuture::from(promise).await?;
+        Ok(Array::from(&js_result))
     }
 
     pub fn get_stores(&self) -> Vec<String> {
@@ -484,13 +652,14 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "find")]
-    pub async fn find_js(&self, collection_name: &str, query: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn find_js(&self, collection_name: &str, query: JsValue, options: &QueryOptions) -> Result<JsValue, JsValue> {
         let schema = self
             .base
             .schemas
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?;
-        self.find(collection_name, Query::new(query, schema.clone())?)
+        let query = Query::new(query, schema.clone())?;
+        self.find(collection_name, &query, options)
             .await
     }
 
@@ -500,13 +669,14 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "count")]
-    pub async fn count_js(&self, collection_name: &str, query: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn count_js(&self, collection_name: &str, query: JsValue, options: &QueryOptions) -> Result<JsValue, JsValue> {
         let schema = self
             .base
             .schemas
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?;
-        self.count(collection_name, Query::new(query, schema.clone())?)
+        let query = Query::new(query, schema.clone())?;
+        self.count(collection_name, &query, options)
             .await
     }
 
@@ -778,8 +948,11 @@ mod tests {
             "status": "active",
             "age": { "$gt": 30 }
         }"#).unwrap();
-
-        let result = db.find_js("demo", query_value).await.unwrap();
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
+        let result = db.find_js("demo", query_value, &query_options).await.unwrap();
         let result_array = Array::from(&result);
 
         assert_eq!(result_array.length(), 1);
@@ -843,8 +1016,11 @@ mod tests {
         let query_value = json_str_to_js_value(r#"{
             "status": "active"
         }"#).unwrap();
-
-        let result = db.count_js("demo", query_value).await.unwrap();
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
+        let result = db.count_js("demo", query_value, &query_options).await.unwrap();
         assert_eq!(result.as_f64().unwrap(), 2.0);
 
         // Clean up
@@ -904,14 +1080,17 @@ mod tests {
 
         // Query the empty products collection
         let empty_query = json_str_to_js_value("{}").unwrap();
-
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
         // Find all products (should be empty)
-        let products_result = db.find_js("products", empty_query.clone()).await.unwrap();
+        let products_result = db.find_js("products", empty_query.clone(), &query_options).await.unwrap();
         let products_array = Array::from(&products_result);
         assert_eq!(products_array.length(), 0);
 
         // Count products (should be 0)
-        let count_result = db.count_js("products", empty_query).await.unwrap();
+        let count_result = db.count_js("products", empty_query, &query_options).await.unwrap();
         assert_eq!(count_result.as_f64().unwrap(), 0.0);
 
         // Clean up

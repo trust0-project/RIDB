@@ -6,9 +6,9 @@
 
 # Type Alias: OperatorOrType\<T\>
 
-> **OperatorOrType**\<`T`\>: `T` *extends* `number` ? `T` \| [`Operators`](Operators.md) \| [`InOperator`](InOperator.md)\<`T`\> : `T` \| [`InOperator`](InOperator.md)\<`T`\>
+> **OperatorOrType**\<`T`\>: `T` *extends* `number` ? `T` \| [`Operators`](Operators.md)\<`T`\> \| [`InOperator`](InOperator.md)\<`T`\> \| `NInOperator`\<`T`\> : `T` \| [`InOperator`](InOperator.md)\<`T`\> \| `NInOperator`\<`T`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:73
+Defined in: ridb-core/pkg/ridb\_core.d.ts:78
 
 ## Type Parameters
 

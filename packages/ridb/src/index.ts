@@ -19,6 +19,7 @@
  * ```typescript
  * const db = new RIDB(
  *     {
+ *         dbName: "demo",
  *         schemas: {
  *             demo: {
  *                 version: 0,
@@ -38,7 +39,7 @@
  * 
  * ### Starting the database
  * ```typescript    
- * await db.start({dbName: "demo"})
+ * await db.start()
  * ```
  * 
  * ### Using with encryption plugin
@@ -46,7 +47,6 @@
  * ```typescript
  * await db.start({
  *     password: "my-password"
- *     db
  * })
  * ```
  * 
@@ -58,6 +58,7 @@
  * ```typescript
  * const db = new RIDB(
  *     {
+ *         dbName: "demo",
  *         schemas: {
  *             demo: {
  *                 version: 1,
@@ -85,7 +86,7 @@
  *     }
  * )
  * 
- * await db.start({dbName: "demo"})
+ * await db.start()
  * ```
  * # SDK Rerefence
  */

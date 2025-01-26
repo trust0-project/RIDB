@@ -8,7 +8,7 @@
 
 > **SchemaTypeRecord**: `object`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:197
+Defined in: ridb-core/pkg/ridb\_core.d.ts:662
 
 Represents a record of schema types, where each key is a string and the value is a `SchemaType`.
 

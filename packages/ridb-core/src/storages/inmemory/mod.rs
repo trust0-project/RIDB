@@ -8,6 +8,7 @@ use crate::storage::internals::base_storage::BaseStorage;
 use crate::storage::internals::core::CoreStorage;
 use std::sync::RwLock;
 use crate::logger::Logger;
+use crate::query::options::QueryOptions;
 use super::base::Storage;
 
 #[wasm_bindgen(typescript_custom_section)]
@@ -227,7 +228,7 @@ impl Storage for InMemory {
         }
     }
 
-    async fn find(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
+    async fn find(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue> {
         Logger::log(
             "InMemory::find",
             &JsValue::from_str(&format!(
@@ -236,7 +237,7 @@ impl Storage for InMemory {
                 query
             ))
         );
-        let documents = self.get_matching_documents(collection_name, &query).await?;
+        let documents = self.get_matching_documents(collection_name, &query, options).await?;
         let results_array = Array::new();
 
         for doc in documents {
@@ -298,7 +299,7 @@ impl Storage for InMemory {
         Ok(JsValue::undefined())
     }
 
-    async fn count(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
+    async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue> {
         Logger::log(
             "InMemory::count",
             &JsValue::from_str(&format!(
@@ -307,7 +308,7 @@ impl Storage for InMemory {
                 query
             ))
         );
-        let documents = self.get_matching_documents(collection_name, &query).await?;
+        let documents = self.get_matching_documents(collection_name, &query, options).await?;
         Logger::log(
             "InMemory::count",
             &JsValue::from_str(&format!(
@@ -376,7 +377,8 @@ impl InMemory {
     async fn get_matching_documents(
         &self,
         collection_name: &str,
-        query: &Query
+        query: &Query,
+        options: &QueryOptions
     ) -> Result<Vec<JsValue>, JsValue> {
         Logger::log(
             "InMemory::get_matching_documents",
@@ -497,12 +499,26 @@ impl InMemory {
         Logger::log(
             "InMemory::get_matching_documents",
             &JsValue::from_str(&format!(
-                "Found {} matching documents.",
+                "Found {} matching documents before applying limit/offset.",
                 matched_docs.len()
             ))
         );
         
-        Ok(matched_docs)
+        // Apply offset/limit:
+        let offset = options.offset.unwrap_or(0) as usize;
+        let limit = options.limit.unwrap_or(u32::MAX) as usize;
+        let end = offset.saturating_add(limit).min(matched_docs.len());
+        let result_docs = matched_docs[offset..end].to_vec();
+
+        Logger::log(
+            "InMemory::get_matching_documents",
+            &JsValue::from_str(&format!(
+                "Returning {} documents after applying limit/offset.",
+                result_docs.len()
+            ))
+        );
+
+        Ok(result_docs)
     }
     
     #[wasm_bindgen]
@@ -560,7 +576,7 @@ impl InMemory {
     }
 
     #[wasm_bindgen(js_name = "find")]
-    pub async fn find_js(&self, collection_name: &str, query_js: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn find_js(&self, collection_name: &str, query_js: JsValue, options: &QueryOptions) -> Result<JsValue, JsValue> {
         Logger::log(
             "InMemory::find_js",
             &JsValue::from_str(&format!(
@@ -571,7 +587,7 @@ impl InMemory {
         let schema = self.base.schemas.get(collection_name)
             .ok_or_else(|| JsValue::from( format!("Collection {} not found in find", collection_name)))?;
         let query = Query::new(query_js.clone(), schema.clone())?;
-        self.find(collection_name, query.clone()).await
+        self.find(collection_name, &query, options).await
     }
 
     #[wasm_bindgen(js_name = "findDocumentById")]
@@ -591,7 +607,7 @@ impl InMemory {
     }
 
     #[wasm_bindgen(js_name = "count")]
-    pub async fn count_js(&self, collection_name: &str, query_js: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn count_js(&self, collection_name: &str, query_js: JsValue, options: &QueryOptions) -> Result<JsValue, JsValue> {
         Logger::log(
             "InMemory::count_js",
             &JsValue::from_str(&format!(
@@ -601,7 +617,7 @@ impl InMemory {
         );
         let schema = self.base.schemas.get(collection_name).ok_or_else(|| JsValue::from( format!("Collection {} not found in count", collection_name)))?;
         let query = Query::new(query_js, schema.clone())?;
-        self.count(collection_name, query).await
+        self.count(collection_name, &query, options).await
     }
 
     #[wasm_bindgen(js_name = "close")]
@@ -802,8 +818,13 @@ mod tests {
             "status": "active",
             "age": { "$gt": 30 }
         }"#).unwrap();
-        
-        let result = inmem.find_js("demo", query_value).await.unwrap();
+
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
+
+        let result = inmem.find_js("demo", query_value, &query_options).await.unwrap();
         let result_array = Array::from(&result);
         
         assert_eq!(result_array.length(), 1);
@@ -812,6 +833,77 @@ mod tests {
             Reflect::get(&first_doc, &JsValue::from_str("name")).unwrap(),
             JsValue::from_str("Charlie")
         );
+    }
+
+    #[wasm_bindgen_test(async)]
+    async fn test_inmemory_storage_find_limit_and_offset() {
+        // This test validates that specifying limit and offset in QueryOptions
+        // returns the correct subset of the documents.
+        let schemas_obj = Object::new();
+        let schema_str = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "title": { "type": "string" }
+            }
+        }"#;
+        let schema = json_str_to_js_value(schema_str).unwrap();
+        Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
+        
+        let inmem = InMemory::create("test_db_limit_offset", schemas_obj).await.unwrap();
+
+        // Insert multiple test documents
+        let items = vec![
+            json_str_to_js_value(r#"{"id": "1", "title": "Doc1"}"#).unwrap(),
+            json_str_to_js_value(r#"{"id": "2", "title": "Doc2"}"#).unwrap(),
+            json_str_to_js_value(r#"{"id": "3", "title": "Doc3"}"#).unwrap(),
+            json_str_to_js_value(r#"{"id": "4", "title": "Doc4"}"#).unwrap(),
+            json_str_to_js_value(r#"{"id": "5", "title": "Doc5"}"#).unwrap(),
+        ];
+
+        for item in items {
+            let primary_key = Reflect::get(&item, &JsValue::from_str("id")).unwrap();
+            let op = Operation {
+                collection: "demo".to_string(),
+                op_type: OpType::CREATE,
+                data: item,
+                primary_key_field: Some("id".to_string()),
+                primary_key: Some(primary_key)
+            };
+            inmem.write(&op).await.unwrap();
+        }
+
+        // Query all docs with no filter but limit=2, offset=0
+        let query_value = json_str_to_js_value("{}").unwrap();
+
+        // 1) limit=2, offset=0 => should return first 2 docs
+        let query_options_1 = QueryOptions {
+            limit: Some(2),
+            offset: Some(0),
+        };
+        let result_1 = inmem.find_js("demo", query_value.clone(), &query_options_1).await.unwrap();
+        let arr_1 = Array::from(&result_1);
+        assert_eq!(arr_1.length(), 2);
+
+        // 2) limit=2, offset=2 => 2 docs after skipping the first 2
+        let query_options_2 = QueryOptions {
+            limit: Some(2),
+            offset: Some(2),
+        };
+        let result_2 = inmem.find_js("demo", query_value.clone(), &query_options_2).await.unwrap();
+        let arr_2 = Array::from(&result_2);
+        assert_eq!(arr_2.length(), 2);
+
+        // 3) limit=2, offset=4 => 1 doc remaining in the set
+        let query_options_3 = QueryOptions {
+            limit: Some(2),
+            offset: Some(4),
+        };
+        let result_3 = inmem.find_js("demo", query_value, &query_options_3).await.unwrap();
+        let arr_3 = Array::from(&result_3);
+        assert_eq!(arr_3.length(), 1);
     }
 
     #[wasm_bindgen_test(async)]
@@ -864,8 +956,11 @@ mod tests {
         let query_value = json_str_to_js_value(r#"{
             "status": "active"
         }"#).unwrap();
-        
-        let result = inmem.count_js("demo", query_value).await.unwrap();
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
+        let result = inmem.count_js("demo", query_value, &query_options).await.unwrap();
         assert_eq!(result.as_f64().unwrap(), 2.0);
     }
 
@@ -921,14 +1016,17 @@ mod tests {
 
         // Query the empty posts collection
         let empty_query = json_str_to_js_value("{}").unwrap();
-        
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
         // Test find on empty collection
-        let posts_result = inmem.find_js("posts", empty_query.clone()).await.unwrap();
+        let posts_result = inmem.find_js("posts", empty_query.clone(), &query_options).await.unwrap();
         let posts_array = Array::from(&posts_result);
         assert_eq!(posts_array.length(), 0);
         
         // Test count on empty collection
-        let count_result = inmem.count_js("posts", empty_query).await.unwrap();
+        let count_result = inmem.count_js("posts", empty_query, &query_options).await.unwrap();
         assert_eq!(count_result.as_f64().unwrap(), 0.0);
     }
 
@@ -973,7 +1071,11 @@ mod tests {
 
         // Ensure storage is empty after restart
         let query_value = json_str_to_js_value("{}").unwrap();
-        let result = inmem.find_js("demo", query_value).await.unwrap();
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
+        let result = inmem.find_js("demo", query_value, &query_options).await.unwrap();
         let result_array = Array::from(&result);
         assert_eq!(result_array.length(), 0);
     }
