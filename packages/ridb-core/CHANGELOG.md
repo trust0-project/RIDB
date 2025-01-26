@@ -1,3 +1,9 @@
+## @trust0/ridb-core [1.3.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.3.0...@trust0/ridb-core@1.3.1) (2025-01-26)
+
+### Bug Fixes
+
+* lerna issue ([e104849](https://github.com/trust0-project/RIDB/commit/e10484998e7ad1d31215733dd40f33c9f999570e))
+
 ## @trust0/ridb-core [1.3.0](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.2.0...@trust0/ridb-core@1.3.0) (2025-01-26)
 
 ### Features
