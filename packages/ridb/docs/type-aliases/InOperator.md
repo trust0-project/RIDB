@@ -8,7 +8,7 @@
 
 > **InOperator**\<`T`\>: `object`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:72
+Defined in: ridb-core/pkg/ridb\_core.d.ts:75
 
 ## Type Parameters
 

@@ -6,7 +6,7 @@
 
 # Class: InMemory\<T\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:362
+Defined in: ridb-core/pkg/ridb\_core.d.ts:510
 
 Represents an in-memory storage system extending the base storage functionality.
 
@@ -26,7 +26,7 @@ The schema type.
 
 > **new InMemory**\<`T`\>(`dbName`, `schemas`, `options`?): [`InMemory`](InMemory.md)\<`T`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:107
+Defined in: ridb-core/pkg/ridb\_core.d.ts:636
 
 #### Parameters
 
@@ -56,7 +56,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:107
 
 > `readonly` **core**: [`CoreStorage`](CoreStorage.md)
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:115
+Defined in: ridb-core/pkg/ridb\_core.d.ts:644
 
 #### Inherited from
 
@@ -68,7 +68,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:115
 
 > `readonly` **dbName**: `string`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:112
+Defined in: ridb-core/pkg/ridb\_core.d.ts:641
 
 #### Inherited from
 
@@ -80,7 +80,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:112
 
 > `readonly` **options**: [`BaseStorageOptions`](../type-aliases/BaseStorageOptions.md)
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:114
+Defined in: ridb-core/pkg/ridb\_core.d.ts:643
 
 #### Inherited from
 
@@ -92,7 +92,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:114
 
 > `readonly` **schemas**: `Record`\<keyof `T`, [`Schema`](Schema.md)\<`T`\[keyof `T`\]\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:113
+Defined in: ridb-core/pkg/ridb\_core.d.ts:642
 
 #### Inherited from
 
@@ -104,7 +104,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:113
 
 > **addIndexSchemas**(): `null`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:125
+Defined in: ridb-core/pkg/ridb\_core.d.ts:654
 
 #### Returns
 
@@ -120,7 +120,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:125
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:117
+Defined in: ridb-core/pkg/ridb\_core.d.ts:646
 
 #### Returns
 
@@ -136,7 +136,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:117
 
 > **count**(`colectionName`, `query`): `Promise`\<`number`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:118
+Defined in: ridb-core/pkg/ridb\_core.d.ts:647
 
 #### Parameters
 
@@ -162,7 +162,7 @@ keyof `T`
 
 > **find**(`collectionName`, `query`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>[]\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:120
+Defined in: ridb-core/pkg/ridb\_core.d.ts:649
 
 #### Parameters
 
@@ -188,7 +188,7 @@ keyof `T`
 
 > **findDocumentById**(`collectionName`, `id`): `Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:119
+Defined in: ridb-core/pkg/ridb\_core.d.ts:648
 
 #### Parameters
 
@@ -214,7 +214,7 @@ keyof `T`
 
 > **free**(): `void`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:366
+Defined in: ridb-core/pkg/ridb\_core.d.ts:514
 
 Frees the resources used by the in-memory storage.
 
@@ -228,7 +228,7 @@ Frees the resources used by the in-memory storage.
 
 > **getOption**(`name`): `undefined` \| `string` \| `number` \| `boolean`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:122
+Defined in: ridb-core/pkg/ridb\_core.d.ts:651
 
 #### Parameters
 
@@ -250,7 +250,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:122
 
 > **getSchema**(`name`): [`Schema`](Schema.md)\<`any`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:123
+Defined in: ridb-core/pkg/ridb\_core.d.ts:652
 
 #### Parameters
 
@@ -272,7 +272,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:123
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:116
+Defined in: ridb-core/pkg/ridb\_core.d.ts:645
 
 #### Returns
 
@@ -288,7 +288,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:116
 
 > **write**(`op`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:121
+Defined in: ridb-core/pkg/ridb\_core.d.ts:650
 
 #### Parameters
 
@@ -310,7 +310,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:121
 
 > `static` **create**\<`SchemasCreate`\>(`dbName`, `schemas`): `Promise`\<[`InMemory`](InMemory.md)\<`SchemasCreate`\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:368
+Defined in: ridb-core/pkg/ridb\_core.d.ts:516
 
 #### Type Parameters
 

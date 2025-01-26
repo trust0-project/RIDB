@@ -4,13 +4,21 @@
 
 [@trust0/ridb](../README.md) / Operators
 
-# Type Alias: Operators
+# Type Alias: Operators\<T\>
 
-> **Operators**: `object`
+> **Operators**\<`T`\>: `object`
 
 Defined in: ridb-core/pkg/ridb\_core.d.ts:66
 
+## Type Parameters
+
+• **T**
+
 ## Type declaration
+
+### $eq?
+
+> `optional` **$eq**: `T`
 
 ### $gt?
 
@@ -27,3 +35,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:66
 ### $lte?
 
 > `optional` **$lte**: `number`
+
+### $ne?
+
+> `optional` **$ne**: `T`

@@ -6,7 +6,7 @@
 
 # Class: `abstract` StorageInternal\<Schemas\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:201
+Defined in: ridb-core/pkg/ridb\_core.d.ts:666
 
 ## Extended by
 
@@ -22,7 +22,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:201
 
 > **new StorageInternal**\<`Schemas`\>(`name`, `schemas`): [`StorageInternal`](StorageInternal.md)\<`Schemas`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:202
+Defined in: ridb-core/pkg/ridb\_core.d.ts:667
 
 #### Parameters
 
@@ -44,7 +44,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:202
 
 > `abstract` **close**(): `Promise`\<`void`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:207
+Defined in: ridb-core/pkg/ridb\_core.d.ts:672
 
 #### Returns
 
@@ -56,7 +56,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:207
 
 > `abstract` **count**(`colectionName`, `query`): `Promise`\<`number`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:208
+Defined in: ridb-core/pkg/ridb\_core.d.ts:673
 
 #### Parameters
 
@@ -78,7 +78,7 @@ keyof `Schemas`
 
 > `abstract` **find**(`collectionName`, `query`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>[]\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:216
+Defined in: ridb-core/pkg/ridb\_core.d.ts:681
 
 #### Parameters
 
@@ -100,7 +100,7 @@ keyof `Schemas`
 
 > `abstract` **findDocumentById**(`collectionName`, `id`): `Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:212
+Defined in: ridb-core/pkg/ridb\_core.d.ts:677
 
 #### Parameters
 
@@ -122,7 +122,7 @@ keyof `Schemas`
 
 > `abstract` **start**(): `Promise`\<`void`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:206
+Defined in: ridb-core/pkg/ridb\_core.d.ts:671
 
 #### Returns
 
@@ -134,7 +134,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:206
 
 > `abstract` **write**(`op`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:220
+Defined in: ridb-core/pkg/ridb\_core.d.ts:685
 
 #### Parameters
 
