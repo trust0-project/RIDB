@@ -1,3 +1,18 @@
+## @trust0/ridb-level [1.1.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.2...@trust0/ridb-level@1.1.3) (2025-01-26)
+
+### Bug Fixes
+
+* vuln dependency check ([c590170](https://github.com/trust0-project/RIDB/commit/c59017092f410aab93dd84f0911769bad9f81c7f))
+
+### Miscellaneous Chores
+
+* **release:** 1.1.3-rc.1 [skip ci] ([d968b05](https://github.com/trust0-project/RIDB/commit/d968b052bf1c172acfc1c8fcff3e1efe4ddd20f3))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.2.2
+
 ## @trust0/ridb-level [1.1.3-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.2...@trust0/ridb-level@1.1.3-rc.1) (2025-01-26)
 
 ### Bug Fixes
