@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-level",
-  "version": "1.1.5",
+  "version": "1.1.6-rc.1",
   "description": "Level DB storage for @trust0/ridb.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -57,7 +57,6 @@
     "vite-plugin-wasm": "^3.3.0",
     "vitest": "^1.6.0",
     "webdriverio": "^9.7.1",
-    "@trust0/ridb": "1.2.4",
     "vite": "^5.4.12",
     "classic-level": "^2.0.0",
     "@trust0/ridb-testing": "^0.0.1"
