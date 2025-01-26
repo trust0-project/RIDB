@@ -1,3 +1,14 @@
+## @trust0/ridb-level [1.1.5](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.4...@trust0/ridb-level@1.1.5) (2025-01-26)
+
+### Bug Fixes
+
+* lerna issue ([e104849](https://github.com/trust0-project/RIDB/commit/e10484998e7ad1d31215733dd40f33c9f999570e))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.2.4
+
 ## @trust0/ridb-level [1.1.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.3...@trust0/ridb-level@1.1.4) (2025-01-26)
 
 ### Bug Fixes
