@@ -1,3 +1,14 @@
+## @trust0/ridb-level [1.1.2-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.1...@trust0/ridb-level@1.1.2-rc.1) (2025-01-26)
+
+### Bug Fixes
+
+* docs prepublish ([2291750](https://github.com/trust0-project/RIDB/commit/2291750c059ed63ecbb4cddef6e4f33bf4d02013))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.2.1-rc.1
+
 ## @trust0/ridb-level [1.1.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.0...@trust0/ridb-level@1.1.1) (2025-01-26)
 
 ### Miscellaneous Chores
