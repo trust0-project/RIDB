@@ -1,3 +1,13 @@
+## @trust0/ridb-level [1.1.6](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.5...@trust0/ridb-level@1.1.6) (2025-01-26)
+
+### Bug Fixes
+
+* package lock issue with lerna ([016f612](https://github.com/trust0-project/RIDB/commit/016f612c5991a049278b9f5f0f0cac7973b33ba7))
+
+### Miscellaneous Chores
+
+* **release:** 1.1.6-rc.1 [skip ci] ([612299d](https://github.com/trust0-project/RIDB/commit/612299d76a092aaec4257954e002b45d53e5135e))
+
 ## @trust0/ridb-level [1.1.6-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.5...@trust0/ridb-level@1.1.6-rc.1) (2025-01-26)
 
 ### Bug Fixes
