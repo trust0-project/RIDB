@@ -20,7 +20,7 @@
  * # SDK Rerefence
  */
 import path from 'path';
-import { RIDB } from "@trust0/ridb";
+import { QueryOptions, RIDB } from "@trust0/ridb";
 import type { 
     SchemaTypeRecord, 
     Doc, 
@@ -121,44 +121,99 @@ export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
         }
         return op.data;
     }
-    /** Count documents matching a query */
+    /** Count documents matching a query (supports offset & limit) */
     async count(
         collectionName: keyof T,
-        query: QueryType<T[keyof T]>
+        query: QueryType<T[keyof T]>,
+        options?: QueryOptions
     ): Promise<number> {
         const collectionPrefix = `${String(collectionName)}:`;
         const schema = this.getSchema(String(collectionName));
         const queryInstance = new Query(query, schema);
-        let count = 0;
+
+        // Retrieve limit and offset from options, using defaults if undefined
+        const limit = options?.limit ?? -1;  // -1 indicates "no limit" for classic-level
+        const offset = options?.offset ?? 0; // default to 0 (no offset)
+
+        let matchedCount = 0;
+        let skipCount = offset;
+
+        // If a limit is set, set maxRead = limit + offset
+        // Otherwise, let maxRead be -1 (no limit)
+        const maxRead = limit > 0 ? offset + limit : -1;
+
         for await (const [key, value] of this.db.iterator({
             gte: collectionPrefix,
             lt: `${collectionPrefix}\xFF`,
+            limit: maxRead
         })) {
             const doc = JSON.parse(value);
-            if (this.core.matchesQuery(doc, queryInstance)) {
-                count++;
+
+            if (!this.core.matchesQuery(doc, queryInstance)) {
+                continue;
+            }
+
+            // Skip documents until offset is reached
+            if (skipCount > 0) {
+                skipCount--;
+                continue;
+            }
+
+            matchedCount++;
+
+            // If we've reached the limit, break early
+            if (limit > 0 && matchedCount >= limit) {
+                break;
             }
         }
-        return count;
+
+        return matchedCount;
     }
-    /** Find documents matching a query */
+    /** Find documents matching a query with pagination */
     async find(
         collectionName: keyof T,
-        query: QueryType<T[keyof T]>
+        query: QueryType<T[keyof T]>,
+        options?: QueryOptions
     ): Promise<Doc<T[keyof T]>[]> {
         const collectionPrefix = `${String(collectionName)}:`;
         const schema = this.getSchema(String(collectionName));
         const queryInstance = new Query(query, schema);
+
+        // Retrieve limit and offset from the options, using defaults if undefined
+        const limit = options?.limit ?? -1;  // -1 indicates "no limit" for classic-level
+        const offset = options?.offset ?? 0; // default to 0 (no offset)
+
         const docs: Doc<T[keyof T]>[] = [];
+        let skipCount = offset;
+
+        // If a limit is set, set maxRead = limit + offset
+        // Else let maxRead be -1 (no limit) so we read all
+        const maxRead = limit > 0 ? offset + limit : -1;
+
         for await (const [key, value] of this.db.iterator({
             gte: collectionPrefix,
             lt: `${collectionPrefix}\xFF`,
+            limit: maxRead
         })) {
             const doc = JSON.parse(value);
-            if (this.core.matchesQuery(doc, queryInstance)) {
-                docs.push(doc);
+            if (!this.core.matchesQuery(doc, queryInstance)) {
+                continue;
+            }
+
+            // Skip documents until offset is reached
+            if (skipCount > 0) {
+                skipCount--;
+                continue;
+            }
+
+            docs.push(doc);
+
+            // If we've reached the limit, break early
+            if (limit > 0 && docs.length >= limit) {
+                break;
             }
         }
+
         return docs;
     }
 }

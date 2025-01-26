@@ -9,7 +9,7 @@ fn get_u32_option(options: &JsValue, key: &str) -> Result<Option<u32>, JsValue> 
     if options.is_undefined() {
         return Ok(None);
     }
-    
+
     let value = Reflect::get(options, &JsValue::from_str(key))?;
 
     // If the value is undefined, we treat it as `None`.
