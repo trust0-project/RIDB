@@ -57,5 +57,4 @@ jobs:
         run: |
           npm install
           npm run build
-          npm run docs
           npx multi-semantic-release
