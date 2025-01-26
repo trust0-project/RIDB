@@ -103,7 +103,7 @@ export class Collection<T extends SchemaType> {
 #[derive(Clone)]
 pub struct Collection {
     pub(crate) name: String,
-    pub(crate) storage: Storage,
+    pub(crate) storage: Storage
 }
 
 #[wasm_bindgen]
@@ -121,7 +121,7 @@ impl Collection {
     ) -> Collection {
         Collection {
             name,
-            storage,
+            storage
         }
     }
 
@@ -140,22 +140,19 @@ impl Collection {
 
     /// Finds and returns all documents in the collection.
     ///
-    /// This function is asynchronous and returns a `Schema` representing
+    /// This function is asynchronous and returns a `JsValue` representing
     /// the documents found in the collection.
     #[wasm_bindgen]
-    pub async fn find(&mut self, query: JsValue) -> Result<JsValue, JsValue> {
-        let result = match self.storage.internal.find(&self.name, query).await {
-            Ok(docs) => {
-                docs
-            },
-            Err(e) => {
-                return Err(js_sys::Error::new(&format!("Failed to find documents: {:?}", e)).into())
-            }
-        };
+    pub async fn find(&mut self, query_js: JsValue) -> Result<JsValue, JsValue> {
+        // No index available, perform a regular find
+        let docs = self.storage.find(
+            &self.name,
+            query_js
+        ).await?;
 
-        // Convert the result to a JavaScript array
-        let array = js_sys::Array::from(&result);
-        let processed_array = js_sys::Array::new();
+        // Process and return the result
+        let array = js_sys::Array::from(&docs);
+        let  processed_array = js_sys::Array::new();
 
         // Iterate over each document in the array
         for item in array.iter() {
@@ -164,7 +161,11 @@ impl Collection {
             processed_array.push(&processed_item);
         }
 
-        Ok(processed_array.into())
+        Ok(
+            JsValue::from(
+                processed_array
+            )
+        )
     }
 
     /// counts and returns all documents in the collection.
@@ -172,8 +173,8 @@ impl Collection {
     /// This function is asynchronous and returns a `Schema` representing
     /// the documents found in the collection.
     #[wasm_bindgen]
-    pub async fn count(&self, query: JsValue) -> Result<JsValue, JsValue> {
-        match self.storage.internal.count(&self.name, query).await {
+    pub async fn count(&self, query_js: JsValue) -> Result<JsValue, JsValue> {
+        match self.storage.count(&self.name, query_js).await {
             Ok(count) => Ok(count),
             Err(e) => Err(js_sys::Error::new(&format!("Failed to count documents: {:?}", e)).into())
         }
@@ -184,7 +185,7 @@ impl Collection {
     /// This function is asynchronous.
     #[wasm_bindgen(js_name="findById")]
     pub async fn find_by_id(&self, primary_key: JsValue) -> Result<JsValue, JsValue>{
-        let document = match self.storage.internal.find_document_by_id(&self.name, primary_key  ).await {
+        let document = match self.storage.find_document_by_id(&self.name, primary_key  ).await {
             Ok(doc) => doc,
             Err(e) => return Err(js_sys::Error::new(&format!("Failed to find document by ID: {:?}", e)).into())
         };

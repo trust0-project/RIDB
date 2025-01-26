@@ -13,22 +13,9 @@
  *   <a href="https://raw.githubusercontent.com/trust0-project/RIDB/refs/heads/main/LICENSE"><img src="https://img.shields.io/github/license/trust0-project/ridb?style=flat-square"></a>
  *   <a href="https://www.npmjs.com/package/@trust0/ridb"><img src="https://img.shields.io/npm/dm/@trust0/ridb?color=c63a3b&style=flat-square"></a>   
  * </p>
+ * <h1>Introduction</h1>
  * 
- * # SDK Rerefence
- */
-
-// @ts-ignore @ignore
-import wasmBuffer from "@trust0/ridb-core/pkg/ridb_core_bg.wasm";
-import { BasePlugin, BaseStorage, Database, MigrationPathsForSchemas, MigrationsParameter, SchemaTypeRecord } from "@trust0/ridb-core";
-
-let internal: typeof import("@trust0/ridb-core") | undefined;
-
-/**
- * Represents a RIDB (Rust IndexedDB) instance.
- * This is the main class exposed by the RIDB Storage sdk and is used to create a database instance.
- * 
- * ### Usage:
- * 
+ * ### Usage
  * ```typescript
  * const db = new RIDB(
  *     {
@@ -100,10 +87,14 @@ let internal: typeof import("@trust0/ridb-core") | undefined;
  * 
  * await db.start({dbName: "demo"})
  * ```
- *
- * @class
- * @template T - The type of the schema record.
+ * # SDK Rerefence
  */
+
+// @ts-ignore @ignore
+import wasmBuffer from "@trust0/ridb-core/pkg/ridb_core_bg.wasm";
+import { BasePlugin, BaseStorage, Database, MigrationPathsForSchemas, MigrationsParameter, SchemaTypeRecord } from "@trust0/ridb-core";
+
+let internal: typeof import("@trust0/ridb-core") | undefined;
 
 type StorageClass<T extends SchemaTypeRecord> = {
     create: (
@@ -260,6 +251,7 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
             if (StorageClass && !StorageClass.create) {
                 throw new Error("Your storage does not have an async create function, please check documentation")
             }
+
             
             const storage = StorageClass ? 
                 await StorageClass.create(this.dbName, this.schemas, options) :

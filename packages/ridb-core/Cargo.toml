@@ -17,11 +17,10 @@ serde = { version = "1.0.195", features = ["derive"] }
 serde-wasm-bindgen = "0.6.3"
 console = "0.15.8"
 serde_json = "1.0.111"
-web-sys = { version = "0.3.69", features = ["Storage","IdbTransaction", "IdbVersionChangeEvent", "IdbObjectStoreParameters", "Event", "DomException", "IdbCursor", "IdbKeyRange", "IdbObjectStore", "IdbRequest", "IdbTransactionMode", "IdbOpenDbRequest", "console", "Window", "Request", "Response", "IdbDatabase", "IdbFactory", "DomStringList"] }
+web-sys = { version = "0.3.69", features = ["Storage", "IdbTransaction", "IdbVersionChangeEvent", "IdbObjectStoreParameters","IdbIndexParameters", "Event", "DomException", "IdbCursor", "IdbKeyRange", "IdbObjectStore", "IdbRequest", "IdbTransactionMode", "IdbOpenDbRequest", "console", "Window", "Request", "Response", "IdbDatabase", "IdbFactory", "DomStringList", "IdbIndex"] }
 wasm-bindgen-test = {version="^0.3.42"}
 sha2 = "0.11.0-pre.4"
 base64 = "0.22.1"
-chacha20poly1305 = { version = "0.10.1", features = ["std"] }
 rand = "0.9.0-alpha.2"
 getrandom = { version = "0.2", features = ["js"] }
 parking_lot = "0.12"

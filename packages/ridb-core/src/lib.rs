@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 use std::panic;
@@ -76,17 +78,23 @@ mod logger {
     pub struct Logger;
 
     impl Logger {
-        pub fn log(message: &JsValue) {
-            Logger::log_1(message);
-        }
-        pub fn debug(message: &JsValue) {
+        pub fn log(component: &str, message: &JsValue) {
             if crate::is_debug_mode() {
-                Logger::log_1(message);
+                Logger::log_1(component, message);
+            }
+        }
+        pub fn debug(component: &str, message: &JsValue) {
+            if crate::is_debug_mode() {
+                Logger::log_1(component, message);
             }
         }
 
-        fn log_1(message: &JsValue) {
-            console::log_1(message);
+        fn log_1(component: &str, message: &JsValue) {
+            console::log_1(
+                &JsValue::from(
+                    format!("[{}] {:?}", component, message)
+                )
+            );
         }
     }
 }
