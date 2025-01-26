@@ -92,7 +92,10 @@
           "packages/**/package.json",
           "packages/**/CHANGELOG.md",
           "packages/**/package-lock.json",
-          "packages/**/docs/**/*",
+          "packages/ridb/docs/**/*",
+          "packages/ridb-level/docs/**/*",
+          "packages/ridb-react/docs/**/*",
+          "packages/ridb-core/docs/**/*",
           "package-lock.json",
           "package.json",
           "CHANGELOG.md"
