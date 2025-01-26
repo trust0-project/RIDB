@@ -30,7 +30,7 @@
     "test:browser": "sh test.sh -e browser",
     "types": "npm run types:default",
     "types:default": "npx tsc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build && npm run docs"
   },
   "devDependencies": {
     "esbuild": "0.21.5",
