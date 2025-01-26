@@ -1,3 +1,18 @@
+## @trust0/ridb-core [1.3.0](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.2.0...@trust0/ridb-core@1.3.0) (2025-01-26)
+
+### Features
+
+* adding $nin operator to match array elements with negative criteria ([56df6bd](https://github.com/trust0-project/RIDB/commit/56df6bd3359709e04686365976e2362ca0f2a5ff))
+
+### Bug Fixes
+
+* add basic limit + offset queryOptions implementation in count and find methods ([cb1dab6](https://github.com/trust0-project/RIDB/commit/cb1dab6b6103048496fddc166ad8b0165a3f47cf))
+* add data structure and validation for QueryOptions ([89f65b7](https://github.com/trust0-project/RIDB/commit/89f65b7b34fddaf203159e29f4a2348d1e48f79a))
+
+### Miscellaneous Chores
+
+* **release:** 1.3.0-rc.1 [skip ci] ([72bf72a](https://github.com/trust0-project/RIDB/commit/72bf72a812d3f603bbe13aa615660383bfc1ac6f))
+
 ## @trust0/ridb-core [1.3.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.2.0...@trust0/ridb-core@1.3.0-rc.1) (2025-01-26)
 
 ### Features
