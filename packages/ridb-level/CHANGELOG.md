@@ -1,3 +1,18 @@
+## @trust0/ridb-level [1.1.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.3...@trust0/ridb-level@1.1.4) (2025-01-26)
+
+### Bug Fixes
+
+* add basic limit + offset queryOptions implementation in count and find methods ([cb1dab6](https://github.com/trust0-project/RIDB/commit/cb1dab6b6103048496fddc166ad8b0165a3f47cf))
+
+### Miscellaneous Chores
+
+* **release:** 1.1.4-rc.1 [skip ci] ([74f58dd](https://github.com/trust0-project/RIDB/commit/74f58ddfbc13eb1c845d8b36bef5c5af62320cbf))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.2.3
+
 ## @trust0/ridb-level [1.1.4-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.3...@trust0/ridb-level@1.1.4-rc.1) (2025-01-26)
 
 
