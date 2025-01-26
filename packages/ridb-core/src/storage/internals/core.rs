@@ -192,6 +192,33 @@ impl CoreStorage {
                             return Ok(false);
                         }
                     }
+                    "$nin" => {
+                        if !Array::is_array(&condition_value) {
+                            return Err(JsValue::from_str("$nin value must be an array"));
+                        }
+                        let arr = Array::from(&condition_value);
+                        for j in 0..arr.length() {
+                            let item = arr.get(j);
+                            let valid = self.values_equal(&document_field, &item)?;
+                            if valid {
+                                return Ok(false);
+                            }
+                        }
+                    }
+                    "$eq" => {
+                        // $eq operator: must equal the condition
+                        let eq = self.values_equal(&document_field, &condition_value)?;
+                        if !eq {
+                            return Ok(false);
+                        }
+                    }
+                    "$ne" => {
+                        // $ne operator: must NOT equal the condition
+                        let eq = self.values_equal(&document_field, &condition_value)?;
+                        if eq {
+                            return Ok(false);
+                        }
+                    }
                     _ => {
                         return Err(JsValue::from_str(
                             &format!("Unsupported operator: {}", key)

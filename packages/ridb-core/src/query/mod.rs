@@ -8,18 +8,27 @@ use js_sys::Reflect;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
-export type Operators = {
+export type Operators<T> = {
     $gte?: number,
     $gt?: number
     $lt?: number,
-    $lte?: number
+    $lte?: number,
+    $eq?: T,
+    $ne?: T
 };
+
 export type InOperator<T> = {  $in?: T[] };
-export type OperatorOrType<T> = T extends number ? T | Operators | InOperator<T> : T | InOperator<T>;
+export type NInOperator<T> = {  $nin?: T[] };
+
+export type OperatorOrType<T> = T extends number ? 
+    T | Operators<T> | InOperator<T> | NInOperator<T> : 
+    T | InOperator<T> | NInOperator<T>;
+
 export type LogicalOperators<T extends SchemaType> = {
     $and?: Partial<QueryType<T>>[];
     $or?: Partial<QueryType<T>>[];
 };
+
 export type QueryType<T extends SchemaType> = Partial<{
     [K in keyof T['properties']]: OperatorOrType<
         ExtractType<
@@ -27,11 +36,11 @@ export type QueryType<T extends SchemaType> = Partial<{
         >
     >
 }> & LogicalOperators<T> | LogicalOperators<T>[];
+
 export class Query<T extends SchemaType> {
     constructor(query: QueryType<T>, schema:Schema<T>);
     readonly query: QueryType<T>;
 }
-//test
 "#;
 
 #[derive(Debug, Clone)]
@@ -245,7 +254,7 @@ impl Query {
             for i in 0..keys.length() {
                 let key = keys.get(i).as_string().unwrap_or_default();
                 let val = Reflect::get(value, &JsValue::from_str(&key))?;
-                if ["$gte", "$gt", "$lt", "$lte", "$in"].contains(&key.as_str()) {
+                if ["$gte", "$gt", "$lt", "$lte", "$in", "$nin", "$eq", "$ne"].contains(&key.as_str()) {
                     // Validate operator value
                     self.validate_operator_value(&key, &val, property_type)?;
                     Reflect::set(&result, &JsValue::from_str(&key), &val)?;
@@ -263,7 +272,26 @@ impl Query {
 
     fn validate_operator_value(&self, operator: &str, value: &JsValue, property_type: &str) -> Result<(), JsValue> {
         match operator {
+            "$eq" => {
+                self.validate_value(value, property_type)?;
+                Ok(())
+            }
+            "$ne" => {
+                self.validate_value(value, property_type)?;
+                Ok(())
+            }
             "$in" => {
+                if !Array::is_array(value) {
+                    return Err(JsValue::from_str(&format!("{} operator requires an array", operator)));
+                }
+                let arr = Array::from(value);
+                for i in 0..arr.length() {
+                    let item = arr.get(i);
+                    self.validate_value(&item, property_type)?;
+                }
+                Ok(())
+            }
+            "$nin" => {
                 if !Array::is_array(value) {
                     return Err(JsValue::from_str(&format!("{} operator requires an array", operator)));
                 }
@@ -1157,4 +1185,190 @@ fn test_query_parse_empty_logical_operators() {
 
     let result = query.parse();
     assert!(result.is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_query_parse_nin_operator() {
+    // This test checks that the $nin operator works correctly for string-based properties
+    let schema_str = r#"
+    {
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "status": { "type": "string" }
+        }
+    }
+    "#;
+    let query_str = r#"
+    {
+        "status": { "$nin": ["active", "inactive"] }
+    }
+    "#;
+    let schema_value = JSON::parse(schema_str).unwrap();
+    let schema = Schema::create(schema_value).unwrap();
+
+    let query_js_value = JSON::parse(query_str).unwrap();
+    let query = Query::new(query_js_value, schema).unwrap();
+
+    let result = query.parse();
+    assert!(result.is_ok(), "Parsing query with $nin should succeed for correct types.");
+}
+
+#[wasm_bindgen_test]
+fn test_query_parse_nin_operator_wrong_type() {
+    // This test checks that using $nin on a number property with string values fails
+    let schema_str = r#"
+    {
+        "version": 1,
+        "type": "object",
+        "primaryKey": "id",
+        "properties": {
+            "id": { "type": "string" },
+            "age": { "type": "number" }
+        }
+    }
+    "#;
+    let query_str = r#"
+    {
+        "age": { "$nin": ["twenty", "thirty"] }
+    }
+    "#;
+    let schema_value = JSON::parse(schema_str).unwrap();
+    let schema = Schema::create(schema_value).unwrap();
+
+    let query_js_value = JSON::parse(query_str).unwrap();
+    let query = Query::new(query_js_value, schema).unwrap();
+
+    let result = query.parse();
+    assert!(result.is_err(), "Parsing query with $nin operator on wrong value types should fail.");
+    assert_eq!(
+        result.err().unwrap().as_string().unwrap(),
+        "Expected a number"
+    );
+}
+
+#[wasm_bindgen_test]
+fn test_query_parse_eq_operator() {
+    // This test checks that the $eq operator works correctly for string-based properties
+    let schema_str = r#"
+    {
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "status": { "type": "string" }
+        }
+    }
+    "#;
+    let query_str = r#"
+    {
+        "status": { "$eq": "active" }
+    }
+    "#;
+    let schema_value = JSON::parse(schema_str).unwrap();
+    let schema = Schema::create(schema_value).unwrap();
+
+    let query_js_value = JSON::parse(query_str).unwrap();
+    let query = Query::new(query_js_value, schema).unwrap();
+
+    let result = query.parse();
+    assert!(result.is_ok(), "Parsing query with $eq should succeed for correct types.");
+}
+
+#[wasm_bindgen_test]
+fn test_query_parse_eq_operator_wrong_type() {
+    // This test checks using the $eq operator on a number property with a non-number value
+    let schema_str = r#"
+    {
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "age": { "type": "number" }
+        }
+    }
+    "#;
+    let query_str = r#"
+    {
+        "age": { "$eq": "thirty" }
+    }
+    "#;
+    let schema_value = JSON::parse(schema_str).unwrap();
+    let schema = Schema::create(schema_value).unwrap();
+
+    let query_js_value = JSON::parse(query_str).unwrap();
+    let query = Query::new(query_js_value, schema).unwrap();
+
+    let result = query.parse();
+    assert!(result.is_err(), "Parsing query with $eq operator on wrong value types should fail.");
+    assert_eq!(
+        result.err().unwrap().as_string().unwrap(),
+        "Expected a number"
+    );
+}
+
+#[wasm_bindgen_test]
+fn test_query_parse_ne_operator() {
+    // This test checks that the $ne operator works correctly for string-based properties
+    let schema_str = r#"
+    {
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "status": { "type": "string" }
+        }
+    }
+    "#;
+    let query_str = r#"
+    {
+        "status": { "$ne": "inactive" }
+    }
+    "#;
+    let schema_value = JSON::parse(schema_str).unwrap();
+    let schema = Schema::create(schema_value).unwrap();
+
+    let query_js_value = JSON::parse(query_str).unwrap();
+    let query = Query::new(query_js_value, schema).unwrap();
+
+    let result = query.parse();
+    assert!(result.is_ok(), "Parsing query with $ne should succeed for correct types.");
+}
+
+#[wasm_bindgen_test]
+fn test_query_parse_ne_operator_wrong_type() {
+    // This test checks using the $ne operator on a number property with a non-number value
+    let schema_str = r#"
+    {
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "age": { "type": "number" }
+        }
+    }
+    "#;
+    let query_str = r#"
+    {
+        "age": { "$ne": "forty" }
+    }
+    "#;
+    let schema_value = JSON::parse(schema_str).unwrap();
+    let schema = Schema::create(schema_value).unwrap();
+
+    let query_js_value = JSON::parse(query_str).unwrap();
+    let query = Query::new(query_js_value, schema).unwrap();
+
+    let result = query.parse();
+    assert!(result.is_err(), "Parsing query with $ne operator on wrong value types should fail.");
+    assert_eq!(
+        result.err().unwrap().as_string().unwrap(),
+        "Expected a number"
+    );
 }

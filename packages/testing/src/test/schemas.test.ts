@@ -1673,6 +1673,185 @@ export default (platform: string, storages: StoragesType[]) => {
                         await db.close();
                     });
 
+                    /**
+                     * 11) $nin operator on a numeric field
+                     */
+                    it('should retrieve documents where age not in [25, 30]', async () => {
+                        const db = new RIDB({
+                            dbName,
+                            schemas: {
+                                smallIndexTest: {
+                                    version: 0 as const,
+                                    primaryKey: "id",
+                                    type: SchemaFieldType.object,
+                                    indexes: ["age", "status"],
+                                    properties: {
+                                        id: { type: SchemaFieldType.string },
+                                        age: { type: SchemaFieldType.number },
+                                        status: { type: SchemaFieldType.string },
+                                    },
+                                },
+                            },
+                        });
+                        await db.start({ storageType: storage, password: "test" });
+
+                        // Insert test documents
+                        for (const doc of docs) {
+                            await db.collections.smallIndexTest.create(doc);
+                        }
+
+                        // Query for documents where age is not in the array [25, 30]
+                        const found = await db.collections.smallIndexTest.find({
+                            age: { $nin: [25, 30] },
+                        });
+
+                        // docs:
+                        // * doc2 (25)   -> excluded
+                        // * doc3 (30)   -> excluded
+                        // * doc7 (25)   -> excluded
+                        // Others have ages: 18, 22, 28, 35, 40, 45
+                        // We should end up with 7 matches
+                        expect(found.length).to.eq(7);
+
+                        // Ensure none of them contain the excluded ages
+                        for (const item of found) {
+                            expect([25, 30]).to.not.include(item.age);
+                        }
+
+                        await db.close();
+                    });
+
+                    /**
+                     * 12) $nin operator on a string field
+                     */
+                    it('should retrieve documents where status not in ["active", "pending"]', async () => {
+                        const db = new RIDB({
+                            dbName,
+                            schemas: {
+                                smallIndexTest: {
+                                    version: 0 as const,
+                                    primaryKey: "id",
+                                    type: SchemaFieldType.object,
+                                    indexes: ["age", "status"],
+                                    properties: {
+                                        id: { type: SchemaFieldType.string },
+                                        age: { type: SchemaFieldType.number },
+                                        status: { type: SchemaFieldType.string },
+                                    },
+                                },
+                            },
+                        });
+                        await db.start({ storageType: storage, password: "test" });
+
+                        // Insert test documents
+                        for (const doc of docs) {
+                            await db.collections.smallIndexTest.create(doc);
+                        }
+
+                        // Query for documents where status is neither "active" nor "pending"
+                        const found = await db.collections.smallIndexTest.find({
+                            status: { $nin: ["active", "pending"] },
+                        });
+
+                        // By checking our sample data:
+                        // * "inactive" docs should appear: doc2, doc6, doc10
+                        // * "active" or "pending" docs should be excluded
+                        expect(found.length).to.eq(3);
+                        const ids = found.map((doc) => doc.id);
+                        expect(ids).to.include.members(["doc2", "doc6", "doc10"]);
+
+                        // Also ensure none of them have a status of active or pending
+                        for (const item of found) {
+                            expect(["active", "pending"]).to.not.include(item.status);
+                        }
+
+                        await db.close();
+                    });
+
+                    /**
+                     * 13) $eq operator on a numeric field
+                     */
+                    it('should retrieve documents where age = 25', async () => {
+                        const db = new RIDB({
+                            dbName,
+                            schemas: {
+                                smallIndexTest: {
+                                    version: 0 as const,
+                                    primaryKey: "id",
+                                    type: SchemaFieldType.object,
+                                    indexes: ["age", "status"],
+                                    properties: {
+                                        id: { type: SchemaFieldType.string },
+                                        age: { type: SchemaFieldType.number },
+                                        status: { type: SchemaFieldType.string },
+                                    },
+                                },
+                            },
+                        });
+                        await db.start({ storageType: storage, password: "test" });
+
+                        // Insert test documents
+                        for (const doc of docs) {
+                            await db.collections.smallIndexTest.create(doc);
+                        }
+
+                        // Query documents where age = 25
+                        const found = await db.collections.smallIndexTest.find({
+                            age: { $eq: 25 },
+                        });
+
+                        // In our docs array, doc2(age=25, status="inactive") and doc7(age=25, status="pending")
+                        // are the only docs with age=25.
+                        expect(found.length).to.eq(2);
+                        const ids = found.map((doc) => doc.id);
+                        expect(ids).to.include.members(["doc2", "doc7"]);
+
+                        await db.close();
+                    });
+
+                    /**
+                     * 14) $ne operator on a numeric field
+                     */
+                    it('should retrieve documents where age != 25', async () => {
+                        const db = new RIDB({
+                            dbName,
+                            schemas: {
+                                smallIndexTest: {
+                                    version: 0 as const,
+                                    primaryKey: "id",
+                                    type: SchemaFieldType.object,
+                                    indexes: ["age", "status"],
+                                    properties: {
+                                        id: { type: SchemaFieldType.string },
+                                        age: { type: SchemaFieldType.number },
+                                        status: { type: SchemaFieldType.string },
+                                    },
+                                },
+                            },
+                        });
+                        await db.start({ storageType: storage, password: "test" });
+
+                        // Insert test documents
+                        for (const doc of docs) {
+                            await db.collections.smallIndexTest.create(doc);
+                        }
+
+                        // Query documents where age != 25
+                        const found = await db.collections.smallIndexTest.find({
+                            age: { $ne: 25 },
+                        });
+
+                        // Excludes doc2 and doc7 (both have age=25).
+                        expect(found.length).to.eq(docs.length - 2);
+                        const excludedIds = ["doc2", "doc7"];
+                        for (const record of found) {
+                            expect(excludedIds).to.not.include(record.id);
+                            expect(record.age).to.not.eq(25);
+                        }
+
+                        await db.close();
+                    });
+
                 });
             });
         });
