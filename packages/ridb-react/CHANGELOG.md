@@ -1,3 +1,13 @@
+## @trust0/ridb-react [1.1.5](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.4...@trust0/ridb-react@1.1.5) (2025-01-26)
+
+### Bug Fixes
+
+* package lock issue with lerna ([016f612](https://github.com/trust0-project/RIDB/commit/016f612c5991a049278b9f5f0f0cac7973b33ba7))
+
+### Miscellaneous Chores
+
+* **release:** 1.1.5-rc.1 [skip ci] ([02a8959](https://github.com/trust0-project/RIDB/commit/02a895976b91cde231987ff570cb1d7c491aeab8))
+
 ## @trust0/ridb-react [1.1.5-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.4...@trust0/ridb-react@1.1.5-rc.1) (2025-01-26)
 
 ### Bug Fixes
