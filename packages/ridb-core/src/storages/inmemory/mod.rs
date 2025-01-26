@@ -8,6 +8,7 @@ use crate::storage::internals::base_storage::BaseStorage;
 use crate::storage::internals::core::CoreStorage;
 use std::sync::RwLock;
 use crate::logger::Logger;
+use crate::query::options::QueryOptions;
 use super::base::Storage;
 
 #[wasm_bindgen(typescript_custom_section)]
@@ -227,7 +228,7 @@ impl Storage for InMemory {
         }
     }
 
-    async fn find(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
+    async fn find(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue> {
         Logger::log(
             "InMemory::find",
             &JsValue::from_str(&format!(
@@ -236,7 +237,7 @@ impl Storage for InMemory {
                 query
             ))
         );
-        let documents = self.get_matching_documents(collection_name, &query).await?;
+        let documents = self.get_matching_documents(collection_name, &query, options).await?;
         let results_array = Array::new();
 
         for doc in documents {
@@ -298,7 +299,7 @@ impl Storage for InMemory {
         Ok(JsValue::undefined())
     }
 
-    async fn count(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
+    async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue> {
         Logger::log(
             "InMemory::count",
             &JsValue::from_str(&format!(
@@ -307,7 +308,7 @@ impl Storage for InMemory {
                 query
             ))
         );
-        let documents = self.get_matching_documents(collection_name, &query).await?;
+        let documents = self.get_matching_documents(collection_name, &query, options).await?;
         Logger::log(
             "InMemory::count",
             &JsValue::from_str(&format!(
@@ -376,7 +377,8 @@ impl InMemory {
     async fn get_matching_documents(
         &self,
         collection_name: &str,
-        query: &Query
+        query: &Query,
+        options: &QueryOptions
     ) -> Result<Vec<JsValue>, JsValue> {
         Logger::log(
             "InMemory::get_matching_documents",
@@ -560,7 +562,7 @@ impl InMemory {
     }
 
     #[wasm_bindgen(js_name = "find")]
-    pub async fn find_js(&self, collection_name: &str, query_js: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn find_js(&self, collection_name: &str, query_js: JsValue, options: &QueryOptions) -> Result<JsValue, JsValue> {
         Logger::log(
             "InMemory::find_js",
             &JsValue::from_str(&format!(
@@ -571,7 +573,7 @@ impl InMemory {
         let schema = self.base.schemas.get(collection_name)
             .ok_or_else(|| JsValue::from( format!("Collection {} not found in find", collection_name)))?;
         let query = Query::new(query_js.clone(), schema.clone())?;
-        self.find(collection_name, query.clone()).await
+        self.find(collection_name, &query, options).await
     }
 
     #[wasm_bindgen(js_name = "findDocumentById")]
@@ -591,7 +593,7 @@ impl InMemory {
     }
 
     #[wasm_bindgen(js_name = "count")]
-    pub async fn count_js(&self, collection_name: &str, query_js: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn count_js(&self, collection_name: &str, query_js: JsValue, options: &QueryOptions) -> Result<JsValue, JsValue> {
         Logger::log(
             "InMemory::count_js",
             &JsValue::from_str(&format!(
@@ -601,7 +603,7 @@ impl InMemory {
         );
         let schema = self.base.schemas.get(collection_name).ok_or_else(|| JsValue::from( format!("Collection {} not found in count", collection_name)))?;
         let query = Query::new(query_js, schema.clone())?;
-        self.count(collection_name, query).await
+        self.count(collection_name, &query, options).await
     }
 
     #[wasm_bindgen(js_name = "close")]
@@ -802,8 +804,13 @@ mod tests {
             "status": "active",
             "age": { "$gt": 30 }
         }"#).unwrap();
-        
-        let result = inmem.find_js("demo", query_value).await.unwrap();
+
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
+
+        let result = inmem.find_js("demo", query_value, &query_options).await.unwrap();
         let result_array = Array::from(&result);
         
         assert_eq!(result_array.length(), 1);
@@ -864,8 +871,11 @@ mod tests {
         let query_value = json_str_to_js_value(r#"{
             "status": "active"
         }"#).unwrap();
-        
-        let result = inmem.count_js("demo", query_value).await.unwrap();
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
+        let result = inmem.count_js("demo", query_value, &query_options).await.unwrap();
         assert_eq!(result.as_f64().unwrap(), 2.0);
     }
 
@@ -921,14 +931,17 @@ mod tests {
 
         // Query the empty posts collection
         let empty_query = json_str_to_js_value("{}").unwrap();
-        
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
         // Test find on empty collection
-        let posts_result = inmem.find_js("posts", empty_query.clone()).await.unwrap();
+        let posts_result = inmem.find_js("posts", empty_query.clone(), &query_options).await.unwrap();
         let posts_array = Array::from(&posts_result);
         assert_eq!(posts_array.length(), 0);
         
         // Test count on empty collection
-        let count_result = inmem.count_js("posts", empty_query).await.unwrap();
+        let count_result = inmem.count_js("posts", empty_query, &query_options).await.unwrap();
         assert_eq!(count_result.as_f64().unwrap(), 0.0);
     }
 
@@ -973,7 +986,11 @@ mod tests {
 
         // Ensure storage is empty after restart
         let query_value = json_str_to_js_value("{}").unwrap();
-        let result = inmem.find_js("demo", query_value).await.unwrap();
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
+        let result = inmem.find_js("demo", query_value, &query_options).await.unwrap();
         let result_array = Array::from(&result);
         assert_eq!(result_array.length(), 0);
     }

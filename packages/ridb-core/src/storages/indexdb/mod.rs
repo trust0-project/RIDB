@@ -13,6 +13,7 @@ use parking_lot::Mutex;
 use std::collections::HashMap;
 use std::sync::Weak;
 use lazy_static::lazy_static;
+use crate::query::options::QueryOptions;
 use crate::schema::Schema;
 use super::base::Storage;
 
@@ -134,14 +135,14 @@ impl Storage for IndexDB {
         }
     }
 
-    async fn find(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
+    async fn find(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue> {
         Logger::debug(
             "IndexDB-Find",
             &JsValue::from(format!("Find method {}", collection_name)),
         );
 
         let filtered_docs = self
-            .collect_documents_for_query(collection_name, query)
+            .collect_documents_for_query(collection_name, query, options)
             .await?;
         Ok(filtered_docs.into())
     }
@@ -169,9 +170,9 @@ impl Storage for IndexDB {
         }
     }
 
-    async fn count(&self, collection_name: &str, query: Query) -> Result<JsValue, JsValue> {
+    async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue> {
         let filtered_docs = self
-            .collect_documents_for_query(collection_name, query)
+            .collect_documents_for_query(collection_name, query, options)
             .await?;
         Ok(JsValue::from_f64(filtered_docs.length() as f64))
     }
@@ -332,7 +333,8 @@ impl IndexDB {
     async fn collect_documents_for_query(
         &self,
         collection_name: &str,
-        query: Query,
+        query: &Query,
+        options: &QueryOptions
     ) -> Result<Array, JsValue> {
         let store = self.get_store(collection_name)?;
         let schema = self
@@ -484,13 +486,14 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "find")]
-    pub async fn find_js(&self, collection_name: &str, query: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn find_js(&self, collection_name: &str, query: JsValue, options: &QueryOptions) -> Result<JsValue, JsValue> {
         let schema = self
             .base
             .schemas
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?;
-        self.find(collection_name, Query::new(query, schema.clone())?)
+        let query = Query::new(query, schema.clone())?;
+        self.find(collection_name, &query, options)
             .await
     }
 
@@ -500,13 +503,14 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "count")]
-    pub async fn count_js(&self, collection_name: &str, query: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn count_js(&self, collection_name: &str, query: JsValue, options: &QueryOptions) -> Result<JsValue, JsValue> {
         let schema = self
             .base
             .schemas
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?;
-        self.count(collection_name, Query::new(query, schema.clone())?)
+        let query = Query::new(query, schema.clone())?;
+        self.count(collection_name, &query, options)
             .await
     }
 
@@ -778,8 +782,11 @@ mod tests {
             "status": "active",
             "age": { "$gt": 30 }
         }"#).unwrap();
-
-        let result = db.find_js("demo", query_value).await.unwrap();
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
+        let result = db.find_js("demo", query_value, &query_options).await.unwrap();
         let result_array = Array::from(&result);
 
         assert_eq!(result_array.length(), 1);
@@ -843,8 +850,11 @@ mod tests {
         let query_value = json_str_to_js_value(r#"{
             "status": "active"
         }"#).unwrap();
-
-        let result = db.count_js("demo", query_value).await.unwrap();
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
+        let result = db.count_js("demo", query_value, &query_options).await.unwrap();
         assert_eq!(result.as_f64().unwrap(), 2.0);
 
         // Clean up
@@ -904,14 +914,17 @@ mod tests {
 
         // Query the empty products collection
         let empty_query = json_str_to_js_value("{}").unwrap();
-
+        let query_options = QueryOptions {
+            limit: None,
+            offset: None
+        };
         // Find all products (should be empty)
-        let products_result = db.find_js("products", empty_query.clone()).await.unwrap();
+        let products_result = db.find_js("products", empty_query.clone(), &query_options).await.unwrap();
         let products_array = Array::from(&products_result);
         assert_eq!(products_array.length(), 0);
 
         // Count products (should be 0)
-        let count_result = db.count_js("products", empty_query).await.unwrap();
+        let count_result = db.count_js("products", empty_query, &query_options).await.unwrap();
         assert_eq!(count_result.as_f64().unwrap(), 0.0);
 
         // Clean up

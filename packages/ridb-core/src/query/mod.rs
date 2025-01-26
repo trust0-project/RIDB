@@ -1,3 +1,5 @@
+pub mod options;
+
 use std::collections::HashMap;
 use js_sys::{Array,  Object, JSON};
 use wasm_bindgen::JsValue;
@@ -42,6 +44,7 @@ export class Query<T extends SchemaType> {
     readonly query: QueryType<T>;
 }
 "#;
+
 
 #[derive(Debug, Clone)]
 #[wasm_bindgen(skip_typescript)]

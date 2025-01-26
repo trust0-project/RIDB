@@ -5,6 +5,7 @@ use wasm_bindgen::{JsCast, JsValue};
 
 use crate::{error::RIDBError, operation::{OpType, Operation}, plugin::BasePlugin, schema::{property_type::PropertyType, Schema}, storages::base::StorageExternal};
 use crate::logger::Logger;
+use crate::query::options::QueryOptions;
 
 pub mod internals;
 
@@ -227,14 +228,14 @@ impl Storage {
 
     }
 
-    pub(crate) async fn find(&self, collection_name: &str, query: JsValue) -> Result<JsValue, JsValue>{
+    pub(crate) async fn find(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, JsValue>{
         //TODO: Use indexes for more efficient document finding
-        self.internal.find(collection_name, query).await
+        self.internal.find(collection_name, query, options).await
     }
 
-    pub(crate) async fn count(&self, collection_name: &str, query: JsValue) -> Result<JsValue, JsValue>{
+    pub(crate) async fn count(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, JsValue>{
         //TODO: Use indexes for more efficient counting
-        self.internal.count(collection_name, query).await
+        self.internal.count(collection_name, query, options).await
     }
 
     pub(crate) async fn find_document_by_id(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, JsValue>{

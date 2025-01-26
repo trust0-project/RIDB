@@ -1,8 +1,33 @@
 use js_sys::{Object, Reflect};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
+use crate::query::options::QueryOptions;
 use crate::schema::Schema;
 use crate::storage::{HookType, Storage};
+
+fn get_u32_option(options: &JsValue, key: &str) -> Result<Option<u32>, JsValue> {
+    if options.is_undefined() {
+        return Ok(None);
+    }
+    
+    let value = Reflect::get(options, &JsValue::from_str(key))?;
+
+    // If the value is undefined, we treat it as `None`.
+    if value.is_undefined() {
+        return Ok(None);
+    }
+
+    // If it's a number, convert to u32.
+    if let Some(n) = value.as_f64() {
+        return Ok(Some(n as u32));
+    }
+
+    // Otherwise, we bail out with a descriptive error.
+    Err(JsValue::from_str(&format!(
+        "Expected '{}' to be undefined or a number.",
+        key
+    )))
+}
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -49,6 +74,11 @@ export type Doc<T extends SchemaType> = {
   __version?: number;
 };
 
+export type QueryOptions = {
+    limit?: number;
+    offset?: number;
+}
+
 /**
  * Collection is a class that represents a collection of documents in a database.
  * @template T - A schema type defining the structure of the documents in the collection.
@@ -59,13 +89,13 @@ export class Collection<T extends SchemaType> {
 	 *
 	 * @returns A promise that resolves to an array of documents.
 	 */
-	find(query: QueryType<T>): Promise<Doc<T>[]>;
+	find(query: QueryType<T>, options?: QueryOptions): Promise<Doc<T>[]>;
 	/**
 	 * count all documents in the collection.
 	 *
 	 * @returns A promise that resolves to an array of documents.
 	 */
-	count(query: QueryType<T>): Promise<number>;
+	count(query: QueryType<T>, options?: QueryOptions): Promise<number>;
 	/**
 	 * Finds a single document in the collection by its ID.
 	 *
@@ -143,11 +173,14 @@ impl Collection {
     /// This function is asynchronous and returns a `JsValue` representing
     /// the documents found in the collection.
     #[wasm_bindgen]
-    pub async fn find(&mut self, query_js: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn find(&mut self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, JsValue> {
+        let options = self.parse_query_options(options_js)?;
+
         // No index available, perform a regular find
         let docs = self.storage.find(
             &self.name,
-            query_js
+            query_js,
+            options
         ).await?;
 
         // Process and return the result
@@ -168,13 +201,22 @@ impl Collection {
         )
     }
 
+    pub fn parse_query_options(&self, options: JsValue) -> Result<QueryOptions, JsValue> {
+        // Use the helper to extract and validate both limit and offset.
+        let limit = get_u32_option(&options, "limit")?;
+        let offset = get_u32_option(&options, "offset")?;
+
+        Ok(QueryOptions { limit, offset })
+    }
+
     /// counts and returns all documents in the collection.
     ///
     /// This function is asynchronous and returns a `Schema` representing
     /// the documents found in the collection.
     #[wasm_bindgen]
-    pub async fn count(&self, query_js: JsValue) -> Result<JsValue, JsValue> {
-        match self.storage.count(&self.name, query_js).await {
+    pub async fn count(&self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, JsValue> {
+        let options = self.parse_query_options(options_js)?;
+        match self.storage.count(&self.name, query_js, options).await {
             Ok(count) => Ok(count),
             Err(e) => Err(js_sys::Error::new(&format!("Failed to count documents: {:?}", e)).into())
         }
