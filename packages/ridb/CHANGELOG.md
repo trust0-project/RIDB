@@ -1,3 +1,9 @@
+## @trust0/ridb [1.2.1-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.2.1-rc.1...@trust0/ridb@1.2.1-rc.2) (2025-01-26)
+
+### Bug Fixes
+
+* capture docs on release ([7fe4b63](https://github.com/trust0-project/RIDB/commit/7fe4b63e77b35332fdbe3f8348d3d38a9ca80e59))
+
 ## @trust0/ridb [1.2.1-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.2.0...@trust0/ridb@1.2.1-rc.1) (2025-01-26)
 
 ### Bug Fixes
