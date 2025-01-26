@@ -8,10 +8,8 @@
 
 > **MigrationPathsForSchema**\<`T`\>: `T`\[`"version"`\] *extends* `0` ? `object` : `{ [K in EnumerateFrom1To<T["version"]>]: MigrationFunction<T> }`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:403
+
 ## Type Parameters
 
 • **T** *extends* [`SchemaType`](SchemaType.md)
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:123

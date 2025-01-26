@@ -8,6 +8,8 @@
 
 > **SchemaType**: `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:252
+
 Represents the type definition for a schema.
 
 ## Type declaration
@@ -34,7 +36,7 @@ The properties defined in the schema.
 
 #### Index Signature
 
- \[`name`: `string`\]: [`Property`](../classes/Property.md)
+\[`name`: `string`\]: [`Property`](../classes/Property.md)
 
 ### type
 
@@ -47,7 +49,3 @@ The type of the schema.
 > **version**: `number`
 
 The version of the schema.
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:556

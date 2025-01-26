@@ -8,6 +8,8 @@
 
 > **InOperator**\<`T`\>: `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:72
+
 ## Type Parameters
 
 • **T**
@@ -17,7 +19,3 @@
 ### $in?
 
 > `optional` **$in**: `T`[]
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:154

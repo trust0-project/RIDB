@@ -6,6 +6,8 @@
 
 # Class: Query\<T\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:85
+
 ## Type Parameters
 
 • **T** *extends* [`SchemaType`](../type-aliases/SchemaType.md)
@@ -15,6 +17,8 @@
 ### new Query()
 
 > **new Query**\<`T`\>(`query`, `schema`): [`Query`](Query.md)\<`T`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:86
 
 #### Parameters
 
@@ -30,16 +34,10 @@
 
 [`Query`](Query.md)\<`T`\>
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:168
-
 ## Properties
 
 ### query
 
 > `readonly` **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:169
+Defined in: ridb-core/pkg/ridb\_core.d.ts:87

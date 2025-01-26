@@ -6,6 +6,8 @@
 
 # Class: Property
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:133
+
 Represents a property within a schema, including various constraints and nested properties.
 
 ## Constructors
@@ -24,11 +26,9 @@ Represents a property within a schema, including various constraints and nested 
 
 > `readonly` `optional` **default**: `any`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:182
+
 An optional default value for the property.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:523
 
 ***
 
@@ -36,11 +36,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:523
 
 > `readonly` `optional` **items**: [`Property`](Property.md)
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:152
+
 An optional array of nested properties for array-type properties.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:493
 
 ***
 
@@ -48,11 +46,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:493
 
 > `readonly` `optional` **maxItems**: `number`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:157
+
 The maximum number of items for array-type properties, if applicable.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:498
 
 ***
 
@@ -60,11 +56,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:498
 
 > `readonly` `optional` **maxLength**: `number`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:167
+
 The maximum length for string-type properties, if applicable.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:508
 
 ***
 
@@ -72,11 +66,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:508
 
 > `readonly` `optional` **minItems**: `number`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:162
+
 The minimum number of items for array-type properties, if applicable.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:503
 
 ***
 
@@ -84,11 +76,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:503
 
 > `readonly` `optional` **minLength**: `number`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:172
+
 The minimum length for string-type properties, if applicable.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:513
 
 ***
 
@@ -96,11 +86,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:513
 
 > `readonly` `optional` **primaryKey**: `string`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:147
+
 The primary key of the property, if applicable.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:488
 
 ***
 
@@ -108,15 +96,13 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:488
 
 > `readonly` `optional` **properties**: `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:187
+
 An optional map of nested properties for object-type properties.
 
 #### Index Signature
 
- \[`name`: `string`\]: [`Property`](Property.md)
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:528
+\[`name`: `string`\]: [`Property`](Property.md)
 
 ***
 
@@ -124,11 +110,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:528
 
 > `readonly` `optional` **required**: `boolean`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:177
+
 An optional array of required fields for object-type properties.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:518
 
 ***
 
@@ -136,11 +120,9 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:518
 
 > `readonly` **type**: `string`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:137
+
 The type of the property.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:478
 
 ***
 
@@ -148,8 +130,6 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:478
 
 > `readonly` `optional` **version**: `number`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:142
+
 The version of the property, if applicable.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:483

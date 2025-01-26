@@ -8,6 +8,8 @@
 
 > **BasePluginOptions**: `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:434
+
 ## Type declaration
 
 ### docCreateHook?
@@ -17,7 +19,3 @@
 ### docRecoverHook?
 
 > `optional` **docRecoverHook**: [`Hook`](Hook.md)
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:541

@@ -8,10 +8,8 @@
 
 > **MigrationPathsForSchemas**\<`T`\>: `{ [K in keyof T]: MigrationPathsForSchema<T[K]> }`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:410
+
 ## Type Parameters
 
 • **T** *extends* [`SchemaTypeRecord`](SchemaTypeRecord.md)
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:130

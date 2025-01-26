@@ -8,12 +8,10 @@
 
 > **SchemaTypeRecord**: `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:197
+
 Represents a record of schema types, where each key is a string and the value is a `SchemaType`.
 
 ## Index Signature
 
- \[`name`: `string`\]: [`SchemaType`](SchemaType.md)
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:217
+\[`name`: `string`\]: [`SchemaType`](SchemaType.md)

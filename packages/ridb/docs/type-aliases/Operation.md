@@ -8,6 +8,8 @@
 
 > **Operation**\<`T`\>: `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:660
+
 Represents an operation to be performed on a collection.
 
 ## Type Parameters
@@ -30,18 +32,16 @@ The name of the collection on which the operation will be performed.
 
 The data involved in the operation, conforming to the schema type.
 
-### indexes
-
-> **indexes**: `string`[]
-
-An array of indexes related to the operation.
-
 ### opType
 
 > **opType**: [`OpType`](../enumerations/OpType.md)
 
 The type of operation to be performed (e.g., CREATE, UPDATE, DELETE).
 
-## Defined in
+### primaryKey?
 
-ridb-wasm/pkg/ridb\_wasm.d.ts:447
+> `optional` **primaryKey**: `string`
+
+### primaryKeyField?
+
+> `optional` **primaryKeyField**: `string`

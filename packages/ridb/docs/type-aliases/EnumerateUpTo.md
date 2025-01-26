@@ -6,14 +6,12 @@
 
 # Type Alias: EnumerateUpTo\<N, Acc\>
 
-> **EnumerateUpTo**\<`N`, `Acc`\>: `Acc`\[`"length"`\] *extends* `N` ? `Acc`\[`number`\] : [`EnumerateUpTo`](EnumerateUpTo.md)\<`N`, [`...Acc`, `Acc`\[`"length"`\]]\>
+> **EnumerateUpTo**\<`N`, `Acc`\>: `Acc`\[`"length"`\] *extends* `N` ? `Acc`\[`number`\] : [`EnumerateUpTo`](EnumerateUpTo.md)\<`N`, \[`...Acc`, `Acc`\[`"length"`\]\]\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:380
 
 ## Type Parameters
 
 • **N** *extends* `number`
 
-• **Acc** *extends* `number`[] = []
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:100
+• **Acc** *extends* `number`[] = \[\]

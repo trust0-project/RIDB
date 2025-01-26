@@ -6,6 +6,8 @@
 
 # Class: Collection\<T\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:595
+
 Collection is a class that represents a collection of documents in a database.
 
 ## Type Parameters
@@ -30,6 +32,8 @@ A schema type defining the structure of the documents in the collection.
 
 > **count**(`query`): `Promise`\<`number`\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:607
+
 count all documents in the collection.
 
 #### Parameters
@@ -44,15 +48,13 @@ count all documents in the collection.
 
 A promise that resolves to an array of documents.
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:305
-
 ***
 
 ### create()
 
 > **create**(`document`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:629
 
 Creates a new document in the collection.
 
@@ -70,15 +72,13 @@ The document to create.
 
 A promise that resolves to the created document.
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:327
-
 ***
 
 ### delete()
 
 > **delete**(`id`): `Promise`\<`void`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:636
 
 Deletes a document in the collection by its ID.
 
@@ -96,15 +96,13 @@ The ID of the document to delete.
 
 A promise that resolves when the deletion is complete.
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:334
-
 ***
 
 ### find()
 
 > **find**(`query`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>[]\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:601
 
 Finds all documents in the collection.
 
@@ -120,15 +118,13 @@ Finds all documents in the collection.
 
 A promise that resolves to an array of documents.
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:299
-
 ***
 
 ### findById()
 
 > **findById**(`id`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:614
 
 Finds a single document in the collection by its ID.
 
@@ -146,15 +142,13 @@ The ID of the document to find.
 
 A promise that resolves to the found document.
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:312
-
 ***
 
 ### update()
 
 > **update**(`document`): `Promise`\<`void`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:622
 
 Updates a document in the collection by its ID.
 
@@ -171,7 +165,3 @@ A partial document containing the fields to update.
 `Promise`\<`void`\>
 
 A promise that resolves when the update is complete.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:320

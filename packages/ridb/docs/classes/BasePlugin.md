@@ -6,6 +6,8 @@
 
 # Class: BasePlugin
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:439
+
 ## Implements
 
 - [`BasePluginOptions`](../type-aliases/BasePluginOptions.md)
@@ -26,13 +28,11 @@
 
 > `optional` **docCreateHook**: [`Hook`](../type-aliases/Hook.md)
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:440
+
 #### Implementation of
 
 `BasePluginOptions.docCreateHook`
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:547
 
 ***
 
@@ -40,10 +40,8 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:547
 
 > `optional` **docRecoverHook**: [`Hook`](../type-aliases/Hook.md)
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:441
+
 #### Implementation of
 
 `BasePluginOptions.docRecoverHook`
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:548

@@ -8,6 +8,8 @@
 
 > **ExtractType**\<`T`\>: `T` *extends* `"string"` ? `string` : `T` *extends* `"number"` ? `number` : `T` *extends* `"boolean"` ? `boolean` : `T` *extends* `"object"` ? `object` : `T` *extends* `"array"` ? `any`[] : `never`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:563
+
 ExtractType is a utility type that maps a string representing a basic data type to the actual TypeScript type.
 
 ## Type Parameters
@@ -25,7 +27,3 @@ type BooleanType = ExtractType<'boolean'>; // BooleanType is boolean
 type ObjectType = ExtractType<'object'>; // ObjectType is object
 type ArrayType = ExtractType<'array'>; // ArrayType is Array<any>
 ```
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:261

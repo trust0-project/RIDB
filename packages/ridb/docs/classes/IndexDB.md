@@ -6,6 +6,8 @@
 
 # Class: IndexDB\<T\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:231
+
 Represents an IndexDB storage system extending the base storage functionality.
 
 ## Extends
@@ -23,6 +25,8 @@ The schema type.
 ### new IndexDB()
 
 > **new IndexDB**\<`T`\>(`dbName`, `schemas`, `options`?): [`IndexDB`](IndexDB.md)\<`T`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:107
 
 #### Parameters
 
@@ -46,23 +50,17 @@ The schema type.
 
 [`BaseStorage`](BaseStorage.md).[`constructor`](BaseStorage.md#constructors)
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:190
-
 ## Properties
 
 ### core
 
 > `readonly` **core**: [`CoreStorage`](CoreStorage.md)
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:115
+
 #### Inherited from
 
 [`BaseStorage`](BaseStorage.md).[`core`](BaseStorage.md#core)
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:199
 
 ***
 
@@ -70,13 +68,11 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:199
 
 > `readonly` **dbName**: `string`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:112
+
 #### Inherited from
 
 [`BaseStorage`](BaseStorage.md).[`dbName`](BaseStorage.md#dbname-1)
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:196
 
 ***
 
@@ -84,13 +80,11 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:196
 
 > `readonly` **options**: [`BaseStorageOptions`](../type-aliases/BaseStorageOptions.md)
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:114
+
 #### Inherited from
 
 [`BaseStorage`](BaseStorage.md).[`options`](BaseStorage.md#options-1)
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:198
 
 ***
 
@@ -98,19 +92,35 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:198
 
 > `readonly` **schemas**: `Record`\<keyof `T`, [`Schema`](Schema.md)\<`T`\[keyof `T`\]\>\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:113
+
 #### Inherited from
 
 [`BaseStorage`](BaseStorage.md).[`schemas`](BaseStorage.md#schemas-1)
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:197
-
 ## Methods
+
+### addIndexSchemas()
+
+> **addIndexSchemas**(): `null`
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:125
+
+#### Returns
+
+`null`
+
+#### Inherited from
+
+[`BaseStorage`](BaseStorage.md).[`addIndexSchemas`](BaseStorage.md#addindexschemas)
+
+***
 
 ### close()
 
 > **close**(): `Promise`\<`void`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:117
 
 #### Returns
 
@@ -120,15 +130,13 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:197
 
 [`BaseStorage`](BaseStorage.md).[`close`](BaseStorage.md#close)
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:201
-
 ***
 
 ### count()
 
 > **count**(`colectionName`, `query`): `Promise`\<`number`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:118
 
 #### Parameters
 
@@ -148,15 +156,13 @@ keyof `T`
 
 [`BaseStorage`](BaseStorage.md).[`count`](BaseStorage.md#count)
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:202
-
 ***
 
 ### find()
 
 > **find**(`collectionName`, `query`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>[]\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:120
 
 #### Parameters
 
@@ -176,15 +182,13 @@ keyof `T`
 
 [`BaseStorage`](BaseStorage.md).[`find`](BaseStorage.md#find)
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:204
-
 ***
 
 ### findDocumentById()
 
 > **findDocumentById**(`collectionName`, `id`): `Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:119
 
 #### Parameters
 
@@ -204,15 +208,13 @@ keyof `T`
 
 [`BaseStorage`](BaseStorage.md).[`findDocumentById`](BaseStorage.md#finddocumentbyid)
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:203
-
 ***
 
 ### free()
 
 > **free**(): `void`
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:235
 
 Frees the resources used by the in-memory storage.
 
@@ -220,15 +222,13 @@ Frees the resources used by the in-memory storage.
 
 `void`
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:75
-
 ***
 
 ### getOption()
 
 > **getOption**(`name`): `undefined` \| `string` \| `number` \| `boolean`
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:122
 
 #### Parameters
 
@@ -244,15 +244,13 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:75
 
 [`BaseStorage`](BaseStorage.md).[`getOption`](BaseStorage.md#getoption)
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:207
-
 ***
 
 ### getSchema()
 
 > **getSchema**(`name`): [`Schema`](Schema.md)\<`any`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:123
 
 #### Parameters
 
@@ -268,15 +266,13 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:207
 
 [`BaseStorage`](BaseStorage.md).[`getSchema`](BaseStorage.md#getschema)
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:208
-
 ***
 
 ### start()
 
 > **start**(): `Promise`\<`void`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:116
 
 #### Returns
 
@@ -286,15 +282,13 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:208
 
 [`BaseStorage`](BaseStorage.md).[`start`](BaseStorage.md#start)
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:200
-
 ***
 
 ### write()
 
 > **write**(`op`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:121
 
 #### Parameters
 
@@ -310,15 +304,13 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:200
 
 [`BaseStorage`](BaseStorage.md).[`write`](BaseStorage.md#write)
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:205
-
 ***
 
 ### create()
 
 > `static` **create**\<`SchemasCreate`\>(`dbName`, `schemas`): `Promise`\<[`IndexDB`](IndexDB.md)\<`SchemasCreate`\>\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:237
 
 #### Type Parameters
 
@@ -341,7 +333,3 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:205
 #### Overrides
 
 [`BaseStorage`](BaseStorage.md).[`create`](BaseStorage.md#create)
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:77

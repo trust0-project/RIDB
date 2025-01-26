@@ -89,13 +89,10 @@
       "@semantic-release/git",
       {
         "assets": [
-          "packages/**/package.json",
-          "packages/**/CHANGELOG.md",
-          "packages/**/package-lock.json",
-          "packages/**/docs/**/*",
           "package-lock.json",
           "package.json",
-          "CHANGELOG.md"
+          "CHANGELOG.md",
+          "docs/**/*"
         ],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }

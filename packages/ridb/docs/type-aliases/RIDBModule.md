@@ -8,6 +8,8 @@
 
 > **RIDBModule**: `object`
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:538
+
 Represents a storage module with a method for creating storage.
 
 ## Type declaration
@@ -27,7 +29,3 @@ Plugin constructors array
 #### Returns
 
 [`BasePlugin`](../classes/BasePlugin.md)[]
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:432

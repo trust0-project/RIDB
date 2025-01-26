@@ -1,7 +1,7 @@
 {
     "name": "@trust0/ridb",
-    "version": "1.2.0",
-    "description": "Dependency free wasm db encrypted and secure database wrapper for web and nodejs.",
+    "version": "1.2.1-rc.3",
+    "description": "Lightweight db encrypted and secure database wrapper for browser and nodejs",
     "main": "./build/index.js",
     "types": "./build/index.d.ts",
     "type": "module",
@@ -30,7 +30,7 @@
         "test:browser": "sh test.sh -e browser",
         "types": "npm run types:default",
         "types:default": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/index.d.ts",
-        "prepublishOnly": "npm run build"
+        "prepublishOnly": "npm run build && npm run docs"
     },
     "devDependencies": {
         "@babel/types": "^7.26.3",

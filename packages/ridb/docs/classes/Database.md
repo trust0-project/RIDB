@@ -6,6 +6,8 @@
 
 # Class: Database\<T\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:475
+
 Represents a database containing collections of documents.
 RIDB extends from this class and is used to expose collections.
 
@@ -54,13 +56,11 @@ A record of schema types.
 
 > `readonly` **collections**: \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:503
+
 The collections in the database.
 
 This is a read-only property where the key is the name of the collection and the value is a `Collection` instance.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:397
 
 ***
 
@@ -68,15 +68,15 @@ ridb-wasm/pkg/ridb\_wasm.d.ts:397
 
 > `readonly` **started**: `boolean`
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:401
+Defined in: ridb-core/pkg/ridb\_core.d.ts:507
 
 ## Methods
 
 ### close()
 
 > **close**(): `Promise`\<`void`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:521
 
 Closes the database.
 
@@ -86,15 +86,13 @@ Closes the database.
 
 A promise that resolves when the database is closed.
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:415
-
 ***
 
 ### start()
 
 > **start**(): `Promise`\<`void`\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:514
 
 Starts the database.
 
@@ -104,15 +102,13 @@ Starts the database.
 
 A promise that resolves when the database is started.
 
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:408
-
 ***
 
 ### create()
 
 > `static` **create**\<`TS`\>(`db_name`, `schemas`, `migrations`, `plugins`, `options`, `password`?, `storage`?): `Promise`\<[`Database`](Database.md)\<`TS`\>\>
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:488
 
 Creates a new `Database` instance with the provided schemas and storage module.
 
@@ -159,7 +155,3 @@ The schemas to use for the collections.
 `Promise`\<[`Database`](Database.md)\<`TS`\>\>
 
 A promise that resolves to the created `Database` instance.
-
-#### Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:382

@@ -8,6 +8,8 @@
 
 > **Hook**: (`schema`, `migration`, `doc`) => [`Doc`](Doc.md)\<[`SchemaType`](SchemaType.md)\>
 
+Defined in: ridb-core/pkg/ridb\_core.d.ts:428
+
 ## Parameters
 
 ### schema
@@ -25,7 +27,3 @@
 ## Returns
 
 [`Doc`](Doc.md)\<[`SchemaType`](SchemaType.md)\>
-
-## Defined in
-
-ridb-wasm/pkg/ridb\_wasm.d.ts:535
