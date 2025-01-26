@@ -6,7 +6,7 @@
 
 # Class: RIDB\<T\>
 
-Defined in: [ridb/src/index.ts:158](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L158)
+Defined in: [ridb/src/index.ts:158](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L158)
 
 ## Type Parameters
 
@@ -18,7 +18,7 @@ Defined in: [ridb/src/index.ts:158](https://github.com/trust0-project/RIDB/blob/
 
 > **new RIDB**\<`T`\>(`options`): [`RIDB`](RIDB.md)\<`T`\>
 
-Defined in: [ridb/src/index.ts:170](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L170)
+Defined in: [ridb/src/index.ts:170](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L170)
 
 Creates an instance of RIDB.
 
@@ -38,7 +38,7 @@ Creates an instance of RIDB.
 
 > `private` **\_db**: `undefined` \| [`Database`](Database.md)\<`T`\>
 
-Defined in: [ridb/src/index.ts:163](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L163)
+Defined in: [ridb/src/index.ts:163](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L163)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [ridb/src/index.ts:163](https://github.com/trust0-project/RIDB/blob/
 
 > `private` **dbName**: `string`
 
-Defined in: [ridb/src/index.ts:164](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L164)
+Defined in: [ridb/src/index.ts:164](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L164)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [ridb/src/index.ts:164](https://github.com/trust0-project/RIDB/blob/
 
 > `private` **migrations**: [`MigrationPathsForSchemas`](../type-aliases/MigrationPathsForSchemas.md)\<`T`\>
 
-Defined in: [ridb/src/index.ts:161](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L161)
+Defined in: [ridb/src/index.ts:161](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L161)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [ridb/src/index.ts:161](https://github.com/trust0-project/RIDB/blob/
 
 > `private` **plugins**: *typeof* [`BasePlugin`](BasePlugin.md)[] = `[]`
 
-Defined in: [ridb/src/index.ts:162](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L162)
+Defined in: [ridb/src/index.ts:162](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L162)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [ridb/src/index.ts:162](https://github.com/trust0-project/RIDB/blob/
 
 > `private` **schemas**: `T`
 
-Defined in: [ridb/src/index.ts:160](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L160)
+Defined in: [ridb/src/index.ts:160](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L160)
 
 ## Accessors
 
@@ -80,7 +80,7 @@ Defined in: [ridb/src/index.ts:160](https://github.com/trust0-project/RIDB/blob/
 
 > **get** **collections**(): \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
 
-Defined in: [ridb/src/index.ts:218](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L218)
+Defined in: [ridb/src/index.ts:218](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L218)
 
 Gets the collections from the database.
 
@@ -98,7 +98,7 @@ The collections object.
 
 > **get** `private` **db**(): [`Database`](Database.md)\<`T`\>
 
-Defined in: [ridb/src/index.ts:203](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L203)
+Defined in: [ridb/src/index.ts:203](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L203)
 
 Gets the database instance. Throws an error if the database has not been started.
 
@@ -118,7 +118,7 @@ Will throw an error if the database is not started.
 
 > **get** **started**(): `boolean`
 
-Defined in: [ridb/src/index.ts:210](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L210)
+Defined in: [ridb/src/index.ts:210](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L210)
 
 ##### Returns
 
@@ -130,7 +130,7 @@ Defined in: [ridb/src/index.ts:210](https://github.com/trust0-project/RIDB/blob/
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [ridb/src/index.ts:279](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L279)
+Defined in: [ridb/src/index.ts:279](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L279)
 
 #### Returns
 
@@ -142,7 +142,7 @@ Defined in: [ridb/src/index.ts:279](https://github.com/trust0-project/RIDB/blob/
 
 > `private` **getStorageType**\<`T`\>(`storageType`): *typeof* [`InMemory`](InMemory.md)
 
-Defined in: [ridb/src/index.ts:191](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L191)
+Defined in: [ridb/src/index.ts:191](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L191)
 
 #### Type Parameters
 
@@ -164,7 +164,7 @@ Defined in: [ridb/src/index.ts:191](https://github.com/trust0-project/RIDB/blob/
 
 > **start**(`options`?): `Promise`\<[`Database`](Database.md)\<`T`\>\>
 
-Defined in: [ridb/src/index.ts:241](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L241)
+Defined in: [ridb/src/index.ts:241](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L241)
 
 Starts the database.
 
@@ -186,7 +186,7 @@ A promise that resolves to the database instance.
 
 > `private` `static` **load**(): `Promise`\<`__module`\>
 
-Defined in: [ridb/src/index.ts:227](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L227)
+Defined in: [ridb/src/index.ts:227](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L227)
 
 Loads the RIDB Rust module.
 

@@ -8,7 +8,7 @@
 
 > `const` **SchemaFieldType**: `object`
 
-Defined in: [ridb/src/index.ts:289](https://github.com/trust0-project/RIDB/blob/99c65071b9fa26908fb7a847098f8c5c3969f24b/packages/ridb/src/index.ts#L289)
+Defined in: [ridb/src/index.ts:289](https://github.com/trust0-project/RIDB/blob/84c676177c609c5e68b8e8431b78d3689c61cd50/packages/ridb/src/index.ts#L289)
 
 An enumeration of schema field types.
 
