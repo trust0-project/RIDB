@@ -1,3 +1,18 @@
+## @trust0/ridb-react [1.1.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.2...@trust0/ridb-react@1.1.3) (2025-01-26)
+
+### Bug Fixes
+
+* vuln dependency check ([c590170](https://github.com/trust0-project/RIDB/commit/c59017092f410aab93dd84f0911769bad9f81c7f))
+
+### Miscellaneous Chores
+
+* **release:** 1.1.3-rc.1 [skip ci] ([97dacd9](https://github.com/trust0-project/RIDB/commit/97dacd9d7e15f11d2daf15147f7c4be3bbaf6fa0))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.2.2
+
 ## @trust0/ridb-react [1.1.3-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.2...@trust0/ridb-react@1.1.3-rc.1) (2025-01-26)
 
 ### Bug Fixes
