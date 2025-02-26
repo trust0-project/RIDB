@@ -33,7 +33,7 @@
     "prepublishOnly": "npm run build && npm run docs"
   },
   "devDependencies": {
-    "esbuild": "0.21.5",
+    "esbuild": "^0.25.0",
     "esbuild-plugin-wasm": "^1.1.0",
     "esbuild-plugin-wasm-pack": "^1.1.0",
     "@esbuild-plugins/node-resolve": "^0.2.2",
@@ -63,7 +63,7 @@
   },
   "peerDependencies": {
     "classic-level": "^2.0.0",
-    "@trust0/ridb": "1.2.4"
+    "@trust0/ridb": "^1.2.4"
   },
   "optionalDependencies": {
     "@esbuild/darwin-arm64": "0.15.18",

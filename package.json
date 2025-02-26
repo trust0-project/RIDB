@@ -19,11 +19,12 @@
     "@anolilab/semantic-release-preset": "^9.0.3",
     "@types/react": "^18.2.8",
     "@types/react-dom": "^18.2.4",
+    "chromedriver": "^133.0.3",
     "dts-bundle-generator": "^9.5.1",
-    "esbuild-node-externals": "^1.16.0",
+    "esbuild-node-externals": "^1.18.0",
     "esbuild-plugin-glob": "^2.2.3",
     "jsdom": "^25.0.1",
-    "lerna": "^8.1.9",
+    "lerna": "^8.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typedoc": "^0.27.6",
@@ -36,7 +37,7 @@
     "vitest": "^1.6.0"
   },
   "optionalDependencies": {
-    "@esbuild/darwin-arm64": "0.15.18",
+    "@esbuild/darwin-arm64": "^0.25.0",
     "@rollup/rollup-linux-x64-gnu": "^4.24.0"
   }
 }
