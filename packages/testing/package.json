@@ -1,13 +1,12 @@
 {
   "name": "@trust0/ridb-testing",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "./src/index.ts",
   "scripts": {
     "clean": "rm -rf build node_modules"
   },
   "private": true,
   "devDependencies": {
-    "@trust0/ridb": "^1.2.4",
     "esbuild": "^0.25.0",
     "esbuild-plugin-wasm": "^1.1.0",
     "esbuild-plugin-wasm-pack": "^1.1.0",
