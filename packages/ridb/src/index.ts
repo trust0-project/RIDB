@@ -125,6 +125,7 @@ export type {
     LogicalOperators, 
     QueryType, 
     Query, 
+    QueryOptions,
     InternalsRecord, 
     ExtractType, 
     Doc, 
