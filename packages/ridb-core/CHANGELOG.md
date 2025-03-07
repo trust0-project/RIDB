@@ -1,3 +1,9 @@
+## @trust0/ridb-core [1.4.0-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.0-rc.1...@trust0/ridb-core@1.4.0-rc.2) (2025-03-07)
+
+### Bug Fixes
+
+* update ([3fe21fc](https://github.com/trust0-project/RIDB/commit/3fe21fcfb3a307244c7d7c5be0df07258ba59ddd))
+
 ## @trust0/ridb-core [1.4.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.3.1...@trust0/ridb-core@1.4.0-rc.1) (2025-03-07)
 
 ### Features
