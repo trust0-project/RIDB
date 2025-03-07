@@ -1,44 +1,56 @@
 'use client';
 
 import Image from "next/image";
-import React, { useMemo, useState } from 'react';
+import React, {  useState, useEffect } from 'react';
 
-import { RIDB, SchemaFieldType, StorageType, Doc } from "@trust0/ridb";
+import {  SchemaFieldType, StorageType, Doc, Worker } from "@trust0/ridb";
 
 
 const demoSchema = {
   version: 0 as const,
   primaryKey: 'id',
   type: SchemaFieldType.object,
-  encrypted:["age"],
+  encrypted: ["age"],
   properties: {
-      id: {
-          type: SchemaFieldType.string,
-          maxLength: 60
-      },
-      age: {
-        type: SchemaFieldType.number,
-        default: 18
+    id: {
+      type: SchemaFieldType.string,
+      maxLength: 60
+    },
+    age: {
+      type: SchemaFieldType.number,
+      default: 18
     }
   }
 };
 
-const schemas =  {
+const schemas = {
   demo: demoSchema
 };
 
-type DBType = RIDB<typeof schemas>;
-
 export default function Home() {
-  const db: DBType = useMemo(
-    () => new RIDB(
-      {
+  const [db, setWorker] = useState<Worker<typeof schemas> | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'SharedWorker' in window) {
+      try {
+        console.log('[Home] Initializing RIDBWorker');
+        const newWorker = new Worker({
           dbName: "test-database",
           schemas
+        });
+        setWorker(newWorker);
+        return () => {
+          console.log('[Home] Cleaning up RIDBWorker');
+          newWorker.close();
+        };
+      } catch (error) {
+        console.error('[Home] Error initializing SharedWorker:', error);
       }
-    ),
-    []
-  );
+    } else {
+      console.warn('[Home] SharedWorker is not supported in this environment');
+    }
+  }, []);
+
   const [isStarted, setIsStarted] = useState(false);
   const [demos, setDemos] = useState<Doc<typeof schemas.demo>[]>([]);
   const [newDemoId, setNewDemoId] = useState('');
@@ -54,38 +66,45 @@ export default function Home() {
 
   const handleStart = async () => {
     if (db) {
+      console.log('[Home] Starting the database');
       const startTime = performance.now();
       await db.start({ storageType, password: "demo" });
       const endTime = performance.now();
       logOperation('Start DB', startTime, endTime);
       setIsStarted(true);
+      console.log('[Home] Database started successfully');
       fetchDemos();
     }
   };
 
   const handleClose = async () => {
     if (db) {
+      console.log('[Home] Closing the database');
       const startTime = performance.now();
       await db.close();
       const endTime = performance.now();
       logOperation('Close DB', startTime, endTime);
       setIsStarted(false);
+      console.log('[Home] Database closed');
     }
   };
 
   const fetchDemos = async () => {
     if (db) {
+      console.log('[Home] Fetching demos');
       const startTime = performance.now();
       const demoCollection = db.collections.demo;
       const allDemos = await demoCollection.find({});
       const endTime = performance.now();
       logOperation('Fetch Demos', startTime, endTime);
       setDemos(allDemos);
+      console.log('[Home] Demos fetched:', allDemos);
     }
   };
 
   const handleAddDemo = async () => {
     if (db && isStarted && newDemoId) {
+      console.log('[Home] Adding a new demo:', newDemoId);
       const startTime = performance.now();
       const demoCollection = db.collections.demo;
       await demoCollection.create({ id: newDemoId });
@@ -93,11 +112,13 @@ export default function Home() {
       logOperation('Add Demo', startTime, endTime);
       setNewDemoId('');
       fetchDemos();
+      console.log('[Home] New demo added:', newDemoId);
     }
   };
 
   const generateRandomData = async () => {
     if (db && isStarted) {
+      console.log(`[Home] Generating random data for ${numRecords} record(s)`);
       const startTime = performance.now();
       const demoCollection = db.collections.demo;
       for (let i = 0; i < numRecords; i++) {
@@ -108,6 +129,7 @@ export default function Home() {
       const endTime = performance.now();
       logOperation('Generate Random Data', startTime, endTime);
       fetchDemos();
+      console.log('[Home] Finished generating random data');
     }
   };
 
@@ -173,9 +195,8 @@ export default function Home() {
             <button
               onClick={handleAddDemo}
               disabled={!newDemoId || !isStarted || !db}
-              className={`p-2 w-full rounded-md shadow-md transition-colors ${
-                !newDemoId || !isStarted || !db ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 text-white'
-              }`}
+              className={`p-2 w-full rounded-md shadow-md transition-colors ${!newDemoId || !isStarted || !db ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 text-white'
+                }`}
               aria-disabled={!newDemoId || !isStarted || !db}
             >
               Add Demo
@@ -191,9 +212,8 @@ export default function Home() {
             <button
               onClick={generateRandomData}
               disabled={!isStarted || !db}
-              className={`p-2 w-full rounded-md shadow-md transition-colors ${
-                !isStarted || !db ? 'bg-gray-300 cursor-not-allowed' : 'bg-purple-500 hover:bg-purple-600 text-white'
-              }`}
+              className={`p-2 w-full rounded-md shadow-md transition-colors ${!isStarted || !db ? 'bg-gray-300 cursor-not-allowed' : 'bg-purple-500 hover:bg-purple-600 text-white'
+                }`}
               aria-disabled={!isStarted || !db}
             >
               Generate Random Data
