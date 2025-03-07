@@ -1,3 +1,9 @@
+## @trust0/ridb-core [1.4.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.3.1...@trust0/ridb-core@1.4.0-rc.1) (2025-03-07)
+
+### Features
+
+* create workers ([f981f8f](https://github.com/trust0-project/RIDB/commit/f981f8fd325831a409fedc82094031031fabc65d))
+
 ## @trust0/ridb-core [1.3.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.3.0...@trust0/ridb-core@1.3.1) (2025-01-26)
 
 ### Bug Fixes
