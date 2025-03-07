@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-core",
-  "description": "RIDB core",
+  "description": "RIDB core update",
   "type": "module",
   "publishConfig": {
     "access": "public"
