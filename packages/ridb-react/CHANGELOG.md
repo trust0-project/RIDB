@@ -1,3 +1,22 @@
+## @trust0/ridb-react [1.1.6](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.5...@trust0/ridb-react@1.1.6) (2025-03-08)
+
+### Bug Fixes
+
+* dependency fix ([645f7c5](https://github.com/trust0-project/RIDB/commit/645f7c508c0371ecbd790282ea17b46db6e7b2c7))
+* package restructure fix ([595a130](https://github.com/trust0-project/RIDB/commit/595a1300f51ad93858427540389eac7d880f9bf8))
+* update dependencies ([096b326](https://github.com/trust0-project/RIDB/commit/096b326ce67e5b5134b8bd9574125fc1d37bdc8e))
+
+### Miscellaneous Chores
+
+* **release:** 1.1.6-rc.1 [skip ci] ([e5a2435](https://github.com/trust0-project/RIDB/commit/e5a24357279139cbf2c5bb81a21fe498c1348cb0))
+* **release:** 1.1.6-rc.2 [skip ci] ([376f808](https://github.com/trust0-project/RIDB/commit/376f808103cba17b64c8b18cb26e51a463cf6a2c))
+* **release:** 1.1.6-rc.3 [skip ci] ([43b150b](https://github.com/trust0-project/RIDB/commit/43b150be9f07830cf8090b1c902d63cc4e0f7045))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.3.0
+
 ## @trust0/ridb-react [1.1.6-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.6-rc.2...@trust0/ridb-react@1.1.6-rc.3) (2025-03-08)
 
 
