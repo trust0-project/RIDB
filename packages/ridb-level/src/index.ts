@@ -25,13 +25,18 @@ import {
     SchemaTypeRecord, 
     Doc, 
     Operation,
-    QueryType,
-    WasmInternal
- } from "@trust0/ridb";
-import type { ClassicLevel } from "classic-level";
-type Level = ClassicLevel<string, string>
+    QueryType,    
+} from "@trust0/ridb-core";
 
-const { BaseStorage, Query, OpType } = WasmInternal;
+import {WasmInternal} from "@trust0/ridb";
+
+import type { ClassicLevel } from "classic-level";
+type Level = ClassicLevel<string, string>;
+
+
+
+
+const { BaseStorage, Query, OpType } = WasmInternal as typeof import("@trust0/ridb-core");
 
 export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
 
