@@ -14,7 +14,8 @@
   "scripts": {
     "clean": "rm -rf build node_modules",
     "test": "sh test.sh",
-    "build": "sh build.sh"
+    "build": "sh build.sh",
+    "docs": "echo 'No docs for this package'"
   },
   "files": [
     "./pkg/ridb_core_bg.wasm",

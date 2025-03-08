@@ -12,6 +12,7 @@
     },
     "scripts": {
         "clean": "rm -rf build node_modules",
+        "docs": "echo 'No docs for this package'",
         "build": "rm -rf build && npm run types && node ./esbuild.js",
         "test": "vitest --run",
         "types": "npm run types:default",
