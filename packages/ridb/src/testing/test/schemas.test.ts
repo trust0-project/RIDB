@@ -1,10 +1,7 @@
-import { describe, it, expect, afterEach, beforeEach, afterAll } from 'vitest';
-import path from 'path';
-import fs from 'fs';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
-import { RIDB, SchemaFieldType, Doc } from '@trust0/ridb';
-import { StoragesType, TestPlatform } from '..';
-
+import { RIDB, SchemaFieldType, Doc } from '../../index';
+import { StoragesType } from '..';
 
 export default (platform: string, storages: StoragesType[]) => {
     return describe(`[${platform}] Testing`, () => {
@@ -12,12 +9,6 @@ export default (platform: string, storages: StoragesType[]) => {
 
         beforeEach(() => {
             dbName = "test" + uuidv4();
-        })
-
-        afterAll(() => {
-            if (platform === TestPlatform.NODE) {
-                fs.rmSync(path.resolve(process.cwd(), `./.db`), { recursive: true, force: true });
-            }
         })
 
         storages.forEach(({ name, storage }) => {
@@ -827,7 +818,7 @@ export default (platform: string, storages: StoragesType[]) => {
                     });
                     await db.collections.demo.delete("12345");
                     const found = await db.collections.demo.findById("12345");
-                    expect(found).to.be.undefined;
+                    expect(found).to.be.null;
                 });
 
                 it('Should enforce maxLength on string properties', async () => {
@@ -1245,7 +1236,7 @@ export default (platform: string, storages: StoragesType[]) => {
                     await collection.delete("12345");
                     const found = await collection.findById("12345");
 
-                    expect(found).toBeUndefined();
+                    expect(found).toBeNull();
                 });
 
                 // Step 4: Measure performance queries on multiple indexes with large dataset

@@ -1,3 +1,42 @@
+## @trust0/ridb [1.3.0-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.3.0-rc.2...@trust0/ridb@1.3.0-rc.3) (2025-03-08)
+
+### Bug Fixes
+
+* improve documentation and SharedWorker usage ([687f43d](https://github.com/trust0-project/RIDB/commit/687f43dc6f583b0d9cfa8f0754cb1a42a206040f))
+
+
+### Dependencies
+
+* **@trust0/ridb-core:** upgraded to 1.4.0-rc.5
+
+## @trust0/ridb [1.3.0-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.3.0-rc.1...@trust0/ridb@1.3.0-rc.2) (2025-03-08)
+
+### Bug Fixes
+
+* restore building for neutral platforms ([8d5319f](https://github.com/trust0-project/RIDB/commit/8d5319f42bcd5cdf7c9556b251e37e6c9d813896))
+
+## @trust0/ridb [1.3.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.2.4...@trust0/ridb@1.3.0-rc.1) (2025-03-08)
+
+### Features
+
+* create workers ([f981f8f](https://github.com/trust0-project/RIDB/commit/f981f8fd325831a409fedc82094031031fabc65d))
+
+### Bug Fixes
+
+* dependency ([f804a48](https://github.com/trust0-project/RIDB/commit/f804a48148312ade0275dd14a78edcb7b4c87642))
+* dependency fix ([645f7c5](https://github.com/trust0-project/RIDB/commit/645f7c508c0371ecbd790282ea17b46db6e7b2c7))
+* export QueryOptions again, for levelDB ([891bdb3](https://github.com/trust0-project/RIDB/commit/891bdb31996f200dcdfecfed583207fff54ab7e9))
+* level improvements ([e74e630](https://github.com/trust0-project/RIDB/commit/e74e63056caf6325cedbb619e5c7ae85762d642c))
+* package restructure fix ([595a130](https://github.com/trust0-project/RIDB/commit/595a1300f51ad93858427540389eac7d880f9bf8))
+* remove testing package ([e295c4c](https://github.com/trust0-project/RIDB/commit/e295c4c8e36deb757a99e843a1b08cad1e754e8a))
+* restore path ([7e9179a](https://github.com/trust0-project/RIDB/commit/7e9179a9c65a457d14df8548bf2676b16a03e307))
+* update dependencies ([096b326](https://github.com/trust0-project/RIDB/commit/096b326ce67e5b5134b8bd9574125fc1d37bdc8e))
+
+
+### Dependencies
+
+* **@trust0/ridb-core:** upgraded to 1.4.0-rc.4
+
 ## @trust0/ridb [1.2.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.2.3...@trust0/ridb@1.2.4) (2025-01-26)
 
 ### Bug Fixes

@@ -296,7 +296,7 @@ impl Storage for InMemory {
             "InMemory::find_document_by_id",
             &JsValue::from_str("Document not found.")
         );
-        Ok(JsValue::undefined())
+        Ok(JsValue::null())
     }
 
     async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue> {

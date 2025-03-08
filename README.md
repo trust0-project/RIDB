@@ -52,7 +52,7 @@ By default RIDB is bundled with a default InMemory storage with support for writ
 | **IndexDB Storage**           | Robust type safe replacement for Dexie        
 | **InMemory Storage**           | Robust type safe implementation of an inMemory storage
 | **LevelDB Storage**           | Robust type safe implementation for LevelDB 'classic-level'                
-
+| **SharedWorker**           | Use the database in a SharedWorker for better performance in the browser
 
 ## Contributing
 I'm very welcome to contributions from anyone, feel free to always open an Issue or create a Pull request. 

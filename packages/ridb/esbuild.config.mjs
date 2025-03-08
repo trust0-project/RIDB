@@ -38,11 +38,11 @@ const plugins = [
 const generic = {
     chunkNames: "[name]",
     assetNames: "[name]",
-    entryPoints: ['src/index.ts'],
+    entryPoints: ['src/index.ts', 'src/worker.ts', 'src/testing/index.ts'],
     sourcemap: false,
     bundle: true,
     platform: 'neutral',
-    splitting: false,
+    splitting: true,
     resolveExtensions: ['.ts', '.js', '.wasm'],
     inject: [],
     mainFields: ['module', 'main'],
@@ -52,7 +52,7 @@ const generic = {
     define: {
         'global.Buffer': 'Buffer',
     },
-    external: ['buffer']
+    //external: ['buffer']
 }
 
 // Build ES module

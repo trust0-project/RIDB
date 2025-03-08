@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@trust0/ridb": "file:../../",
+    "@types/sharedworker": "^0.0.150",
     "next": "15.1.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

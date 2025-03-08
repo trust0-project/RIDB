@@ -20,38 +20,37 @@
  * # SDK Rerefence
  */
 import path from 'path';
-import { QueryOptions, RIDB } from "@trust0/ridb";
-import type { 
+import { RIDB } from "@trust0/ridb";
+import {
+    QueryOptions, 
     SchemaTypeRecord, 
     Doc, 
     Operation,
-    QueryType,
-    BaseStorage as BaseStorageWasm
- } from "@trust0/ridb-core";
+    QueryType
+} from '@trust0/ridb-core';
 import type { ClassicLevel } from "classic-level";
 type Level = ClassicLevel<string, string>
-
 
 const { BaseStorage, Query, OpType } = await RIDB.load();
 
 export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
-    private db: Level;
+
     static async create<SchemasCreate extends SchemaTypeRecord>(
         name: string,
         schemas: SchemasCreate,
         options: any
-    ): Promise<BaseStorageWasm<SchemasCreate>> {
-        const levelImport = await import("classic-level");
-        const level = levelImport.ClassicLevel;
-        return new LevelDB(level, name, schemas, options);
+    ): Promise<LevelDB<SchemasCreate>> {
+        const {ClassicLevel} = await import("classic-level");
+        const level = new ClassicLevel(path.resolve(process.cwd(), "./.db/" + name));
+        const db = new LevelDB<SchemasCreate>(level, name, schemas, options);
+        return db;
     }
-    constructor(Level: typeof ClassicLevel, name: string, schemas: T, options: any) {
+    constructor(private db: Level, name: string, schemas: T, options: any) {
         super(name, schemas, options);
-        this.db = new Level(path.resolve(process.cwd(), "./.db/" + name));
     }
     /** Start the database */
     async start(): Promise<void> {
-        await this.db
+        await this.db.open();
     }
     /** Close the database */
     async close(): Promise<void> {
@@ -61,18 +60,18 @@ export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
     async findDocumentById(
         collectionName: keyof T,
         id: string
-    ): Promise<Doc<T[keyof T]> | undefined> {
+    ): Promise<Doc<T[keyof T]> | null> {
         const key = `${String(collectionName)}:${id}`;
         try {
             const value = await this.db.get(key);
             if (!value) {
-                return undefined
+                return null
             }
             const doc = JSON.parse(value);
             return doc;
         } catch (err: any) {
             if (err.notFound) {
-                return undefined;
+                return null;
             } else {
                 throw err;
             }

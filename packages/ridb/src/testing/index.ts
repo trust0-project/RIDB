@@ -1,6 +1,6 @@
 
 
-import { StorageClass, type StorageType } from '@trust0/ridb';
+import { StorageClass, type StorageType } from '../';
 import { default as Schemas } from './test/schemas.test';
 
 const Tests = {

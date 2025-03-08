@@ -1,11 +1,11 @@
 {
   "name": "@trust0/ridb-core",
-  "description": "RIDB core",
+  "description": "RIDB core update",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.3.1",
+  "version": "1.4.0-rc.5",
   "main": "./pkg/ridb_core.js",
   "types": "./pkg/ridb_core.d.ts",
   "sideEffects": [

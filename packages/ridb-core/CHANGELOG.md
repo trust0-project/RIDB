@@ -1,3 +1,33 @@
+## @trust0/ridb-core [1.4.0-rc.5](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.0-rc.4...@trust0/ridb-core@1.4.0-rc.5) (2025-03-08)
+
+### Bug Fixes
+
+* improve documentation and SharedWorker usage ([687f43d](https://github.com/trust0-project/RIDB/commit/687f43dc6f583b0d9cfa8f0754cb1a42a206040f))
+
+## @trust0/ridb-core [1.4.0-rc.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.0-rc.3...@trust0/ridb-core@1.4.0-rc.4) (2025-03-08)
+
+### Bug Fixes
+
+* remove testing package ([e295c4c](https://github.com/trust0-project/RIDB/commit/e295c4c8e36deb757a99e843a1b08cad1e754e8a))
+
+## @trust0/ridb-core [1.4.0-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.0-rc.2...@trust0/ridb-core@1.4.0-rc.3) (2025-03-07)
+
+### Bug Fixes
+
+* level improvements ([e74e630](https://github.com/trust0-project/RIDB/commit/e74e63056caf6325cedbb619e5c7ae85762d642c))
+
+## @trust0/ridb-core [1.4.0-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.0-rc.1...@trust0/ridb-core@1.4.0-rc.2) (2025-03-07)
+
+### Bug Fixes
+
+* update ([3fe21fc](https://github.com/trust0-project/RIDB/commit/3fe21fcfb3a307244c7d7c5be0df07258ba59ddd))
+
+## @trust0/ridb-core [1.4.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.3.1...@trust0/ridb-core@1.4.0-rc.1) (2025-03-07)
+
+### Features
+
+* create workers ([f981f8f](https://github.com/trust0-project/RIDB/commit/f981f8fd325831a409fedc82094031031fabc65d))
+
 ## @trust0/ridb-core [1.3.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.3.0...@trust0/ridb-core@1.3.1) (2025-01-26)
 
 ### Bug Fixes
