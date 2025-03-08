@@ -387,14 +387,14 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
 
   async close() {
     if (this.useWorker) {
-      this.worker.port.postMessage({
+      this._worker?.port.postMessage({
         action: 'close',
         requestId:this._sessionId!,
         data: {
           dbName: this.options.dbName,
         }
       });
-      await this.worker.port.close();
+      await this._worker?.port.close();
       this._worker = undefined;
     } else {
       await this.db.close();
