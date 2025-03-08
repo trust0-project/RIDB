@@ -70,7 +70,7 @@ await db.start({
 })
 ```
 
-A compatible storage should be a class implementing [StorageInternal<SchemaType> ](../docs/namespaces/RIDBTypes/classes/StorageInternal.md) and its methods.
+A compatible storage should be a class implementing [StorageInternal<SchemaType> ](_media/StorageInternal.md) and its methods.
 
 ### Using with migration plugin
 The migration plugin will automatically migrate your documents for you as you upgrade and change your schemas over the time. 

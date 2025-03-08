@@ -8,7 +8,7 @@
 
 > **CreateStorage**: \<`T`\>(`records`) => `Promise`\<[`BaseStorage`](../classes/BaseStorage.md)\<`T`\>\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:681
+Defined in: ridb-core/pkg/ridb\_core.d.ts:681
 
 Represents a function type for creating storage with the provided schema type records.
 

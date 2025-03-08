@@ -8,7 +8,7 @@
 
 > **StartOptions**\<`T`\>: `object`
 
-Defined in: [src/index.ts:127](https://github.com/trust0-project/RIDB/blob/e7dc85a85a4e3a7dcb1a7c6c4583ac0168c3eb0c/packages/ridb/src/index.ts#L127)
+Defined in: [ridb/src/index.ts:127](https://github.com/trust0-project/RIDB/blob/f5856b3eb59ea4bab3c7b8367b0d008033fed532/packages/ridb/src/index.ts#L127)
 
 ## Type Parameters
 
