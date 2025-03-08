@@ -6,7 +6,7 @@
 
 # Class: Collection\<T\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:575
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:200
 
 Collection is a class that represents a collection of documents in a database.
 
@@ -30,9 +30,9 @@ A schema type defining the structure of the documents in the collection.
 
 ### count()
 
-> **count**(`query`): `Promise`\<`number`\>
+> **count**(`query`, `options`?): `Promise`\<`number`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:587
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:212
 
 count all documents in the collection.
 
@@ -41,6 +41,10 @@ count all documents in the collection.
 ##### query
 
 [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
+
+##### options?
+
+[`QueryOptions`](../type-aliases/QueryOptions.md)
 
 #### Returns
 
@@ -54,7 +58,7 @@ A promise that resolves to an array of documents.
 
 > **create**(`document`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:609
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:234
 
 Creates a new document in the collection.
 
@@ -78,7 +82,7 @@ A promise that resolves to the created document.
 
 > **delete**(`id`): `Promise`\<`void`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:616
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:241
 
 Deletes a document in the collection by its ID.
 
@@ -100,9 +104,9 @@ A promise that resolves when the deletion is complete.
 
 ### find()
 
-> **find**(`query`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>[]\>
+> **find**(`query`, `options`?): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>[]\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:581
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:206
 
 Finds all documents in the collection.
 
@@ -111,6 +115,10 @@ Finds all documents in the collection.
 ##### query
 
 [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
+
+##### options?
+
+[`QueryOptions`](../type-aliases/QueryOptions.md)
 
 #### Returns
 
@@ -124,7 +132,7 @@ A promise that resolves to an array of documents.
 
 > **findById**(`id`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:594
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:219
 
 Finds a single document in the collection by its ID.
 
@@ -148,7 +156,7 @@ A promise that resolves to the found document.
 
 > **update**(`document`): `Promise`\<`void`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:602
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:227
 
 Updates a document in the collection by its ID.
 

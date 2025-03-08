@@ -6,7 +6,7 @@
 
 # Class: `abstract` StorageInternal\<Schemas\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:666
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:556
 
 ## Extended by
 
@@ -22,7 +22,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:666
 
 > **new StorageInternal**\<`Schemas`\>(`name`, `schemas`): [`StorageInternal`](StorageInternal.md)\<`Schemas`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:667
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:557
 
 #### Parameters
 
@@ -44,7 +44,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:667
 
 > `abstract` **close**(): `Promise`\<`void`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:672
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:562
 
 #### Returns
 
@@ -54,9 +54,9 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:672
 
 ### count()
 
-> `abstract` **count**(`colectionName`, `query`): `Promise`\<`number`\>
+> `abstract` **count**(`colectionName`, `query`, `options`?): `Promise`\<`number`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:673
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:563
 
 #### Parameters
 
@@ -68,6 +68,10 @@ keyof `Schemas`
 
 [`QueryType`](../type-aliases/QueryType.md)\<`Schemas`\[keyof `Schemas`\]\>
 
+##### options?
+
+[`QueryOptions`](../type-aliases/QueryOptions.md)
+
 #### Returns
 
 `Promise`\<`number`\>
@@ -76,9 +80,9 @@ keyof `Schemas`
 
 ### find()
 
-> `abstract` **find**(`collectionName`, `query`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>[]\>
+> `abstract` **find**(`collectionName`, `query`, `options`?): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>[]\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:681
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:572
 
 #### Parameters
 
@@ -90,6 +94,10 @@ keyof `Schemas`
 
 [`QueryType`](../type-aliases/QueryType.md)\<`Schemas`\[keyof `Schemas`\]\>
 
+##### options?
+
+[`QueryOptions`](../type-aliases/QueryOptions.md)
+
 #### Returns
 
 `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>[]\>
@@ -98,9 +106,9 @@ keyof `Schemas`
 
 ### findDocumentById()
 
-> `abstract` **findDocumentById**(`collectionName`, `id`): `Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+> `abstract` **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:677
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:568
 
 #### Parameters
 
@@ -114,7 +122,7 @@ keyof `Schemas`
 
 #### Returns
 
-`Promise`\<`undefined` \| `null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+`Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
 ***
 
@@ -122,7 +130,7 @@ keyof `Schemas`
 
 > `abstract` **start**(): `Promise`\<`void`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:671
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:561
 
 #### Returns
 
@@ -134,7 +142,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:671
 
 > `abstract` **write**(`op`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:685
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:577
 
 #### Parameters
 

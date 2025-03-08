@@ -22,6 +22,7 @@
 ```typescript
 const db = new RIDB(
     {
+        dbName: "demo",
         schemas: {
             demo: {
                 version: 0,
@@ -39,9 +40,26 @@ const db = new RIDB(
 )
 ```
 
-### Starting the database
-```typescript    
-await db.start({dbName: "demo"})
+### Using with SharedWorker
+
+```typescript
+const db = new RIDB({
+    dbName: "demo",
+    schemas: {
+        demo: {
+            version: 0,
+            primaryKey: 'id',
+            type: SchemaFieldType.object,
+            properties: {
+                id: {
+                    type: SchemaFieldType.string,
+                    maxLength: 60
+                }
+            }
+        } as const
+    },
+    worker: true
+)
 ```
 
 ### Using with encryption plugin
@@ -49,7 +67,6 @@ You can also optionally specify storageType with a compatible storage of your ch
 ```typescript
 await db.start({
     password: "my-password"
-    db
 })
 ```
 
@@ -61,6 +78,7 @@ The migration plugin will automatically migrate your documents for you as you up
 ```typescript
 const db = new RIDB(
     {
+        dbName: "demo",
         schemas: {
             demo: {
                 version: 1,
@@ -88,7 +106,7 @@ const db = new RIDB(
     }
 )
 
-await db.start({dbName: "demo"})
+await db.start()
 ```
 # SDK Rerefence
 
@@ -134,12 +152,15 @@ await db.start({dbName: "demo"})
 - [Operation](type-aliases/Operation.md)
 - [OperatorOrType](type-aliases/OperatorOrType.md)
 - [Operators](type-aliases/Operators.md)
+- [QueryOptions](type-aliases/QueryOptions.md)
 - [QueryType](type-aliases/QueryType.md)
 - [RIDBModule](type-aliases/RIDBModule.md)
 - [SchemaType](type-aliases/SchemaType.md)
 - [SchemaTypeRecord](type-aliases/SchemaTypeRecord.md)
 - [StartOptions](type-aliases/StartOptions.md)
+- [StorageClass](type-aliases/StorageClass.md)
 
 ## Variables
 
 - [SchemaFieldType](variables/SchemaFieldType.md)
+- [WasmInternal](variables/WasmInternal.md)

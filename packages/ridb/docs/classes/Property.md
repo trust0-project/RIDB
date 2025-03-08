@@ -6,7 +6,7 @@
 
 # Class: Property
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:421
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:305
 
 Represents a property within a schema, including various constraints and nested properties.
 
@@ -26,7 +26,7 @@ Represents a property within a schema, including various constraints and nested 
 
 > `readonly` `optional` **default**: `any`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:470
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:354
 
 An optional default value for the property.
 
@@ -36,7 +36,7 @@ An optional default value for the property.
 
 > `readonly` `optional` **items**: [`Property`](Property.md)
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:440
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:324
 
 An optional array of nested properties for array-type properties.
 
@@ -46,7 +46,7 @@ An optional array of nested properties for array-type properties.
 
 > `readonly` `optional` **maxItems**: `number`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:445
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:329
 
 The maximum number of items for array-type properties, if applicable.
 
@@ -56,7 +56,7 @@ The maximum number of items for array-type properties, if applicable.
 
 > `readonly` `optional` **maxLength**: `number`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:455
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:339
 
 The maximum length for string-type properties, if applicable.
 
@@ -66,7 +66,7 @@ The maximum length for string-type properties, if applicable.
 
 > `readonly` `optional` **minItems**: `number`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:450
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:334
 
 The minimum number of items for array-type properties, if applicable.
 
@@ -76,7 +76,7 @@ The minimum number of items for array-type properties, if applicable.
 
 > `readonly` `optional` **minLength**: `number`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:460
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:344
 
 The minimum length for string-type properties, if applicable.
 
@@ -86,7 +86,7 @@ The minimum length for string-type properties, if applicable.
 
 > `readonly` `optional` **primaryKey**: `string`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:435
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:319
 
 The primary key of the property, if applicable.
 
@@ -96,7 +96,7 @@ The primary key of the property, if applicable.
 
 > `readonly` `optional` **properties**: `object`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:475
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:359
 
 An optional map of nested properties for object-type properties.
 
@@ -110,7 +110,7 @@ An optional map of nested properties for object-type properties.
 
 > `readonly` `optional` **required**: `boolean`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:465
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:349
 
 An optional array of required fields for object-type properties.
 
@@ -120,7 +120,7 @@ An optional array of required fields for object-type properties.
 
 > `readonly` **type**: `string`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:425
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:309
 
 The type of the property.
 
@@ -130,6 +130,6 @@ The type of the property.
 
 > `readonly` `optional` **version**: `number`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:430
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:314
 
 The version of the property, if applicable.

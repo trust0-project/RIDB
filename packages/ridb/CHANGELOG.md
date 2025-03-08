@@ -1,3 +1,10 @@
+## @trust0/ridb [1.3.2-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.3.1...@trust0/ridb@1.3.2-rc.1) (2025-03-08)
+
+
+### Dependencies
+
+* **@trust0/ridb-core:** upgraded to 1.4.2-rc.1
+
 ## @trust0/ridb [1.3.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.3.0...@trust0/ridb@1.3.1) (2025-03-08)
 
 ### Bug Fixes

@@ -6,7 +6,7 @@
 
 # Class: Query\<T\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:95
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:95
 
 ## Type Parameters
 
@@ -18,7 +18,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:95
 
 > **new Query**\<`T`\>(`query`, `schema`): [`Query`](Query.md)\<`T`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:96
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:96
 
 #### Parameters
 
@@ -40,4 +40,4 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:96
 
 > `readonly` **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:97
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:97
