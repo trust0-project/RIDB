@@ -15,7 +15,14 @@ esbuild.build({
     globPlugin(),
     nodeExternalsPlugin()
   ],
+  banner: {
+    js:  "\nif (typeof Buffer === 'undefined' ) {\n  global.Buffer = require('buffer').Buffer;\n}",
+},
+define: {
+    'global.Buffer': 'Buffer',
+},
   external: [
+    'buffer',
     'react',
     'react-dom'
   ]

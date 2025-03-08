@@ -15,6 +15,16 @@ export default defineConfig({
     test: {
         setupFiles: ['./tests/setup.ts'],
         reporters: ['verbose'],
+        browser: {
+            provider: 'webdriverio',
+            enabled: true,
+            headless: true,
+            instances: [
+                {
+                    browser: 'chrome',
+                }
+            ],
+        },
         coverage: {
             provider: 'istanbul',
             reporter: isCI ? ['json-summary'] : ['json-summary', "html"],

@@ -46,13 +46,7 @@ const generic = {
     resolveExtensions: ['.ts', '.js', '.wasm'],
     inject: [],
     mainFields: ['module', 'main'],
-    banner: {
-        js:  "\nif (typeof Buffer === 'undefined') {\n  global.Buffer = require('buffer').Buffer;\n}",
-    },
-    define: {
-        'global.Buffer': 'Buffer',
-    },
-    //external: ['buffer']
+    external: ['buffer']
 }
 
 // Build ES module

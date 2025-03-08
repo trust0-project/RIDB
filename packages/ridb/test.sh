@@ -3,8 +3,8 @@ set -e  # Exit on any error
 # Initialize variables
 ENVIRONMENT=""
 # Define test environment options
-NODE_ENV="--environment node --run"
-BROWSER_ENV="--environment jsdom --browser --browser.name=chrome --run"
+NODE_ENV="--environment node --browser.enabled=false --run"
+BROWSER_ENV="--environment jsdom --run"
 
 # Parse command-line options
 while getopts e: option
