@@ -28,89 +28,56 @@ const schemas = {
 };
 
 export default function Home() {
-  const [db, setWorker] = useState<RIDB<typeof schemas> | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'SharedWorker' in window) {
-      try {
-        console.log('[Home] Initializing RIDBWorker');
-        const newWorker = new RIDB({
-          dbName: "test-database",
-          schemas,
-          worker: true
-        });
-        setWorker(newWorker);
-        return () => {
-          console.log('[Home] Cleaning up RIDBWorker');
-          newWorker.close();
-        };
-      } catch (error) {
-        console.error('[Home] Error initializing SharedWorker:', error);
-      }
-    } else {
-      console.warn('[Home] SharedWorker is not supported in this environment');
-    }
-  }, []);
-
+  const [db, setWorker] = useState<RIDB<typeof schemas>>(
+    new RIDB({
+      dbName: "test-database",
+      schemas,
+      worker: true
+    })
+  );
   const [isStarted, setIsStarted] = useState(false);
   const [demos, setDemos] = useState<Doc<typeof schemas.demo>[]>([]);
   const [newDemoId, setNewDemoId] = useState('');
   const [storageType, setStorageType] = useState<StorageType>(StorageType.IndexDB);
-  const [operationTime, setOperationTime] = useState<string | null>(null);
-  const [operationHistory, setOperationHistory] = useState<{ name: string; time: string }[]>([]);
   const [numRecords, setNumRecords] = useState<number>(1);
 
-  const logOperation = (name: string, startTime: number, endTime: number) => {
-    const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
-    setOperationHistory((prev) => [...prev, { name, time: `${timeTaken} seconds` }]);
-  };
+  useEffect(() => {
+    return () => {
+      console.log('[Home] Cleaning up RIDBWorker');
+      if (db) {
+        db.close();
+      }
+    };
+  }, []);
 
   const handleStart = async () => {
-    if (db) {
-      console.log('[Home] Starting the database');
-      const startTime = performance.now();
-      await db.start({ storageType, password: "demo" });
-      const endTime = performance.now();
-      logOperation('Start DB', startTime, endTime);
-      setIsStarted(true);
-      console.log('[Home] Database started successfully');
-      fetchDemos();
-    }
+    console.log(`[Home] Starting the database ${storageType}`);
+    await db.start({ storageType, password: "demo" })
+    console.log(`[Home] Started the database ${storageType}`);
+    setIsStarted(true);
+    fetchDemos();
   };
 
   const handleClose = async () => {
-    if (db) {
-      console.log('[Home] Closing the database');
-      const startTime = performance.now();
-      await db.close();
-      const endTime = performance.now();
-      logOperation('Close DB', startTime, endTime);
-      setIsStarted(false);
-      console.log('[Home] Database closed');
-    }
+    console.log('[Home] Closing the database');
+    await db.close();
+    setIsStarted(false);
+    console.log('[Home] Database closed');
   };
 
   const fetchDemos = async () => {
-    if (db) {
-      console.log('[Home] Fetching demos');
-      const startTime = performance.now();
-      const demoCollection = db.collections.demo;
-      const allDemos = await demoCollection.find({});
-      const endTime = performance.now();
-      logOperation('Fetch Demos', startTime, endTime);
-      setDemos(allDemos);
-      console.log('[Home] Demos fetched:', allDemos);
-    }
+    console.log('[Home] Fetching demos');
+    const demoCollection = db.collections.demo;
+    const allDemos = await demoCollection.find({});
+    setDemos(allDemos);
+    console.log('[Home] Demos fetched:', allDemos);
   };
 
   const handleAddDemo = async () => {
-    if (db && isStarted && newDemoId) {
+    if (isStarted && newDemoId) {
       console.log('[Home] Adding a new demo:', newDemoId);
-      const startTime = performance.now();
       const demoCollection = db.collections.demo;
       await demoCollection.create({ id: newDemoId });
-      const endTime = performance.now();
-      logOperation('Add Demo', startTime, endTime);
       setNewDemoId('');
       fetchDemos();
       console.log('[Home] New demo added:', newDemoId);
@@ -118,17 +85,14 @@ export default function Home() {
   };
 
   const generateRandomData = async () => {
-    if (db && isStarted) {
+    if (isStarted) {
       console.log(`[Home] Generating random data for ${numRecords} record(s)`);
-      const startTime = performance.now();
       const demoCollection = db.collections.demo;
       for (let i = 0; i < numRecords; i++) {
         const randomId = `demo-${Math.random().toString(36).substr(2, 9)}`;
         const randomAge = Math.floor(Math.random() * 100);
         await demoCollection.create({ id: randomId, age: randomAge });
       }
-      const endTime = performance.now();
-      logOperation('Generate Random Data', startTime, endTime);
       fetchDemos();
       console.log('[Home] Finished generating random data');
     }
@@ -175,7 +139,6 @@ export default function Home() {
             </button>
           )}
           <p className="text-lg font-medium">Status: {isStarted ? 'Started' : 'Stopped'}</p>
-          <p className="text-lg font-medium">Operation Time: {operationTime}</p>
         </div>
         {isStarted && (
           <div className="w-full">
@@ -221,16 +184,6 @@ export default function Home() {
             </button>
           </div>
         )}
-        <div className="w-full">
-          <h2 className="text-xl font-semibold mb-2">Operation History</h2>
-          <ul className="list-disc pl-5 mb-4">
-            {operationHistory.map((operation, index) => (
-              <li key={index} className="text-lg">
-                {operation.name}: {operation.time}
-              </li>
-            ))}
-          </ul>
-        </div>
       </main>
     </div>
   );
