@@ -1,3 +1,9 @@
+## @trust0/ridb [1.3.0-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.3.0-rc.1...@trust0/ridb@1.3.0-rc.2) (2025-03-08)
+
+### Bug Fixes
+
+* restore building for neutral platforms ([8d5319f](https://github.com/trust0-project/RIDB/commit/8d5319f42bcd5cdf7c9556b251e37e6c9d813896))
+
 ## @trust0/ridb [1.3.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.2.4...@trust0/ridb@1.3.0-rc.1) (2025-03-08)
 
 ### Features
