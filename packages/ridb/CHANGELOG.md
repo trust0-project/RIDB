@@ -1,3 +1,9 @@
+## @trust0/ridb [1.3.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.3.2...@trust0/ridb@1.3.3) (2025-03-08)
+
+### Bug Fixes
+
+* worker + web examples ([5fb02c7](https://github.com/trust0-project/RIDB/commit/5fb02c76b219cd851e8df5782505b0ae60994f4f))
+
 ## @trust0/ridb [1.3.3-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.3.2...@trust0/ridb@1.3.3-rc.1) (2025-03-08)
 
 ### Bug Fixes
