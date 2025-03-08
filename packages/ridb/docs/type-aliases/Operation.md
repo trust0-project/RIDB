@@ -8,7 +8,7 @@
 
 > **Operation**\<`T`\>: `object`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:396
+Defined in: ridb-core/pkg/ridb\_core.d.ts:479
 
 Represents an operation to be performed on a collection.
 

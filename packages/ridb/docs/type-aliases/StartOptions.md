@@ -8,7 +8,7 @@
 
 > **StartOptions**\<`T`\>: `object`
 
-Defined in: [ridb/src/index.ts:112](https://github.com/trust0-project/RIDB/blob/56df6bd3359709e04686365976e2362ca0f2a5ff/packages/ridb/src/index.ts#L112)
+Defined in: [ridb/src/index.ts:127](https://github.com/trust0-project/RIDB/blob/f5856b3eb59ea4bab3c7b8367b0d008033fed532/packages/ridb/src/index.ts#L127)
 
 ## Type Parameters
 
@@ -26,4 +26,4 @@ Defined in: [ridb/src/index.ts:112](https://github.com/trust0-project/RIDB/blob/
 
 ### storageType?
 
-> `optional` **storageType**: `StorageClass`\<`T`\> \| [`StorageType`](../enumerations/StorageType.md)
+> `optional` **storageType**: [`StorageClass`](StorageClass.md)\<`T`\> \| [`StorageType`](../enumerations/StorageType.md)

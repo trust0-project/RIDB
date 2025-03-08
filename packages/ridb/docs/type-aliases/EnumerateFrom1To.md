@@ -8,7 +8,7 @@
 
 > **EnumerateFrom1To**\<`N`\>: `Exclude`\<[`EnumerateUpTo`](EnumerateUpTo.md)\<`N`\>, `0`\> \| `N` *extends* `0` ? `never` : `N`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:319
+Defined in: ridb-core/pkg/ridb\_core.d.ts:508
 
 ## Type Parameters
 

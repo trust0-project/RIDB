@@ -1,11 +1,11 @@
 {
   "name": "@trust0/ridb-core",
-  "description": "RIDB core",
+  "description": "RIDB wasm core",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.4.1",
+  "version": "1.4.2-rc.1",
   "main": "./pkg/ridb_core.js",
   "types": "./pkg/ridb_core.d.ts",
   "sideEffects": [
@@ -14,7 +14,8 @@
   "scripts": {
     "clean": "rm -rf build node_modules",
     "test": "sh test.sh",
-    "build": "sh build.sh"
+    "build": "sh build.sh",
+    "docs": "echo 'No docs for this package'"
   },
   "files": [
     "./pkg/ridb_core_bg.wasm",

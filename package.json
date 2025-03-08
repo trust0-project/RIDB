@@ -12,7 +12,8 @@
     "clean": "lerna run clean --stream --loglevel verbose && rm -rf node_modules package-lock.json",
     "docs": "lerna run docs --stream --loglevel verbose",
     "build": "lerna run build --stream --loglevel verbose",
-    "test": "lerna run test --stream --loglevel verbose"
+    "test": "lerna run test --stream --loglevel verbose",
+    "ci-check":"npx multi-semantic-release --deps.prefix=\"^\" --dry-run"
   },
   "devDependencies": {
     "@anolilab/multi-semantic-release": "^1.1.6",

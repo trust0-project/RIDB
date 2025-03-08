@@ -1,3 +1,21 @@
+## @trust0/ridb-react [1.1.8-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.8-rc.1...@trust0/ridb-react@1.1.8-rc.2) (2025-03-08)
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.3.2-rc.2
+
+## @trust0/ridb-react [1.1.8-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.7...@trust0/ridb-react@1.1.8-rc.1) (2025-03-08)
+
+### Bug Fixes
+
+* docs command ([ba45c4e](https://github.com/trust0-project/RIDB/commit/ba45c4ebd54b8db49b01a5af363cebb281c9fb78))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.3.2-rc.1
+
 ## @trust0/ridb-react [1.1.7](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.6...@trust0/ridb-react@1.1.7) (2025-03-08)
 
 ### Bug Fixes

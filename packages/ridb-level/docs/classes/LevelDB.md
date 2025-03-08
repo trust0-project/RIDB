@@ -6,7 +6,7 @@
 
 # Class: LevelDB\<T\>
 
-Defined in: [ridb-level/src/index.ts:37](https://github.com/elribonazo/RIDB/blob/94fb471a7843bae2924c2c5eb61059582cf42e9d/packages/ridb-level/src/index.ts#L37)
+Defined in: [ridb-level/src/index.ts:41](https://github.com/trust0-project/RIDB/blob/d2923e7ed1c9cad78614f325915d51cf01fde6e7/packages/ridb-level/src/index.ts#L41)
 
 ## Extends
 
@@ -20,15 +20,15 @@ Defined in: [ridb-level/src/index.ts:37](https://github.com/elribonazo/RIDB/blob
 
 ### new LevelDB()
 
-> **new LevelDB**\<`T`\>(`Level`, `name`, `schemas`, `options`): [`LevelDB`](LevelDB.md)\<`T`\>
+> **new LevelDB**\<`T`\>(`db`, `name`, `schemas`, `options`): [`LevelDB`](LevelDB.md)\<`T`\>
 
-Defined in: [ridb-level/src/index.ts:48](https://github.com/elribonazo/RIDB/blob/94fb471a7843bae2924c2c5eb61059582cf42e9d/packages/ridb-level/src/index.ts#L48)
+Defined in: [ridb-level/src/index.ts:53](https://github.com/trust0-project/RIDB/blob/d2923e7ed1c9cad78614f325915d51cf01fde6e7/packages/ridb-level/src/index.ts#L53)
 
 #### Parameters
 
-##### Level
+##### db
 
-*typeof* `ClassicLevel`
+`Level`
 
 ##### name
 
@@ -56,7 +56,7 @@ Defined in: [ridb-level/src/index.ts:48](https://github.com/elribonazo/RIDB/blob
 
 > `readonly` **core**: `CoreStorage`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:336
+Defined in: ridb-core/pkg/ridb\_core.d.ts:269
 
 #### Inherited from
 
@@ -68,7 +68,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:336
 
 > `private` **db**: `Level`
 
-Defined in: [ridb-level/src/index.ts:38](https://github.com/elribonazo/RIDB/blob/94fb471a7843bae2924c2c5eb61059582cf42e9d/packages/ridb-level/src/index.ts#L38)
+Defined in: [ridb-level/src/index.ts:53](https://github.com/trust0-project/RIDB/blob/d2923e7ed1c9cad78614f325915d51cf01fde6e7/packages/ridb-level/src/index.ts#L53)
 
 ***
 
@@ -76,7 +76,7 @@ Defined in: [ridb-level/src/index.ts:38](https://github.com/elribonazo/RIDB/blob
 
 > `readonly` **dbName**: `string`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:333
+Defined in: ridb-core/pkg/ridb\_core.d.ts:266
 
 #### Inherited from
 
@@ -88,7 +88,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:333
 
 > `readonly` **options**: `BaseStorageOptions`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:335
+Defined in: ridb-core/pkg/ridb\_core.d.ts:268
 
 #### Inherited from
 
@@ -100,7 +100,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:335
 
 > `readonly` **schemas**: `Record`\<keyof `T`, `Schema`\<`T`\[keyof `T`\]\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:334
+Defined in: ridb-core/pkg/ridb\_core.d.ts:267
 
 #### Inherited from
 
@@ -112,7 +112,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:334
 
 > **addIndexSchemas**(): `null`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:346
+Defined in: ridb-core/pkg/ridb\_core.d.ts:279
 
 #### Returns
 
@@ -128,7 +128,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:346
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [ridb-level/src/index.ts:57](https://github.com/elribonazo/RIDB/blob/94fb471a7843bae2924c2c5eb61059582cf42e9d/packages/ridb-level/src/index.ts#L57)
+Defined in: [ridb-level/src/index.ts:61](https://github.com/trust0-project/RIDB/blob/d2923e7ed1c9cad78614f325915d51cf01fde6e7/packages/ridb-level/src/index.ts#L61)
 
 Close the database
 
@@ -146,7 +146,7 @@ Close the database
 
 > **count**(`collectionName`, `query`, `options`?): `Promise`\<`number`\>
 
-Defined in: [ridb-level/src/index.ts:125](https://github.com/elribonazo/RIDB/blob/94fb471a7843bae2924c2c5eb61059582cf42e9d/packages/ridb-level/src/index.ts#L125)
+Defined in: [ridb-level/src/index.ts:129](https://github.com/trust0-project/RIDB/blob/d2923e7ed1c9cad78614f325915d51cf01fde6e7/packages/ridb-level/src/index.ts#L129)
 
 Count documents matching a query (supports offset & limit)
 
@@ -178,7 +178,7 @@ keyof `T`
 
 > **find**(`collectionName`, `query`, `options`?): `Promise`\<`Doc`\<`T`\[keyof `T`\]\>[]\>
 
-Defined in: [ridb-level/src/index.ts:173](https://github.com/elribonazo/RIDB/blob/94fb471a7843bae2924c2c5eb61059582cf42e9d/packages/ridb-level/src/index.ts#L173)
+Defined in: [ridb-level/src/index.ts:177](https://github.com/trust0-project/RIDB/blob/d2923e7ed1c9cad78614f325915d51cf01fde6e7/packages/ridb-level/src/index.ts#L177)
 
 Find documents matching a query with pagination
 
@@ -208,9 +208,9 @@ keyof `T`
 
 ### findDocumentById()
 
-> **findDocumentById**(`collectionName`, `id`): `Promise`\<`undefined` \| `Doc`\<`T`\[keyof `T`\]\>\>
+> **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| `Doc`\<`T`\[keyof `T`\]\>\>
 
-Defined in: [ridb-level/src/index.ts:61](https://github.com/elribonazo/RIDB/blob/94fb471a7843bae2924c2c5eb61059582cf42e9d/packages/ridb-level/src/index.ts#L61)
+Defined in: [ridb-level/src/index.ts:65](https://github.com/trust0-project/RIDB/blob/d2923e7ed1c9cad78614f325915d51cf01fde6e7/packages/ridb-level/src/index.ts#L65)
 
 Find a document by its ID
 
@@ -226,7 +226,7 @@ keyof `T`
 
 #### Returns
 
-`Promise`\<`undefined` \| `Doc`\<`T`\[keyof `T`\]\>\>
+`Promise`\<`null` \| `Doc`\<`T`\[keyof `T`\]\>\>
 
 #### Overrides
 
@@ -238,7 +238,7 @@ keyof `T`
 
 > **getOption**(`name`): `undefined` \| `string` \| `number` \| `boolean`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:343
+Defined in: ridb-core/pkg/ridb\_core.d.ts:276
 
 #### Parameters
 
@@ -260,7 +260,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:343
 
 > **getSchema**(`name`): `Schema`\<`any`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:344
+Defined in: ridb-core/pkg/ridb\_core.d.ts:277
 
 #### Parameters
 
@@ -282,7 +282,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:344
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: [ridb-level/src/index.ts:53](https://github.com/elribonazo/RIDB/blob/94fb471a7843bae2924c2c5eb61059582cf42e9d/packages/ridb-level/src/index.ts#L53)
+Defined in: [ridb-level/src/index.ts:57](https://github.com/trust0-project/RIDB/blob/d2923e7ed1c9cad78614f325915d51cf01fde6e7/packages/ridb-level/src/index.ts#L57)
 
 Start the database
 
@@ -300,7 +300,7 @@ Start the database
 
 > **write**(`op`): `Promise`\<`Doc`\<`T`\[keyof `T`\]\>\>
 
-Defined in: [ridb-level/src/index.ts:82](https://github.com/elribonazo/RIDB/blob/94fb471a7843bae2924c2c5eb61059582cf42e9d/packages/ridb-level/src/index.ts#L82)
+Defined in: [ridb-level/src/index.ts:86](https://github.com/trust0-project/RIDB/blob/d2923e7ed1c9cad78614f325915d51cf01fde6e7/packages/ridb-level/src/index.ts#L86)
 
 Write an operation (insert, update, delete)
 
@@ -322,9 +322,9 @@ Write an operation (insert, update, delete)
 
 ### create()
 
-> `static` **create**\<`SchemasCreate`\>(`name`, `schemas`, `options`): `Promise`\<`BaseStorage`\<`SchemasCreate`\>\>
+> `static` **create**\<`SchemasCreate`\>(`name`, `schemas`, `options`): `Promise`\<[`LevelDB`](LevelDB.md)\<`SchemasCreate`\>\>
 
-Defined in: [ridb-level/src/index.ts:39](https://github.com/elribonazo/RIDB/blob/94fb471a7843bae2924c2c5eb61059582cf42e9d/packages/ridb-level/src/index.ts#L39)
+Defined in: [ridb-level/src/index.ts:43](https://github.com/trust0-project/RIDB/blob/d2923e7ed1c9cad78614f325915d51cf01fde6e7/packages/ridb-level/src/index.ts#L43)
 
 #### Type Parameters
 
@@ -346,7 +346,7 @@ Defined in: [ridb-level/src/index.ts:39](https://github.com/elribonazo/RIDB/blob
 
 #### Returns
 
-`Promise`\<`BaseStorage`\<`SchemasCreate`\>\>
+`Promise`\<[`LevelDB`](LevelDB.md)\<`SchemasCreate`\>\>
 
 #### Overrides
 
