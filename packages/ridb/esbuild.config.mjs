@@ -38,11 +38,11 @@ const plugins = [
 const generic = {
     chunkNames: "[name]",
     assetNames: "[name]",
-    entryPoints: ['src/index.ts', 'src/worker.ts'],
+    entryPoints: ['src/index.ts', 'src/worker.ts', 'src/testing/index.ts'],
     sourcemap: false,
     bundle: true,
     platform: 'neutral',
-    splitting: false,
+    splitting: true,
     resolveExtensions: ['.ts', '.js', '.wasm'],
     inject: [],
     mainFields: ['module', 'main'],
@@ -66,21 +66,7 @@ esbuild.build({
         wasmPlugin,
         ...plugins
     ],
-}).then(() => esbuild.build({
-    ...generic,
-    entryPoints: ['src/testing/index.ts'],
-    platform: 'node',
-    bundle: true,
-    outdir:"build/testing",
-    external: ['@trust0/ridb', '@trust0/ridb-core'],
-    outExtension: { ".js": ".js" },
-    target: ['esnext'],
-    format: 'esm',
-    plugins: [
-        wasmPlugin,
-        ...plugins
-    ],
-})).catch((err) => {
+}).catch((err) => {
     console.log(err)
     process.exit(1)
 });

@@ -1,9 +1,7 @@
-import { describe, it, expect, afterEach, beforeEach, afterAll } from 'vitest';
-import path from 'path';
-import fs from 'fs';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
 import { RIDB, SchemaFieldType, Doc } from '../../index';
-import { StoragesType, TestPlatform } from '..';
+import { StoragesType } from '..';
 
 export default (platform: string, storages: StoragesType[]) => {
     return describe(`[${platform}] Testing`, () => {
@@ -11,12 +9,6 @@ export default (platform: string, storages: StoragesType[]) => {
 
         beforeEach(() => {
             dbName = "test" + uuidv4();
-        })
-
-        afterAll(() => {
-            if (platform === TestPlatform.NODE) {
-                fs.rmSync(path.resolve(process.cwd(), `./.db`), { recursive: true, force: true });
-            }
         })
 
         storages.forEach(({ name, storage }) => {
