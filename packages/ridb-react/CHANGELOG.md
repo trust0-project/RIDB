@@ -1,3 +1,14 @@
+## @trust0/ridb-react [1.1.9](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.8...@trust0/ridb-react@1.1.9) (2025-03-08)
+
+### Bug Fixes
+
+* wrong merge commit ([8679bfd](https://github.com/trust0-project/RIDB/commit/8679bfd0bf8a33d998b6ffd7ad9d90b61e678899))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.3.3
+
 ## @trust0/ridb-react [1.1.9-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.8...@trust0/ridb-react@1.1.9-rc.1) (2025-03-08)
 
 ### Bug Fixes
