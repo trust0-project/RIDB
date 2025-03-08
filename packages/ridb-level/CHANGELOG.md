@@ -1,3 +1,14 @@
+## @trust0/ridb-level [1.1.7-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.7-rc.1...@trust0/ridb-level@1.1.7-rc.2) (2025-03-08)
+
+### Bug Fixes
+
+* restore building for neutral platforms ([8d5319f](https://github.com/trust0-project/RIDB/commit/8d5319f42bcd5cdf7c9556b251e37e6c9d813896))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.3.0-rc.2
+
 ## @trust0/ridb-level [1.1.7-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.6...@trust0/ridb-level@1.1.7-rc.1) (2025-03-08)
 
 ### Bug Fixes
