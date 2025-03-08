@@ -1,3 +1,24 @@
+## @trust0/ridb-core [1.4.0](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.3.1...@trust0/ridb-core@1.4.0) (2025-03-08)
+
+### Features
+
+* create workers ([f981f8f](https://github.com/trust0-project/RIDB/commit/f981f8fd325831a409fedc82094031031fabc65d))
+
+### Bug Fixes
+
+* improve documentation and SharedWorker usage ([687f43d](https://github.com/trust0-project/RIDB/commit/687f43dc6f583b0d9cfa8f0754cb1a42a206040f))
+* level improvements ([e74e630](https://github.com/trust0-project/RIDB/commit/e74e63056caf6325cedbb619e5c7ae85762d642c))
+* remove testing package ([e295c4c](https://github.com/trust0-project/RIDB/commit/e295c4c8e36deb757a99e843a1b08cad1e754e8a))
+* update ([3fe21fc](https://github.com/trust0-project/RIDB/commit/3fe21fcfb3a307244c7d7c5be0df07258ba59ddd))
+
+### Miscellaneous Chores
+
+* **release:** 1.4.0-rc.1 [skip ci] ([404808f](https://github.com/trust0-project/RIDB/commit/404808fa4093d9b0069ce9fe958f5d4a9e555ddb))
+* **release:** 1.4.0-rc.2 [skip ci] ([03a0f19](https://github.com/trust0-project/RIDB/commit/03a0f19c300f85855483840de2e419f330ed993c))
+* **release:** 1.4.0-rc.3 [skip ci] ([59824fd](https://github.com/trust0-project/RIDB/commit/59824fd017ea2f101df19fa4d7266077a38f51f0))
+* **release:** 1.4.0-rc.4 [skip ci] ([4db3dbd](https://github.com/trust0-project/RIDB/commit/4db3dbd65e823de8e6013e067b638ef2fd264db9))
+* **release:** 1.4.0-rc.5 [skip ci] ([d3a610b](https://github.com/trust0-project/RIDB/commit/d3a610b6b271e63ed1c6abf46b5eda4cd4d38272))
+
 ## @trust0/ridb-core [1.4.0-rc.5](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.0-rc.4...@trust0/ridb-core@1.4.0-rc.5) (2025-03-08)
 
 ### Bug Fixes
