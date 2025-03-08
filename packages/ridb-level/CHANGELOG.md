@@ -1,3 +1,27 @@
+## @trust0/ridb-level [1.1.7](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.6...@trust0/ridb-level@1.1.7) (2025-03-08)
+
+### Bug Fixes
+
+* dependency ([f804a48](https://github.com/trust0-project/RIDB/commit/f804a48148312ade0275dd14a78edcb7b4c87642))
+* dependency fix ([645f7c5](https://github.com/trust0-project/RIDB/commit/645f7c508c0371ecbd790282ea17b46db6e7b2c7))
+* level improvements ([e74e630](https://github.com/trust0-project/RIDB/commit/e74e63056caf6325cedbb619e5c7ae85762d642c))
+* package restructure fix ([595a130](https://github.com/trust0-project/RIDB/commit/595a1300f51ad93858427540389eac7d880f9bf8))
+* remove testing package ([e295c4c](https://github.com/trust0-project/RIDB/commit/e295c4c8e36deb757a99e843a1b08cad1e754e8a))
+* restore building for neutral platforms ([8d5319f](https://github.com/trust0-project/RIDB/commit/8d5319f42bcd5cdf7c9556b251e37e6c9d813896))
+* types for level db ([eaec63d](https://github.com/trust0-project/RIDB/commit/eaec63df4f295edadbba256ad2d0fdf649aaf878))
+* update dependencies ([096b326](https://github.com/trust0-project/RIDB/commit/096b326ce67e5b5134b8bd9574125fc1d37bdc8e))
+
+### Miscellaneous Chores
+
+* **release:** 1.1.7-rc.1 [skip ci] ([9ae269a](https://github.com/trust0-project/RIDB/commit/9ae269a1005f6567a2f7f796f740e40830609a51))
+* **release:** 1.1.7-rc.2 [skip ci] ([2120376](https://github.com/trust0-project/RIDB/commit/2120376b27a9994722245cd7f3d43c0cc4707ef9))
+* **release:** 1.1.7-rc.3 [skip ci] ([427ae21](https://github.com/trust0-project/RIDB/commit/427ae21c4b255c33547fb202e7d60cbdaf53dcf4))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.3.0
+
 ## @trust0/ridb-level [1.1.7-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.7-rc.2...@trust0/ridb-level@1.1.7-rc.3) (2025-03-08)
 
 
