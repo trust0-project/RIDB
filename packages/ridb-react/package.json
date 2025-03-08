@@ -11,6 +11,7 @@
         "access": "public"
     },
     "scripts": {
+        
         "clean": "rm -rf build node_modules",
         "build": "rm -rf build && npm run types && node ./esbuild.js",
         "test": "vitest --run",
