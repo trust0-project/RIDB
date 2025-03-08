@@ -110,6 +110,7 @@
 
 // @ts-ignore @ignore
 import { BasePlugin, BaseStorage, Collection, Database, MigrationPathsForSchemas, MigrationsParameter, Schema, SchemaTypeRecord } from "@trust0/ridb-core";
+import { v4 as uuidv4 } from 'uuid';
 
 export type StorageClass<T extends SchemaTypeRecord> = {
   create: (
@@ -170,6 +171,13 @@ export type {
   StorageInternal
 } from "@trust0/ridb-core";
 
+
+/**
+ * Options for the RIDB constructor.
+ *
+ * @typedef {DBOptions}
+ * @template {SchemaTypeRecord} [T=SchemaTypeRecord] 
+ */
 type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
   dbName: string,
   schemas: T,
@@ -191,6 +199,7 @@ let internal = WasmInternal;
 export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
   private _db: Database<T> | undefined;
   private _worker: SharedWorker | undefined;
+  private _sessionId: string | undefined;
   public started: boolean = false;
 
   private pendingRequests:PendingRequests = new Map();
@@ -260,14 +269,13 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
   private get workerCollections(): { [name in keyof T]: Collection<Schema<T[name]>>; } {
     const { schemas } = this.options;
     const result = {} as { [name in keyof T]: Collection<Schema<T[name]>>; };
-
     const validOperations = ['find', 'count', 'findById', 'update', 'create', 'delete'];
     for (const key of Object.keys(schemas) as Array<keyof T>) {
       result[key] = new Proxy({} as any, {
         get: (target, prop, receiver) => {
           if (validOperations.includes(prop.toString())) {
             return async (data: any) => {
-              const requestId = crypto.randomUUID();
+              const requestId = uuidv4();
               console.log(`[RIDBWorker] Posting message to worker. Operation: ${prop.toString()}, Collection: ${String(key)}, Data:`, data);
               return new Promise((resolve, reject) => {
                 this.pendingRequests.set(requestId, { resolve, reject });
@@ -355,13 +363,13 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
   ): Promise<void> {
     const withWorker = this.useWorker;
     if (withWorker) {
+      this._sessionId ??= uuidv4();
       this._worker ??= await this.createWorker();
-      const requestId = crypto.randomUUID();
       return new Promise((resolve, reject) => {
-        this.pendingRequests.set(requestId, { resolve, reject });
+        this.pendingRequests.set(this._sessionId!, { resolve, reject });
         this.worker.port.postMessage({
           action: 'start',
-          requestId,
+          requestId:this._sessionId!,
           data: {
             dbName: this.options.dbName,
             schemas: this.options.schemas,
@@ -379,6 +387,13 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
 
   async close() {
     if (this.useWorker) {
+      this.worker.port.postMessage({
+        action: 'close',
+        requestId:this._sessionId!,
+        data: {
+          dbName: this.options.dbName,
+        }
+      });
       await this.worker.port.close();
       this._worker = undefined;
     } else {
