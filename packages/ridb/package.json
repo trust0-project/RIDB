@@ -1,6 +1,6 @@
 {
     "name": "@trust0/ridb",
-    "version": "1.3.2-rc.2",
+    "version": "1.3.2-rc.3",
     "description": "Lightweight db encrypted and secure database wrapper for browser and nodejs.",
     "main": "./build/index.js",
     "types": "./build/index.d.ts",
