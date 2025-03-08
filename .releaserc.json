@@ -27,6 +27,12 @@
     ],
     "@anolilab/semantic-release-clean-package-json",
     "@semantic-release/github",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "npm run docs"
+      }
+    ],
     "@semantic-release/npm",
     [
       "@semantic-release/git",

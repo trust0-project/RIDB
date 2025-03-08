@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-core",
-  "description": "RIDB core",
+  "description": "RIDB wasm core",
   "type": "module",
   "publishConfig": {
     "access": "public"
