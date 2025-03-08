@@ -109,10 +109,7 @@
  */
 
 // @ts-ignore @ignore
-import wasmBuffer from "@trust0/ridb-core/pkg/ridb_core_bg.wasm";
 import { BasePlugin, BaseStorage, Collection, Database, MigrationPathsForSchemas, MigrationsParameter, Schema, SchemaTypeRecord } from "@trust0/ridb-core";
-
-let internal: typeof import("@trust0/ridb-core") | undefined;
 
 export type StorageClass<T extends SchemaTypeRecord> = {
   create: (
@@ -180,15 +177,24 @@ type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
   worker?: boolean
 } & MigrationsParameter<T>
 
+import WasmInternal from "./wasm";
+
+export {default as WasmInternal} from './wasm';
+
+type PendingRequests = Map<
+  string,
+  { resolve: (resp: any) => void; reject: (err: any) => void }
+>;
+
+let internal = WasmInternal;
+
 export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
   private _db: Database<T> | undefined;
   private _worker: SharedWorker | undefined;
   public started: boolean = false;
 
-  private pendingRequests = new Map<
-    string,
-    { resolve: (resp: any) => void; reject: (err: any) => void }
-  >();
+  private pendingRequests:PendingRequests = new Map();
+
   private get dbName() {
     return this.options.dbName;
   }
@@ -288,20 +294,6 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
     return this.useWorker ? this.workerCollections : this.dbCollections;
   }
 
-  /**
-   * Loads the RIDB Rust module.
-   * @returns {Promise<typeof import("@trust0/ridb")>} A promise that resolves to the RIDB Rust module.
-   * @private
-   */
-  static async load() {
-    internal ??= await import("@trust0/ridb-core").then(async (module) => {
-      const wasmInstance = module.initSync(wasmBuffer);
-      await module.default(wasmInstance);
-      return module;
-    });
-    return internal!;
-  }
-
   private async createWorker() {
     const worker = new SharedWorker(
       new URL('@trust0/ridb/worker', import.meta.url), { type: 'module' }
@@ -327,7 +319,7 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
 
   private async createDatabase(options?: StartOptions<T>) {
     const { storageType, password } = options ?? {};
-    const { Database } = await RIDB.load();
+    const { Database } = internal;
     const StorageClass = typeof storageType === "string" ?
       this.getStorageType(storageType) :
       storageType ?? undefined;
