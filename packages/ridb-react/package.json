@@ -1,7 +1,11 @@
 {
     "name": "@trust0/ridb-react",
     "description": "React bindings for RIDB.",
+<<<<<<< HEAD
     "version": "1.1.8",
+=======
+    "version": "1.1.8-rc.3",
+>>>>>>> 2670438 (chore(release): 1.1.8-rc.3 [skip ci])
     "author": "elribonazo@gmail.com",
     "repository": {
         "type": "git",
@@ -36,10 +40,17 @@
         "react-dom": "^18.3.1",
         "typescript": "^5.7.2",
         "@vitejs/plugin-react-swc": "^3.8.0",
+<<<<<<< HEAD
         "@trust0/ridb": "^1.3.2"
     },
     "peerDependencies": {
         "@trust0/ridb": "^1.3.2",
+=======
+        "@trust0/ridb": "^1.3.2-rc.3"
+    },
+    "peerDependencies": {
+        "@trust0/ridb": "^1.3.2-rc.3",
+>>>>>>> 2670438 (chore(release): 1.1.8-rc.3 [skip ci])
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
     },
