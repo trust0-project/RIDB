@@ -1,3 +1,9 @@
+## @trust0/ridb-core [1.4.0-rc.5](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.0-rc.4...@trust0/ridb-core@1.4.0-rc.5) (2025-03-08)
+
+### Bug Fixes
+
+* improve documentation and SharedWorker usage ([687f43d](https://github.com/trust0-project/RIDB/commit/687f43dc6f583b0d9cfa8f0754cb1a42a206040f))
+
 ## @trust0/ridb-core [1.4.0-rc.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.0-rc.3...@trust0/ridb-core@1.4.0-rc.4) (2025-03-08)
 
 ### Bug Fixes
