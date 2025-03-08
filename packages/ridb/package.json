@@ -10,6 +10,9 @@
         },
         "./worker": {
             "import": "./build/worker.js"
+        },
+        "./testing": {
+            "import": "./build/testing/index.js"
         }
     },
     "type": "module",
@@ -37,7 +40,7 @@
         "test:node": "sh test.sh -e node",
         "test:browser": "sh test.sh -e browser",
         "types": "npm run types:default",
-        "types:default": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/index.d.ts && npx dts-bundle-generator src/worker.ts  --no-check -o ./build/worker.d.ts",
+        "types:default": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/index.d.ts && npx dts-bundle-generator src/worker.ts  --no-check -o ./build/worker.d.ts && npx dts-bundle-generator src/testing/index.ts  --no-check -o ./build/testing/index.d.ts",
         "prepublishOnly": "npm run build && npm run docs"
     },
     "devDependencies": {
@@ -72,7 +75,9 @@
         "webdriverio": "^9.7.1"
     },
     "peerDependencies": {
-        "@trust0/ridb-testing": "^0.0.2"
+        "vite-plugin-top-level-await": "^1.4.1",
+        "vite-plugin-wasm": "^3.3.0",
+        "vitest": "^1.6.0"
     },
     "optionalDependencies": {
         "@esbuild/darwin-arm64": "^0.25.0",

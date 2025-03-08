@@ -60,18 +60,18 @@ export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
     async findDocumentById(
         collectionName: keyof T,
         id: string
-    ): Promise<Doc<T[keyof T]> | undefined> {
+    ): Promise<Doc<T[keyof T]> | null> {
         const key = `${String(collectionName)}:${id}`;
         try {
             const value = await this.db.get(key);
             if (!value) {
-                return undefined
+                return null
             }
             const doc = JSON.parse(value);
             return doc;
         } catch (err: any) {
             if (err.notFound) {
-                return undefined;
+                return null;
             } else {
                 throw err;
             }

@@ -59,7 +59,6 @@
     "webdriverio": "^9.7.1",
     "vite": "^5.4.12",
     "classic-level": "^2.0.0",
-    "@trust0/ridb-testing": "^0.0.2",
     "@trust0/ridb": "^1.2.4"
   },
   "peerDependencies": {

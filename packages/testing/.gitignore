@@ -1,8 +1,0 @@
-node_modules/*
-cjs/*
-esm/*
-umd/*
-.idea
-coverage
-build
-node_modules

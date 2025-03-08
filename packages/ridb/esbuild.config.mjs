@@ -41,8 +41,8 @@ const generic = {
     entryPoints: ['src/index.ts', 'src/worker.ts'],
     sourcemap: false,
     bundle: true,
-    platform: 'browser',
-    splitting: true,
+    platform: 'neutral',
+    splitting: false,
     resolveExtensions: ['.ts', '.js', '.wasm'],
     inject: [],
     mainFields: ['module', 'main'],
@@ -52,7 +52,7 @@ const generic = {
     define: {
         'global.Buffer': 'Buffer',
     },
-    external: ['buffer']
+    //external: ['buffer']
 }
 
 // Build ES module
@@ -66,7 +66,21 @@ esbuild.build({
         wasmPlugin,
         ...plugins
     ],
-}).catch((err) => {
+}).then(() => esbuild.build({
+    ...generic,
+    entryPoints: ['src/testing/index.ts'],
+    platform: 'node',
+    bundle: true,
+    outdir:"build/testing",
+    external: ['@trust0/ridb', '@trust0/ridb-core'],
+    outExtension: { ".js": ".js" },
+    target: ['esnext'],
+    format: 'esm',
+    plugins: [
+        wasmPlugin,
+        ...plugins
+    ],
+})).catch((err) => {
     console.log(err)
     process.exit(1)
 });

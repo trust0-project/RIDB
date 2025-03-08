@@ -97,7 +97,7 @@ import { BasePlugin, BaseStorage, Collection, Database, MigrationPathsForSchemas
 
 let internal: typeof import("@trust0/ridb-core") | undefined;
 
-type StorageClass<T extends SchemaTypeRecord> = {
+export type StorageClass<T extends SchemaTypeRecord> = {
     create: (
         name: string, 
         schemas: T, 
