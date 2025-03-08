@@ -18,6 +18,15 @@ export default defineConfig({
     test: {
         setupFiles: [],
         reporters: ['verbose'],
+        browser: {
+            enabled: true,
+            instances: [
+                {
+                    browser: 'chrome',
+                    headless: true,
+                }
+            ],
+        },
         coverage: {
             provider: 'istanbul',
             reporter: isCI ? ['json-summary'] : ['json-summary', "html"],

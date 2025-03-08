@@ -20,18 +20,23 @@
  * # SDK Rerefence
  */
 import path from 'path';
-import { RIDB } from "@trust0/ridb";
-import {
+import { 
     QueryOptions, 
     SchemaTypeRecord, 
     Doc, 
     Operation,
-    QueryType
-} from '@trust0/ridb-core';
-import type { ClassicLevel } from "classic-level";
-type Level = ClassicLevel<string, string>
+    QueryType,    
+} from "@trust0/ridb-core";
 
-const { BaseStorage, Query, OpType } = await RIDB.load();
+import {WasmInternal} from "@trust0/ridb";
+
+import type { ClassicLevel } from "classic-level";
+type Level = ClassicLevel<string, string>;
+
+
+
+
+const { BaseStorage, Query, OpType } = WasmInternal as typeof import("@trust0/ridb-core");
 
 export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
 

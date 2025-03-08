@@ -1,3 +1,23 @@
+## @trust0/ridb-level [1.1.8-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.8-rc.1...@trust0/ridb-level@1.1.8-rc.2) (2025-03-08)
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.3.1-rc.2
+
+## @trust0/ridb-level [1.1.8-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.7...@trust0/ridb-level@1.1.8-rc.1) (2025-03-08)
+
+### Bug Fixes
+
+* package improvements ([2b1b017](https://github.com/trust0-project/RIDB/commit/2b1b017cb7888d9e6d6f03301735f5c654d649f0))
+* release ([4070d75](https://github.com/trust0-project/RIDB/commit/4070d75d31fabb56166963d04ad251be26ad6c4c))
+* security update, upgrade esbuild from vite ([f0b4d50](https://github.com/trust0-project/RIDB/commit/f0b4d50517c5cbd4d6baeb4399b4edc876398d77))
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.3.1-rc.1
+
 ## @trust0/ridb-level [1.1.7](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.6...@trust0/ridb-level@1.1.7) (2025-03-08)
 
 ### Bug Fixes

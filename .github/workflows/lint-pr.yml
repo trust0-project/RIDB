@@ -1,4 +1,9 @@
 name: "Pull request linter"
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
 
 on:
   pull_request:

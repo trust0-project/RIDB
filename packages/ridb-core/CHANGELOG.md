@@ -1,3 +1,15 @@
+## @trust0/ridb-core [1.4.1-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.1-rc.1...@trust0/ridb-core@1.4.1-rc.2) (2025-03-08)
+
+### Bug Fixes
+
+* core release ([5e0bffa](https://github.com/trust0-project/RIDB/commit/5e0bffa8f5b4b49f7f4cd996f3f362ab0ff6f415))
+
+## @trust0/ridb-core [1.4.1-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.0...@trust0/ridb-core@1.4.1-rc.1) (2025-03-08)
+
+### Bug Fixes
+
+* security update, upgrade esbuild from vite ([f0b4d50](https://github.com/trust0-project/RIDB/commit/f0b4d50517c5cbd4d6baeb4399b4edc876398d77))
+
 ## @trust0/ridb-core [1.4.0](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.3.1...@trust0/ridb-core@1.4.0) (2025-03-08)
 
 ### Features

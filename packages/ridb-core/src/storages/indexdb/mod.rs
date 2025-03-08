@@ -7,7 +7,7 @@ use crate::query::Query;
 use crate::storage::internals::base_storage::BaseStorage;
 use crate::storage::internals::core::CoreStorage;
 use crate::operation::{OpType, Operation};
-use web_sys::{window, IdbDatabase, IdbFactory, IdbIndexParameters, IdbKeyRange, IdbObjectStore, IdbOpenDbRequest, IdbRequest};
+use web_sys::{IdbDatabase, IdbFactory, IdbIndexParameters, IdbKeyRange, IdbObjectStore, IdbOpenDbRequest, IdbRequest};
 use std::sync::Arc;
 use parking_lot::Mutex;
 use std::collections::HashMap;
@@ -234,20 +234,22 @@ impl Storage for IndexDB {
 
 }
 
+/// Attempt to detect IndexedDB either in a Window or in a Worker scope
 fn get_indexed_db() -> Result<IdbFactory, JsValue> {
-    if let Some(win) = window() {
-        if let Some(db) = win.indexed_db()? {
-            return Ok(db);
+    // 1) If in a normal browser (Window) environment
+    if let Ok(window) = js_sys::global().dyn_into::<web_sys::Window>() {
+        if let Some(idb) = window.indexed_db()? {
+            return Ok(idb);
+        }
+    }
+    // 2) If in a Worker context
+    else if let Ok(worker) = js_sys::global().dyn_into::<web_sys::WorkerGlobalScope>() {
+        if let Some(idb) = worker.indexed_db()? {
+            return Ok(idb);
         }
     }
 
-    // If no window, fall back to worker scope
-    // (this uses js_sys::global to get the worker's global context)
-    let scope = js_sys::global()
-        .dyn_into::<web_sys::WorkerGlobalScope>()
-        .map_err(|_| JsValue::from_str("Could not cast to WorkerGlobalScope"))?;
-
-    scope.indexed_db()?.ok_or_else(|| JsValue::from_str("IndexedDB not available"))
+    Err(JsValue::from_str("IndexedDB not available in this environment"))
 }
 
 async fn create_database(name: &str, schemas: &HashMap<String, Schema>) -> Result<Arc<IdbDatabase>, JsValue> {
