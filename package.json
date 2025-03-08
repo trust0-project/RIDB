@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@anolilab/multi-semantic-release": "^1.1.6",
+    "@anolilab/semantic-release-clean-package-json": "^2.0.1",
     "@anolilab/semantic-release-preset": "^9.0.3",
     "@types/react": "^18.2.8",
     "@types/react-dom": "^18.2.4",
@@ -37,6 +38,5 @@
   "optionalDependencies": {
     "@esbuild/darwin-arm64": "^0.25.0",
     "@rollup/rollup-linux-x64-gnu": "^4.24.0"
-  },
-  "dependencies": {}
+  }
 }
