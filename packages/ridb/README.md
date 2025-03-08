@@ -85,6 +85,11 @@ import {
 })()
 ```
 
+Extra options for constructor:
+
+* worker: boolean - Use a SharedWorker to offload the database to a shared worker across all tabs and extensions using it.
+Default is false.
+
 ## Specification
 
 ### Storage

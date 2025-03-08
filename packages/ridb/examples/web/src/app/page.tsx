@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React, {  useState, useEffect } from 'react';
 
-import {  SchemaFieldType, StorageType, Doc, Worker } from "@trust0/ridb";
+import {  SchemaFieldType, StorageType, Doc, RIDB } from "@trust0/ridb";
 
 
 const demoSchema = {
@@ -28,15 +28,16 @@ const schemas = {
 };
 
 export default function Home() {
-  const [db, setWorker] = useState<Worker<typeof schemas> | null>(null);
+  const [db, setWorker] = useState<RIDB<typeof schemas> | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'SharedWorker' in window) {
       try {
         console.log('[Home] Initializing RIDBWorker');
-        const newWorker = new Worker({
+        const newWorker = new RIDB({
           dbName: "test-database",
-          schemas
+          schemas,
+          worker: true
         });
         setWorker(newWorker);
         return () => {

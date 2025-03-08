@@ -67,7 +67,7 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
                 const { dbName, schemas, migrations, options } = data;
                 if (!connections.has(dbName)) {
                     console.log(`[Worker] Creating new RIDB instance for: ${dbName}`);
-                    const db = new RIDB({ dbName, schemas, migrations });
+                    const db = new RIDB({ dbName, schemas, migrations, worker: false });
                     await db.start(options);
                     connections.set(dbName, db);
                     port.postMessage({

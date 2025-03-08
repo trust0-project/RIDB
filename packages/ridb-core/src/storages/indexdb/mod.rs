@@ -163,7 +163,7 @@ impl Storage for IndexDB {
 
         if result.is_undefined() || result.is_null() {
             Logger::debug("IndexDB-Find-By-Id",&JsValue::from("Document not found"));
-            Ok(JsValue::undefined())
+            Ok(JsValue::null())
         } else {
             Logger::debug("IndexDB-Find-By-Id",&JsValue::from("Document found"));
             Ok(result)

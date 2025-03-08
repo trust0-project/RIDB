@@ -818,7 +818,7 @@ export default (platform: string, storages: StoragesType[]) => {
                     });
                     await db.collections.demo.delete("12345");
                     const found = await db.collections.demo.findById("12345");
-                    expect(found).to.be.undefined;
+                    expect(found).to.be.null;
                 });
 
                 it('Should enforce maxLength on string properties', async () => {
@@ -1236,7 +1236,7 @@ export default (platform: string, storages: StoragesType[]) => {
                     await collection.delete("12345");
                     const found = await collection.findById("12345");
 
-                    expect(found).toBeUndefined();
+                    expect(found).toBeNull();
                 });
 
                 // Step 4: Measure performance queries on multiple indexes with large dataset

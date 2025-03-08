@@ -37,9 +37,26 @@
  * )
  * ```
  * 
- * ### Starting the database
- * ```typescript    
- * await db.start()
+ * ### Using with SharedWorker
+ * 
+ * ```typescript
+ * const db = new RIDB({
+ *     dbName: "demo",
+ *     schemas: {
+ *         demo: {
+ *             version: 0,
+ *             primaryKey: 'id',
+ *             type: SchemaFieldType.object,
+ *             properties: {
+ *                 id: {
+ *                     type: SchemaFieldType.string,
+ *                     maxLength: 60
+ *                 }
+ *             }
+ *         } as const
+ *     },
+ *     worker: true
+ * )
  * ```
  * 
  * ### Using with encryption plugin
@@ -98,261 +115,255 @@ import { BasePlugin, BaseStorage, Collection, Database, MigrationPathsForSchemas
 let internal: typeof import("@trust0/ridb-core") | undefined;
 
 export type StorageClass<T extends SchemaTypeRecord> = {
-    create: (
-        name: string, 
-        schemas: T, 
-        options: any
-    ) => Promise<BaseStorage<T>>;
+  create: (
+    name: string,
+    schemas: T,
+    options: any
+  ) => Promise<BaseStorage<T>>;
 }
 
 export enum StorageType {
-    InMemory = "InMemory",
-    IndexDB = "IndexDB"
+  InMemory = "InMemory",
+  IndexDB = "IndexDB"
 }
 
 export type StartOptions<T extends SchemaTypeRecord> = {
-    storageType?: StorageClass<T> | StorageType,
-    password?: string,
-    [name: string]: any
+  storageType?: StorageClass<T> | StorageType,
+  password?: string,
+  [name: string]: any
 }
 
 export type {
-    OpType, 
-    IndexDB, 
-    Operators, 
-    InOperator, 
-    OperatorOrType, 
-    LogicalOperators, 
-    QueryType, 
-    Query, 
-    QueryOptions,
-    InternalsRecord, 
-    ExtractType, 
-    Doc, 
-    Collection, 
-    InMemory, 
-    Operation, 
-    Property, 
-    CoreStorage, 
-    EnumerateUpTo, 
-    EnumerateFrom1To, 
-    IsVersionGreaterThan0, 
-    AnyVersionGreaterThan1, 
-    MigrationFunction, 
-    MigrationPathsForSchema, 
-    MigrationPathsForSchemas, 
-    MigrationsParameter, 
-    BaseStorageOptions, 
-    BaseStorage, 
-    SchemaType, 
-    Schema, 
-    Database, 
-    CreateStorage, 
-    RIDBModule, 
-    Hook, 
-    BasePluginOptions, 
-    BasePlugin, 
-    SchemaTypeRecord, 
-    StorageInternal
+  OpType,
+  IndexDB,
+  Operators,
+  InOperator,
+  OperatorOrType,
+  LogicalOperators,
+  QueryType,
+  Query,
+  QueryOptions,
+  InternalsRecord,
+  ExtractType,
+  Doc,
+  Collection,
+  InMemory,
+  Operation,
+  Property,
+  CoreStorage,
+  EnumerateUpTo,
+  EnumerateFrom1To,
+  IsVersionGreaterThan0,
+  AnyVersionGreaterThan1,
+  MigrationFunction,
+  MigrationPathsForSchema,
+  MigrationPathsForSchemas,
+  MigrationsParameter,
+  BaseStorageOptions,
+  BaseStorage,
+  SchemaType,
+  Schema,
+  Database,
+  CreateStorage,
+  RIDBModule,
+  Hook,
+  BasePluginOptions,
+  BasePlugin,
+  SchemaTypeRecord,
+  StorageInternal
 } from "@trust0/ridb-core";
 
 type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
-    dbName: string,
-    schemas: T,
-    plugins?: Array<typeof BasePlugin>
-  } & MigrationsParameter<T>
+  dbName: string,
+  schemas: T,
+  plugins?: Array<typeof BasePlugin>,
+  worker?: boolean
+} & MigrationsParameter<T>
 
 export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
+  private _db: Database<T> | undefined;
+  private _worker: SharedWorker | undefined;
+  public started: boolean = false;
 
-    private schemas: T;
-    private migrations: MigrationPathsForSchemas<T>
-    private plugins: Array<typeof BasePlugin> = [];
-    private _db: Database<T> | undefined;
-    private dbName: string;
-    
-    /**
-     * Creates an instance of RIDB.
-     * @param options
-     */
-    constructor(
-        options: DBOptions<T>
-    ) {
-        const {
-            dbName,
-            schemas,
-            migrations = {} as MigrationPathsForSchemas<T>,
-            plugins = []
-        } = options;
+  private pendingRequests = new Map<
+    string,
+    { resolve: (resp: any) => void; reject: (err: any) => void }
+  >();
+  private get dbName() {
+    return this.options.dbName;
+  }
 
-        this.schemas = schemas;
-        this.plugins = plugins;
-        this.migrations = migrations;
-        this.dbName = dbName;
+  private get schemas() {
+    return this.options.schemas;
+  }
+
+  private get migrations() {
+    return this.options.migrations ?? {} as MigrationPathsForSchemas<T>;
+  }
+
+  private get plugins() {
+    return this.options.plugins ?? [];
+  }
+
+  get useWorker() {
+    const useWorker = this.options.worker ?? false;
+    const supportsWorker = typeof SharedWorker !== 'undefined';
+    return useWorker && supportsWorker;
+  }
+
+  /**
+   * Creates an instance of RIDB.
+   * @param options
+   */
+  constructor(private options: DBOptions<T>) { }
+
+  private getStorageType<T extends StorageType>(storageType: T) {
+    return storageType === StorageType.InMemory ?
+      internal!.InMemory :
+      internal!.IndexDB;
+  }
+
+  /**
+   * Gets the database instance. Throws an error if the database has not been started.
+   * @throws Will throw an error if the database is not started.
+   * @private
+   */
+  private get db() {
+    if (!this._db) {
+      throw new Error("Start the database first");
     }
+    return this._db;
+  }
 
-
-    private getStorageType<T extends StorageType>(
-        storageType: T
-    ) {
-        return storageType === StorageType.InMemory ? internal!.InMemory : internal!.IndexDB;
+  private get worker() {
+    if (!this._worker) {
+      throw new Error("Start the worker first");
     }
+    return this._worker;
+  }
 
 
-    /**
-     * Gets the database instance. Throws an error if the database has not been started.
-     * @throws Will throw an error if the database is not started.
-     * @private
-     */
-    private get db() {
-        if (!this._db) {
-            throw new Error("Start the database first");
-        }
-        return this._db;
-    }
+  /**
+   * Gets the collections from the database.
+   * @returns The collections object.
+   */
+  private get dbCollections() {
+    return this.db.collections;
+  }
 
-    get started() {
-        return this._db?.started ?? false;
-    }
+  private get workerCollections(): { [name in keyof T]: Collection<Schema<T[name]>>; } {
+    const { schemas } = this.options;
+    const result = {} as { [name in keyof T]: Collection<Schema<T[name]>>; };
 
-    /**
-     * Gets the collections from the database.
-     * @returns The collections object.
-     */
-    get collections() {
-        return this.db.collections;
-    }
-
-    /**
-     * Loads the RIDB Rust module.
-     * @returns {Promise<typeof import("@trust0/ridb")>} A promise that resolves to the RIDB Rust module.
-     * @private
-     */
-    static async load() {
-        internal ??= await import("@trust0/ridb-core").then(async (module) => {
-            const wasmInstance = module.initSync(wasmBuffer);
-            await module.default(wasmInstance);
-            return module;
-        });
-        return internal!;
-    }
-
-    /**
-     * Starts the database.
-     * @returns {Promise<Database<T>>} A promise that resolves to the database instance.
-     * @param options
-     */
-    async start(
-        options?: StartOptions<T>
-    ): Promise<Database<T>> {
-        if (!this._db) {
-            const { storageType, password } = options ?? {};
-            const { Database } = await RIDB.load();
-            const StorageClass = typeof storageType === "string" ?
-                this.getStorageType(storageType) :
-                storageType ?? undefined;
-            
-            if (StorageClass && !StorageClass.create) {
-                throw new Error("Your storage does not have an async create function, please check documentation")
-            }
-            
-            const storage = StorageClass ? 
-                await StorageClass.create(this.dbName, this.schemas, options) :
-                undefined;
-
-            this._db ??= await Database.create<T>(
-                this.dbName,
-                this.schemas,
-                this.migrations,
-                this.plugins,
-                {
-                    apply: (plugins: Array<typeof BasePlugin> = []) => plugins.map((Plugin) => new Plugin()),
-                },
-                password,
-                storage
-            );
-
-        } else {
-            await this.db.start();
-        }
-        return this.db;
-    }
-
-    async close() {
-        await this.db.close();
-        this._db = undefined;
-    }
-}
-
-export class Worker<T extends SchemaTypeRecord = SchemaTypeRecord> {
-    private worker: SharedWorker;
-  
-    // 1. Add a map to store pending requests
-    private pendingRequests = new Map<
-      string,
-      { resolve: (resp: any) => void; reject: (err: any) => void }
-    >();
-  
-    constructor(
-      private options: DBOptions<T>,
-    ) {
-      console.log('[RIDBWorker] Initializing worker with options:', options);
-      this.worker = new SharedWorker(
-        new URL('@trust0/ridb/worker', import.meta.url), { type: 'module' }
-      );
-  
-      // 2. Attach a single onmessage listener to handle all responses
-      this.worker.port.onmessage = (event) => {
-        const { requestId, status, data } = event.data || {};
-        console.log('[RIDBWorker] Received message from worker:', event.data);
-        if (requestId && this.pendingRequests.has(requestId)) {
-          if (status === 'success') {
-            console.log(`[RIDBWorker] Request ${requestId} successful. Data:`, data);
-            this.pendingRequests.get(requestId)!.resolve(data);
-          } else {
-            console.error(`[RIDBWorker] Request ${requestId} failed. Error:`, data);
-            this.pendingRequests.get(requestId)!.reject(data);
-          }
-          this.pendingRequests.delete(requestId);
-        }
-      };
-    }
-    
-    // 3. Modify the get trap for 'find' so it sends a request and returns a promise
-    get collections(): { [name in keyof T]: Collection<Schema<T[name]>>; } {
-      const { schemas } = this.options;
-      const result = {} as { [name in keyof T]: Collection<Schema<T[name]>>; };
-  
-      const validOperations = ['find', 'count', 'findById', 'update', 'create', 'delete'];
-      for (const key of Object.keys(schemas) as Array<keyof T>) {
-        result[key] = new Proxy({} as any, {
-          get: (target, prop, receiver) => {
-            if (validOperations.includes(prop.toString())) {
-              return async (data: any) => {
-                const requestId = crypto.randomUUID();
-                console.log(`[RIDBWorker] Posting message to worker. Operation: ${prop.toString()}, Collection: ${String(key)}, Data:`, data);
-                return new Promise((resolve, reject) => {
-                  this.pendingRequests.set(requestId, { resolve, reject });
-                  this.worker.port.postMessage({
-                    action: prop.toString(),
-                    requestId,
-                    data: {
-                      dbName: this.options.dbName,
-                      collection: key,
-                      body: data
-                    }
-                  });
+    const validOperations = ['find', 'count', 'findById', 'update', 'create', 'delete'];
+    for (const key of Object.keys(schemas) as Array<keyof T>) {
+      result[key] = new Proxy({} as any, {
+        get: (target, prop, receiver) => {
+          if (validOperations.includes(prop.toString())) {
+            return async (data: any) => {
+              const requestId = crypto.randomUUID();
+              console.log(`[RIDBWorker] Posting message to worker. Operation: ${prop.toString()}, Collection: ${String(key)}, Data:`, data);
+              return new Promise((resolve, reject) => {
+                this.pendingRequests.set(requestId, { resolve, reject });
+                this.worker.port.postMessage({
+                  action: prop.toString(),
+                  requestId,
+                  data: {
+                    dbName: this.options.dbName,
+                    collection: key,
+                    body: data
+                  }
                 });
-              };
-            }
-            return Reflect.get(target, prop, receiver);
+              });
+            };
           }
-        });
-      }
-      return result;
+          return Reflect.get(target, prop, receiver);
+        }
+      });
     }
-  
-    async start(options?: StartOptions<T> | undefined) {
-      console.log('[RIDBWorker] Sending start command to worker with options:', options);
+    return result;
+  }
+
+  get collections() {
+    return this.useWorker ? this.workerCollections : this.dbCollections;
+  }
+
+  /**
+   * Loads the RIDB Rust module.
+   * @returns {Promise<typeof import("@trust0/ridb")>} A promise that resolves to the RIDB Rust module.
+   * @private
+   */
+  static async load() {
+    internal ??= await import("@trust0/ridb-core").then(async (module) => {
+      const wasmInstance = module.initSync(wasmBuffer);
+      await module.default(wasmInstance);
+      return module;
+    });
+    return internal!;
+  }
+
+  private async createWorker() {
+    const worker = new SharedWorker(
+      new URL('@trust0/ridb/worker', import.meta.url), { type: 'module' }
+    );
+    worker.port.onmessage = this.handleWorkerMessage.bind(this);
+    return worker;
+  }
+
+  private async handleWorkerMessage(event: MessageEvent) {
+    const { requestId, status, data } = event.data || {};
+    console.log('[RIDBWorker] Received message from worker:', event.data);
+    if (requestId && this.pendingRequests.has(requestId)) {
+      if (status === 'success') {
+        console.log(`[RIDBWorker] Request ${requestId} successful. Data:`, data);
+        this.pendingRequests.get(requestId)!.resolve(data);
+      } else {
+        console.error(`[RIDBWorker] Request ${requestId} failed. Error:`, data);
+        this.pendingRequests.get(requestId)!.reject(data);
+      }
+      this.pendingRequests.delete(requestId);
+    }
+  }
+
+  private async createDatabase(options?: StartOptions<T>) {
+    const { storageType, password } = options ?? {};
+    const { Database } = await RIDB.load();
+    const StorageClass = typeof storageType === "string" ?
+      this.getStorageType(storageType) :
+      storageType ?? undefined;
+
+    if (StorageClass && !StorageClass.create) {
+      throw new Error("Your storage does not have an async create function, please check documentation")
+    }
+
+    const storage = StorageClass ?
+      await StorageClass.create(this.dbName, this.schemas, options) :
+      undefined;
+
+    return Database.create<T>(
+      this.dbName,
+      this.schemas,
+      this.migrations,
+      this.plugins,
+      {
+        apply: (plugins: Array<typeof BasePlugin> = []) => plugins.map((Plugin) => new Plugin()),
+      },
+      password,
+      storage
+    );
+  }
+
+  /**
+   * Starts the database.
+   * @returns {Promise<Database<T>>} A promise that resolves to the database instance.
+   * @param options
+   */
+  async start(
+    options?: StartOptions<T>
+  ): Promise<void> {
+    const withWorker = this.useWorker;
+    if (withWorker) {
+      this._worker ??= await this.createWorker();
       const requestId = crypto.randomUUID();
       return new Promise((resolve, reject) => {
         this.pendingRequests.set(requestId, { resolve, reject });
@@ -367,22 +378,33 @@ export class Worker<T extends SchemaTypeRecord = SchemaTypeRecord> {
           }
         });
       });
+    } else {
+      this._db ??= await this.createDatabase(options);
+      await this.db.start();
     }
-  
-    async close(): Promise<void> {
-      console.log('[RIDBWorker] Closing worker port');
-      this.worker.port.close();
-    }
+    this.started = true;
   }
+
+  async close() {
+    if (this.useWorker) {
+      await this.worker.port.close();
+      this._worker = undefined;
+    } else {
+      await this.db.close();
+      this._db = undefined;
+    }
+    this.started = false;
+  }
+}
 
 /**
  * An enumeration of schema field types.
  */
 export const SchemaFieldType = {
-    string: 'string' as const,
-    number: 'number' as const,
-    boolean: 'boolean' as const,
-    array: 'array' as const,
-    object: 'object' as const,
+  string: 'string' as const,
+  number: 'number' as const,
+  boolean: 'boolean' as const,
+  array: 'array' as const,
+  object: 'object' as const,
 };
 
