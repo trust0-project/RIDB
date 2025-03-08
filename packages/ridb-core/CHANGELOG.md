@@ -1,3 +1,9 @@
+## @trust0/ridb-core [1.4.0-rc.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.0-rc.3...@trust0/ridb-core@1.4.0-rc.4) (2025-03-08)
+
+### Bug Fixes
+
+* remove testing package ([e295c4c](https://github.com/trust0-project/RIDB/commit/e295c4c8e36deb757a99e843a1b08cad1e754e8a))
+
 ## @trust0/ridb-core [1.4.0-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.0-rc.2...@trust0/ridb-core@1.4.0-rc.3) (2025-03-07)
 
 ### Bug Fixes
