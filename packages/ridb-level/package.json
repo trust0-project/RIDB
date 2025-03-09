@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-level",
-  "version": "1.1.12-rc.1",
+  "version": "1.1.12-rc.2",
   "description": "Level DB storage for @trust0/ridb.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -55,8 +55,8 @@
     "@trust0/ridb": "^1.4.0-rc.1"
   },
   "peerDependencies": {
-    "@trust0/ridb": ">=1"
-    },
+    "@trust0/ridb": "^1.4.0-rc.1"
+  },
   "optionalDependencies": {
     "@esbuild/darwin-arm64": "0.15.18",
     "@rollup/rollup-linux-x64-gnu": "^4.24.0"
