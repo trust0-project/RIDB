@@ -9,7 +9,7 @@ const TS_APPEND_CONTENT: &'static str = r#"
  *
  * @template T - The schema type of the collection.
  */
-export type Operation<T extends SchemaType> = {
+export type Operation<T extends SchemaType = SchemaType> = {
     /**
      * The name of the collection on which the operation will be performed.
      */
