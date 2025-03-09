@@ -18,7 +18,7 @@ use crate::storages::inmemory::InMemory;
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
 /**
- * Represents a database containing collections.
+ * Represents a database containing collections of documents.
  * RIDB extends from this class and is used to expose collections.
  * 
  * So if you specify:
@@ -69,6 +69,8 @@ export class Database<T extends SchemaTypeRecord> {
         storage?: BaseStorage<TS>
     ): Promise<Database<TS>>;
 
+    authenticate(password: string): Promise<boolean>;
+
     /**
      * The collections in the database.
      *
@@ -96,7 +98,7 @@ export class Database<T extends SchemaTypeRecord> {
 }
 
 /**
- * Represents a function for creating storage with the provided schema type records.
+ * Represents a function type for creating storage with the provided schema type records.
  *
  * @template T - The schema type record.
  * @param {T} records - The schema type records.
@@ -139,7 +141,8 @@ extern "C" {
 pub struct Database {
     /// The storage mechanism for the database.
     pub(crate) storage: Storage,
-    pub(crate) started: bool
+    pub(crate) started: bool,
+    pub(crate) password: Option<String>
 }
 
 
@@ -171,6 +174,19 @@ impl Database {
     #[wasm_bindgen(getter, js_name = "started")]
     pub fn started(&self) -> bool {
         self.started
+    }
+
+    #[wasm_bindgen]
+    pub async fn authenticate(&self, password: &str) -> Result<bool, RIDBError> {
+        if let Some(stored_password) = &self.password {
+            let valid = password == stored_password.as_str();
+            match valid {
+                true => Ok(true),
+                false => Err(RIDBError::authentication("Invalid password", 20))
+            }
+        } else {
+            Ok(false)
+        }
     }
 
     /// Retrieves the collections in the database.
@@ -268,13 +284,11 @@ impl Database {
         Logger::debug("DB",&"Adding integrity plugin.".into());
         vec_plugins.push(IntegrityPlugin::new()?.base.clone());
 
-        if let Some(pass) = password {
+        if let Some(pass) = password.clone() {
             Logger::debug("DB",&"Adding encryption plugin.".into());
             let encryption = EncryptionPlugin::new(pass)?;
             vec_plugins.push(encryption.base.clone());
         }
-
-
 
         Logger::debug("DB",&"Creating storage with schemas and migrations.".into());
         let mounted_storage = Storage::create(
@@ -285,7 +299,7 @@ impl Database {
         ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
         Logger::debug("DB",&"Database created successfully.".into());
-        let db = Database { storage:mounted_storage, started: false };
+        let db = Database { storage:mounted_storage, started: false, password };
         
         storage.start().await?;
 
@@ -456,4 +470,5 @@ mod tests {
         // Clean up
         db.close().await.unwrap();
     }
+      
 }
