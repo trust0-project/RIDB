@@ -52,11 +52,11 @@
     "uuid": "^11.0.3",
     "webdriverio": "^9.7.1",
     "classic-level": "^2.0.0",
-    "@trust0/ridb": "^1.3.5-rc.1"
+    "@trust0/ridb": "^1.4.0-rc.1"
   },
   "peerDependencies": {
-    "@trust0/ridb": "^1.3.5-rc.1"
-  },
+    "@trust0/ridb": ">=1"
+    },
   "optionalDependencies": {
     "@esbuild/darwin-arm64": "0.15.18",
     "@rollup/rollup-linux-x64-gnu": "^4.24.0"
