@@ -18,7 +18,7 @@ use crate::storages::inmemory::InMemory;
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
 /**
- * Represents a database containing collections of documents.
+ * Represents a database containing collections.
  * RIDB extends from this class and is used to expose collections.
  * 
  * So if you specify:
