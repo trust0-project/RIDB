@@ -109,7 +109,7 @@
  */
 
 // @ts-ignore @ignore
-import { BasePlugin, BaseStorage, Collection, Database, MigrationPathsForSchemas, MigrationsParameter, RIDBError, Schema, SchemaTypeRecord } from "@trust0/ridb-core";
+import { BasePlugin, RIDBError, BaseStorage, Collection, Database, MigrationPathsForSchemas, MigrationsParameter, Schema, SchemaTypeRecord } from "@trust0/ridb-core";
 import { v4 as uuidv4 } from 'uuid';
 
 export type StorageClass<T extends SchemaTypeRecord> = {
