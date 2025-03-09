@@ -6,7 +6,7 @@
 
 # Class: IndexDB\<T\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:217
+Defined in: ridb-core/pkg/ridb\_core.d.ts:321
 
 Represents an IndexDB storage system extending the base storage functionality.
 
@@ -26,7 +26,7 @@ The schema type.
 
 > **new IndexDB**\<`T`\>(`dbName`, `schemas`, `options`?): [`IndexDB`](IndexDB.md)\<`T`\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:166
+Defined in: ridb-core/pkg/ridb\_core.d.ts:166
 
 #### Parameters
 
@@ -56,7 +56,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:166
 
 > `readonly` **core**: [`CoreStorage`](CoreStorage.md)
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:174
+Defined in: ridb-core/pkg/ridb\_core.d.ts:174
 
 #### Inherited from
 
@@ -68,7 +68,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:174
 
 > `readonly` **dbName**: `string`
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:171
+Defined in: ridb-core/pkg/ridb\_core.d.ts:171
 
 #### Inherited from
 
@@ -80,7 +80,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:171
 
 > `readonly` **options**: [`BaseStorageOptions`](../type-aliases/BaseStorageOptions.md)
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:173
+Defined in: ridb-core/pkg/ridb\_core.d.ts:173
 
 #### Inherited from
 
@@ -92,7 +92,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:173
 
 > `readonly` **schemas**: `Record`\<keyof `T`, [`Schema`](Schema.md)\<`T`\[keyof `T`\]\>\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:172
+Defined in: ridb-core/pkg/ridb\_core.d.ts:172
 
 #### Inherited from
 
@@ -104,7 +104,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:172
 
 > **addIndexSchemas**(): `null`
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:184
+Defined in: ridb-core/pkg/ridb\_core.d.ts:184
 
 #### Returns
 
@@ -120,7 +120,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:184
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:176
+Defined in: ridb-core/pkg/ridb\_core.d.ts:176
 
 #### Returns
 
@@ -136,7 +136,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:176
 
 > **count**(`colectionName`, `query`, `options`?): `Promise`\<`number`\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:177
+Defined in: ridb-core/pkg/ridb\_core.d.ts:177
 
 #### Parameters
 
@@ -166,7 +166,7 @@ keyof `T`
 
 > **find**(`collectionName`, `query`, `options`?): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>[]\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:179
+Defined in: ridb-core/pkg/ridb\_core.d.ts:179
 
 #### Parameters
 
@@ -196,7 +196,7 @@ keyof `T`
 
 > **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:178
+Defined in: ridb-core/pkg/ridb\_core.d.ts:178
 
 #### Parameters
 
@@ -222,7 +222,7 @@ keyof `T`
 
 > **free**(): `void`
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:221
+Defined in: ridb-core/pkg/ridb\_core.d.ts:325
 
 Frees the resources used by the in-memory storage.
 
@@ -236,7 +236,7 @@ Frees the resources used by the in-memory storage.
 
 > **getOption**(`name`): `undefined` \| `string` \| `number` \| `boolean`
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:181
+Defined in: ridb-core/pkg/ridb\_core.d.ts:181
 
 #### Parameters
 
@@ -258,7 +258,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:181
 
 > **getSchema**(`name`): [`Schema`](Schema.md)\<`any`\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:182
+Defined in: ridb-core/pkg/ridb\_core.d.ts:182
 
 #### Parameters
 
@@ -280,7 +280,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:182
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:175
+Defined in: ridb-core/pkg/ridb\_core.d.ts:175
 
 #### Returns
 
@@ -296,7 +296,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:175
 
 > **write**(`op`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:180
+Defined in: ridb-core/pkg/ridb\_core.d.ts:180
 
 #### Parameters
 
@@ -318,7 +318,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:180
 
 > `static` **create**\<`SchemasCreate`\>(`dbName`, `schemas`): `Promise`\<[`IndexDB`](IndexDB.md)\<`SchemasCreate`\>\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:223
+Defined in: ridb-core/pkg/ridb\_core.d.ts:327
 
 #### Type Parameters
 

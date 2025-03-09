@@ -8,7 +8,7 @@
 
 > **LogicalOperators**\<`T`\>: `object`
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:92
+Defined in: ridb-core/pkg/ridb\_core.d.ts:92
 
 ## Type Parameters
 

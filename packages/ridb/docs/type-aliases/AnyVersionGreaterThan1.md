@@ -8,7 +8,7 @@
 
 > **AnyVersionGreaterThan1**\<`T`\>: `true` *extends* `{ [K in keyof T]: IsVersionGreaterThan0<T[K]["version"]> }`\[keyof `T`\] ? `true` : `false`
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:611
+Defined in: ridb-core/pkg/ridb\_core.d.ts:579
 
 ## Type Parameters
 

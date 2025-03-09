@@ -8,7 +8,7 @@
 
 > **MigrationPathsForSchemas**\<`T`\>: `{ [K in keyof T]: MigrationPathsForSchema<T[K]> }`
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:626
+Defined in: ridb-core/pkg/ridb\_core.d.ts:594
 
 ## Type Parameters
 

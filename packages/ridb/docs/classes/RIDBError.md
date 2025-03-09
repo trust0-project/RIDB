@@ -6,13 +6,29 @@
 
 # Class: RIDBError
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:709
+Defined in: ridb-core/pkg/ridb\_core.d.ts:711
 
 ## Constructors
 
 ### new RIDBError()
 
-> **new RIDBError**(): [`RIDBError`](RIDBError.md)
+> **new RIDBError**(`err_type`, `message`, `code`): [`RIDBError`](RIDBError.md)
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:726
+
+#### Parameters
+
+##### err\_type
+
+`string`
+
+##### message
+
+`string`
+
+##### code
+
+`number`
 
 #### Returns
 
@@ -24,7 +40,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:709
 
 > `readonly` **code**: `any`
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:754
+Defined in: ridb-core/pkg/ridb\_core.d.ts:770
 
 ***
 
@@ -32,7 +48,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:754
 
 > `readonly` **message**: `string`
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:757
+Defined in: ridb-core/pkg/ridb\_core.d.ts:773
 
 ***
 
@@ -40,7 +56,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:757
 
 > `readonly` **type**: `string`
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:760
+Defined in: ridb-core/pkg/ridb\_core.d.ts:776
 
 ## Methods
 
@@ -48,7 +64,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:760
 
 > **free**(): `void`
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:710
+Defined in: ridb-core/pkg/ridb\_core.d.ts:720
 
 #### Returns
 
@@ -56,11 +72,39 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:710
 
 ***
 
+### toJSON()
+
+> **toJSON**(): `Object`
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:715
+
+* Return copy of self without private attributes.
+
+#### Returns
+
+`Object`
+
+***
+
+### toString()
+
+> **toString**(): `string`
+
+Defined in: ridb-core/pkg/ridb\_core.d.ts:719
+
+Return stringified version of self.
+
+#### Returns
+
+`string`
+
+***
+
 ### authentication()
 
 > `static` **authentication**(`err`, `code`): [`RIDBError`](RIDBError.md)
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:733
+Defined in: ridb-core/pkg/ridb\_core.d.ts:749
 
 #### Parameters
 
@@ -82,7 +126,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:733
 
 > `static` **error**(`err`, `code`): [`RIDBError`](RIDBError.md)
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:721
+Defined in: ridb-core/pkg/ridb\_core.d.ts:737
 
 #### Parameters
 
@@ -104,7 +148,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:721
 
 > `static` **from**(`err`): [`RIDBError`](RIDBError.md)
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:715
+Defined in: ridb-core/pkg/ridb\_core.d.ts:731
 
 #### Parameters
 
@@ -122,7 +166,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:715
 
 > `static` **hook**(`err`, `code`): [`RIDBError`](RIDBError.md)
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:751
+Defined in: ridb-core/pkg/ridb\_core.d.ts:767
 
 #### Parameters
 
@@ -144,7 +188,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:751
 
 > `static` **query**(`err`, `code`): [`RIDBError`](RIDBError.md)
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:727
+Defined in: ridb-core/pkg/ridb\_core.d.ts:743
 
 #### Parameters
 
@@ -166,7 +210,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:727
 
 > `static` **serialisation**(`err`, `code`): [`RIDBError`](RIDBError.md)
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:739
+Defined in: ridb-core/pkg/ridb\_core.d.ts:755
 
 #### Parameters
 
@@ -188,7 +232,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:739
 
 > `static` **validation**(`err`, `code`): [`RIDBError`](RIDBError.md)
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:745
+Defined in: ridb-core/pkg/ridb\_core.d.ts:761
 
 #### Parameters
 

@@ -1,3 +1,13 @@
+## @trust0/ridb [1.4.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.3.5-rc.1...@trust0/ridb@1.4.0-rc.1) (2025-03-09)
+
+### Features
+
+* validate password at runtime ([db85b3d](https://github.com/trust0-project/RIDB/commit/db85b3d11a9e862efe93628b982d246c1f9f7251))
+
+### Bug Fixes
+
+* manually upgrade ridb ([24c7942](https://github.com/trust0-project/RIDB/commit/24c7942462a9ce131876aec8f3f97e36356d5bf4))
+
 ## @trust0/ridb [1.3.5-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.3.4...@trust0/ridb@1.3.5-rc.1) (2025-03-09)
 
 ### Bug Fixes
