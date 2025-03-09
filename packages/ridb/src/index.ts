@@ -109,7 +109,7 @@
  */
 
 // @ts-ignore @ignore
-import { BasePlugin, RIDBError, BaseStorage, Collection, Database, MigrationPathsForSchemas, MigrationsParameter, Schema, SchemaTypeRecord } from "@trust0/ridb-core";
+import { BasePlugin, BaseStorage, Collection, Database, MigrationPathsForSchemas, MigrationsParameter, Schema, SchemaTypeRecord } from "@trust0/ridb-core";
 import { v4 as uuidv4 } from 'uuid';
 
 export type StorageClass<T extends SchemaTypeRecord> = {
@@ -168,9 +168,17 @@ export type {
   BasePluginOptions,
   BasePlugin,
   SchemaTypeRecord,
-  StorageInternal
+  StorageInternal,
+  RIDBError
 } from "@trust0/ridb-core";
 
+
+const {
+  RIDBError,
+  InMemory,
+  IndexDB,
+  Database
+} = WasmInternal;
 
 /**
  * Options for the RIDB constructor.
@@ -194,12 +202,6 @@ type PendingRequests = Map<
   { resolve: (resp: any) => void; reject: (err: any) => void }
 >;
 
-const {
-  RIDBError,
-  InMemory,
-  IndexDB,
-  Database
-} = WasmInternal;
 
 export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
   private _db: Database<T> | undefined;
