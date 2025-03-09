@@ -56,5 +56,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
           npm install
-          npm run build
           npx multi-semantic-release --deps.prefix="^"
