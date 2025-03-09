@@ -6,6 +6,7 @@ pub mod defaults;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::*;
 use js_sys::Reflect;
+use crate::error::RIDBError;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -38,7 +39,7 @@ pub struct BasePlugin {
 impl BasePlugin {
 
     #[wasm_bindgen(constructor)]
-    pub fn new(name: String) -> Result<BasePlugin, JsValue> {
+    pub fn new(name: String) -> Result<BasePlugin, RIDBError> {
         Ok(BasePlugin {
             name,
             doc_create_hook: JsValue::undefined(),

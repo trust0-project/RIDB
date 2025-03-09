@@ -13,6 +13,7 @@ use parking_lot::Mutex;
 use std::collections::HashMap;
 use std::sync::Weak;
 use lazy_static::lazy_static;
+use crate::error::RIDBError;
 use crate::query::options::QueryOptions;
 use crate::schema::Schema;
 use super::base::Storage;
@@ -95,10 +96,11 @@ async fn idb_request_result(request: IdbRequest) -> Result<JsValue, JsValue> {
 }
 
 impl Storage for IndexDB {
-    async fn write(&self, op: &Operation) -> Result<JsValue, JsValue> {
+    async fn write(&self, op: &Operation) -> Result<JsValue, RIDBError> {
         let store_name = &op.collection;
         let store = self.get_store(store_name)?;
-        let schema = self.base.schemas.get(op.collection.as_str()).ok_or_else(|| JsValue::from_str("Collection not found"))?;
+        let schema = self.base.schemas.get(op.collection.as_str())
+            .ok_or_else(|| RIDBError::from("Collection not found"))?;
 
         match op.op_type {
             OpType::CREATE | OpType::UPDATE => {
@@ -106,13 +108,10 @@ impl Storage for IndexDB {
 
                 // Extract primary key
                 let primary_key = schema.primary_key.clone();
-                let pk_value = match Reflect::get(&document, &JsValue::from_str(&primary_key)) {
-                    Ok(v) => v,
-                    Err(e) => return Err(e),
-                };
+                let pk_value =  Reflect::get(&document, &JsValue::from_str(&primary_key))?;
 
                 if pk_value.is_undefined() || pk_value.is_null() {
-                    return Err(JsValue::from_str("Document must contain a primary key"));
+                    return Err(RIDBError::from("Document must contain a primary key"));
                 }
                 // Store the document and wait for completion
                 let request = store.put_with_key(&document, &pk_value)?;
@@ -122,7 +121,7 @@ impl Storage for IndexDB {
             OpType::DELETE => {
                 let pk_value = op.data.clone();
                 if pk_value.is_undefined() || pk_value.is_null() {
-                    return Err(JsValue::from_str("Primary key value is required for delete operation"));
+                    return Err(RIDBError::from("Primary key value is required for delete operation"));
                 }
 
                 // Delete the document using the primary key
@@ -131,11 +130,11 @@ impl Storage for IndexDB {
 
                 Ok(JsValue::from_str("Document deleted"))
             },
-            _ => Err(JsValue::from_str("Unsupported operation type")),
+            _ => Err(RIDBError::from("Unsupported operation type")),
         }
     }
 
-    async fn find(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue> {
+    async fn find(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, RIDBError> {
         Logger::debug(
             "IndexDB-Find",
             &JsValue::from(format!("Find method {}", collection_name)),
@@ -147,10 +146,10 @@ impl Storage for IndexDB {
         Ok(filtered_docs.into())
     }
 
-    async fn find_document_by_id(&self, collection_name: &str, primary_key_value: JsValue) -> Result<JsValue, JsValue> {
+    async fn find_document_by_id(&self, collection_name: &str, primary_key_value: JsValue) -> Result<JsValue, RIDBError> {
         let store_name = collection_name;
         if primary_key_value.is_undefined() || primary_key_value.is_null() {
-            return Err(JsValue::from_str("Primary key value is required"));
+            return Err(RIDBError::from("Primary key value is required"));
         }
 
         let store = self.get_store(store_name)?;
@@ -170,14 +169,14 @@ impl Storage for IndexDB {
         }
     }
 
-    async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue> {
+    async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, RIDBError> {
         let filtered_docs = self
             .collect_documents_for_query(collection_name, query, options)
             .await?;
         Ok(JsValue::from_f64(filtered_docs.length() as f64))
     }
 
-    async fn close(&mut self) -> Result<JsValue, JsValue> {
+    async fn close(&mut self) -> Result<JsValue, RIDBError> {
         // Wait for any pending transactions to complete
         let stores: Vec<String> = self.get_stores();
 
@@ -213,7 +212,7 @@ impl Storage for IndexDB {
         Ok(JsValue::from_str("IndexDB database closed"))
     }
 
-    async fn start(&mut self) -> Result<JsValue, JsValue> {
+    async fn start(&mut self) -> Result<JsValue, RIDBError> {
         // Check if database is closed by attempting a simple transaction
         let test_store = self.db.object_store_names().get(0);
         if test_store.is_some() {
@@ -235,7 +234,7 @@ impl Storage for IndexDB {
 }
 
 /// Attempt to detect IndexedDB either in a Window or in a Worker scope
-fn get_indexed_db() -> Result<IdbFactory, JsValue> {
+fn get_indexed_db() -> Result<IdbFactory, RIDBError> {
     // 1) If in a normal browser (Window) environment
     if let Ok(window) = js_sys::global().dyn_into::<web_sys::Window>() {
         if let Some(idb) = window.indexed_db()? {
@@ -249,10 +248,10 @@ fn get_indexed_db() -> Result<IdbFactory, JsValue> {
         }
     }
 
-    Err(JsValue::from_str("IndexedDB not available in this environment"))
+    Err(RIDBError::from("IndexedDB not available in this environment"))
 }
 
-async fn create_database(name: &str, schemas: &HashMap<String, Schema>) -> Result<Arc<IdbDatabase>, JsValue> {
+async fn create_database(name: &str, schemas: &HashMap<String, Schema>) -> Result<Arc<IdbDatabase>, RIDBError> {
     let idb = get_indexed_db()?;
 
     let version = 1;
@@ -351,7 +350,7 @@ impl IndexDB {
         collection_name: &str,
         query: &Query,
         options: &QueryOptions
-    ) -> Result<Array, JsValue> {
+    ) -> Result<Array, RIDBError> {
         // Acquire references to the object store and schema
         let store = self.get_store(collection_name)?;
         let schema = self
@@ -457,7 +456,7 @@ impl IndexDB {
         value_query: &Query,
         offset: u32,
         limit: u32,
-    ) -> Result<Array, JsValue> {
+    ) -> Result<Array, RIDBError> {
         use std::cell::RefCell;
         use std::rc::Rc;
 
@@ -615,7 +614,7 @@ impl IndexDB {
             .collect();
         stores
     }
-    pub fn get_store(&self, store_name: &str) -> Result<IdbObjectStore, JsValue>{
+    pub fn get_store(&self, store_name: &str) -> Result<IdbObjectStore, RIDBError>{
         let stores = self.get_stores();
         let transaction = match self.db.transaction_with_str_and_mode(
             store_name,
@@ -623,22 +622,20 @@ impl IndexDB {
         ) {
             Ok(t) => t,
             Err(_e) => {
-                return Err(JsValue::from_str(&format!(
+                return Err(RIDBError::from(&format!(
                     "Failed to access store '{}'. Available stores: {:?}",
                     store_name, stores
                 )));
             }
         };
-        let store = match transaction.object_store(store_name) {
-            Ok(s) => s,
-            Err(e) => return Err(e),
-        };
-        Ok(
-            store
-        )
+
+        let store = transaction.object_store(store_name)
+            .map_err(|e| RIDBError::from(e));
+
+        store
     }
     #[wasm_bindgen]
-    pub async fn create(name: &str, schemas_js: Object) -> Result<IndexDB, JsValue> {
+    pub async fn create(name: &str, schemas_js: Object) -> Result<IndexDB, RIDBError> {
         let base = BaseStorage::new(
             name.to_string(),
             schemas_js.clone(),
@@ -664,12 +661,12 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "write")]
-    pub async fn write_js(&self, op: &Operation) -> Result<JsValue, JsValue> {
+    pub async fn write_js(&self, op: &Operation) -> Result<JsValue, RIDBError> {
         self.write(op).await
     }
 
     #[wasm_bindgen(js_name = "find")]
-    pub async fn find_js(&self, collection_name: &str, query: JsValue, options: &QueryOptions) -> Result<JsValue, JsValue> {
+    pub async fn find_js(&self, collection_name: &str, query: JsValue, options: &QueryOptions) -> Result<JsValue, RIDBError> {
         let schema = self
             .base
             .schemas
@@ -681,12 +678,12 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "findDocumentById")]
-    pub async fn find_document_by_id_js(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn find_document_by_id_js(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, RIDBError> {
         self.find_document_by_id(collection_name, primary_key).await
     }
 
     #[wasm_bindgen(js_name = "count")]
-    pub async fn count_js(&self, collection_name: &str, query: JsValue, options: &QueryOptions) -> Result<JsValue, JsValue> {
+    pub async fn count_js(&self, collection_name: &str, query: JsValue, options: &QueryOptions) -> Result<JsValue, RIDBError> {
         let schema = self
             .base
             .schemas
@@ -698,12 +695,12 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "close")]
-    pub async fn close_js(&mut self) -> Result<JsValue, JsValue> {
+    pub async fn close_js(&mut self) -> Result<JsValue, RIDBError> {
         self.close().await
     }
 
     #[wasm_bindgen(js_name = "start")]
-    pub async fn start_js(&mut self) -> Result<JsValue, JsValue> {
+    pub async fn start_js(&mut self) -> Result<JsValue, RIDBError> {
         self.start().await
     }
 }
@@ -777,7 +774,7 @@ impl IdbDatabaseExt for IdbDatabase {
 fn can_use_single_index_lookup(
     query: &Query,
     schema: &Schema
-) -> Result<Option<String>, JsValue> {
+) -> Result<Option<String>, RIDBError> {
     let fields = query.get_properties()?;
     let schema_indexes = &schema.indexes;
     if let Some(indexes) = schema_indexes {

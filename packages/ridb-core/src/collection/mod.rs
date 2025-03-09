@@ -1,6 +1,7 @@
 use js_sys::{Object, Reflect};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
+use crate::error::RIDBError;
 use crate::query::options::QueryOptions;
 use crate::schema::Schema;
 use crate::storage::{HookType, Storage};
@@ -161,7 +162,7 @@ impl Collection {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn schema(&self) -> Result<Schema, JsValue> {
+    pub fn schema(&self) -> Result<Schema, RIDBError> {
         let schema = self.storage.get_schema(&self.name)?;
         Ok(
             schema.clone()
@@ -173,7 +174,7 @@ impl Collection {
     /// This function is asynchronous and returns a `JsValue` representing
     /// the documents found in the collection.
     #[wasm_bindgen]
-    pub async fn find(&mut self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, JsValue> {
+    pub async fn find(&mut self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, RIDBError> {
         let options = self.parse_query_options(options_js)?;
 
         // No index available, perform a regular find
@@ -201,7 +202,7 @@ impl Collection {
         )
     }
 
-    pub fn parse_query_options(&self, options: JsValue) -> Result<QueryOptions, JsValue> {
+    pub fn parse_query_options(&self, options: JsValue) -> Result<QueryOptions, RIDBError> {
         // Use the helper to extract and validate both limit and offset.
         let limit = get_u32_option(&options, "limit")?;
         let offset = get_u32_option(&options, "offset")?;
@@ -214,11 +215,14 @@ impl Collection {
     /// This function is asynchronous and returns a `Schema` representing
     /// the documents found in the collection.
     #[wasm_bindgen]
-    pub async fn count(&self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, JsValue> {
+    pub async fn count(&self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, RIDBError> {
         let options = self.parse_query_options(options_js)?;
         match self.storage.count(&self.name, query_js, options).await {
             Ok(count) => Ok(count),
-            Err(e) => Err(js_sys::Error::new(&format!("Failed to count documents: {:?}", e)).into())
+            Err(e) => Err(
+                RIDBError::query(&format!("Failed to count documents: {:?}", e), 10)
+
+            )
         }
     }
 
@@ -226,10 +230,12 @@ impl Collection {
     ///
     /// This function is asynchronous.
     #[wasm_bindgen(js_name="findById")]
-    pub async fn find_by_id(&self, primary_key: JsValue) -> Result<JsValue, JsValue>{
+    pub async fn find_by_id(&self, primary_key: JsValue) -> Result<JsValue, RIDBError>{
         let document = match self.storage.find_document_by_id(&self.name, primary_key  ).await {
             Ok(doc) => doc,
-            Err(e) => return Err(js_sys::Error::new(&format!("Failed to find document by ID: {:?}", e)).into())
+            Err(e) => return Err(
+                RIDBError::query(&format!("Failed to find document by ID: {:?}", e), 11)
+            )
         };
         if document.is_undefined() || document.is_null() {
             Ok(document)
@@ -250,7 +256,7 @@ impl Collection {
     ///
     /// * `document` - A `JsValue` representing the partial document to update.
     #[wasm_bindgen]
-    pub async fn update(&mut self, document: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn update(&mut self, document: JsValue) -> Result<JsValue, RIDBError> {
         let primary_key = self.schema()?.primary_key;
         let doc_primary_key = Reflect::get(
             &document,
@@ -273,7 +279,11 @@ impl Collection {
         
         let res = match self.storage.write(&self.name, processed_document).await {
             Ok(result) => Ok(result),
-            Err(e) => Err(e)
+            Err(e) => Err(
+                JsValue::from(
+                    RIDBError::query(&format!("Failed to write document: {:?}", e), 11)
+                )
+            )
         }?;
 
         self.storage.call(
@@ -291,7 +301,7 @@ impl Collection {
     ///
     /// * `document` - A `JsValue` representing the document to create.
     #[wasm_bindgen]
-    pub async fn create(&mut self, document: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn create(&mut self, document: JsValue) -> Result<JsValue, RIDBError> {
         let schema = self.schema()?;
         let processed_document = self.storage.call(
             &self.name, 
@@ -300,10 +310,9 @@ impl Collection {
         ).await?;
 
         schema.validate_document(processed_document.clone())?;
-
         let res = match self.storage.write(&self.name, processed_document).await {
             Ok(result) => Ok(result),
-            Err(e) =>  Err(e)
+            Err(e) => Err(JsValue::from(RIDBError::query(&format!("Failed to write document: {:?}", e), 13)))
         }?;
 
         self.storage.call(
@@ -317,10 +326,15 @@ impl Collection {
     ///
     /// This function is asynchronous.
     #[wasm_bindgen]
-    pub async fn delete(&self, primary_key: JsValue) -> Result<JsValue, JsValue> {
+    pub async fn delete(&self, primary_key: JsValue) -> Result<JsValue, RIDBError> {
         match self.storage.remove(&self.name, primary_key ).await {
             Ok(res) => Ok(res),
-            Err(e) => Err(js_sys::Error::new(&format!("Failed to delete document: {:?}", e)).into())
+            Err(e) => Err(
+                RIDBError::query(
+                    &format!("Failed to delete document: {:?}", e),
+                    12
+                )
+            )
         }
     }
 }

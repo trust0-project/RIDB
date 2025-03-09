@@ -1,5 +1,6 @@
 use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
+use crate::error::RIDBError;
 use crate::operation::Operation;
 use crate::query::Query;
 use crate::schema::Schema;
@@ -35,16 +36,16 @@ impl CoreStorage {
 
 
     #[wasm_bindgen(js_name = getPrimaryKeyTyped)]
-    pub fn  get_primary_key_typed(&self, value:JsValue) -> Result<String, JsValue> {
+    pub fn  get_primary_key_typed(&self, value:JsValue) -> Result<String, RIDBError> {
         if value.is_undefined() || value.is_null() {
-            return Err(JsValue::from_str("Document must contain a primary key"));
+            return Err(RIDBError::validation("Document must contain a primary key",0));
         }
         if let Some(s) = value.as_string() {
             Ok(s)
         } else if let Some(n) = value.as_f64() {
             Ok(n.to_string())
         } else {
-            Err(JsValue::from_str(&format!("Failed to get primary key, must be number or string but is: {:?}", value)))
+            Err(RIDBError::validation(&format!("Failed to get primary key, must be number or string but is: {:?}", value), 0))
         }
     }
 
@@ -54,7 +55,7 @@ impl CoreStorage {
         &self,
         schema: &Schema,
         op: &Operation
-    ) -> Result<Vec<String>, JsValue> {
+    ) -> Result<Vec<String>, RIDBError> {
         let primary_key = schema.primary_key.clone();
 
         let mut indexes = schema.indexes.clone()
@@ -81,7 +82,7 @@ impl CoreStorage {
         &self, 
         document: &JsValue, 
         query: &Query
-    ) -> Result<bool, JsValue> {
+    ) -> Result<bool, RIDBError> {
 
         if !document.is_object() {
             return Ok(false);
@@ -98,7 +99,7 @@ impl CoreStorage {
             if key == "$and" {
                 // $and operator: all conditions must be true
                 if !Array::is_array(&value) {
-                    return Err(JsValue::from_str("$and must be an array"));
+                    return Err(RIDBError::validation("$and must be an array", 0));
                 }
                 let arr = Array::from(&value);
                 for j in 0..arr.length() {
@@ -114,7 +115,7 @@ impl CoreStorage {
             } else if key == "$or" {
                 // $or operator: at least one condition must be true
                 if !Array::is_array(&value) {
-                    return Err(JsValue::from_str("$or must be an array"));
+                    return Err(RIDBError::validation("$or must be an array", 0));
                 }
                 let arr = Array::from(&value);
                 for j in 0..arr.length() {
@@ -137,13 +138,13 @@ impl CoreStorage {
         Ok(true)
     }
 
-    fn get_cmp(&self, key: String) -> Result<Box<dyn Fn(f64, f64) -> bool>, JsValue> {
+    fn get_cmp(&self, key: String) -> Result<Box<dyn Fn(f64, f64) -> bool>, RIDBError> {
         match key.as_str() {
             "$gt" => Ok(Box::new(|a, b| a > b)),
             "$gte" => Ok(Box::new(|a, b| a >= b)),
             "$lt" => Ok(Box::new(|a, b| a < b)),
             "$lte" => Ok(Box::new(|a, b| a <= b)),
-            _ => Err(JsValue::from_str(&format!("Unsupported comparator: {}", key))),
+            _ => Err(RIDBError::validation(&format!("Unsupported comparator: {}", key), 0)),
         }
     }
 
@@ -152,7 +153,7 @@ impl CoreStorage {
         document: &JsValue,
         condition_key: String,
         condition: &JsValue
-    ) -> Result<bool, JsValue> {
+    ) -> Result<bool, RIDBError> {
         let document_field = Reflect::get(document, &JsValue::from(condition_key.clone()))?;
 
         if condition.is_object() && !Array::is_array(condition) {
@@ -177,7 +178,7 @@ impl CoreStorage {
                     }
                     "$in" => {
                         if !Array::is_array(&condition_value) {
-                            return Err(JsValue::from_str("$in value must be an array"));
+                            return Err(RIDBError::validation("$in value must be an array",0));
                         }
                         let arr = Array::from(&condition_value);
                         let mut found = false;
@@ -194,7 +195,7 @@ impl CoreStorage {
                     }
                     "$nin" => {
                         if !Array::is_array(&condition_value) {
-                            return Err(JsValue::from_str("$nin value must be an array"));
+                            return Err(RIDBError::validation("$nin value must be an array", 0));
                         }
                         let arr = Array::from(&condition_value);
                         for j in 0..arr.length() {
@@ -220,8 +221,9 @@ impl CoreStorage {
                         }
                     }
                     _ => {
-                        return Err(JsValue::from_str(
-                            &format!("Unsupported operator: {}", key)
+                        return Err(RIDBError::validation(
+                            &format!("Unsupported operator: {}", key),
+                            0
                         ));
                     }
                 };
@@ -239,7 +241,7 @@ impl CoreStorage {
         cond_key: String,
         cond_value: &JsValue,
         cmp: F,
-    ) -> Result<bool, JsValue>
+    ) -> Result<bool, RIDBError>
     where
         F: Fn(f64, f64) -> bool,
     {
@@ -269,7 +271,7 @@ impl CoreStorage {
         )
     }
 
-    fn values_equal(&self, document: &JsValue, cond_value: &JsValue) -> Result<bool, JsValue> {
+    fn values_equal(&self, document: &JsValue, cond_value: &JsValue) -> Result<bool, RIDBError> {
         if document.is_string() && cond_value.is_string() {
             Ok(document.as_string() == cond_value.as_string())
         } else if document.as_f64().is_some() {

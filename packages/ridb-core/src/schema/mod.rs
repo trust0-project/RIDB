@@ -146,7 +146,7 @@ pub struct Schema {
 impl Schema {
 
     #[wasm_bindgen(js_name="validate")]
-    pub fn validate_document(&self, document: JsValue) -> Result<(), JsValue> {
+    pub fn validate_document(&self, document: JsValue) -> Result<(), RIDBError> {
         let schema_properties = self.properties.clone();
 
         // Collect required fields
@@ -165,7 +165,8 @@ impl Schema {
                 .map_err(|_e| {
                     JsValue::from(
                         RIDBError::validation(
-                            &format!("Missing required property '{}'", key)
+                            &format!("Missing required property '{}'", key),
+                            14
                         )
                     )
                 })?;
@@ -174,11 +175,11 @@ impl Schema {
                 // If the property is required and not encrypted, it's an error
                 if required.contains(&key) && !encrypted.contains(&key) {
                     return Err(
-                        JsValue::from(
                             RIDBError::validation(
-                                &format!("Missing required property '{}'", key)
+                                &format!("Missing required property '{}'", key),
+                                15
                             )
-                        )
+
                     );
                 }
             } else {
@@ -186,10 +187,15 @@ impl Schema {
                 if let Err(err) = res {
                     return Err(err);
                 } else if !res.unwrap() {
-                    return Err(JsValue::from_str(&format!(
-                        "Field '{}' should be of type '{:?}'",
-                        key, prop.property_type
-                    )));
+                    return Err(
+                            RIDBError::validation(
+                                &format!(
+                                    "Field '{}' should be of type '{:?}'",
+                                    key, prop.property_type
+                                ),
+                                15
+                            )
+                    );
                 }
             }
         }
@@ -197,30 +203,29 @@ impl Schema {
     }
 
 
-    fn is_type_correct(&self, key: &String, value: &JsValue, property: &Property) -> Result<bool, JsValue> {
+    fn is_type_correct(&self, key: &String, value: &JsValue, property: &Property) -> Result<bool, RIDBError> {
         match property.property_type {
             PropertyType::String => {
                 if let Some(string) = value.as_string() {
                     // Check maxLength and minLength if they exist
                     if let Some(max_length) = property.max_length {
                         if string.len() > max_length as usize {
-                            return Err(JsValue::from(
-                                RIDBError::validation(
-                                &format!(
-                                    "Property '{}' exceeds maximum length of '{:?}'",
-                                    key, max_length
-                                )))
+                            return Err(
+                                    RIDBError::validation(
+                                    &format!( "Property '{}' exceeds maximum length of '{:?}'", key, max_length),
+                                    16
+                                    )
                             );
                         }
                     }
                     if let Some(min_length) = property.min_length {
                         if string.len() < min_length as usize {
-                            return Err(JsValue::from(
+                            return Err(
                                 RIDBError::validation(
                                     &format!(
                                         "Property '{}' is lower than min length of '{:?}'",
                                         key, min_length
-                                    )))
+                                    ), 17)
                             );
                         }
                     }
@@ -245,12 +250,12 @@ impl Schema {
                     let len_js = arr.length();
                     let length = i32::try_from(len_js).unwrap();
                     if length > max_length  {
-                        return Err(JsValue::from(
+                        return Err(
                             RIDBError::validation(
                             &format!(
                                 "Property '{}' exceeds maximum items of '{:?}'",
                                 key, max_length
-                            )))
+                            ), 18)
                         );
                     }
                 }
@@ -266,9 +271,12 @@ impl Schema {
         // Check if the schema type is "object"
         let schema_type = self.get_schema_type();
         if schema_type != "object" {
-            return Err(RIDBError::validation(
-                format!("Schema type is invalid (\"{}\")", schema_type).as_str(),
-            ));
+            return Err(
+                RIDBError::validation(
+                    &format!("Schema type is invalid (\"{}\")", schema_type).as_str(),
+                    19
+                )
+            );
         }
 
         // Validate all properties
@@ -289,13 +297,13 @@ impl Schema {
     ///
     /// * `Result<Schema, JsValue>` - A result containing the new `Schema` instance or an error.
     #[wasm_bindgen]
-    pub fn create(schema: JsValue) -> Result<Schema, JsValue> {
+    pub fn create(schema: JsValue) -> Result<Schema, RIDBError> {
         let schema: Schema = from_value(schema)
             .map_err(|e| JsValue::from(RIDBError::from(e)))?;
         let valid = schema.is_valid();
         match valid {
             Ok(_) =>  Ok(schema),
-            Err(e) => Err(JsValue::from(e))
+            Err(e) => Err(e)
         }
     }
 
@@ -350,7 +358,7 @@ impl Schema {
     ///
     /// * `Result<JsValue, JsValue>` - A result containing the properties as a `JsValue` or an error.
     #[wasm_bindgen(getter, js_name="properties")]
-    pub fn get_properties(&self) -> Result<JsValue, JsValue> {
+    pub fn get_properties(&self) -> Result<JsValue, RIDBError> {
         // Create a new JavaScript object to hold all properties
         let result = Object::new();
 

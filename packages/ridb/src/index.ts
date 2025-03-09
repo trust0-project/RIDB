@@ -109,7 +109,7 @@
  */
 
 // @ts-ignore @ignore
-import { BasePlugin, BaseStorage, Collection, Database, MigrationPathsForSchemas, MigrationsParameter, Schema, SchemaTypeRecord } from "@trust0/ridb-core";
+import { BasePlugin, BaseStorage, Collection, Database, MigrationPathsForSchemas, MigrationsParameter, RIDBError, Schema, SchemaTypeRecord } from "@trust0/ridb-core";
 import { v4 as uuidv4 } from 'uuid';
 
 export type StorageClass<T extends SchemaTypeRecord> = {
@@ -194,7 +194,12 @@ type PendingRequests = Map<
   { resolve: (resp: any) => void; reject: (err: any) => void }
 >;
 
-let internal = WasmInternal;
+const {
+  RIDBError,
+  InMemory,
+  IndexDB,
+  Database
+} = WasmInternal;
 
 export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
   private _db: Database<T> | undefined;
@@ -234,8 +239,8 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
 
   private getStorageType<T extends StorageType>(storageType: T) {
     return storageType === StorageType.InMemory ?
-      internal!.InMemory :
-      internal!.IndexDB;
+      InMemory :
+      IndexDB;
   }
 
   /**
@@ -319,7 +324,8 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
         this.pendingRequests.get(requestId)!.resolve(data);
       } else {
         console.error(`[RIDBWorker] Request ${requestId} failed. Error:`, data);
-        this.pendingRequests.get(requestId)!.reject(data);
+        const error = RIDBError.from(data);
+        this.pendingRequests.get(requestId)!.reject(error);
       }
       this.pendingRequests.delete(requestId);
     }
@@ -327,7 +333,6 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
 
   private async createDatabase(options?: StartOptions<T>) {
     const { storageType, password } = options ?? {};
-    const { Database } = internal;
     const StorageClass = typeof storageType === "string" ?
       this.getStorageType(storageType) :
       storageType ?? undefined;
@@ -387,14 +392,14 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
 
   async close() {
     if (this.useWorker) {
-      this.worker.port.postMessage({
+      this._worker?.port.postMessage({
         action: 'close',
         requestId:this._sessionId!,
         data: {
           dbName: this.options.dbName,
         }
       });
-      await this.worker.port.close();
+      await this._worker?.port.close();
       this._worker = undefined;
     } else {
       await this.db.close();
