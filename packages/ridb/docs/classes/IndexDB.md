@@ -6,7 +6,7 @@
 
 # Class: IndexDB\<T\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:217
+Defined in: ridb-core/pkg/ridb\_core.d.ts:321
 
 Represents an IndexDB storage system extending the base storage functionality.
 
@@ -222,7 +222,7 @@ keyof `T`
 
 > **free**(): `void`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:221
+Defined in: ridb-core/pkg/ridb\_core.d.ts:325
 
 Frees the resources used by the in-memory storage.
 
@@ -318,7 +318,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:180
 
 > `static` **create**\<`SchemasCreate`\>(`dbName`, `schemas`): `Promise`\<[`IndexDB`](IndexDB.md)\<`SchemasCreate`\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:223
+Defined in: ridb-core/pkg/ridb\_core.d.ts:327
 
 #### Type Parameters
 

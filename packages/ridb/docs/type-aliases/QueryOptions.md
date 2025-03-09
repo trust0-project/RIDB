@@ -8,7 +8,7 @@
 
 > **QueryOptions**: `object`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:540
+Defined in: ridb-core/pkg/ridb\_core.d.ts:508
 
 ## Type declaration
 

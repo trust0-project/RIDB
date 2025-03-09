@@ -1,4 +1,4 @@
-import { RIDB, SchemaTypeRecord } from './index';
+import { RIDB, SchemaTypeRecord, RIDBError } from './index';
 
 // The SharedWorkerGlobalScope interface
 interface SharedWorkerGlobalScope {
@@ -79,7 +79,7 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
     try {
         switch (action) {
             case 'start': {
-                const { dbName, schemas, migrations, options } = data;
+                const { dbName, schemas, migrations,options } = data;
                 let db = dbMap.get(dbName);
 
                 if (!db) {
@@ -90,7 +90,8 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
                         worker: false 
                     });
                     dbMap.set(dbName, db);
-                }
+                } 
+                
 
                 // Track usage of this db by the current port
                 let portSet = dbUsageMap.get(dbName);
@@ -101,6 +102,8 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
                 portSet.add(port);
 
                 await db.start(options);
+                await db.authenticate(options.password ?? '');
+
                 port.postMessage({
                     status: 'success',
                     requestId,
@@ -152,16 +155,21 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
         }
     } catch (err) {
         console.error('[Worker] Error:', err);
-        port.postMessage({
-            status: 'error',
-            data: {
-                code: (err as any).code,
-                type: (err as any).type,
-                message: (err as any).message,
-            },
-            action,
-            requestId,
-        });
+        if (err instanceof RIDBError) {
+            port.postMessage({
+                status: 'error',
+                data: (err as any).toJSON(),
+                action,
+                requestId,
+            });
+        } else {
+            port.postMessage({
+                status: 'error',
+                data: (err as any).message,
+                action,
+                requestId,
+            });
+        }
     }
 }
 

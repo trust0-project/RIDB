@@ -19,15 +19,7 @@ impl DefaultsPlugin {
         };
         let plugin_clone1 = plugin.clone();
         let create_hook = Closure::wrap(Box::new(move |schema, _migration, document| {
-            // Add logging for debugging
-            Logger::debug("DefaultsPlugin", &"Creating document with defaults".into());
-            let result = plugin_clone1.clone().add_defaults(schema, document);
-            if result.is_ok() {
-                Logger::debug("DefaultsPlugin", &"Document created successfully".into());
-            } else {
-                Logger::debug("DefaultsPlugin", &"Failed to create document".into());
-            }
-            result
+            plugin_clone1.clone().add_defaults(schema, document)
         }) as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, RIDBError>>);
         let mut plugin = plugin;
         plugin.base.doc_create_hook = create_hook.into_js_value();

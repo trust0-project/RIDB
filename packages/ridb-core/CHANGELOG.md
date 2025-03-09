@@ -1,3 +1,15 @@
+## @trust0/ridb-core [1.5.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.4-rc.1...@trust0/ridb-core@1.5.0-rc.1) (2025-03-09)
+
+### Features
+
+* validate password at runtime ([db85b3d](https://github.com/trust0-project/RIDB/commit/db85b3d11a9e862efe93628b982d246c1f9f7251))
+
+## @trust0/ridb-core [1.4.4-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.3...@trust0/ridb-core@1.4.4-rc.1) (2025-03-09)
+
+### Bug Fixes
+
+* improvements on Error handling ([27cfbab](https://github.com/trust0-project/RIDB/commit/27cfbab97304417ad1020b1a32e71d60ee1a0dc5))
+
 ## @trust0/ridb-core [1.4.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.2...@trust0/ridb-core@1.4.3) (2025-03-09)
 
 ### Bug Fixes

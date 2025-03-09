@@ -6,7 +6,7 @@
 
 # Class: InMemory\<T\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:194
+Defined in: ridb-core/pkg/ridb\_core.d.ts:298
 
 Represents an in-memory storage system extending the base storage functionality.
 
@@ -222,7 +222,7 @@ keyof `T`
 
 > **free**(): `void`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:198
+Defined in: ridb-core/pkg/ridb\_core.d.ts:302
 
 Frees the resources used by the in-memory storage.
 
@@ -318,7 +318,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:180
 
 > `static` **create**\<`SchemasCreate`\>(`dbName`, `schemas`): `Promise`\<[`InMemory`](InMemory.md)\<`SchemasCreate`\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:200
+Defined in: ridb-core/pkg/ridb\_core.d.ts:304
 
 #### Type Parameters
 
