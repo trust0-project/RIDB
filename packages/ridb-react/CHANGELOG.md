@@ -1,3 +1,9 @@
+## @trust0/ridb-react [1.1.11-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.11-rc.1...@trust0/ridb-react@1.1.11-rc.2) (2025-03-09)
+
+### Bug Fixes
+
+* upgrade pkg ([6136f85](https://github.com/trust0-project/RIDB/commit/6136f852d442fa87a06ae11f9e9437473c5a16f1))
+
 ## @trust0/ridb-react [1.1.11-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.10...@trust0/ridb-react@1.1.11-rc.1) (2025-03-09)
 
 
