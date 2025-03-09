@@ -1,3 +1,10 @@
+## @trust0/ridb-react [1.1.12](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.11...@trust0/ridb-react@1.1.12) (2025-03-09)
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.4.1
+
 ## @trust0/ridb-react [1.1.12-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.11...@trust0/ridb-react@1.1.12-rc.1) (2025-03-09)
 
 
