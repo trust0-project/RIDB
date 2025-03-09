@@ -8,7 +8,7 @@
 
 > **BasePluginOptions**: `object`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:290
+Defined in: ridb-core/pkg/ridb\_core.d.ts:241
 
 ## Type declaration
 

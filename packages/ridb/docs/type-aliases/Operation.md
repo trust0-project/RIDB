@@ -8,13 +8,13 @@
 
 > **Operation**\<`T`\>: `object`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:479
+Defined in: ridb-core/pkg/ridb\_core.d.ts:130
 
 Represents an operation to be performed on a collection.
 
 ## Type Parameters
 
-• **T** *extends* [`SchemaType`](SchemaType.md)
+• **T** *extends* [`SchemaType`](SchemaType.md) = [`SchemaType`](SchemaType.md)
 
 The schema type of the collection.
 

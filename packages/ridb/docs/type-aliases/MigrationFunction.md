@@ -8,7 +8,7 @@
 
 > **MigrationFunction**\<`T`\>: (`doc`) => [`Doc`](Doc.md)\<`T`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:522
+Defined in: ridb-core/pkg/ridb\_core.d.ts:617
 
 ## Type Parameters
 

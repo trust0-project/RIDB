@@ -1,3 +1,19 @@
+## @trust0/ridb [1.3.4-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.3.3...@trust0/ridb@1.3.4-rc.1) (2025-03-09)
+
+### Bug Fixes
+
+* documentation ([7bf9e2c](https://github.com/trust0-project/RIDB/commit/7bf9e2c0993544139f009e57fba3123515a6d3df))
+* improve demo ([566b7db](https://github.com/trust0-project/RIDB/commit/566b7db16aca6ee092488778a30b88a70bf46eb5))
+* improve documentation gen ([b2e715c](https://github.com/trust0-project/RIDB/commit/b2e715cff22fb9ce6d9aa260e443d61814035f84))
+* improve error handling and authentication errors ([1e7cc7e](https://github.com/trust0-project/RIDB/commit/1e7cc7ee5898d60a75a8539d645dad0dcf74800a))
+* pkg and ts ([64aaca3](https://github.com/trust0-project/RIDB/commit/64aaca36ad4c0e910a8ddebf0189c78c26c2a069))
+* simplify usage ([af9a027](https://github.com/trust0-project/RIDB/commit/af9a027630b5c90fd5b6e6eadfe4b7f930d7ded4))
+
+
+### Dependencies
+
+* **@trust0/ridb-core:** upgraded to 1.4.3-rc.2
+
 ## @trust0/ridb [1.3.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.3.2...@trust0/ridb@1.3.3) (2025-03-08)
 
 ### Bug Fixes

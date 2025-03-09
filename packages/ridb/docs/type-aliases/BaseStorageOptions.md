@@ -8,7 +8,7 @@
 
 > **BaseStorageOptions**: `object`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:247
+Defined in: ridb-core/pkg/ridb\_core.d.ts:152
 
 ## Index Signature
 
