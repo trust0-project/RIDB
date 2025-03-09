@@ -227,7 +227,7 @@ impl Database {
             let version = schema.get_version();
             if version > 0 && !migration.is_undefined() {
                 let function = Reflect::get(&migration, &JsValue::from(version))
-                    .map_err(|e| JsValue::from(RIDBError::from(e)))?;
+                    .map_err(|e| RIDBError::from(e))?;
 
                 if function.is_undefined() {
                     Logger::debug("DB",&format!("Migration path undefined for collection: {}, version: {}", collection_string, version).into());

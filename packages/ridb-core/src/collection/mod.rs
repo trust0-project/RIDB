@@ -217,13 +217,7 @@ impl Collection {
     #[wasm_bindgen]
     pub async fn count(&self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, RIDBError> {
         let options = self.parse_query_options(options_js)?;
-        match self.storage.count(&self.name, query_js, options).await {
-            Ok(count) => Ok(count),
-            Err(e) => Err(
-                RIDBError::query(&format!("Failed to count documents: {:?}", e), 10)
-
-            )
-        }
+        self.storage.count(&self.name, query_js, options).await
     }
 
     /// Finds and returns a single document in the collection by its ID.
@@ -231,12 +225,7 @@ impl Collection {
     /// This function is asynchronous.
     #[wasm_bindgen(js_name="findById")]
     pub async fn find_by_id(&self, primary_key: JsValue) -> Result<JsValue, RIDBError>{
-        let document = match self.storage.find_document_by_id(&self.name, primary_key  ).await {
-            Ok(doc) => doc,
-            Err(e) => return Err(
-                RIDBError::query(&format!("Failed to find document by ID: {:?}", e), 11)
-            )
-        };
+        let document = self.storage.find_document_by_id(&self.name, primary_key  ).await?;
         if document.is_undefined() || document.is_null() {
             Ok(document)
         } else {
@@ -277,15 +266,7 @@ impl Collection {
             merge_docs
         ).await?;
         
-        let res = match self.storage.write(&self.name, processed_document).await {
-            Ok(result) => Ok(result),
-            Err(e) => Err(
-                JsValue::from(
-                    RIDBError::query(&format!("Failed to write document: {:?}", e), 11)
-                )
-            )
-        }?;
-
+        let res = self.storage.write(&self.name, processed_document).await?;
         self.storage.call(
             &self.name, 
             HookType::Recover,
@@ -308,17 +289,12 @@ impl Collection {
             HookType::Create,
             document
         ).await?;
-
         schema.validate_document(processed_document.clone())?;
-        let res = match self.storage.write(&self.name, processed_document).await {
-            Ok(result) => Ok(result),
-            Err(e) => Err(JsValue::from(RIDBError::query(&format!("Failed to write document: {:?}", e), 13)))
-        }?;
-
+        let res = self.storage.write(&self.name, processed_document).await?;
         self.storage.call(
             &self.name, 
             HookType::Recover,
-            res.clone()
+            res
         ).await
     }
 
@@ -327,14 +303,6 @@ impl Collection {
     /// This function is asynchronous.
     #[wasm_bindgen]
     pub async fn delete(&self, primary_key: JsValue) -> Result<JsValue, RIDBError> {
-        match self.storage.remove(&self.name, primary_key ).await {
-            Ok(res) => Ok(res),
-            Err(e) => Err(
-                RIDBError::query(
-                    &format!("Failed to delete document: {:?}", e),
-                    12
-                )
-            )
-        }
+        self.storage.remove(&self.name, primary_key ).await
     }
 }

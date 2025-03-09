@@ -1,15 +1,15 @@
-use wasm_bindgen::closure::Closure;
-use wasm_bindgen::JsValue;
+use crate::error::RIDBError;
 use crate::plugin::BasePlugin;
 use crate::schema::Schema;
-use js_sys::{Object, Reflect};
-use aes_gcm::{AeadCore, Aes256Gcm, KeyInit, Nonce};
 use aes_gcm::aead::{Aead, OsRng};
+use aes_gcm::{AeadCore, Aes256Gcm, KeyInit, Nonce};
+use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
+use getrandom::getrandom;
+use js_sys::{Object, Reflect};
 use pbkdf2::pbkdf2_hmac;
 use sha3::Sha3_256;
-use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
-use getrandom::getrandom;
-use crate::error::RIDBError;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::JsValue;
 
 #[derive(Clone)]
 pub struct EncryptionPlugin {
@@ -19,40 +19,28 @@ pub struct EncryptionPlugin {
 
 fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], RIDBError> {
     if password.is_empty() {
-        return Err(
-            RIDBError::validation(
-                "Password cannot be empty",
-                23
-            ).into()
-        );
+        return Err(RIDBError::validation("Password cannot be empty", 23).into());
     }
     let mut key = [0u8; 32];
     pbkdf2_hmac::<Sha3_256>(password.as_bytes(), salt, 5000, &mut key);
     Ok(key)
 }
 
-
 impl EncryptionPlugin {
-
     pub(crate) fn new(password: String) -> Result<EncryptionPlugin, RIDBError> {
         let base = BasePlugin::new("Encryption".to_string())?;
-        let plugin = EncryptionPlugin {
-            base,
-            password,
-        };
+        let plugin = EncryptionPlugin { base, password };
         let plugin_clone1 = plugin.clone();
         let plugin_clone2 = plugin.clone();
         let create_hook = Closure::wrap(Box::new(move |schema, migration, content| {
-            // Add logging for debugging
-            let result = plugin_clone1.clone().encrypt(schema, migration, content);
-            result
-        }) as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, RIDBError>>);
+            plugin_clone1.clone().encrypt(schema, migration, content)
+        })
+            as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, RIDBError>>);
 
         let recover_hook = Closure::wrap(Box::new(move |schema, migration, content| {
-            // Add logging for debugging
-            let result = plugin_clone2.clone().decrypt(schema, migration, content);
-            result
-        }) as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, RIDBError>>);
+            plugin_clone2.clone().decrypt(schema, migration, content)
+        })
+            as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, RIDBError>>);
 
         let mut plugin = plugin;
         plugin.base.doc_create_hook = create_hook.into_js_value();
@@ -60,7 +48,12 @@ impl EncryptionPlugin {
         Ok(plugin)
     }
 
-    pub(crate) fn encrypt(&self, schema_js: JsValue, migration: JsValue, content: JsValue) -> Result<JsValue, RIDBError> {
+    pub(crate) fn encrypt(
+        &self,
+        schema_js: JsValue,
+        migration: JsValue,
+        content: JsValue,
+    ) -> Result<JsValue, RIDBError> {
         // Handle both single object and array of objects
         if content.is_array() {
             let array = js_sys::Array::from(&content);
@@ -70,7 +63,7 @@ impl EncryptionPlugin {
                 match self.encrypt_single_document(schema_js.clone(), migration.clone(), item) {
                     Ok(encrypted_item) => {
                         encrypted_array.push(&encrypted_item);
-                    },
+                    }
                     Err(e) => return Err(e),
                 }
             }
@@ -81,31 +74,28 @@ impl EncryptionPlugin {
         }
     }
 
-    fn encrypt_single_document(&self, schema_js: JsValue, _migration: JsValue, content: JsValue) -> Result<JsValue, RIDBError> {
+    fn encrypt_single_document(
+        &self,
+        schema_js: JsValue,
+        _migration: JsValue,
+        content: JsValue,
+    ) -> Result<JsValue, RIDBError> {
         // Add validation for input parameters
         if schema_js.is_undefined() || schema_js.is_null() {
-            return Err(
-
-                    RIDBError::from("Schema cannot be null or undefined")
-
-            );
+            return Err(RIDBError::from("Schema cannot be null or undefined"));
         }
         if content.is_undefined() || content.is_null() {
-            return Err(
-                    RIDBError::from("Content cannot be null or undefined")
-            );
+            return Err(RIDBError::from("Content cannot be null or undefined"));
         }
 
         let schema = Schema::create(schema_js)?;
         let encrypted = schema.encrypted.unwrap_or_default();
-        
+
         // Validate content is an object
         if !content.is_object() {
-            return Err(
-                    RIDBError::from("Content must be an object")
-            );
+            return Err(RIDBError::from("Content must be an object"));
         }
-        
+
         // Early return if no fields to encrypt
         if encrypted.is_empty() {
             return Ok(content);
@@ -117,16 +107,14 @@ impl EncryptionPlugin {
 
         for field in encrypted {
             if schema.primary_key == field {
-                return Err(
-                        RIDBError::from("primary key must not be encrypted")
-                );
+                return Err(RIDBError::from("primary key must not be encrypted"));
             }
             if !schema.properties.contains_key(&field) {
-                return Err(
-                        RIDBError::from("encrypted field does not exist in the model")
-                );
+                return Err(RIDBError::from(
+                    "encrypted field does not exist in the model",
+                ));
             }
-            
+
             let property_key = JsValue::from(&field);
             if let Ok(property_value) = Reflect::get(&content_obj, &property_key) {
                 if !property_value.is_undefined() && !property_value.is_null() {
@@ -139,10 +127,16 @@ impl EncryptionPlugin {
 
         // Only perform encryption if there are actual fields to encrypt
         if has_encrypted_fields {
-            let serialized = js_sys::JSON::stringify(&encrypted_obj)
-                .map_err(|_| JsValue::from(RIDBError::from("Failed to stringify encrypted data")))?;
-            let serialized_bytes = serialized.as_string()
-                .ok_or_else(|| JsValue::from(RIDBError::from("Failed to convert serialized data to string")))?
+            let serialized = js_sys::JSON::stringify(&encrypted_obj).map_err(|_| {
+                JsValue::from(RIDBError::from("Failed to stringify encrypted data"))
+            })?;
+            let serialized_bytes = serialized
+                .as_string()
+                .ok_or_else(|| {
+                    JsValue::from(RIDBError::from(
+                        "Failed to convert serialized data to string",
+                    ))
+                })?
                 .as_bytes()
                 .to_vec();
 
@@ -176,38 +170,38 @@ impl EncryptionPlugin {
 
         Ok(JsValue::from(content_obj.clone()))
     }
-    
-    pub(crate) fn decrypt(&self, schema_js: JsValue, migration: JsValue, content: JsValue) -> Result<JsValue, RIDBError> {
-        
+
+    pub(crate) fn decrypt(
+        &self,
+        schema_js: JsValue,
+        migration: JsValue,
+        content: JsValue,
+    ) -> Result<JsValue, RIDBError> {
         // Add validation for input parameters
         if schema_js.is_undefined() || schema_js.is_null() {
-            return Err(
-                    RIDBError::from("Schema cannot be null or undefined")
-            );
+            return Err(RIDBError::from("Schema cannot be null or undefined"));
         }
         if content.is_undefined() || content.is_null() {
-            return Err(
-                    RIDBError::from("Content cannot be null or undefined")
-            );
+            return Err(RIDBError::from("Content cannot be null or undefined"));
         }
 
         // Handle both single object and array of objects
         if content.is_array() {
             let array = js_sys::Array::from(&content);
             let decrypted_array = js_sys::Array::new();
-            
+
             for i in 0..array.length() {
                 let item = array.get(i);
-                    match self.decrypt_single_document(schema_js.clone(), migration.clone(), item) {
-                        Ok(decrypted_item) => {
-                            decrypted_array.push(&decrypted_item);
-                        },
-                        Err(e) => {
-                            return Err(e);
-                        }
+                match self.decrypt_single_document(schema_js.clone(), migration.clone(), item) {
+                    Ok(decrypted_item) => {
+                        decrypted_array.push(&decrypted_item);
                     }
+                    Err(e) => {
+                        return Err(e);
+                    }
+                }
             }
-            
+
             Ok(decrypted_array.into())
         } else {
             // Handle single document
@@ -215,24 +209,23 @@ impl EncryptionPlugin {
         }
     }
 
-    fn decrypt_single_document(&self, schema_js: JsValue, _migration: JsValue, content: JsValue) -> Result<JsValue, RIDBError> {
+    fn decrypt_single_document(
+        &self,
+        schema_js: JsValue,
+        _migration: JsValue,
+        content: JsValue,
+    ) -> Result<JsValue, RIDBError> {
         // Validate content is an object
         if !content.is_object() {
-            return Err(
-                    RIDBError::from("Content must be an object")
-
-            );
+            return Err(RIDBError::from("Content must be an object"));
         }
 
         let content_obj = Object::from(content);
-        
+
         // Safe get of encrypted data
         let encrypted_data = match Reflect::get(&content_obj, &JsValue::from_str("__encrypted")) {
             Ok(data) => data,
-            Err(_) => return Err(
-                    RIDBError::from("Failed to read encrypted data")
-
-            ),
+            Err(_) => return Err(RIDBError::from("Failed to read encrypted data")),
         };
 
         if encrypted_data.is_undefined() {
@@ -248,15 +241,13 @@ impl EncryptionPlugin {
         }
 
         // Get the encrypted data string with better error handling
-        let encrypted_str = encrypted_data
-            .as_string()
-            .ok_or_else(|| JsValue::from(RIDBError::from("Invalid encrypted data: expected string")))?;
+        let encrypted_str = encrypted_data.as_string().ok_or_else(|| {
+            JsValue::from(RIDBError::from("Invalid encrypted data: expected string"))
+        })?;
 
         // Add minimum length check for base64 data
         if encrypted_str.is_empty() {
-            return Err(
-                    RIDBError::from("Encrypted data is empty")
-            );
+            return Err(RIDBError::from("Encrypted data is empty"));
         }
 
         // Decode base64
@@ -265,9 +256,7 @@ impl EncryptionPlugin {
             .map_err(|_| JsValue::from(RIDBError::from("Invalid base64 data")))?;
 
         if decoded.len() < 28 {
-            return Err(
-                    RIDBError::from("Invalid encrypted data length")
-            );
+            return Err(RIDBError::from("Invalid encrypted data length"));
         }
 
         // Split salt, nonce, and ciphertext
@@ -285,8 +274,8 @@ impl EncryptionPlugin {
             .decrypt(nonce, ciphertext)
             .map_err(|_| RIDBError::authentication("Decryption failed", 1))?;
 
-        let decrypted_str = String::from_utf8(decrypted_data)
-            .map_err(|_| RIDBError::from("Invalid UTF-8 data"))?;
+        let decrypted_str =
+            String::from_utf8(decrypted_data).map_err(|_| RIDBError::from("Invalid UTF-8 data"))?;
 
         // Parse the decrypted JSON string back into a JS object
         let encrypted_obj = js_sys::JSON::parse(&decrypted_str)
@@ -294,7 +283,7 @@ impl EncryptionPlugin {
 
         // Remove the encrypted field
         Reflect::delete_property(&content_obj, &JsValue::from_str("__encrypted"))?;
-        
+
         // Merge the decrypted fields back into the content
         for field in encrypted {
             let key = JsValue::from(field);
@@ -329,7 +318,7 @@ mod tests {
             }
         }"#;
         let schema_value = JSON::parse(schema_js).unwrap();
-        
+
         // Create test content
         let content_js = r#"{
             "id": "123",
@@ -339,14 +328,22 @@ mod tests {
 
         // Test encryption
         let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
-        let encrypted = plugin.encrypt(schema_value.clone(), JsValue::NULL, content.clone()).unwrap();
-        
+        let encrypted = plugin
+            .encrypt(schema_value.clone(), JsValue::NULL, content.clone())
+            .unwrap();
+
         // Verify encrypted field is removed and replaced with encrypted data
-        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret")).unwrap().is_undefined());
-        assert!(!Reflect::get(&encrypted, &JsValue::from_str("__encrypted")).unwrap().is_undefined());
+        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret"))
+            .unwrap()
+            .is_undefined());
+        assert!(!Reflect::get(&encrypted, &JsValue::from_str("__encrypted"))
+            .unwrap()
+            .is_undefined());
 
         // Test decryption
-        let decrypted = plugin.decrypt(schema_value, JsValue::NULL, encrypted).unwrap();
+        let decrypted = plugin
+            .decrypt(schema_value, JsValue::NULL, encrypted)
+            .unwrap();
         let secret = Reflect::get(&decrypted, &JsValue::from_str("secret")).unwrap();
         assert_eq!(secret.as_string().unwrap(), "sensitive data");
     }
@@ -387,8 +384,10 @@ mod tests {
         let content = JSON::parse(r#"{"id": "123", "name": "test"}"#).unwrap();
 
         let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
-        let result = plugin.encrypt(schema_value.clone(), JsValue::NULL, content.clone()).unwrap();
-        
+        let result = plugin
+            .encrypt(schema_value.clone(), JsValue::NULL, content.clone())
+            .unwrap();
+
         // Content should remain unchanged
         assert_eq!(
             JSON::stringify(&result).unwrap(),
@@ -410,7 +409,7 @@ mod tests {
             }
         }"#;
         let schema_value = JSON::parse(schema_js).unwrap();
-        
+
         let content_js = r#"{
             "id": "123",
             "secret1": "sensitive data",
@@ -419,14 +418,22 @@ mod tests {
         let content = JSON::parse(content_js).unwrap();
 
         let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
-        let encrypted = plugin.encrypt(schema_value.clone(), JsValue::NULL, content).unwrap();
-        
+        let encrypted = plugin
+            .encrypt(schema_value.clone(), JsValue::NULL, content)
+            .unwrap();
+
         // Verify both fields are removed
-        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret1")).unwrap().is_undefined());
-        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret2")).unwrap().is_undefined());
-        
+        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret1"))
+            .unwrap()
+            .is_undefined());
+        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret2"))
+            .unwrap()
+            .is_undefined());
+
         // Verify decryption restores both fields
-        let decrypted = plugin.decrypt(schema_value, JsValue::NULL, encrypted).unwrap();
+        let decrypted = plugin
+            .decrypt(schema_value, JsValue::NULL, encrypted)
+            .unwrap();
         assert_eq!(
             Reflect::get(&decrypted, &JsValue::from_str("secret1"))
                 .unwrap()
@@ -460,7 +467,7 @@ mod tests {
             }
         }"#;
         let schema_value = JSON::parse(schema_js).unwrap();
-        
+
         let content_js = r#"{
             "id": "123",
             "string_field": "test",
@@ -472,8 +479,12 @@ mod tests {
         let content = JSON::parse(content_js).unwrap();
 
         let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
-        let encrypted = plugin.encrypt(schema_value.clone(), JsValue::NULL, content.clone()).unwrap();
-        let decrypted = plugin.decrypt(schema_value, JsValue::NULL, encrypted).unwrap();
+        let encrypted = plugin
+            .encrypt(schema_value.clone(), JsValue::NULL, content.clone())
+            .unwrap();
+        let decrypted = plugin
+            .decrypt(schema_value, JsValue::NULL, encrypted)
+            .unwrap();
 
         // Verify all fields are correctly restored
         assert_eq!(
@@ -499,7 +510,9 @@ mod tests {
 
         // Encrypt with one password
         let plugin1 = EncryptionPlugin::new("password1".to_string()).unwrap();
-        let encrypted = plugin1.encrypt(schema_value.clone(), JsValue::NULL, content).unwrap();
+        let encrypted = plugin1
+            .encrypt(schema_value.clone(), JsValue::NULL, content)
+            .unwrap();
 
         // Try to decrypt with different password
         let plugin2 = EncryptionPlugin::new("password2".to_string()).unwrap();
@@ -520,7 +533,7 @@ mod tests {
     //         }
     //     }"#;
     //     let schema_value = JSON::parse(schema_js).unwrap();
-        
+
     //     // Create content with corrupted encrypted data
     //     let content = JSON::parse(r#"{
     //         "id": "123",
@@ -548,8 +561,10 @@ mod tests {
         let content = JSON::parse(r#"{"id": "123", "data": "test"}"#).unwrap();
 
         let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
-        let result = plugin.encrypt(schema_value.clone(), JsValue::NULL, content.clone()).unwrap();
-        
+        let result = plugin
+            .encrypt(schema_value.clone(), JsValue::NULL, content.clone())
+            .unwrap();
+
         // Content should remain unchanged
         assert_eq!(
             JSON::stringify(&result).unwrap(),
@@ -600,14 +615,22 @@ mod tests {
 
         // Test encryption
         let plugin = EncryptionPlugin::new("test_password".to_string()).unwrap();
-        let encrypted = plugin.encrypt(schema_value.clone(), JsValue::NULL, content.clone()).unwrap();
+        let encrypted = plugin
+            .encrypt(schema_value.clone(), JsValue::NULL, content.clone())
+            .unwrap();
 
         // Verify encrypted field is removed and replaced with encrypted data
-        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret")).unwrap().is_undefined());
-        assert!(!Reflect::get(&encrypted, &JsValue::from_str("__encrypted")).unwrap().is_undefined());
+        assert!(Reflect::get(&encrypted, &JsValue::from_str("secret"))
+            .unwrap()
+            .is_undefined());
+        assert!(!Reflect::get(&encrypted, &JsValue::from_str("__encrypted"))
+            .unwrap()
+            .is_undefined());
 
         // Test decryption
-        let decrypted = plugin.decrypt(schema_value, JsValue::NULL, encrypted).unwrap();
+        let decrypted = plugin
+            .decrypt(schema_value, JsValue::NULL, encrypted)
+            .unwrap();
         let secret = Reflect::get(&decrypted, &JsValue::from_str("secret")).unwrap();
         assert_eq!(secret.as_string().unwrap(), "sensitive data");
     }

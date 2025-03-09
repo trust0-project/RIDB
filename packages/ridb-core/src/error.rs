@@ -13,7 +13,7 @@ pub enum Errors {
     AuthenticationError,
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen(inspectable)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RIDBError {
     pub(crate) err_type: String,
@@ -23,6 +23,20 @@ pub struct RIDBError {
 
 #[wasm_bindgen]
 impl RIDBError {
+
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        err_type: String,
+        message: String,
+        code: u32
+    ) -> RIDBError {
+        RIDBError {
+            err_type,
+            message,
+            code
+        }
+    }
+
     #[wasm_bindgen(getter, js_name=type)]
     pub fn get_type(&self) -> String {
         self.err_type.to_string()

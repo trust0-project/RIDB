@@ -154,11 +154,7 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
         console.error('[Worker] Error:', err);
         port.postMessage({
             status: 'error',
-            data: {
-                code: (err as any).code,
-                type: (err as any).type,
-                message: (err as any).message,
-            },
+            data: (err as any).toJSON(),
             action,
             requestId,
         });
