@@ -6,7 +6,7 @@
 
 # Class: `abstract` StorageInternal\<Schemas\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:683
+Defined in: ridb-core/pkg/ridb\_core.d.ts:683
 
 ## Extended by
 
@@ -22,7 +22,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:683
 
 > **new StorageInternal**\<`Schemas`\>(`name`, `schemas`): [`StorageInternal`](StorageInternal.md)\<`Schemas`\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:684
+Defined in: ridb-core/pkg/ridb\_core.d.ts:684
 
 #### Parameters
 
@@ -44,7 +44,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:684
 
 > `abstract` **close**(): `Promise`\<`void`\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:689
+Defined in: ridb-core/pkg/ridb\_core.d.ts:689
 
 #### Returns
 
@@ -56,7 +56,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:689
 
 > `abstract` **count**(`colectionName`, `query`, `options`?): `Promise`\<`number`\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:690
+Defined in: ridb-core/pkg/ridb\_core.d.ts:690
 
 #### Parameters
 
@@ -82,7 +82,7 @@ keyof `Schemas`
 
 > `abstract` **find**(`collectionName`, `query`, `options`?): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>[]\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:699
+Defined in: ridb-core/pkg/ridb\_core.d.ts:699
 
 #### Parameters
 
@@ -108,7 +108,7 @@ keyof `Schemas`
 
 > `abstract` **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:695
+Defined in: ridb-core/pkg/ridb\_core.d.ts:695
 
 #### Parameters
 
@@ -130,7 +130,7 @@ keyof `Schemas`
 
 > `abstract` **start**(): `Promise`\<`void`\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:688
+Defined in: ridb-core/pkg/ridb\_core.d.ts:688
 
 #### Returns
 
@@ -142,7 +142,7 @@ Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:688
 
 > `abstract` **write**(`op`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:704
+Defined in: ridb-core/pkg/ridb\_core.d.ts:704
 
 #### Parameters
 

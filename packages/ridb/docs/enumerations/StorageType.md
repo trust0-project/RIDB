@@ -6,7 +6,7 @@
 
 # Enumeration: StorageType
 
-Defined in: [src/index.ts:123](https://github.com/trust0-project/RIDB/blob/966e8f82d6216edecd1701540589d24a4ad572f8/packages/ridb/src/index.ts#L123)
+Defined in: [ridb/src/index.ts:123](https://github.com/trust0-project/RIDB/blob/934a985e11b05b646d6653d7f479a4358cad8c68/packages/ridb/src/index.ts#L123)
 
 ## Enumeration Members
 
@@ -14,7 +14,7 @@ Defined in: [src/index.ts:123](https://github.com/trust0-project/RIDB/blob/966e8
 
 > **IndexDB**: `"IndexDB"`
 
-Defined in: [src/index.ts:125](https://github.com/trust0-project/RIDB/blob/966e8f82d6216edecd1701540589d24a4ad572f8/packages/ridb/src/index.ts#L125)
+Defined in: [ridb/src/index.ts:125](https://github.com/trust0-project/RIDB/blob/934a985e11b05b646d6653d7f479a4358cad8c68/packages/ridb/src/index.ts#L125)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [src/index.ts:125](https://github.com/trust0-project/RIDB/blob/966e8
 
 > **InMemory**: `"InMemory"`
 
-Defined in: [src/index.ts:124](https://github.com/trust0-project/RIDB/blob/966e8f82d6216edecd1701540589d24a4ad572f8/packages/ridb/src/index.ts#L124)
+Defined in: [ridb/src/index.ts:124](https://github.com/trust0-project/RIDB/blob/934a985e11b05b646d6653d7f479a4358cad8c68/packages/ridb/src/index.ts#L124)
