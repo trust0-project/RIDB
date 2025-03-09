@@ -8,7 +8,7 @@
 
 > **SchemaType**: `object`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:369
+Defined in: ridb-core/pkg/ridb\_core.d.ts:392
 
 Represents the type definition for a schema.
 

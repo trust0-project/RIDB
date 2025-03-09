@@ -7,6 +7,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen_test::wasm_bindgen_test;
 use crate::schema::Schema;
 use js_sys::Reflect;
+use crate::error::RIDBError;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -56,12 +57,12 @@ pub struct Query {
 #[wasm_bindgen]
 impl Query {
     #[wasm_bindgen(constructor)]
-    pub fn new(query: JsValue, schema: Schema) -> Result<Query, JsValue> {
+    pub fn new(query: JsValue, schema: Schema) -> Result<Query, RIDBError> {
         Ok(Query { query, schema })
     }
 
     #[wasm_bindgen(getter, js_name="query")]
-    pub fn get_query(&self) -> Result<JsValue, JsValue> {
+    pub fn get_query(&self) -> Result<JsValue, RIDBError> {
         // Normalize the query
         let normalized_query = self.normalize_query(&self.query)?;
         Ok(normalized_query)
@@ -69,7 +70,7 @@ impl Query {
 
     /// Returns the schema properties (fields) that are used in the query.
     /// The query may contain operators like $and, $or, $gt, $lt, etc.
-    pub fn get_properties(&self) -> Result<Vec<String>, JsValue> {
+    pub fn get_properties(&self) -> Result<Vec<String>, RIDBError> {
         let mut properties = Vec::new();
 
         fn collect_properties(value: &JsValue, props: &mut Vec<String>) -> Result<(), JsValue> {
@@ -109,7 +110,7 @@ impl Query {
         Ok(properties)
     }
 
-    fn normalize_query(&self, query: &JsValue) -> Result<JsValue, JsValue> {
+    fn normalize_query(&self, query: &JsValue) -> Result<JsValue, RIDBError> {
         // 1) If it's an array, normalize each item and wrap them into an $and
         if query.is_array() {
             let arr = Array::from(query);
@@ -142,7 +143,10 @@ impl Query {
                 if key == "$and" || key == "$or" {
                     // Process the logical operator array
                     if !Array::is_array(&value) {
-                        return Err(JsValue::from_str(&format!("{} must be an array", key)));
+                        return Err(
+                                RIDBError::from(format!("{} must be an array", key))
+                    
+                        );
                     }
                     let arr = Array::from(&value);
                     let processed_arr = Array::new();
@@ -173,17 +177,22 @@ impl Query {
             }
         } else {
             // If it's neither an array nor an object, reject
-            Err(JsValue::from_str("Query must be an object or an array at the top level"))
+            Err(
+                    RIDBError::from("Query must be an object or an array at the top level")
+                
+            )
         }
     }
 
-    pub fn parse(&self) -> Result<JsValue, JsValue> {
+    pub fn parse(&self) -> Result<JsValue, RIDBError> {
         self.process_query(&self.query)
     }
 
-     fn extract_schema_properties(&self, properties_jsvalue: &JsValue) -> Result<HashMap<String, String>, JsValue> {
+     fn extract_schema_properties(&self, properties_jsvalue: &JsValue) -> Result<HashMap<String, String>, RIDBError> {
         if !properties_jsvalue.is_object() {
-            return Err(JsValue::from_str("Properties is not an object"));
+            return Err(
+                    RIDBError::validation("Properties is not an object", 0)
+            );
         }
         let mut properties = HashMap::new();
         let keys = Object::keys(&Object::from(properties_jsvalue.clone()));
@@ -191,23 +200,35 @@ impl Query {
         for key in keys {
             let value = Reflect::get(properties_jsvalue, &key)?;
             if !value.is_object() {
-                return Err(JsValue::from_str(&format!("Property '{}' is not an object", key.as_string().unwrap())));
+                return Err(
+                        RIDBError::validation(
+                            format!("Property '{}' is not an object", key.as_string().unwrap()).as_str(),
+                            0
+                        )
+                );
             }
             let prop_type = Reflect::get(&value, &JsValue::from_str("type"))?;
             if prop_type.is_string() {
                 properties.insert(key.as_string().unwrap(), prop_type.as_string().unwrap());
             } else {
-                return Err(JsValue::from_str(&format!("Property '{}' does not have a 'type' field", key.as_string().unwrap())));
+                return Err(
+                        RIDBError::validation(
+                            format!("Property '{}' does not have a 'type' field", key.as_string().unwrap()).as_str(),
+                            0
+                        )
+                );
             }
         }
         Ok(properties)
     }
 
-    pub fn process_query(&self, query: &JsValue) -> Result<JsValue, JsValue> {
+    pub fn process_query(&self, query: &JsValue) -> Result<JsValue, RIDBError> {
         let properties_jsvalue = self.schema.get_properties()?;
         let properties = self.extract_schema_properties(&properties_jsvalue)?;
         if !query.is_object() {
-            return Err(JsValue::from_str("Query must be an object"));
+            return Err(
+                    RIDBError::validation("Query must be an object", 0)
+            );
         }
         let result = Object::new();
         let keys = Object::keys(&Object::from(query.clone()));
@@ -216,7 +237,12 @@ impl Query {
             let value = Reflect::get(query, &JsValue::from_str(&key))?;
             if key == "$and" || key == "$or" {
                 if !Array::is_array(&value) {
-                    return Err(JsValue::from_str(&format!("{} must be an array", key)));
+                    return Err(
+                            RIDBError::validation(
+                                format!("{} must be an array", key).as_str(),
+                                0
+                            )
+                    );
                 }
                 let arr = Array::from(&value);
                 let processed_arr = Array::new();
@@ -235,10 +261,20 @@ impl Query {
                         let processed_value = self.process_value(&value, property_type)?;
                         Reflect::set(&result, &JsValue::from_str(&key), &processed_value)?;
                     } else {
-                        return Err(JsValue::from_str(&format!("Invalid property: {} does not exist", key)));
+                        return Err(
+                                RIDBError::validation(
+                                    format!("Invalid property: {} does not exist", key).as_str(),
+                                    0
+                                )
+                        );
                     }
                 } else {
-                    return Err(JsValue::from_str(&format!("Invalid property: {} does not exist", key)));
+                    return Err(
+                            RIDBError::validation(
+                                format!("Invalid property: {} does not exist", key).as_str(),
+                                0
+                            )
+                    );
                 }
             }
         }
@@ -249,7 +285,7 @@ impl Query {
         )
     }
 
-    fn process_value(&self, value: &JsValue, property_type: &str) -> Result<JsValue, JsValue> {
+    fn process_value(&self, value: &JsValue, property_type: &str) -> Result<JsValue, RIDBError> {
         if value.is_object() && !Array::is_array(value) {
             // Value is an object, process operators
             let result = Object::new();
@@ -262,7 +298,12 @@ impl Query {
                     self.validate_operator_value(&key, &val, property_type)?;
                     Reflect::set(&result, &JsValue::from_str(&key), &val)?;
                 } else {
-                    return Err(JsValue::from_str(&format!("Invalid operator: {}", key)));
+                    return Err(
+                            RIDBError::validation(
+                                format!("Invalid operator: {}", key).as_str(),
+                                0
+                            )
+                    );
                 }
             }
             Ok(result.into())
@@ -273,7 +314,7 @@ impl Query {
         }
     }
 
-    fn validate_operator_value(&self, operator: &str, value: &JsValue, property_type: &str) -> Result<(), JsValue> {
+    fn validate_operator_value(&self, operator: &str, value: &JsValue, property_type: &str) -> Result<(), RIDBError> {
         match operator {
             "$eq" => {
                 self.validate_value(value, property_type)?;
@@ -285,7 +326,12 @@ impl Query {
             }
             "$in" => {
                 if !Array::is_array(value) {
-                    return Err(JsValue::from_str(&format!("{} operator requires an array", operator)));
+                    return Err(
+                            RIDBError::validation(
+                                format!("{} operator requires an array", operator).as_str(),
+                                0
+                            )
+                    );
                 }
                 let arr = Array::from(value);
                 for i in 0..arr.length() {
@@ -296,7 +342,12 @@ impl Query {
             }
             "$nin" => {
                 if !Array::is_array(value) {
-                    return Err(JsValue::from_str(&format!("{} operator requires an array", operator)));
+                    return Err(
+                            RIDBError::validation(
+                                format!("{} operator requires an array", operator).as_str(),
+                                0
+                            )
+                    );
                 }
                 let arr = Array::from(value);
                 for i in 0..arr.length() {
@@ -309,36 +360,52 @@ impl Query {
                 self.validate_value(value, property_type)
             }
             _ => {
-                Err(JsValue::from_str(&format!("Unsupported operator: {}", operator)))
+                Err(
+                        RIDBError::validation(
+                            format!("Unsupported operator: {}", operator).as_str(),
+                            0
+                        )
+                )
             },
         }
     }
 
-    fn validate_value(&self, value: &JsValue, property_type: &str) -> Result<(), JsValue> {
+    fn validate_value(&self, value: &JsValue, property_type: &str) -> Result<(), RIDBError> {
         match property_type {
             "number" => {
                 if value.as_f64().is_some() {
                     Ok(())
                 } else {
-                    Err(JsValue::from_str("Expected a number"))
-                }
+                    Err(
+                            RIDBError::validation("Expected a number", 0)
+                    )
+                }   
             }
             "string" => {
                 if value.is_string() {
                     Ok(())
                 } else {
-                    Err(JsValue::from_str("Expected a string"))
+                    Err(
+                            RIDBError::validation("Expected a string", 0)
+                    )
                 }
             }
             "boolean" => {
                 if value.is_truthy() || value.is_falsy() {
                     Ok(())
                 } else {
-                    Err(JsValue::from_str("Expected a boolean"))
+                    Err(
+                            RIDBError::validation("Expected a boolean", 0)
+                    )
                 }
             }
             _ => {
-                Err(JsValue::from_str(&format!("Unsupported property type: {}", property_type)))
+                Err(
+                        RIDBError::validation(
+                            format!("Unsupported property type: {}", property_type).as_str(),
+                            0
+                        )
+                )
             },
         }
     }
@@ -353,14 +420,19 @@ impl Query {
     ///   let val = query.get("age")?;
     ///   // val is a JsValue that might be a number, string, boolean, array, or object (e.g., { "$gt": 30 })
     #[wasm_bindgen(js_name = "get")]
-    pub fn get(&self, property_name: &str) -> Result<JsValue, JsValue> {
+    pub fn get(&self, property_name: &str) -> Result<JsValue, RIDBError> {
         let normalized = self.get_query()?;
         match Self::find_property_value(&normalized, property_name) {
             Some(val) => Ok(val),
-            None => Err(JsValue::from_str(&format!(
-                "Property '{}' not found in query",
-                property_name
-            ))),
+            None => Err(
+                    RIDBError::validation(
+                        format!(
+                            "Property '{}' not found in query",
+                            property_name
+                        ).as_str(),
+                        0
+                    )
+            ),
         }
     }
 }
@@ -758,10 +830,10 @@ fn test_query_parse_operator_wrong_type() {
 
     let result = query.parse();
     assert!(result.is_err());
-    assert_eq!(
-        result.err().unwrap().as_string().unwrap(),
-        "Expected a number"
-    );
+
+    let error_js = result.err().unwrap();
+    let ridb_err = RIDBError::from(error_js);
+    assert_eq!(ridb_err.get_message(), "Validation Error: Expected a number");
 }
 
 #[wasm_bindgen_test]
@@ -820,10 +892,10 @@ fn test_query_parse_in_operator_wrong_type() {
 
     let result = query.parse();
     assert!(result.is_err());
-    assert_eq!(
-        result.err().unwrap().as_string().unwrap(),
-        "Expected a number"
-    );
+
+    let error_js = result.err().unwrap();
+    let ridb_err = RIDBError::from(error_js);
+    assert_eq!(ridb_err.get_message(), "Validation Error: Expected a number");
 }
 
 #[wasm_bindgen_test]
@@ -1112,10 +1184,10 @@ fn test_query_parse_non_object_query() {
 
     let result = query.parse();
     assert!(result.is_err());
-    assert_eq!(
-        result.err().unwrap().as_string().unwrap(),
-        "Query must be an object"
-    );
+
+    let error_js = result.err().unwrap();
+    let ridb_err = RIDBError::from(error_js);
+    assert_eq!(ridb_err.get_message(), "Validation Error: Query must be an object");
 }
 
 #[wasm_bindgen_test]
@@ -1162,10 +1234,10 @@ fn test_query_parse_invalid_in_operator() {
 
     let result = query.parse();
     assert!(result.is_err());
-    assert_eq!(
-        result.err().unwrap().as_string().unwrap(),
-        "$in operator requires an array"
-    );
+
+    let error_js = result.err().unwrap();
+    let ridb_err = RIDBError::from(error_js);
+    assert_eq!(ridb_err.get_message(), "Validation Error: $in operator requires an array");
 }
 
 #[wasm_bindgen_test]
@@ -1246,10 +1318,10 @@ fn test_query_parse_nin_operator_wrong_type() {
 
     let result = query.parse();
     assert!(result.is_err(), "Parsing query with $nin operator on wrong value types should fail.");
-    assert_eq!(
-        result.err().unwrap().as_string().unwrap(),
-        "Expected a number"
-    );
+
+    let error_js = result.err().unwrap();
+    let ridb_err = RIDBError::from(error_js);
+    assert_eq!(ridb_err.get_message(), "Validation Error: Expected a number");
 }
 
 #[wasm_bindgen_test]
@@ -1278,7 +1350,7 @@ fn test_query_parse_eq_operator() {
     let query = Query::new(query_js_value, schema).unwrap();
 
     let result = query.parse();
-    assert!(result.is_ok(), "Parsing query with $eq should succeed for correct types.");
+    assert!(result.is_ok(), "Validation Error: Parsing query with $eq should succeed for correct types.");
 }
 
 #[wasm_bindgen_test]
@@ -1308,10 +1380,10 @@ fn test_query_parse_eq_operator_wrong_type() {
 
     let result = query.parse();
     assert!(result.is_err(), "Parsing query with $eq operator on wrong value types should fail.");
-    assert_eq!(
-        result.err().unwrap().as_string().unwrap(),
-        "Expected a number"
-    );
+
+    let error_js = result.err().unwrap();
+    let ridb_err = RIDBError::from(error_js);
+    assert_eq!(ridb_err.get_message(), "Validation Error: Expected a number");
 }
 
 #[wasm_bindgen_test]
@@ -1340,7 +1412,7 @@ fn test_query_parse_ne_operator() {
     let query = Query::new(query_js_value, schema).unwrap();
 
     let result = query.parse();
-    assert!(result.is_ok(), "Parsing query with $ne should succeed for correct types.");
+    assert!(result.is_ok(), "Validation Error: Parsing query with $ne should succeed for correct types.");
 }
 
 #[wasm_bindgen_test]
@@ -1369,9 +1441,9 @@ fn test_query_parse_ne_operator_wrong_type() {
     let query = Query::new(query_js_value, schema).unwrap();
 
     let result = query.parse();
-    assert!(result.is_err(), "Parsing query with $ne operator on wrong value types should fail.");
-    assert_eq!(
-        result.err().unwrap().as_string().unwrap(),
-        "Expected a number"
-    );
+    assert!(result.is_err(), "Validation Error: Parsing query with $ne operator on wrong value types should fail.");
+
+    let error_js = result.err().unwrap();
+    let ridb_err = RIDBError::from(error_js);
+    assert_eq!(ridb_err.get_message(), "Validation Error: Expected a number");
 }

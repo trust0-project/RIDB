@@ -147,7 +147,7 @@ pub struct Database {
 impl Database {
 
     #[wasm_bindgen(js_name = "start")]
-    pub async fn start(&mut self) -> Result<JsValue, JsValue> {
+    pub async fn start(&mut self) -> Result<JsValue, RIDBError> {
         Logger::debug("DB", &"Starting the database...".into());
         if !self.started {
             let res = self.storage.internal.start().await?;
@@ -160,7 +160,7 @@ impl Database {
     }
 
     #[wasm_bindgen(js_name = "close")]
-    pub async fn close(mut self) -> Result<JsValue, JsValue> {
+    pub async fn close(mut self) -> Result<JsValue, RIDBError> {
         Logger::debug("DB",&"Closing the database...".into());
         let res = self.storage.internal.close().await;
         self.started = false;
@@ -181,7 +181,7 @@ impl Database {
     ///
     /// * `Result<Object, JsValue>` - A result containing an `Object` with the collections or an error.
     #[wasm_bindgen(getter)]
-    pub fn collections(&self) -> Result<Object, JsValue> {
+    pub fn collections(&self) -> Result<Object, RIDBError> {
         Logger::debug("DB",&"Retrieving collections...".into());
         let object = Object::new();
         for (key, _) in self.storage.schemas.iter() {
@@ -210,7 +210,7 @@ impl Database {
         module: RIDBModule,
         password: Option<String>,
         storage: Option<StorageExternal>
-    ) -> Result<Database, JsValue> {
+    ) -> Result<Database, RIDBError> {
 
         Logger::debug("DB",&format!("Creating database: {}", db_name).into());
         let mut schemas: HashMap<String, Schema> = HashMap::new();
@@ -227,21 +227,21 @@ impl Database {
             let version = schema.get_version();
             if version > 0 && !migration.is_undefined() {
                 let function = Reflect::get(&migration, &JsValue::from(version))
-                    .map_err(|e| RIDBError::from(e))?;
+                    .map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
                 if function.is_undefined() {
                     Logger::debug("DB",&format!("Migration path undefined for collection: {}, version: {}", collection_string, version).into());
                     return Err(
-                        JsValue::from(
-                            format!("Required Schema {} migration path {} to not be undefined", collection_string, version)
+                        RIDBError::validation(
+                            format!("Required Schema {} migration path {} to not be undefined", collection_string, version).as_str(),
+                            20
                         )
-                    )
+                    );
                 }
             }
 
             schemas.insert(collection_string.clone(), schema.clone());
             migrations.insert(collection_string.clone(), migration);
-
         }
 
 
@@ -338,7 +338,7 @@ mod tests {
                 InMemory::create("test-db", records_obj)
                     .await
                     .map(|storage| JsValue::from(storage))
-                    .map_err(|e| e)
+                    .map_err(|e| JsValue::from(RIDBError::from(e)))
             })
         }) as Box<dyn FnMut(JsValue) -> js_sys::Promise>);
       
@@ -414,7 +414,7 @@ mod tests {
                 IndexDB::create("test-db", records_obj)
                     .await
                     .map(|storage| JsValue::from(storage))
-                    .map_err(|e| e)
+                    .map_err(|e| JsValue::from(RIDBError::from(e)))
             })
         }) as Box<dyn FnMut(JsValue) -> js_sys::Promise>);
       

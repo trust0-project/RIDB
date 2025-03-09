@@ -154,7 +154,11 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
         console.error('[Worker] Error:', err);
         port.postMessage({
             status: 'error',
-            data: `Error: ${(err as Error).message}`,
+            data: {
+                code: (err as any).code,
+                type: (err as any).type,
+                message: (err as any).message,
+            },
             action,
             requestId,
         });
@@ -170,7 +174,6 @@ _self.onconnect = (connectEvent: MessageEvent) => {
 
     // For each new port, handle all incoming messages via our main handler.
     port.onmessage = (e: MessageEvent) => handleMessage(e, port);
-
     // In older browsers, needed to begin listening.
     port.start();
 };

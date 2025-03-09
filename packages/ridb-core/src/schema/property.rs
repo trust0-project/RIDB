@@ -133,9 +133,13 @@ impl Property {
                 let min = self.min_length.unwrap_or_else(|| 0);
                 let max = self.max_length.unwrap_or_else(|| -1);
                 if min < 0 {
-                    Err(RIDBError::validation("Min property not valid"))
+                    Err(
+                            RIDBError::validation("Min property not valid", 21)
+                    )
                 } else if min > max && max >= 1 {
-                    Err(RIDBError::validation("Min higher than max"))
+                    Err(
+                            RIDBError::validation("Min higher than max", 22)
+                    )
                 } else {
                     Ok(true)
                 }
@@ -150,29 +154,43 @@ impl Property {
                             let min = self.min_items.unwrap_or_else(|| 0);
                             let max = self.max_items.unwrap_or_else(|| -1);
                             if min < 0 {
-                                Err(RIDBError::validation("Min property not valid"))
+                                Err(
+                                        RIDBError::validation("Min property not valid", 23)
+                                )
                             } else if min > max && max >= 1 {
-                                Err(RIDBError::validation("Min higher than max"))
+                                Err(
+                                        RIDBError::validation("Min higher than max", 24)
+                                )
                             } else {
                                 Ok(true)
                             }
                         },
-                        false => Err(RIDBError::validation("Items property not valid"))
+                        false => Err(
+                                RIDBError::validation("Items property not valid", 25)
+                        )
                     }
                 },
-                None => Err(RIDBError::validation("Items is empty"))
+                None => Err(
+                        RIDBError::validation("Items is empty", 26)
+                )
             },
             PropertyType::Object => match self.clone().properties {
                 Some(props) => {
                     if props.len() > 0 {
                         Ok(true)
                     } else {
-                        Err(RIDBError::validation("Properties empty"))
+                        Err(
+                                RIDBError::validation("Properties empty", 27)
+                        )
                     }
                 },
-                _ => Err(RIDBError::validation("Properties empty"))
+                _ => Err(
+                        RIDBError::validation("Properties empty", 28)
+                )
             },
-            _ => Err(RIDBError::validation("Property type invalid"))
+            _ => Err(
+                    RIDBError::validation("Property type invalid", 29)
+            )
         }
     }
     /// Retrieves the type of the property.
@@ -191,7 +209,7 @@ impl Property {
     ///
     /// * `Result<JsValue, JsValue>` - A result containing the items as a `JsValue` or an error.
     #[wasm_bindgen(getter)]
-    pub fn items(&self) -> Result<JsValue, JsValue> {
+    pub fn items(&self) -> Result<JsValue, RIDBError> {
         Ok(to_value(&self.items).map_err(|e| JsValue::from(RIDBError::from(e)))?)
     }
 
@@ -201,7 +219,7 @@ impl Property {
     ///
     /// * `Result<JsValue, JsValue>` - A result containing the maximum number of items as a `JsValue` or an error.
     #[wasm_bindgen(getter, js_name = "maxItems")]
-    pub fn max_items(&self) -> Result<JsValue, JsValue> {
+    pub fn max_items(&self) -> Result<JsValue, RIDBError> {
         Ok(to_value(&self.max_items).map_err(|e| JsValue::from(RIDBError::from(e)))?)
     }
 
@@ -211,7 +229,7 @@ impl Property {
     ///
     /// * `Result<JsValue, JsValue>` - A result containing the minimum number of items as a `JsValue` or an error.
     #[wasm_bindgen(getter, js_name = "minItems")]
-    pub fn min_items(&self) -> Result<JsValue, JsValue> {
+    pub fn min_items(&self) -> Result<JsValue, RIDBError> {
         Ok(to_value(&self.min_items).map_err(|e| JsValue::from(RIDBError::from(e)))?)
     }
 
@@ -221,7 +239,7 @@ impl Property {
     ///
     /// * `Result<JsValue, JsValue>` - A result containing the maximum length as a `JsValue` or an error.
     #[wasm_bindgen(getter, js_name = "maxLength")]
-    pub fn max_length(&self) -> Result<JsValue, JsValue> {
+    pub fn max_length(&self) -> Result<JsValue, RIDBError> {
         Ok(to_value(&self.max_length).map_err(|e| JsValue::from(RIDBError::from(e)))?)
     }
 
@@ -231,7 +249,7 @@ impl Property {
     ///
     /// * `Result<JsValue, JsValue>` - A result containing the minimum length as a `JsValue` or an error.
     #[wasm_bindgen(getter, js_name = "minLength")]
-    pub fn min_length(&self) -> Result<JsValue, JsValue> {
+    pub fn min_length(&self) -> Result<JsValue, RIDBError> {
         Ok(to_value(&self.min_length).map_err(|e| JsValue::from(RIDBError::from(e)))?)
     }
 
@@ -241,7 +259,7 @@ impl Property {
     ///
     /// * `Result<JsValue, JsValue>` - A result containing the nested properties as a `JsValue` or an error.
     #[wasm_bindgen(getter)]
-    pub fn properties(&self) -> Result<JsValue, JsValue> {
+    pub fn properties(&self) -> Result<JsValue, RIDBError> {
         Ok(to_value(&self.properties).map_err(|e| JsValue::from(RIDBError::from(e)))?)
     }
 }
@@ -259,6 +277,7 @@ wasm_bindgen_test_configure!(run_in_browser);
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
+    use crate::error::RIDBError;
     use crate::schema::property::Property;
     use crate::schema::property_type::PropertyType;
 
@@ -310,7 +329,10 @@ mod tests {
         // Check the result for an error message
         match result {
             Ok(_) => panic!("Expected an error, but got Ok"),
-            Err(js_val) => assert_eq!(js_val.message, "Validation Error: Items is empty", "Error: Expected 'Validation Error: Items is empty'")
+            Err(js_val) => {
+                let error = RIDBError::from(js_val);
+                assert_eq!(error.message, "Validation Error: Items is empty", "Error: Expected 'Validation Error: Items is empty'")
+            }
         }
     }
 
@@ -341,7 +363,12 @@ mod tests {
         let result = default_property.is_valid();
         match result {
             Ok(_js_val) => panic!("Expected an error, but got Ok"),
-            Err(js_val) => assert_eq!(js_val.message, "Validation Error: Min property not valid", "Error: Expected 'Validation Error: Min property not valid'")
+            Err(js_val) => {
+                let error = RIDBError::from(js_val);
+
+
+                assert_eq!(error.message, "Validation Error: Min property not valid", "Error: Expected 'Validation Error: Min property not valid'")
+            }
         }
     }
 
@@ -374,7 +401,13 @@ mod tests {
         // Check the result for an error message
         match result {
             Ok(_) => panic!("Expected an error, but got Ok"),
-            Err(js_val) => assert_eq!(js_val.message, "Validation Error: Min higher than max", "Error: Expected 'Validation Error: Min higher than max'")
+            Err(js_val) => {
+                let error = RIDBError::from(js_val);
+                assert_eq!(error.message, "Validation Error: Min higher than max", "Error: Expected 'Validation Error: Min higher than max'")
+
+            }
+
+
         }
     }
 
@@ -408,7 +441,12 @@ mod tests {
         // Check the result for an error message
         match result {
             Ok(_) => panic!("Expected an error, but got Ok"),
-            Err(js_val) => assert_eq!(js_val.message, "Validation Error: Min property not valid", "Error: Expected 'Validation Error: Min property not valid'")
+            Err(js_val) => {
+                let error = RIDBError::from(js_val);
+
+                assert_eq!(error.message, "Validation Error: Min property not valid", "Error: Expected 'Validation Error: Min property not valid'")
+
+            }
         }
     }
 
@@ -472,7 +510,11 @@ mod tests {
         // Check the result for an error message
         match result {
             Ok(_) => panic!("Expected an error, but got Ok"),
-            Err(js_val) => assert_eq!(js_val.message, "Validation Error: Min higher than max", "Error: Expected 'Validation Error: Min higher than max'")
+            Err(js_val) => {
+                let error = RIDBError::from(js_val);
+
+                assert_eq!(error.message, "Validation Error: Min higher than max", "Error: Expected 'Validation Error: Min higher than max'")
+            }
         }
     }
 
@@ -493,7 +535,11 @@ mod tests {
         // Check the result for an error message
         match result {
             Ok(_) => panic!("Expected an error, but got Ok"),
-            Err(js_val) => assert_eq!(js_val.message, "Validation Error: Min property not valid", "Error: Expected 'Validation Error: Min property not valid'")
+            Err(js_val) => {
+                let error = RIDBError::from(js_val);
+
+                assert_eq!(error.message, "Validation Error: Min property not valid", "Error: Expected 'Validation Error: Min property not valid'")
+            }
         }
     }
 
@@ -513,7 +559,12 @@ mod tests {
         // Check the result for an error message
         match result {
             Ok(_) => panic!("Expected an error, but got Ok"),
-            Err(js_val) => assert_eq!(js_val.message, "Validation Error: Properties empty", "Error: Expected 'Validation Error: Properties empty'")
+            Err(js_val) => {
+                let error = RIDBError::from(js_val);
+
+                assert_eq!(error.message, "Validation Error: Properties empty", "Error: Expected 'Validation Error: Properties empty'")
+
+            }
         }
     }
 
@@ -533,8 +584,12 @@ mod tests {
         // Check the result for an error message
         match result {
             Ok(_) => panic!("Expected an error, but got Ok"),
-            Err(js_val) => assert_eq!(js_val.message, "Validation Error: Properties empty", "Error: Expected 'Validation Error: Properties empty'")
-        }
+            Err(js_val) => {
+                let error = RIDBError::from(js_val);
+
+                assert_eq!(error.message, "Validation Error: Properties empty", "Error: Expected 'Validation Error: Properties empty'")
+
+            }  }
     }
 
 }

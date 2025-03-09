@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use js_sys::{Object, Reflect};
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
+use crate::error::RIDBError;
 use crate::schema::property::Property;
 use crate::schema::property_type::PropertyType;
 use crate::schema::Schema;
@@ -73,7 +74,7 @@ impl BaseStorage {
     ///
     /// * `Result<BaseStorage, JsValue>` - A result containing the new `BaseStorage` instance or an error.
     #[wasm_bindgen(constructor)]
-    pub fn new(name: String, schemas_js: Object, options: Option<Object>) -> Result<BaseStorage, JsValue> {
+    pub fn new(name: String, schemas_js: Object, options: Option<Object>) -> Result<BaseStorage, RIDBError> {
         let mut schemas: HashMap<String, Schema> = HashMap::new();
         let keys = Object::keys(&schemas_js.clone()).into_iter();
         for collection in keys {
@@ -91,7 +92,7 @@ impl BaseStorage {
         Ok(base_storage)
     }
 
-     fn get_index_schemas(&mut self) -> Result<HashMap<String, Schema>, JsValue> {
+     fn get_index_schemas(&mut self) -> Result<HashMap<String, Schema>, RIDBError> {
         let mut new_schemas: HashMap<String, Schema> = HashMap::new();
         for (collection_name, schema) in self.clone().schemas.into_iter() {
             if schema.indexes.is_some() {
@@ -172,7 +173,7 @@ impl BaseStorage {
     }
 
     #[wasm_bindgen(js_name = addIndexSchemas)]
-    pub fn add_index_schemas(&mut self) -> Result<JsValue, JsValue> {
+    pub fn add_index_schemas(&mut self) -> Result<JsValue, RIDBError> {
         let index_schemas = self.get_index_schemas()?;
         for (collection_name, schema) in index_schemas.into_iter() {
             self.schemas.insert(
@@ -184,7 +185,7 @@ impl BaseStorage {
     }
 
     #[wasm_bindgen(js_name = getOption)]
-    pub fn get_option(&self, name: String) -> Result<JsValue, JsValue> {
+    pub fn get_option(&self, name: String) -> Result<JsValue, RIDBError> {
         let value = Reflect::get(
             self.options.as_ref().unwrap(), 
             &JsValue::from_str(&name)
@@ -193,13 +194,13 @@ impl BaseStorage {
     }
 
     #[wasm_bindgen(js_name = getSchema)]
-    pub fn get_schema(&self, name: String) -> Result<Schema, JsValue> {
+    pub fn get_schema(&self, name: String) -> Result<Schema, RIDBError> {
         let schema = self.schemas.get(name.as_str()).ok_or_else(|| JsValue::from_str("Schema not found"))?;
         Ok(schema.clone())
     }
 
     #[wasm_bindgen(getter, js_name = core)]
-    pub fn get_core(&self) -> Result<CoreStorage, JsValue> {
+    pub fn get_core(&self) -> Result<CoreStorage, RIDBError> {
         Ok(self.core.clone())
     }
 

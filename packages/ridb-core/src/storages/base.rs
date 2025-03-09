@@ -4,6 +4,7 @@ use wasm_bindgen::JsValue;
 use crate::query::Query;
 
 use wasm_bindgen::prelude::wasm_bindgen;
+use crate::error::RIDBError;
 use crate::operation::Operation;
 use crate::query::options::QueryOptions;
 
@@ -50,32 +51,32 @@ extern "C" {
     pub type StorageExternal;
 
     #[wasm_bindgen(method, catch)]
-    pub async fn write(this: &StorageExternal, op: Operation) -> Result<JsValue, JsValue>;
+    pub async fn write(this: &StorageExternal, op: Operation) -> Result<JsValue, RIDBError>;
 
     #[wasm_bindgen(method, catch)]
-    pub async fn find(this: &StorageExternal, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, JsValue>;
+    pub async fn find(this: &StorageExternal, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError>;
 
     #[wasm_bindgen(method, catch, js_name="findDocumentById")]
-    pub async fn find_document_by_id(this: &StorageExternal, collection_name: &str, primary_key:JsValue) -> Result<JsValue, JsValue>;
+    pub async fn find_document_by_id(this: &StorageExternal, collection_name: &str, primary_key:JsValue) -> Result<JsValue, RIDBError>;
 
     #[wasm_bindgen(method, catch)]
-    pub async fn count(this: &StorageExternal, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, JsValue>;
+    pub async fn count(this: &StorageExternal, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError>;
 
     #[wasm_bindgen(method, catch)]
-    pub async fn close(this: &StorageExternal) -> Result<JsValue, JsValue>;
+    pub async fn close(this: &StorageExternal) -> Result<JsValue, RIDBError>;
 
     #[wasm_bindgen(method, catch)]
-    pub async fn start(this: &StorageExternal) -> Result<JsValue, JsValue>;
+    pub async fn start(this: &StorageExternal) -> Result<JsValue, RIDBError>;
 }
 
 //Represents a rust storage
 pub trait Storage {
     #[allow(clippy::async_yields_async)]
-    async fn write(&self, op: &Operation) -> Result<JsValue, JsValue>;
-    async fn find(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue>;
-    async fn find_document_by_id(&self, collection_name: &str, primary_key:JsValue) -> Result<JsValue, JsValue>;
-    async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, JsValue>;
-    async fn close(&mut self) -> Result<JsValue, JsValue>;
-    async fn start(&mut self) -> Result<JsValue, JsValue>;
+    async fn write(&self, op: &Operation) -> Result<JsValue, RIDBError>;
+    async fn find(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, RIDBError>;
+    async fn find_document_by_id(&self, collection_name: &str, primary_key:JsValue) -> Result<JsValue, RIDBError>;
+    async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, RIDBError>;
+    async fn close(&mut self) -> Result<JsValue, RIDBError>;
+    async fn start(&mut self) -> Result<JsValue, RIDBError>;
 
 }

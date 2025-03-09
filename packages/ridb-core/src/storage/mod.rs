@@ -41,7 +41,7 @@ impl Storage {
         migrations: HashMap<String, JsValue>,
         plugins: Vec<BasePlugin>,
         storage: StorageExternal
-    ) -> Result<Storage, JsValue> {
+    ) -> Result<Storage, RIDBError> {
         let storage = Storage {
             internal: storage,
             plugins,
@@ -51,27 +51,29 @@ impl Storage {
         Ok(storage)
     }
 
-    pub fn get_schema(&self, collection_name: &str) -> Result<&Schema, JsValue> {
+    pub fn get_schema(&self, collection_name: &str) -> Result<&Schema, RIDBError> {
         self.schemas.get(collection_name)
             .ok_or(
-                JsValue::from_str(
-                    &format!("Invalid collection {}, not found", collection_name)
+                RIDBError::error(
+                    &format!("Invalid collection {}, not found", collection_name),
+                    0
                 )
             )
             .map(|schema| schema)
     }
 
-    pub fn get_migration(&self, collection_name: &str) -> Result<&JsValue, JsValue> {
+    pub fn get_migration(&self, collection_name: &str) -> Result<&JsValue, RIDBError> {
         self.migrations.get(collection_name)
             .ok_or(
-                JsValue::from_str(
-                    &format!("Invalid collection {}, not found", collection_name)
+                RIDBError::error(
+                    &format!("Invalid collection {}, not found", collection_name),
+                    0
                 )
             )
             .map(|migration| migration)
     }
 
-    pub(crate) async fn call(&self, collection_name: &str, hook_type: HookType, mut doc: JsValue) -> Result<JsValue, JsValue> {
+    pub(crate) async fn call(&self, collection_name: &str, hook_type: HookType, mut doc: JsValue) -> Result<JsValue, RIDBError> {
         // Determine the order of plugins based on the hook type
         let plugins = match hook_type.clone() {
             HookType::Create => self.plugins.clone(),
@@ -99,13 +101,13 @@ impl Storage {
         Ok(doc)
     }
 
-    fn compute_hook(&self, collection_name: &str, doc: JsValue, hook: &JsValue) -> Result<JsValue, JsValue> {
+    fn compute_hook(&self, collection_name: &str, doc: JsValue, hook: &JsValue) -> Result<JsValue, RIDBError> {
         // Log the initial state of the document
         let schema = self.get_schema(collection_name)?;
         let migration = self.get_migration(collection_name)?;
 
         if !hook.is_function() && !hook.is_undefined() {
-            return Err(JsValue::from(RIDBError::error("Hook must be a function")));
+            return Err(RIDBError::validation("Hook must be a function", 0));
         }
 
         if hook.is_undefined() {
@@ -113,7 +115,7 @@ impl Storage {
         }
 
         let hook_fn = hook.dyn_ref::<js_sys::Function>()
-            .ok_or_else(|| JsValue::from(RIDBError::error("Hook is not a function")))?;
+            .ok_or_else(|| RIDBError::validation("Hook is not a function", 0))?;
 
         let result = hook_fn.call3(
             &JsValue::NULL,
@@ -122,7 +124,7 @@ impl Storage {
             &doc.clone()
         );
 
-        result.map_err(|e| JsValue::from(RIDBError::error(&format!("Error executing plugin hook: {:?}", e))))
+        result.map_err(|e| RIDBError::from(e))
     }
 
 
@@ -135,7 +137,7 @@ impl Storage {
     /// # Returns
     ///
     /// * `Result<JsValue, JsValue>` - A result containing the document with the primary key or an error.
-    fn ensure_primary_key(&self, collection_name: &str, document: JsValue) -> Result<JsValue, JsValue> {
+    fn ensure_primary_key(&self, collection_name: &str, document: JsValue) -> Result<JsValue, RIDBError> {
         let schema = self.get_schema(collection_name)?;
         let properties = schema.properties.clone();
         let key = schema.primary_key.clone();
@@ -145,7 +147,7 @@ impl Storage {
 
         let primary_key_property = properties
             .get(&key)
-            .ok_or(JsValue::from("Invalid Schema cannot find primaryKey field"))?;
+            .ok_or(RIDBError::validation("Invalid Schema cannot find primaryKey field", 0))?;
 
         let primary_key_type = primary_key_property.property_type();
 
@@ -163,9 +165,9 @@ impl Storage {
             .map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
         if primary_key_type == PropertyType::String && !doc_property.is_string() {
-            Err(JsValue::from(RIDBError::from("Unexpected primary key should be a string")))
+            Err(RIDBError::validation("Unexpected primary key should be a string", 0))
         } else if primary_key_type == PropertyType::Number && !doc_property.is_bigint() {
-            Err(JsValue::from(RIDBError::from("Unexpected primary key should be number")))
+            Err(RIDBError::validation("Unexpected primary key should be number", 0))
         } else {
             Ok(document)
         }
@@ -175,7 +177,7 @@ impl Storage {
         &self,
         collection_name: &str,
         document_without_pk: JsValue,
-    ) -> Result<JsValue, JsValue> {
+    ) -> Result<JsValue, RIDBError> {
 
         Logger::debug("Storage-Write", &JsValue::from(
             &format!("\n -------------------------------\n\n Starting write operation for collection '{}'", collection_name)
@@ -228,17 +230,17 @@ impl Storage {
 
     }
 
-    pub(crate) async fn find(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, JsValue>{
+    pub(crate) async fn find(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError>{
         //TODO: Use indexes for more efficient document finding
         self.internal.find(collection_name, query, options).await
     }
 
-    pub(crate) async fn count(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, JsValue>{
+    pub(crate) async fn count(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError>{
         //TODO: Use indexes for more efficient counting
         self.internal.count(collection_name, query, options).await
     }
 
-    pub(crate) async fn find_document_by_id(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, JsValue>{
+    pub(crate) async fn find_document_by_id(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, RIDBError>{
         match self.internal.find_document_by_id( 
             collection_name, 
             primary_key
@@ -248,7 +250,7 @@ impl Storage {
         }
     }
 
-    pub(crate) async fn remove(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, JsValue> {
+    pub(crate) async fn remove(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, RIDBError> {
         Logger::debug("Storage-Remove",&JsValue::from(&format!(
             "Starting remove operation for collection: {}, primary_key: {:?}",
             collection_name, primary_key
@@ -265,7 +267,7 @@ impl Storage {
             Logger::debug("Storage-Remove",&JsValue::from(
                 "Remove operation failed: Document not found"
             ));
-            Err(JsValue::from_str("Invalid primary key value"))
+            Err( RIDBError::validation("Invalid primary key value",0))
         } else {
             let op = Operation {
                 collection: collection_name.to_string(),
@@ -286,7 +288,7 @@ impl Storage {
                 Err(e) => Logger::debug("Storage-Remove",&JsValue::from(&format!("Remove operation failed: {:?}", e))),
             }
 
-            result.map_err(|e| JsValue::from(RIDBError::from(e)))
+            result
         }
     }
 

@@ -127,6 +127,7 @@ await db.start()
 - [Property](classes/Property.md)
 - [Query](classes/Query.md)
 - [RIDB](classes/RIDB.md)
+- [RIDBError](classes/RIDBError.md)
 - [Schema](classes/Schema.md)
 - [StorageInternal](classes/StorageInternal.md)
 
