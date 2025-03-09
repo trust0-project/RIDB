@@ -169,9 +169,11 @@ export type {
   BasePlugin,
   SchemaTypeRecord,
   StorageInternal,
-  RIDBError
 } from "@trust0/ridb-core";
 
+export { 
+  RIDBError
+} from "@trust0/ridb-core";
 
 const {
   RIDBError,
@@ -231,6 +233,10 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
     const useWorker = this.options.worker ?? false;
     const supportsWorker = typeof SharedWorker !== 'undefined';
     return useWorker && supportsWorker;
+  }
+
+  authenticate(password: string) {
+    return this.db?.authenticate(password) ?? false;
   }
 
   /**
@@ -330,7 +336,7 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
         this.pendingRequests.get(requestId)!.reject(error);
       }
       this.pendingRequests.delete(requestId);
-    }
+    } 
   }
 
   private async createDatabase(options?: StartOptions<T>) {

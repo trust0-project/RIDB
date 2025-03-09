@@ -36,8 +36,8 @@ export const plugins = [
 ]
 
 export const generic = {
-    chunkNames: "[name]",
-    assetNames: "[name]",
+    chunkNames: "[name][hash]",
+    assetNames: "[name][hash]",
     sourcemap: false,
     bundle: true,
     platform: 'neutral',
