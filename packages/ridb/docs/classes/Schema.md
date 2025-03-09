@@ -6,7 +6,7 @@
 
 # Class: Schema\<T\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:402
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:402
 
 Represents a schema, including its definition and related methods.
 You may be trying to build a storage, in any other can u won't need access tho this class.
@@ -43,7 +43,7 @@ The schema type.
 
 > `readonly` `optional` **encrypted**: `Extract`\<keyof `T`, `string`\>[]
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:443
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:443
 
 An optional array of encrypted fields.
 
@@ -53,7 +53,7 @@ An optional array of encrypted fields.
 
 > `readonly` `optional` **indexes**: `Extract`\<keyof `T`, `string`\>[]
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:438
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:438
 
 An optional array of indexes.
 
@@ -63,7 +63,7 @@ An optional array of indexes.
 
 > `readonly` **primaryKey**: `string`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:425
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:425
 
 The primary key of the schema.
 
@@ -73,7 +73,7 @@ The primary key of the schema.
 
 > `readonly` **properties**: \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false \| (T\["properties"\]\[K\]\["default"\] extends undefined ? true : false) ? K : never\]?: T\["properties"\]\[K\] \} & \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false ? never : K\]: T\["properties"\]\[K\] \}
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:448
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:448
 
 The properties defined in the schema.
 
@@ -83,7 +83,7 @@ The properties defined in the schema.
 
 > **schema**: [`Schema`](Schema.md)\<`T`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:406
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:406
 
 The schema definition.
 
@@ -93,7 +93,7 @@ The schema definition.
 
 > `readonly` **type**: `string`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:430
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:430
 
 The type of the schema.
 
@@ -103,7 +103,7 @@ The type of the schema.
 
 > `readonly` **version**: `number`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:420
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:420
 
 The version of the schema.
 
@@ -113,7 +113,7 @@ The version of the schema.
 
 > **toJSON**(): [`SchemaType`](../type-aliases/SchemaType.md)
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:458
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:458
 
 Converts the schema to a JSON representation.
 
@@ -129,7 +129,7 @@ The JSON representation of the schema.
 
 > **validate**(`document`): `boolean`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:460
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:460
 
 #### Parameters
 
@@ -147,7 +147,7 @@ Defined in: ridb-core/pkg/ridb\_core.d.ts:460
 
 > `static` **create**\<`TS`\>(`definition`): [`Schema`](Schema.md)\<`TS`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:415
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:415
 
 Creates a new `Schema` instance from the provided definition.
 
