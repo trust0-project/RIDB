@@ -61,3 +61,7 @@ jobs:
           npm install
           npm run build
           npx multi-semantic-release --deps.prefix="^"
+          npm i 
+          git add . 
+          git commit -m "chore: update dependencies [skip ci]"
+          git push
