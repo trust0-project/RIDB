@@ -1,3 +1,10 @@
+## @trust0/ridb-core [1.4.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.2...@trust0/ridb-core@1.4.3) (2025-03-09)
+
+### Bug Fixes
+
+* improve error handling and authentication errors ([1e7cc7e](https://github.com/trust0-project/RIDB/commit/1e7cc7ee5898d60a75a8539d645dad0dcf74800a))
+* pkg and ts ([64aaca3](https://github.com/trust0-project/RIDB/commit/64aaca36ad4c0e910a8ddebf0189c78c26c2a069))
+
 ## @trust0/ridb-core [1.4.3-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.4.3-rc.1...@trust0/ridb-core@1.4.3-rc.2) (2025-03-09)
 
 ### Bug Fixes
