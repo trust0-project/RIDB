@@ -6,7 +6,7 @@
 
 # Class: Collection\<T\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:549
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:549
 
 Collection is a class that represents a collection of documents in a database.
 
@@ -32,7 +32,7 @@ A schema type defining the structure of the documents in the collection.
 
 > **count**(`query`, `options`?): `Promise`\<`number`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:561
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:561
 
 count all documents in the collection.
 
@@ -58,7 +58,7 @@ A promise that resolves to an array of documents.
 
 > **create**(`document`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:583
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:583
 
 Creates a new document in the collection.
 
@@ -82,7 +82,7 @@ A promise that resolves to the created document.
 
 > **delete**(`id`): `Promise`\<`void`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:590
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:590
 
 Deletes a document in the collection by its ID.
 
@@ -106,7 +106,7 @@ A promise that resolves when the deletion is complete.
 
 > **find**(`query`, `options`?): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>[]\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:555
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:555
 
 Finds all documents in the collection.
 
@@ -132,7 +132,7 @@ A promise that resolves to an array of documents.
 
 > **findById**(`id`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:568
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:568
 
 Finds a single document in the collection by its ID.
 
@@ -156,7 +156,7 @@ A promise that resolves to the found document.
 
 > **update**(`document`): `Promise`\<`void`\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:576
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:576
 
 Updates a document in the collection by its ID.
 

@@ -8,4 +8,4 @@
 
 > `const` **WasmInternal**: `__module`
 
-Defined in: [ridb/src/wasm.ts:4](https://github.com/trust0-project/RIDB/blob/95cde192664b2a4b7017210b4c649ba471e58981/packages/ridb/src/wasm.ts#L4)
+Defined in: [src/wasm.ts:4](https://github.com/trust0-project/RIDB/blob/a6b0121185877080bad7ab1361054cc4574a1bd2/packages/ridb/src/wasm.ts#L4)

@@ -8,7 +8,7 @@
 
 > **RIDBModule**: `object`
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:345
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:345
 
 Represents a storage module with a method for creating storage.
 

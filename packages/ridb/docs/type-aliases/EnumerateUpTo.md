@@ -8,7 +8,7 @@
 
 > **EnumerateUpTo**\<`N`, `Acc`\>: `Acc`\[`"length"`\] *extends* `N` ? `Acc`\[`number`\] : [`EnumerateUpTo`](EnumerateUpTo.md)\<`N`, \[`...Acc`, `Acc`\[`"length"`\]\]\>
 
-Defined in: ridb-core/pkg/ridb\_core.d.ts:596
+Defined in: node\_modules/@trust0/ridb-core/pkg/ridb\_core.d.ts:596
 
 ## Type Parameters
 
