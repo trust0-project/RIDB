@@ -4,6 +4,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use crate::plugin::BasePlugin;
 use crate::schema::Schema;
 use js_sys::Reflect;
+use crate::error::RIDBError;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -61,7 +62,7 @@ pub struct MigrationPlugin {
 }
 
 impl MigrationPlugin {
-    pub fn new() -> Result<MigrationPlugin, JsValue> {
+    pub fn new() -> Result<MigrationPlugin, RIDBError> {
         let base = BasePlugin::new("Migration".to_string())?;
         let plugin = MigrationPlugin {
             base,
@@ -70,12 +71,12 @@ impl MigrationPlugin {
         let plugin_clone1 = plugin.clone();
         let create_hook = Closure::wrap(Box::new(move |schema, migration, content| {
             plugin_clone1.create_hook(schema, migration, content)
-        }) as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, JsValue>>);
+        }) as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, RIDBError>>);
 
         let plugin_clone2 = plugin.clone();
         let recover_hook = Closure::wrap(Box::new(move |schema, migration, content| {
             plugin_clone2.recover_hook(schema, migration, content)
-        }) as Box<dyn Fn(JsValue,JsValue,JsValue) -> Result<JsValue, JsValue>>);
+        }) as Box<dyn Fn(JsValue,JsValue,JsValue) -> Result<JsValue, RIDBError>>);
 
         let mut plugin = plugin;
         plugin.base.doc_create_hook = create_hook.into_js_value();
@@ -88,7 +89,7 @@ impl MigrationPlugin {
         schema_js: JsValue,
         migration_js: JsValue,
         content: JsValue,
-    ) -> Result<JsValue, JsValue> {
+    ) -> Result<JsValue, RIDBError> {
         // Handle both single object and array of objects
         if content.is_array() {
             let array = js_sys::Array::from(&content);
@@ -116,12 +117,11 @@ impl MigrationPlugin {
         schema_js: JsValue,
         _migration_js: JsValue,
         content: JsValue,
-    ) -> Result<JsValue, JsValue> {
+    ) -> Result<JsValue, RIDBError> {
         let doc_version_key = JsValue::from("__version");
         let schema = Schema::create(schema_js)?;
         let version = schema.version;
         let doc_version = Reflect::get(&content, &doc_version_key)?;
-
         if doc_version.is_undefined() {
             Reflect::set(&content, &doc_version_key, &JsValue::from(version.to_owned()))?;
         }
@@ -133,7 +133,7 @@ impl MigrationPlugin {
         schema_js: JsValue,
         migration_js: JsValue,
         mut content: JsValue
-    ) -> Result<JsValue, JsValue> {
+    ) -> Result<JsValue, RIDBError> {
         let doc_version_key = JsValue::from("__version");
         let schema = Schema::create(schema_js.clone())?;
         //Ensure that we have the version set correctly
@@ -142,12 +142,12 @@ impl MigrationPlugin {
         let doc_version_js = Reflect::get(
             &content,
             &doc_version_key
-        ).map_err(|e| JsValue::from(format!("Error getting the document version, err {:?}", e)))?;
+        ).map_err(|e| RIDBError::from(format!("Error getting the document version, err {:?}", e)))?;
         let doc_version = if doc_version_js.is_undefined() {
             version
         } else {
             doc_version_js.as_f64()
-                .ok_or_else(|| JsValue::from("__version should be a number"))? as i32
+                .ok_or_else(|| RIDBError::from("__version should be a number"))? as i32
         };
         if doc_version < version {
             // Iterate through each version that needs migration
@@ -155,13 +155,13 @@ impl MigrationPlugin {
                 // Get the next version's migration function
                 let next_version = current_version+1;
                 if migration_js.is_undefined() {
-                    return Err(JsValue::from("Migration Object is undefined".to_string()))
+                    return Err(RIDBError::from("Migration Object is undefined".to_string()).into())
                 }
                 let function = Reflect::get(
                     &migration_js, &JsValue::from(next_version)
-                ).map_err(|e| JsValue::from(format!("Error recovering migration function for version {:?}", e)))?;
+                ).map_err(|e| RIDBError::from(format!("Error recovering migration function for version {:?}", e)))?;
                 if function.is_undefined() {
-                    return Err(JsValue::from(format!("Migrating function {} to schema version not found", next_version)))
+                    return Err(RIDBError::from(format!("Migrating function {} to schema version not found", next_version)).into())
                 }
                 let upgraded = Reflect::apply(
                     &function.unchecked_into(),

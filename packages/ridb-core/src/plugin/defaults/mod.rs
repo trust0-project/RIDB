@@ -3,7 +3,7 @@ use wasm_bindgen::JsValue;
 use crate::{logger::Logger, plugin::BasePlugin, schema::Schema};
 use js_sys::Reflect;
 use serde_wasm_bindgen::to_value;
-
+use crate::error::RIDBError;
 
 #[derive(Clone)]
 pub struct DefaultsPlugin {
@@ -12,7 +12,7 @@ pub struct DefaultsPlugin {
 
 impl DefaultsPlugin {
 
-    pub(crate) fn new() -> Result<DefaultsPlugin, JsValue> {
+    pub(crate) fn new() -> Result<DefaultsPlugin, RIDBError> {
         let base = BasePlugin::new("Defaults".to_string())?;
         let plugin = DefaultsPlugin {
             base,
@@ -28,14 +28,14 @@ impl DefaultsPlugin {
                 Logger::debug("DefaultsPlugin", &"Failed to create document".into());
             }
             result
-        }) as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, JsValue>>);
+        }) as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, RIDBError>>);
         let mut plugin = plugin;
         plugin.base.doc_create_hook = create_hook.into_js_value();
         Ok(plugin)
     }
     
 
-    pub(crate) fn add_defaults(&self, schema: JsValue, document: JsValue) -> Result<JsValue, JsValue> {
+    pub(crate) fn add_defaults(&self, schema: JsValue, document: JsValue) -> Result<JsValue, RIDBError> {
         Logger::debug("DefaultsPlugin", &"Adding defaults to document".into());
         let schema = Schema::create(schema)?;
 

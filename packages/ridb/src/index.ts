@@ -109,7 +109,7 @@
  */
 
 // @ts-ignore @ignore
-import { BasePlugin, BaseStorage, Collection, Database, MigrationPathsForSchemas, MigrationsParameter, Schema, SchemaTypeRecord } from "@trust0/ridb-core";
+import { BasePlugin, BaseStorage, Collection, Database, MigrationPathsForSchemas, MigrationsParameter, RIDBError, Schema, SchemaTypeRecord } from "@trust0/ridb-core";
 import { v4 as uuidv4 } from 'uuid';
 
 export type StorageClass<T extends SchemaTypeRecord> = {
@@ -319,7 +319,8 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
         this.pendingRequests.get(requestId)!.resolve(data);
       } else {
         console.error(`[RIDBWorker] Request ${requestId} failed. Error:`, data);
-        this.pendingRequests.get(requestId)!.reject(data);
+        const error = internal.RIDBError.from(data);
+        this.pendingRequests.get(requestId)!.reject(error);
       }
       this.pendingRequests.delete(requestId);
     }

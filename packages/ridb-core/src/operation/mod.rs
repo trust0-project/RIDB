@@ -1,5 +1,6 @@
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
+use crate::error::RIDBError;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -129,7 +130,7 @@ impl Operation {
     }
 
     #[wasm_bindgen(getter, js_name="primaryKeyIndex")]
-    pub fn primary_key_index(&self) -> Result<String, JsValue> {
+    pub fn primary_key_index(&self) -> Result<String, RIDBError> {
         match &self.primary_key_field {
             Some(primary_key_field) => Ok(
                 format!(
@@ -139,8 +140,9 @@ impl Operation {
                 )
             ),
             None => Err(
-                JsValue::from(
-                    format!("Unable to create default index, Primary Key not available in current OP")
+                    RIDBError::validation(
+                        "Unable to create default index, Primary Key not available in current OP".to_string().as_str(),
+                        21
                 )
             ),
         }
