@@ -194,7 +194,12 @@ type PendingRequests = Map<
   { resolve: (resp: any) => void; reject: (err: any) => void }
 >;
 
-let internal = WasmInternal;
+const {
+  RIDBError,
+  InMemory,
+  IndexDB,
+  Database
+} = WasmInternal;
 
 export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
   private _db: Database<T> | undefined;
@@ -234,8 +239,8 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
 
   private getStorageType<T extends StorageType>(storageType: T) {
     return storageType === StorageType.InMemory ?
-      internal!.InMemory :
-      internal!.IndexDB;
+      InMemory :
+      IndexDB;
   }
 
   /**
@@ -319,7 +324,7 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
         this.pendingRequests.get(requestId)!.resolve(data);
       } else {
         console.error(`[RIDBWorker] Request ${requestId} failed. Error:`, data);
-        const error = internal.RIDBError.from(data);
+        const error = RIDBError.from(data);
         this.pendingRequests.get(requestId)!.reject(error);
       }
       this.pendingRequests.delete(requestId);
@@ -328,7 +333,6 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
 
   private async createDatabase(options?: StartOptions<T>) {
     const { storageType, password } = options ?? {};
-    const { Database } = internal;
     const StorageClass = typeof storageType === "string" ?
       this.getStorageType(storageType) :
       storageType ?? undefined;
