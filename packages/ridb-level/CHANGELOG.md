@@ -1,3 +1,10 @@
+## @trust0/ridb-level [1.1.13](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.12...@trust0/ridb-level@1.1.13) (2025-03-09)
+
+
+### Dependencies
+
+* **@trust0/ridb:** upgraded to 1.4.1
+
 ## @trust0/ridb-level [1.1.13-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.12...@trust0/ridb-level@1.1.13-rc.1) (2025-03-09)
 
 
