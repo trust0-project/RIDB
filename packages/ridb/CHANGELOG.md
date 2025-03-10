@@ -1,3 +1,9 @@
+## @trust0/ridb [1.4.2-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.4.1...@trust0/ridb@1.4.2-rc.1) (2025-03-10)
+
+### Bug Fixes
+
+* package improvements ([c893483](https://github.com/trust0-project/RIDB/commit/c89348396189a4c9d82fb81a853b3b41c64e5199))
+
 ## @trust0/ridb [1.4.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.4.0...@trust0/ridb@1.4.1) (2025-03-09)
 
 
