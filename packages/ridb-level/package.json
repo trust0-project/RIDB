@@ -52,7 +52,7 @@
     "uuid": "^11.0.3",
     "webdriverio": "^9.7.1",
     "classic-level": "^2.0.0",
-    "@trust0/ridb": "^1.4.1"
+    "@trust0/ridb": "^1.4.2"
   },
   "peerDependencies": {
     "@trust0/ridb": "^1.4.1"
