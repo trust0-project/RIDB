@@ -175,12 +175,7 @@ export {
   RIDBError
 } from "@trust0/ridb-core";
 
-const {
-  RIDBError,
-  InMemory,
-  IndexDB,
-  Database
-} = WasmInternal;
+
 
 /**
  * Options for the RIDB constructor.
@@ -245,7 +240,8 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
    */
   constructor(private options: DBOptions<T>) { }
 
-  private getStorageType<T extends StorageType>(storageType: T) {
+  private async getStorageType<T extends StorageType>(storageType: T) {
+    const { InMemory, IndexDB } = await WasmInternal();
     return storageType === StorageType.InMemory ?
       InMemory :
       IndexDB;
@@ -315,25 +311,26 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
     return this.useWorker ? this.workerCollections : this.dbCollections;
   }
 
-  private async createWorker() {
-    const worker = new SharedWorker(
-      new URL('@trust0/ridb/worker', import.meta.url), { type: 'module' }
-    );
+  private createWorker() {
+    const workerPath = require.resolve('@trust0/ridb/worker');
+    const worker = new SharedWorker(workerPath, { type: 'module' });
     worker.port.onmessage = this.handleWorkerMessage.bind(this);
     return worker;
   }
 
   private async handleWorkerMessage(event: MessageEvent) {
+    const { RIDBError } = await WasmInternal();
     const { requestId, status, data } = event.data || {};
     console.log('[RIDBWorker] Received message from worker:', event.data);
     if (requestId && this.pendingRequests.has(requestId)) {
+      const pendingRequest = this.pendingRequests.get(requestId)!;
       if (status === 'success') {
         console.log(`[RIDBWorker] Request ${requestId} successful. Data:`, data);
-        this.pendingRequests.get(requestId)!.resolve(data);
+        pendingRequest.resolve(data);
       } else {
         console.error(`[RIDBWorker] Request ${requestId} failed. Error:`, data);
         const error = RIDBError.from(data);
-        this.pendingRequests.get(requestId)!.reject(error);
+        pendingRequest.reject(error);
       }
       this.pendingRequests.delete(requestId);
     } 
@@ -342,7 +339,7 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
   private async createDatabase(options?: StartOptions<T>) {
     const { storageType, password } = options ?? {};
     const StorageClass = typeof storageType === "string" ?
-      this.getStorageType(storageType) :
+      await this.getStorageType(storageType) :
       storageType ?? undefined;
 
     if (StorageClass && !StorageClass.create) {
@@ -377,7 +374,7 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
     const withWorker = this.useWorker;
     if (withWorker) {
       this._sessionId ??= uuidv4();
-      this._worker ??= await this.createWorker();
+      this._worker ??= this.createWorker();
       return new Promise((resolve, reject) => {
         this.pendingRequests.set(this._sessionId!, { resolve, reject });
         this.worker.port.postMessage({
