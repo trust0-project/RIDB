@@ -1,3 +1,11 @@
+## @trust0/ridb [1.4.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.4.1...@trust0/ridb@1.4.2) (2025-03-10)
+
+### Bug Fixes
+
+* build improvement ([85db3a9](https://github.com/trust0-project/RIDB/commit/85db3a9d2dcaff16a7ea58fa276d6e3c4d9e6eea))
+* package improvements ([c893483](https://github.com/trust0-project/RIDB/commit/c89348396189a4c9d82fb81a853b3b41c64e5199))
+* rxdb ([1f71a09](https://github.com/trust0-project/RIDB/commit/1f71a09841b6ffb1868d90bdffc9a8325891afc8))
+
 ## @trust0/ridb [1.4.2-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.4.1...@trust0/ridb@1.4.2-rc.1) (2025-03-10)
 
 ### Bug Fixes
