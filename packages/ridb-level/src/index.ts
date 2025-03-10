@@ -21,9 +21,6 @@
  */
 import path from 'path';
 
-import {
-    WasmInternal
- } from "@trust0/ridb";
 
  import {
     OpType, 
@@ -35,13 +32,18 @@ import {
     QueryType,  
  } from "@trust0/ridb-core"
 
+
+import {
+    WasmInternal
+ } from "@trust0/ridb";
+
 import type { ClassicLevel } from "classic-level";
 type Level = ClassicLevel<string, string>;
 
 
 
 export default async function createLevelDB() {
-    const {BaseStorage} = await WasmInternal();
+    const {BaseStorage} = await WasmInternal;
     class Instance<T extends SchemaTypeRecord> extends BaseStorage<T> {
         constructor(public level: Level, name: string, schemas: T, options: any) {
             super(name, schemas, options);
