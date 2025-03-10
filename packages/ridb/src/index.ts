@@ -190,9 +190,19 @@ type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
   worker?: boolean
 } & MigrationsParameter<T>
 
-import WasmInternal from "./wasm";
+import wasmBuffer from "@trust0/ridb-core/pkg/ridb_core_bg.wasm";
 
-export {default as WasmInternal} from './wasm';
+let loaded : typeof import("@trust0/ridb-core") | undefined;
+
+export async function WasmInternal() {
+    if (!loaded) {
+        const module = await import("@trust0/ridb-core");
+        const wasmInstance = module.initSync(wasmBuffer);
+        await module.default(wasmInstance);
+        loaded = module;
+    }
+    return loaded;
+};
 
 type PendingRequests = Map<
   string,
