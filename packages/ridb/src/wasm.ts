@@ -1,8 +1,14 @@
 
 import wasmBuffer from "@trust0/ridb-core/pkg/ridb_core_bg.wasm";
 
-const module = await import("@trust0/ridb-core");
-const wasmInstance = module.initSync(wasmBuffer);
-await module.default(wasmInstance);
+let loaded : typeof import("@trust0/ridb-core") | undefined;
 
-export default module;
+export default async function load() {
+    if (!loaded) {
+        const module = await import("@trust0/ridb-core");
+        const wasmInstance = module.initSync(wasmBuffer);
+        await module.default(wasmInstance);
+        loaded = module;
+    }
+    return loaded;
+};

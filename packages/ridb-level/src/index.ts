@@ -20,204 +20,209 @@
  * # SDK Rerefence
  */
 import path from 'path';
-import { 
+
+import {
+    WasmInternal
+ } from "@trust0/ridb";
+
+ import {
+    OpType, 
+    Query,
     QueryOptions, 
     SchemaTypeRecord, 
     Doc, 
     Operation,
-    QueryType,    
-} from "@trust0/ridb-core";
-
-import {WasmInternal} from "@trust0/ridb";
+    QueryType,  
+ } from "@trust0/ridb-core"
 
 import type { ClassicLevel } from "classic-level";
 type Level = ClassicLevel<string, string>;
 
 
 
-
-const { BaseStorage, Query, OpType } = WasmInternal as typeof import("@trust0/ridb-core");
-
-export class LevelDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
-
-    static async create<SchemasCreate extends SchemaTypeRecord>(
-        name: string,
-        schemas: SchemasCreate,
-        options: any
-    ): Promise<LevelDB<SchemasCreate>> {
-        const {ClassicLevel} = await import("classic-level");
-        const level = new ClassicLevel(path.resolve(process.cwd(), "./.db/" + name));
-        const db = new LevelDB<SchemasCreate>(level, name, schemas, options);
-        return db;
-    }
-    constructor(private db: Level, name: string, schemas: T, options: any) {
-        super(name, schemas, options);
-    }
-    /** Start the database */
-    async start(): Promise<void> {
-        await this.db.open();
-    }
-    /** Close the database */
-    async close(): Promise<void> {
-        await this.db.close(); // Close the database
-    }
-    /** Find a document by its ID */
-    async findDocumentById(
-        collectionName: keyof T,
-        id: string
-    ): Promise<Doc<T[keyof T]> | null> {
-        const key = `${String(collectionName)}:${id}`;
-        try {
-            const value = await this.db.get(key);
-            if (!value) {
-                return null
-            }
-            const doc = JSON.parse(value);
-            return doc;
-        } catch (err: any) {
-            if (err.notFound) {
-                return null;
-            } else {
-                throw err;
-            }
+export default async function createLevelDB() {
+    const {BaseStorage} = await WasmInternal();
+    class Instance<T extends SchemaTypeRecord> extends BaseStorage<T> {
+        constructor(public level: Level, name: string, schemas: T, options: any) {
+            super(name, schemas, options);
         }
-    }
-    /** Write an operation (insert, update, delete) */
-    async write(op: Operation<T[keyof T]>): Promise<Doc<T[keyof T]>> {
-        const collectionName = String(op.collection);
-        const primaryKey = this.getSchema(collectionName).primaryKey;
-
-        switch (op.opType) {
-            case OpType.CREATE: {
-                const id = primaryKey  in op.data ? (op.data as any)[primaryKey] : null;
-                if (!id) {
-                    throw new Error("Document ID is required");
+        static async create<SchemasCreate extends SchemaTypeRecord>(
+            name: string,
+            schemas: SchemasCreate,
+            options: any
+        ) {
+            const {ClassicLevel} = await import("classic-level");
+            const level = new ClassicLevel(path.resolve(process.cwd(), "./.db/" + name));
+            const db = new Instance<SchemasCreate>(level, name, schemas, options);
+            return db;
+        }
+        /** Start the database */
+        async start(): Promise<void> {
+            await this.level.open();
+        }
+        /** Close the database */
+        async close(): Promise<void> {
+            await this.level.close(); // Close the database
+        }
+        /** Find a document by its ID */
+        async findDocumentById(
+            collectionName: keyof T,
+            id: string
+        ): Promise<Doc<T[keyof T]> | null> {
+            const key = `${String(collectionName)}:${id}`;
+            try {
+                const value = await this.level.get(key);
+                if (!value) {
+                    return null
                 }
-                const key = `${collectionName}:${id}`;
-                const value = JSON.stringify(op.data);
-                await this.db.put(key, value);
-                break;
-            }
-            case OpType.UPDATE: {
-                const id = primaryKey  in op.data ? (op.data as any)[primaryKey] : null;
-                if (!id) {
-                    throw new Error("Document ID is required");
+                const doc = JSON.parse(value);
+                return doc;
+            } catch (err: any) {
+                if (err.notFound) {
+                    return null;
+                } else {
+                    throw err;
                 }
-                const existingRecord = await this.findDocumentById(collectionName, id);
-                if (!existingRecord) {
-                    throw new Error("Document ID not found");
+            }
+        }
+        /** Write an operation (insert, update, delete) */
+        async write(op: Operation<T[keyof T]>): Promise<Doc<T[keyof T]>> {
+            const collectionName = String(op.collection);
+            const primaryKey = this.getSchema(collectionName).primaryKey;
+    
+            switch (op.opType) {
+                case OpType.CREATE: {
+                    const id = primaryKey  in op.data ? (op.data as any)[primaryKey] : null;
+                    if (!id) {
+                        throw new Error("Document ID is required");
+                    }
+                    const key = `${collectionName}:${id}`;
+                    const value = JSON.stringify(op.data);
+                    await this.level.put(key, value);
+                    break;
                 }
-                const key = `${collectionName}:${id}`;
-                const value = JSON.stringify({
-                    ...existingRecord,
-                    ...op.data
-                });
-                await this.db.put(key, value);
-                break;
+                case OpType.UPDATE: {
+                    const id = primaryKey  in op.data ? (op.data as any)[primaryKey] : null;
+                    if (!id) {
+                        throw new Error("Document ID is required");
+                    }
+                    const existingRecord = await this.findDocumentById(collectionName, id);
+                    if (!existingRecord) {
+                        throw new Error("Document ID not found");
+                    }
+                    const key = `${collectionName}:${id}`;
+                    const value = JSON.stringify({
+                        ...existingRecord,
+                        ...op.data
+                    });
+                    await this.level.put(key, value);
+                    break;
+                }
+                case OpType.DELETE: {
+                    const key = `${collectionName}:${op.data}`;
+                    await this.level.del(key);
+                    break;
+                }
+                default:
+                    throw new Error(`Unknown operation type: ${op.opType}`);
             }
-            case OpType.DELETE: {
-                const key = `${collectionName}:${op.data}`;
-                await this.db.del(key);
-                break;
-            }
-            default:
-                throw new Error(`Unknown operation type: ${op.opType}`);
+            return op.data;
         }
-        return op.data;
-    }
-    /** Count documents matching a query (supports offset & limit) */
-    async count(
-        collectionName: keyof T,
-        query: QueryType<T[keyof T]>,
-        options?: QueryOptions
-    ): Promise<number> {
-        const collectionPrefix = `${String(collectionName)}:`;
-        const schema = this.getSchema(String(collectionName));
-        const queryInstance = new Query(query, schema);
-
-        // Retrieve limit and offset from options, using defaults if undefined
-        const limit = options?.limit ?? -1;  // -1 indicates "no limit" for classic-level
-        const offset = options?.offset ?? 0; // default to 0 (no offset)
-
-        let matchedCount = 0;
-        let skipCount = offset;
-
-        // If a limit is set, set maxRead = limit + offset
-        // Otherwise, let maxRead be -1 (no limit)
-        const maxRead = limit > 0 ? offset + limit : -1;
-
-        for await (const [key, value] of this.db.iterator({
-            gte: collectionPrefix,
-            lt: `${collectionPrefix}\xFF`,
-            limit: maxRead
-        })) {
-            const doc = JSON.parse(value);
-
-            if (!this.core.matchesQuery(doc, queryInstance)) {
-                continue;
+        /** Count documents matching a query (supports offset & limit) */
+        async count(
+            collectionName: keyof T,
+            query: QueryType<T[keyof T]>,
+            options?: QueryOptions
+        ): Promise<number> {
+            const collectionPrefix = `${String(collectionName)}:`;
+            const schema = this.getSchema(String(collectionName));
+            const queryInstance = new Query(query, schema);
+    
+            // Retrieve limit and offset from options, using defaults if undefined
+            const limit = options?.limit ?? -1;  // -1 indicates "no limit" for classic-level
+            const offset = options?.offset ?? 0; // default to 0 (no offset)
+    
+            let matchedCount = 0;
+            let skipCount = offset;
+    
+            // If a limit is set, set maxRead = limit + offset
+            // Otherwise, let maxRead be -1 (no limit)
+            const maxRead = limit > 0 ? offset + limit : -1;
+    
+            for await (const [key, value] of this.level.iterator({
+                gte: collectionPrefix,
+                lt: `${collectionPrefix}\xFF`,
+                limit: maxRead
+            })) {
+                const doc = JSON.parse(value);
+    
+                if (!this.core.matchesQuery(doc, queryInstance)) {
+                    continue;
+                }
+    
+                // Skip documents until offset is reached
+                if (skipCount > 0) {
+                    skipCount--;
+                    continue;
+                }
+    
+                matchedCount++;
+    
+                // If we've reached the limit, break early
+                if (limit > 0 && matchedCount >= limit) {
+                    break;
+                }
             }
-
-            // Skip documents until offset is reached
-            if (skipCount > 0) {
-                skipCount--;
-                continue;
-            }
-
-            matchedCount++;
-
-            // If we've reached the limit, break early
-            if (limit > 0 && matchedCount >= limit) {
-                break;
-            }
+    
+            return matchedCount;
         }
-
-        return matchedCount;
-    }
-    /** Find documents matching a query with pagination */
-    async find(
-        collectionName: keyof T,
-        query: QueryType<T[keyof T]>,
-        options?: QueryOptions
-    ): Promise<Doc<T[keyof T]>[]> {
-        const collectionPrefix = `${String(collectionName)}:`;
-        const schema = this.getSchema(String(collectionName));
-        const queryInstance = new Query(query, schema);
-
-        // Retrieve limit and offset from the options, using defaults if undefined
-        const limit = options?.limit ?? -1;  // -1 indicates "no limit" for classic-level
-        const offset = options?.offset ?? 0; // default to 0 (no offset)
-
-        const docs: Doc<T[keyof T]>[] = [];
-        let skipCount = offset;
-
-        // If a limit is set, set maxRead = limit + offset
-        // Else let maxRead be -1 (no limit) so we read all
-        const maxRead = limit > 0 ? offset + limit : -1;
-
-        for await (const [key, value] of this.db.iterator({
-            gte: collectionPrefix,
-            lt: `${collectionPrefix}\xFF`,
-            limit: maxRead
-        })) {
-            const doc = JSON.parse(value);
-            if (!this.core.matchesQuery(doc, queryInstance)) {
-                continue;
+        /** Find documents matching a query with pagination */
+        async find(
+            collectionName: keyof T,
+            query: QueryType<T[keyof T]>,
+            options?: QueryOptions
+        ): Promise<Doc<T[keyof T]>[]> {
+            const collectionPrefix = `${String(collectionName)}:`;
+            const schema = this.getSchema(String(collectionName));
+            const queryInstance = new Query(query, schema);
+    
+            // Retrieve limit and offset from the options, using defaults if undefined
+            const limit = options?.limit ?? -1;  // -1 indicates "no limit" for classic-level
+            const offset = options?.offset ?? 0; // default to 0 (no offset)
+    
+            const docs: Doc<T[keyof T]>[] = [];
+            let skipCount = offset;
+    
+            // If a limit is set, set maxRead = limit + offset
+            // Else let maxRead be -1 (no limit) so we read all
+            const maxRead = limit > 0 ? offset + limit : -1;
+    
+            for await (const [key, value] of this.level.iterator({
+                gte: collectionPrefix,
+                lt: `${collectionPrefix}\xFF`,
+                limit: maxRead
+            })) {
+                const doc = JSON.parse(value);
+                if (!this.core.matchesQuery(doc, queryInstance)) {
+                    continue;
+                }
+    
+                // Skip documents until offset is reached
+                if (skipCount > 0) {
+                    skipCount--;
+                    continue;
+                }
+    
+                docs.push(doc);
+    
+                // If we've reached the limit, break early
+                if (limit > 0 && docs.length >= limit) {
+                    break;
+                }
             }
-
-            // Skip documents until offset is reached
-            if (skipCount > 0) {
-                skipCount--;
-                continue;
-            }
-
-            docs.push(doc);
-
-            // If we've reached the limit, break early
-            if (limit > 0 && docs.length >= limit) {
-                break;
-            }
+    
+            return docs;
         }
-
-        return docs;
     }
+    return Instance;
 }

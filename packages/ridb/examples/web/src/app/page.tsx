@@ -1,8 +1,6 @@
 'use client';
 
-import Image from "next/image";
-import React, {  useState, useEffect, useMemo } from 'react';
-
+import React, { useState, useEffect, useMemo } from 'react';
 import {  SchemaFieldType, StorageType, Doc, RIDB } from "@trust0/ridb";
 
 
@@ -36,7 +34,7 @@ export default function Home() {
     () => new RIDB({
       dbName,
       schemas,
-      worker: true
+      worker: false
     }), []
   );
 
@@ -59,9 +57,10 @@ export default function Home() {
    */
   const handleConnectAndStart = async () => {
     if (!db) return;
-
     // (1) Close any existing connection:
-    await db.close();
+    if (db.started) {
+      await db.close();
+    }
     console.log(`[Home] Creating a new database connection: ${dbName}`);
     setIsStarted(false);
     setDemos([]);

@@ -1,8 +1,8 @@
 {
     "name": "@trust0/ridb",
-    "version": "1.4.1",
+    "version": "1.4.2-rc.1",
     "description": "Lightweight db encrypted and secure database wrapper for browser and nodejs.",
-    "main": "./build/index.js",
+    "module": "./build/index.js",
     "types": "./build/index.d.ts",
     "exports": {
         ".": {
@@ -35,7 +35,7 @@
     "scripts": {
         "clean": "rm -rf build node_modules",
         "docs": "typedoc",
-        "build": "rm -rf build && npm run types && node esbuild.config.mjs",
+        "build": "rm -rf build && node esbuild.config.mjs && npm run types",
         "test": "sh test.sh",
         "test:node": "sh test.sh -e node",
         "test:browser": "sh test.sh -e browser",

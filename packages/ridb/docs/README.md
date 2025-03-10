@@ -164,4 +164,7 @@ await db.start()
 ## Variables
 
 - [SchemaFieldType](variables/SchemaFieldType.md)
-- [WasmInternal](variables/WasmInternal.md)
+
+## Functions
+
+- [WasmInternal](functions/WasmInternal.md)
