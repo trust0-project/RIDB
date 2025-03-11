@@ -29,7 +29,7 @@ export default {
       [
         "@semantic-release/exec",
         {
-          "prepareCmd": "npx npm-check-updates -u @trust0/ridb -t newest && npx npm-check-updates -u @trust0/ridb-core -t newest && npm i && npm run docs"
+          "prepareCmd": "npx npm-check-updates -u @trust0/ridb -t newest && npx npm-check-updates -u @trust0/ridb-core -t newest && npm i"
         }
       ],
       "@semantic-release/npm",
