@@ -1,3 +1,10 @@
+## [1.5.4-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.3...@trust0/ridb-core@1.5.4-rc.1) (2025-03-11)
+
+### Bug Fixes
+
+* commit dependencies on release ([c6b74ca](https://github.com/trust0-project/RIDB/commit/c6b74cab31ef6e4bc80ae2653c7c511239c83d92))
+* remove extra build ([c5780d1](https://github.com/trust0-project/RIDB/commit/c5780d128e12878e1acbb7e1e044edf57bbab850))
+
 ## [1.5.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.2...@trust0/ridb-core@1.5.3) (2025-03-11)
 
 ### Bug Fixes
