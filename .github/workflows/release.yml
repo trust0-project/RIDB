@@ -50,15 +50,41 @@ jobs:
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
-      - name: Run semantic-release
+      - name: Run Build package
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
           npm install
           npm run build
-          cd packages/ridb-core && npx semantic-release --deps.prefix="^" && cd ../..
-          cd packages/ridb && npx semantic-release --deps.prefix="^" && cd ../..
-          cd packages/ridb-level && npx semantic-release --deps.prefix="^" && cd ../..
-          cd packages/ridb-react && npx semantic-release --deps.prefix="^" && cd ../..
+
+      - name: Release @trust0/ridb-core
+        env:
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_SECRET }}
+        run: |
+          npm install
+          npm run build
+
+      - name: Release @trust0/ridb
+        env:
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_SECRET }}
+        run: |
+          cd packages/ridb-core && npx semantic-release --deps.prefix="^"
           
+
+      - name: Release @trust0/ridb-level
+        env:
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_SECRET }}
+        run: |
+          cd packages/ridb-level && npx semantic-release --deps.prefix="^"
+          
+
+      - name: Release @trust0/ridb-react
+        env:
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_SECRET }}
+        run: |
+          cd packages/ridb-react && npx semantic-release --deps.prefix="^"
