@@ -1,3 +1,17 @@
+## [1.5.5-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.4...@trust0/ridb-core@1.5.5-rc.1) (2025-03-11)
+
+### Bug Fixes
+
+* compatible cjs and esm build ([b537473](https://github.com/trust0-project/RIDB/commit/b5374738dee54ee675374dcdfe2916df45ab0dca))
+* compatible cjs and esm build ([#66](https://github.com/trust0-project/RIDB/issues/66)) ([384d5cc](https://github.com/trust0-project/RIDB/commit/384d5cc37d292c801a947cbc576d98231b76fb54))
+* correct packages ([35d2be0](https://github.com/trust0-project/RIDB/commit/35d2be0eabd1ff313874411c175189648beec2a2))
+* latest chrome driver ([691b11a](https://github.com/trust0-project/RIDB/commit/691b11aa8bad0c7c06fe2f9a9d2b9501d5b9ba6d))
+* pkg improvements ([e6cbe00](https://github.com/trust0-project/RIDB/commit/e6cbe00bb35942d609bc56fee1a2e0e9104fbe5c))
+* remove timeout ([39eac0d](https://github.com/trust0-project/RIDB/commit/39eac0dc41a66d25a500b11654e0cad26b0edbd0))
+* testing in browser ([4d5532c](https://github.com/trust0-project/RIDB/commit/4d5532c68a14ef7b64464878a0116bf36f4b8add))
+* tests ([7b3d13a](https://github.com/trust0-project/RIDB/commit/7b3d13a11eec6d120d798b6d0768cc232c895a93))
+* update chrome driver ([7b01a38](https://github.com/trust0-project/RIDB/commit/7b01a38c5077247a38d5d6ec450de664091d49ad))
+
 ## [1.5.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.3...@trust0/ridb-core@1.5.4) (2025-03-11)
 
 ### Bug Fixes
