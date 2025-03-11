@@ -1,3 +1,9 @@
+## [1.5.4-rc.5](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.4-rc.4...@trust0/ridb-core@1.5.4-rc.5) (2025-03-11)
+
+### Bug Fixes
+
+* improve ci order ([e21ab43](https://github.com/trust0-project/RIDB/commit/e21ab43a96752be116719bbeae5c6516041bb8da))
+
 ## [1.5.4-rc.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.4-rc.3...@trust0/ridb-core@1.5.4-rc.4) (2025-03-11)
 
 ### Bug Fixes
