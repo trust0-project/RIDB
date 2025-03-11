@@ -41,13 +41,17 @@ jobs:
           echo "@trust0:registry=https://registry.npmjs.org/" >> ./.npmrc
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
+npm install chromedriver --chromedriver-force-download
 
       - name: Install WASM
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
+          brew install --cask google-chrome
+          brew install chromedriver
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          npm install chromedriver --chromedriver-force-download
           npm install
           npm run build
           npm test
