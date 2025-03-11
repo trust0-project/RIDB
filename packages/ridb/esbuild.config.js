@@ -1,6 +1,6 @@
 
 import esbuild from 'esbuild';
-import { generic, wasmPlugin, plugins } from '../../esbuild.base.mjs';
+import { generic, wasmPlugin, plugins } from '../../esbuild.base.js';
 
 await esbuild.build({
     ...generic,

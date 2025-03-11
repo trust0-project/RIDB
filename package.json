@@ -4,6 +4,7 @@
   "engines": {
     "node": ">=20"
   },
+  "type": "module",
   "packageManager": "npm@10.9.0",
   "workspaces": [
     "packages/*"
