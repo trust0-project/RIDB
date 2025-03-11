@@ -181,7 +181,7 @@ impl Collection {
         let docs = self.storage.find(
             &self.name,
             query_js,
-            options
+            options.clone()
         ).await?;
 
         // Process and return the result
@@ -217,7 +217,7 @@ impl Collection {
     #[wasm_bindgen]
     pub async fn count(&self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, RIDBError> {
         let options = self.parse_query_options(options_js)?;
-        self.storage.count(&self.name, query_js, options).await
+        self.storage.count(&self.name, query_js, options.clone()).await
     }
 
     /// Finds and returns a single document in the collection by its ID.

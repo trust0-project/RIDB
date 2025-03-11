@@ -601,7 +601,7 @@ impl InMemory {
     }
 
     #[wasm_bindgen(js_name = "find")]
-    pub async fn find_js(&self, collection_name: &str, query_js: JsValue, options: &QueryOptions) -> Result<JsValue, RIDBError> {
+    pub async fn find_js(&self, collection_name: &str, query_js: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError> {
         Logger::log(
             "InMemory::find_js",
             &JsValue::from_str(&format!(
@@ -611,8 +611,8 @@ impl InMemory {
         );
         let schema = self.base.schemas.get(collection_name)
             .ok_or_else(|| JsValue::from( format!("Collection {} not found in find", collection_name)))?;
-        let query = Query::new(query_js.clone(), schema.clone())?;
-        self.find(collection_name, &query, options).await
+        let query = Query::new(query_js, schema.clone())?;
+        self.find(collection_name, &query, &options).await
     }
 
     #[wasm_bindgen(js_name = "findDocumentById")]
@@ -632,7 +632,7 @@ impl InMemory {
     }
 
     #[wasm_bindgen(js_name = "count")]
-    pub async fn count_js(&self, collection_name: &str, query_js: JsValue, options: &QueryOptions) -> Result<JsValue, RIDBError> {
+    pub async fn count_js(&self, collection_name: &str, query_js: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError> {
         Logger::log(
             "InMemory::count_js",
             &JsValue::from_str(&format!(
@@ -642,7 +642,7 @@ impl InMemory {
         );
         let schema = self.base.schemas.get(collection_name).ok_or_else(|| JsValue::from( format!("Collection {} not found in count", collection_name)))?;
         let query = Query::new(query_js, schema.clone())?;
-        self.count(collection_name, &query, options).await
+        self.count(collection_name, &query, &options).await
     }
 
     #[wasm_bindgen(js_name = "close")]
@@ -849,7 +849,7 @@ mod tests {
             offset: None
         };
 
-        let result = inmem.find_js("demo", query_value, &query_options).await.unwrap();
+        let result = inmem.find_js("demo", query_value, query_options).await.unwrap();
         let result_array = Array::from(&result);
         
         assert_eq!(result_array.length(), 1);
@@ -908,7 +908,7 @@ mod tests {
             limit: Some(2),
             offset: Some(0),
         };
-        let result_1 = inmem.find_js("demo", query_value.clone(), &query_options_1).await.unwrap();
+        let result_1 = inmem.find_js("demo", query_value.clone(), query_options_1).await.unwrap();
         let arr_1 = Array::from(&result_1);
         assert_eq!(arr_1.length(), 2);
 
@@ -917,7 +917,7 @@ mod tests {
             limit: Some(2),
             offset: Some(2),
         };
-        let result_2 = inmem.find_js("demo", query_value.clone(), &query_options_2).await.unwrap();
+        let result_2 = inmem.find_js("demo", query_value.clone(), query_options_2).await.unwrap();
         let arr_2 = Array::from(&result_2);
         assert_eq!(arr_2.length(), 2);
 
@@ -926,7 +926,7 @@ mod tests {
             limit: Some(2),
             offset: Some(4),
         };
-        let result_3 = inmem.find_js("demo", query_value, &query_options_3).await.unwrap();
+        let result_3 = inmem.find_js("demo", query_value, query_options_3).await.unwrap();
         let arr_3 = Array::from(&result_3);
         assert_eq!(arr_3.length(), 1);
     }
@@ -985,7 +985,7 @@ mod tests {
             limit: None,
             offset: None
         };
-        let result = inmem.count_js("demo", query_value, &query_options).await.unwrap();
+        let result = inmem.count_js("demo", query_value, query_options).await.unwrap();
         assert_eq!(result.as_f64().unwrap(), 2.0);
     }
 
@@ -1046,12 +1046,12 @@ mod tests {
             offset: None
         };
         // Test find on empty collection
-        let posts_result = inmem.find_js("posts", empty_query.clone(), &query_options).await.unwrap();
+        let posts_result = inmem.find_js("posts", empty_query.clone(), query_options).await.unwrap();
         let posts_array = Array::from(&posts_result);
         assert_eq!(posts_array.length(), 0);
         
         // Test count on empty collection
-        let count_result = inmem.count_js("posts", empty_query, &query_options).await.unwrap();
+        let count_result = inmem.count_js("posts", empty_query, query_options).await.unwrap();
         assert_eq!(count_result.as_f64().unwrap(), 0.0);
     }
 
@@ -1100,7 +1100,7 @@ mod tests {
             limit: None,
             offset: None
         };
-        let result = inmem.find_js("demo", query_value, &query_options).await.unwrap();
+        let result = inmem.find_js("demo", query_value, query_options).await.unwrap();
         let result_array = Array::from(&result);
         assert_eq!(result_array.length(), 0);
     }

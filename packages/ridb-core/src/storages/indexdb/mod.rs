@@ -666,14 +666,14 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "find")]
-    pub async fn find_js(&self, collection_name: &str, query: JsValue, options: &QueryOptions) -> Result<JsValue, RIDBError> {
+    pub async fn find_js(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError> {
         let schema = self
             .base
             .schemas
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?;
         let query = Query::new(query, schema.clone())?;
-        self.find(collection_name, &query, options)
+        self.find(collection_name, &query, &options)
             .await
     }
 
@@ -683,14 +683,14 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "count")]
-    pub async fn count_js(&self, collection_name: &str, query: JsValue, options: &QueryOptions) -> Result<JsValue, RIDBError> {
+    pub async fn count_js(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError> {
         let schema = self
             .base
             .schemas
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?;
         let query = Query::new(query, schema.clone())?;
-        self.count(collection_name, &query, options)
+        self.count(collection_name, &query, &options)
             .await
     }
 
@@ -966,7 +966,7 @@ mod tests {
             limit: None,
             offset: None
         };
-        let result = db.find_js("demo", query_value, &query_options).await.unwrap();
+        let result = db.find_js("demo", query_value, query_options).await.unwrap();
         let result_array = Array::from(&result);
 
         assert_eq!(result_array.length(), 1);
@@ -1034,7 +1034,7 @@ mod tests {
             limit: None,
             offset: None
         };
-        let result = db.count_js("demo", query_value, &query_options).await.unwrap();
+        let result = db.count_js("demo", query_value, query_options).await.unwrap();
         assert_eq!(result.as_f64().unwrap(), 2.0);
 
         // Clean up
@@ -1099,12 +1099,12 @@ mod tests {
             offset: None
         };
         // Find all products (should be empty)
-        let products_result = db.find_js("products", empty_query.clone(), &query_options).await.unwrap();
+        let products_result = db.find_js("products", empty_query.clone(), query_options).await.unwrap();
         let products_array = Array::from(&products_result);
         assert_eq!(products_array.length(), 0);
 
         // Count products (should be 0)
-        let count_result = db.count_js("products", empty_query, &query_options).await.unwrap();
+        let count_result = db.count_js("products", empty_query, query_options).await.unwrap();
         assert_eq!(count_result.as_f64().unwrap(), 0.0);
 
         // Clean up

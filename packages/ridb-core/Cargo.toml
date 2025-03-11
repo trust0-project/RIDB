@@ -41,17 +41,3 @@ wasm-opt = false
 default = ["console_error_panic_hook"]
 browser = []
 node = []
-
-
-[package.metadata.wasm-pack]
-scope = "elribonazo"
-
-# Everything under "[package.metadata.wasm-pack.package]" goes directly
-# into the generated package.json 
-[package.metadata.wasm-pack.package]
-# For top-level properties:
-description = "My Rust-based Node.js package"
-
-# For nested objects:
-[package.metadata.wasm-pack.package.publishConfig]
-access = "public"
