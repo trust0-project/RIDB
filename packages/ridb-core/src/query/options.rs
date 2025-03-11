@@ -2,7 +2,7 @@ use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::error::RIDBError;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 #[wasm_bindgen(skip_typescript)]
 pub struct QueryOptions {
     pub(crate) limit: Option<u32>,
