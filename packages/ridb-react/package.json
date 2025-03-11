@@ -1,7 +1,7 @@
 {
     "name": "@trust0/ridb-react",
     "description": "React bindings for RIDB.",
-    "version": "1.1.15",
+    "version": "1.1.16-rc.1",
     "author": "elribonazo@gmail.com",
     "repository": {
         "type": "git",
@@ -13,7 +13,7 @@
     "scripts": {
         "clean": "rm -rf build node_modules",
         "docs": "echo 'No docs for this package'",
-        "build": "rm -rf build && npm run types && node ./esbuild.js",
+        "build": "rm -rf build && npm run types && node ./esbuild.config.js",
         "test": "vitest --run",
         "types": "npm run types:default",
         "types:default": "npx tsc",
@@ -36,10 +36,10 @@
         "react-dom": "^18.3.1",
         "typescript": "^5.7.2",
         "@vitejs/plugin-react-swc": "^3.8.0",
-        "@trust0/ridb": "^1.4.5"
+        "@trust0/ridb": "^1.4.6-rc.2"
     },
     "peerDependencies": {
-        "@trust0/ridb": "^1.4.2",
+        "@trust0/ridb": "^1.4.6-rc.1",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
     },

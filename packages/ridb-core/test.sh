@@ -13,7 +13,7 @@ test_browser() {
         echo "Error: chromedriver is not installed. Please install chromedriver to continue."
         exit 1
     fi
-    wasm-pack --log-level error test --headless --chrome -- --features browser || { echo "wasm-pack test for browser failed"; exit 1; }
+    wasm-pack --log-level info test --headless --chrome -- --features browser || { echo "wasm-pack test for browser failed"; exit 1; }
 }
 
 # Initialize variables

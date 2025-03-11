@@ -321,8 +321,13 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
   }
 
   private createWorker() {
-    const workerPath = require.resolve('@trust0/ridb/worker');
-    const worker = new SharedWorker(workerPath, { type: 'module' });
+    let worker: SharedWorker | undefined;
+    try {
+      worker = new SharedWorker(new URL('@trust0/ridb/worker', import.meta.url), { type: 'module' });
+    } catch (err) {
+      const workerPath = require.resolve('@trust0/ridb/worker');
+      worker = new SharedWorker(workerPath, { type: 'module' });
+    }
     worker.port.onmessage = this.handleWorkerMessage.bind(this);
     return worker;
   }

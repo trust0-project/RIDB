@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-level",
-  "version": "1.1.16",
+  "version": "1.1.17-rc.2",
   "description": "Level DB storage for @trust0/ridb.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -24,7 +24,7 @@
   "scripts": {
     "clean": "rm -rf build node_modules",
     "docs": "typedoc",
-    "build": "rm -rf build && npm run types && node esbuild.config.mjs",
+    "build": "rm -rf build && npm run types && node esbuild.config.js",
     "test": "sh test.sh",
     "test:node": "sh test.sh -e node",
     "test:browser": "sh test.sh -e browser",
@@ -44,10 +44,10 @@
     "uuid": "^11.0.3",
     "webdriverio": "^9.7.1",
     "classic-level": "^2.0.0",
-    "@trust0/ridb": "^1.4.5"
+    "@trust0/ridb": "^1.4.6-rc.2"
   },
   "peerDependencies": {
-    "@trust0/ridb": "^1.4.2"
+    "@trust0/ridb": "^1.4.5"
   },
   "optionalDependencies": {
     "@esbuild/darwin-arm64": "0.15.18",

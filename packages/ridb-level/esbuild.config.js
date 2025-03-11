@@ -1,6 +1,6 @@
 
 import esbuild from 'esbuild';
-import { generic } from '../../esbuild.base.mjs';
+import { generic } from '../../esbuild.base.js';
 
 // Build ES module
 esbuild.build({
