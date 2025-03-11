@@ -48,7 +48,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-          npm install chromedriver --chromedriver-force-download
           npm install
           npm run build
           npm test
