@@ -85,3 +85,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
           cd packages/ridb-react && npx semantic-release --deps.prefix="^" --tag-format="@trust0/ridb-react@\${version}"
+          
+      - name: Update dependencies and commit package.json files
+        env:
+          GH_TOKEN: ${{ secrets.GH_SECRET }}
+        run: |
+          git config --global user.name "elribonazo"
+          git config --global user.email "elribonazo@gmail.com"
+          npm install
+          git add package.json package-lock.json
+          git commit -m "chore: update dependencies after release [skip ci]" || echo "No changes to commit"
+          git push origin ${GITHUB_REF#refs/heads/}

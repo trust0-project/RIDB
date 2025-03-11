@@ -1,6 +1,5 @@
-export default  {
-  tagFormat: '@trust0/ridb-react@${version}',
-
+export default {
+  tagFormat: '@trust0/ridb@${version}',
     "branches": [
       {
         "name": "main"
@@ -38,6 +37,8 @@ export default  {
         "@semantic-release/git",
         {
           "assets": [
+            "../../package-lock.json",
+            "../../package.json",
             "package-lock.json",
             "package.json",
             "CHANGELOG.md",
@@ -47,5 +48,4 @@ export default  {
         }
       ]
     ],
-    "noCi": true
   }
