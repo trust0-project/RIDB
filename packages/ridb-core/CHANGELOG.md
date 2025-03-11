@@ -1,3 +1,10 @@
+## [0.12.2](https://github.com/trust0-project/RIDB/compare/v0.12.1...v0.12.2) (2025-03-11)
+
+### Bug Fixes
+
+* force release ([d85dda7](https://github.com/trust0-project/RIDB/commit/d85dda702292b4a37e302b5851d58a86bd81e619))
+* update pipeline ([eeb1035](https://github.com/trust0-project/RIDB/commit/eeb1035ac24d584a1608af646d8146e2ed0c7042))
+
 ## [0.12.1](https://github.com/trust0-project/RIDB/compare/v0.12.0...v0.12.1) (2025-03-11)
 
 ### Bug Fixes
