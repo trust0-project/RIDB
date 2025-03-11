@@ -1,3 +1,9 @@
+## [1.1.15-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.15-rc.2...@trust0/ridb-react@1.1.15-rc.3) (2025-03-11)
+
+### Bug Fixes
+
+* test changes ([9cea911](https://github.com/trust0-project/RIDB/commit/9cea911ef9202ea871e41885b817eda8079d9bb6))
+
 ## [1.1.15-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.15-rc.1...@trust0/ridb-react@1.1.15-rc.2) (2025-03-11)
 
 ### Bug Fixes
