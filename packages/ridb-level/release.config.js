@@ -1,4 +1,4 @@
-module.exports = {
+export default  {
   tagFormat: '@trust0/ridb-level@${version}',
 
     "branches": [
