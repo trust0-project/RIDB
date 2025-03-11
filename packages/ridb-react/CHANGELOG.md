@@ -1,3 +1,11 @@
+## [1.1.15-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.14...@trust0/ridb-react@1.1.15-rc.1) (2025-03-11)
+
+### Bug Fixes
+
+* commit dependencies on release ([c6b74ca](https://github.com/trust0-project/RIDB/commit/c6b74cab31ef6e4bc80ae2653c7c511239c83d92))
+* remove extra build ([c5780d1](https://github.com/trust0-project/RIDB/commit/c5780d128e12878e1acbb7e1e044edf57bbab850))
+* restore build ([7a63848](https://github.com/trust0-project/RIDB/commit/7a63848ce274c4c12fec3d23c80936f8abad4ffa))
+
 ## [1.1.14](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.13...@trust0/ridb-react@1.1.14) (2025-03-11)
 
 ### Bug Fixes
