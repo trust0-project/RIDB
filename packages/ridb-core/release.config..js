@@ -1,4 +1,6 @@
-{
+module.exports = {
+  tagFormat: '@trust0/ridb-core@${version}',
+
     "branches": [
       {
         "name": "main"

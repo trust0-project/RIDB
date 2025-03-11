@@ -63,15 +63,14 @@ jobs:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
-          npm install
-          npm run build
+          cd packages/ridb-core && npx semantic-release --deps.prefix="^"
 
       - name: Release @trust0/ridb
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
-          cd packages/ridb-core && npx semantic-release --deps.prefix="^"
+          cd packages/ridb && npx semantic-release --deps.prefix="^"
           
 
       - name: Release @trust0/ridb-level

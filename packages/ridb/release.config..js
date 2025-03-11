@@ -1,4 +1,5 @@
-{
+module.exports = {
+  tagFormat: '@trust0/ridb@${version}',
     "branches": [
       {
         "name": "main"
@@ -45,5 +46,4 @@
         }
       ]
     ],
-    "noCi": true
   }
