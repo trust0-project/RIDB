@@ -47,8 +47,7 @@ jobs:
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ./.npmrc
           echo "@trust0:registry=https://registry.npmjs.org/" >> ./.npmrc
-          brew install --cask google-chrome
-          brew install chromedriver
+
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
