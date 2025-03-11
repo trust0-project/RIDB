@@ -5,7 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.5.4-rc.2",
+  "version": "1.5.4-rc.3",
   "main": "./pkg/ridb_core.js",
   "types": "./pkg/ridb_core.d.ts",
   "sideEffects": [
