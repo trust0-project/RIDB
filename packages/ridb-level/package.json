@@ -47,7 +47,7 @@
     "@trust0/ridb": "^1.4.2"
   },
   "peerDependencies": {
-    "@trust0/ridb": "^1.4.1"
+    "@trust0/ridb": "^1.4.2"
   },
   "optionalDependencies": {
     "@esbuild/darwin-arm64": "0.15.18",
