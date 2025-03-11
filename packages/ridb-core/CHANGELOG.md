@@ -1,3 +1,10 @@
+## [1.5.5-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.5-rc.1...@trust0/ridb-core@1.5.5-rc.2) (2025-03-11)
+
+### Bug Fixes
+
+* level ([f7f0158](https://github.com/trust0-project/RIDB/commit/f7f01583eeca1ca4018405845c62f2b138bfd3c0))
+* pipeline ([1351c5b](https://github.com/trust0-project/RIDB/commit/1351c5b3c613e6d7e6defa852ac6077b47e1f9c0))
+
 ## [1.5.5-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.4...@trust0/ridb-core@1.5.5-rc.1) (2025-03-11)
 
 ### Bug Fixes
