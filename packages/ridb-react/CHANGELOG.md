@@ -1,3 +1,10 @@
+## [1.1.14](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.13...@trust0/ridb-react@1.1.14) (2025-03-11)
+
+### Bug Fixes
+
+* es module config ([3916f84](https://github.com/trust0-project/RIDB/commit/3916f84d7793467beae2d98c59aa8829b7c767b8))
+* typo ([66c3531](https://github.com/trust0-project/RIDB/commit/66c3531038ef0e7eefa09a6a297271280efb2577))
+
 ## @trust0/ridb-react [1.1.12](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.11...@trust0/ridb-react@1.1.12) (2025-03-09)
 
 
