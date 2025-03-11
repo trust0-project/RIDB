@@ -1,3 +1,9 @@
+## [1.5.5-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.5-rc.2...@trust0/ridb-core@1.5.5-rc.3) (2025-03-11)
+
+### Bug Fixes
+
+* wrong config ([abe3b52](https://github.com/trust0-project/RIDB/commit/abe3b52154921b05816c8d6d58f945e13b3719d5))
+
 ## [1.5.5-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.5-rc.1...@trust0/ridb-core@1.5.5-rc.2) (2025-03-11)
 
 ### Bug Fixes
