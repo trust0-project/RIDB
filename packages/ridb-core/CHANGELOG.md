@@ -1,3 +1,16 @@
+## [1.5.6-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.5...@trust0/ridb-core@1.5.6-rc.1) (2025-03-11)
+
+### Bug Fixes
+
+* changes ([e3c768d](https://github.com/trust0-project/RIDB/commit/e3c768d38f3ec5fa351121f2b56635572fe76ac1))
+* chrome driver ([8ac616c](https://github.com/trust0-project/RIDB/commit/8ac616c6b20b135b41134e5d0da4d1366bb99f7b))
+* chrome driver download ([87f527c](https://github.com/trust0-project/RIDB/commit/87f527c3b7b613e99c56e69d1a7649612c397187))
+* ci build ([0589519](https://github.com/trust0-project/RIDB/commit/05895190dfc9f797c36faeca48907813156f41b0))
+* description ([e9a40ea](https://github.com/trust0-project/RIDB/commit/e9a40eaa4cf2fde7dbbf39ddc0fb02a17de3a695))
+* driver ([a71b45b](https://github.com/trust0-project/RIDB/commit/a71b45b1d7e63ac89cc57c50feef21c5906451ea))
+* QueryOptions clone ([ae38f7d](https://github.com/trust0-project/RIDB/commit/ae38f7d752eb5de75e2d863642033bfbe800c153))
+* ridb description ([#68](https://github.com/trust0-project/RIDB/issues/68)) ([4abba0c](https://github.com/trust0-project/RIDB/commit/4abba0c62c6ca162d4d7fbb7c59c9667ed69b6f0))
+
 ## [1.5.5](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.4...@trust0/ridb-core@1.5.5) (2025-03-11)
 
 ### Bug Fixes
