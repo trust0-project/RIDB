@@ -21,8 +21,8 @@
  */
 import path from 'path';
 
-import {
-    WasmInternal,
+
+ import {
     OpType, 
     Query,
     QueryOptions, 
@@ -30,6 +30,11 @@ import {
     Doc, 
     Operation,
     QueryType,  
+ } from "@trust0/ridb-core"
+
+
+import {
+    WasmInternal
  } from "@trust0/ridb";
 
 import type { ClassicLevel } from "classic-level";
