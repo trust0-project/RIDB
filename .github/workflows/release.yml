@@ -56,8 +56,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
           npm install
-          npx npm-check-updates -u @trust0/ridb-core --dep dev --deep
-          npx npm-check-updates -u @trust0/ridb --dep dev --deep
-          npm install
           npm run build
-          npx multi-semantic-release --deps.prefix="^"
+          cd packages/ridb && npx emantic-release --deps.prefix="^" && cd ../..
+          cd packages/ridb-core && npx emantic-release --deps.prefix="^" && cd ../..
+          cd packages/ridb-level && npx emantic-release --deps.prefix="^" && cd ../..
+          cd packages/ridb-react && npx emantic-release --deps.prefix="^" && cd ../..
+          

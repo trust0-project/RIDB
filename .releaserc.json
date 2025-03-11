@@ -1,5 +1,4 @@
 {
-  "extends": "@anolilab/semantic-release-preset/npm",
   "branches": [
     {
       "name": "main"
@@ -25,7 +24,6 @@
         "preset": "conventionalcommits"
       }
     ],
-    "@anolilab/semantic-release-clean-package-json",
     "@semantic-release/github",
     [
       "@semantic-release/exec",
