@@ -1,3 +1,10 @@
+## [1.5.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.2...@trust0/ridb-core@1.5.3) (2025-03-11)
+
+### Bug Fixes
+
+* es module config ([3916f84](https://github.com/trust0-project/RIDB/commit/3916f84d7793467beae2d98c59aa8829b7c767b8))
+* typo ([66c3531](https://github.com/trust0-project/RIDB/commit/66c3531038ef0e7eefa09a6a297271280efb2577))
+
 ## [0.12.2](https://github.com/trust0-project/RIDB/compare/v0.12.1...v0.12.2) (2025-03-11)
 
 ### Bug Fixes
