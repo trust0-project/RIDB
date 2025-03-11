@@ -22,6 +22,6 @@ Specifying a different path is not yet supported.
 
 # SDK Rerefence
 
-## Classes
+## Functions
 
-- [LevelDB](classes/LevelDB.md)
+- [createLevelDB](functions/createLevelDB.md)
