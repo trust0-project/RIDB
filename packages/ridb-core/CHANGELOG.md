@@ -1,3 +1,9 @@
+## [1.5.4-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.4-rc.1...@trust0/ridb-core@1.5.4-rc.2) (2025-03-11)
+
+### Bug Fixes
+
+* restore build ([7a63848](https://github.com/trust0-project/RIDB/commit/7a63848ce274c4c12fec3d23c80936f8abad4ffa))
+
 ## [1.5.4-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.3...@trust0/ridb-core@1.5.4-rc.1) (2025-03-11)
 
 ### Bug Fixes
