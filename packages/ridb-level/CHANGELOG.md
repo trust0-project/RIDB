@@ -1,3 +1,18 @@
+## [1.1.16](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.15...@trust0/ridb-level@1.1.16) (2025-03-11)
+
+### Bug Fixes
+
+* commit dependencies on release ([c6b74ca](https://github.com/trust0-project/RIDB/commit/c6b74cab31ef6e4bc80ae2653c7c511239c83d92))
+* improve ci order ([e21ab43](https://github.com/trust0-project/RIDB/commit/e21ab43a96752be116719bbeae5c6516041bb8da))
+* improvement in ci [skip ci] ([9f5a8b3](https://github.com/trust0-project/RIDB/commit/9f5a8b37e6f0f5772793a7f08efb7a3325a538fb))
+* lock ([a7cf9d4](https://github.com/trust0-project/RIDB/commit/a7cf9d4db28d0bb6dad0b2b8cba3999e7db08c95))
+* only build cli when required ([4a9febd](https://github.com/trust0-project/RIDB/commit/4a9febdca55c2d6d06ead0b400c0a164391259a1))
+* release core only when required ([b9382b1](https://github.com/trust0-project/RIDB/commit/b9382b11b75adaea7f36f06f33877930f7f87990))
+* remove extra build ([c5780d1](https://github.com/trust0-project/RIDB/commit/c5780d128e12878e1acbb7e1e044edf57bbab850))
+* restore build ([7a63848](https://github.com/trust0-project/RIDB/commit/7a63848ce274c4c12fec3d23c80936f8abad4ffa))
+* test changes ([9cea911](https://github.com/trust0-project/RIDB/commit/9cea911ef9202ea871e41885b817eda8079d9bb6))
+* typo in verifyConditionsCmd ([6291979](https://github.com/trust0-project/RIDB/commit/62919799db5cd74f16570275a88e7bd286c79d01))
+
 ## [1.1.16-rc.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.16-rc.3...@trust0/ridb-level@1.1.16-rc.4) (2025-03-11)
 
 ### Bug Fixes
