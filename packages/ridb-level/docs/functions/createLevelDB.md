@@ -8,7 +8,7 @@
 
 > **createLevelDB**(): `Promise`\<*typeof* `Instance`\>
 
-Defined in: [index.ts:45](https://github.com/trust0-project/RIDB/blob/d855c214dc32595947f9c60673e1a5f328feb0a1/packages/ridb-level/src/index.ts#L45)
+Defined in: [index.ts:45](https://github.com/trust0-project/RIDB/blob/10423183d2c31f7e4e11630023f5b3c28f7eb90f/packages/ridb-level/src/index.ts#L45)
 
 ## Returns
 
