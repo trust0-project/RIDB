@@ -63,27 +63,25 @@ jobs:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
-          cd packages/ridb-core && npx semantic-release --deps.prefix="^"
+          cd packages/ridb-core && npx semantic-release --deps.prefix="^" --tag-format="@trust0/ridb-core@\${version}"
 
       - name: Release @trust0/ridb
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
-          cd packages/ridb && npx semantic-release --deps.prefix="^"
+          cd packages/ridb && npx semantic-release --deps.prefix="^" --tag-format="@trust0/ridb@\${version}"
           
-
       - name: Release @trust0/ridb-level
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
-          cd packages/ridb-level && npx semantic-release --deps.prefix="^"
+          cd packages/ridb-level && npx semantic-release --deps.prefix="^" --tag-format="@trust0/ridb-level@\${version}"
           
-
       - name: Release @trust0/ridb-react
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
-          cd packages/ridb-react && npx semantic-release --deps.prefix="^"
+          cd packages/ridb-react && npx semantic-release --deps.prefix="^" --tag-format="@trust0/ridb-react@\${version}"
