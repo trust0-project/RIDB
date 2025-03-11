@@ -46,7 +46,7 @@
     "devDependencies": {
         "@babel/types": "^7.26.3",
         "@esbuild-plugins/node-resolve": "^0.2.2",
-        "@trust0/ridb-core": "^1.5.3",
+        "@trust0/ridb-core": "^1.5.4-rc.1",
         "@types/node": "^20.14.2",
         "@types/sharedworker": "^0.0.150",
         "dts-bundle-generator": "^9.5.0",
