@@ -9,9 +9,6 @@ export const branches = [
   },
   "v+([0-9])?(.{+([0-9]),x}).x"
 ]
-
-
-
 export const plugins = [
   "@semantic-release/changelog",
   [
