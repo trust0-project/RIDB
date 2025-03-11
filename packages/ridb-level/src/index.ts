@@ -43,7 +43,7 @@ type Level = ClassicLevel<string, string>;
 
 
 export default async function createLevelDB() {
-    const {BaseStorage} = await WasmInternal;
+    const {BaseStorage} = await WasmInternal();
     class Instance<T extends SchemaTypeRecord> extends BaseStorage<T> {
         constructor(public level: Level, name: string, schemas: T, options: any) {
             super(name, schemas, options);
