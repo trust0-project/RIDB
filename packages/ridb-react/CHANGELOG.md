@@ -1,3 +1,13 @@
+## [1.1.15-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.15-rc.1...@trust0/ridb-react@1.1.15-rc.2) (2025-03-11)
+
+### Bug Fixes
+
+* improvement in ci [skip ci] ([9f5a8b3](https://github.com/trust0-project/RIDB/commit/9f5a8b37e6f0f5772793a7f08efb7a3325a538fb))
+* lock ([a7cf9d4](https://github.com/trust0-project/RIDB/commit/a7cf9d4db28d0bb6dad0b2b8cba3999e7db08c95))
+* only build cli when required ([4a9febd](https://github.com/trust0-project/RIDB/commit/4a9febdca55c2d6d06ead0b400c0a164391259a1))
+* release core only when required ([b9382b1](https://github.com/trust0-project/RIDB/commit/b9382b11b75adaea7f36f06f33877930f7f87990))
+* typo in verifyConditionsCmd ([6291979](https://github.com/trust0-project/RIDB/commit/62919799db5cd74f16570275a88e7bd286c79d01))
+
 ## [1.1.15-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.1.14...@trust0/ridb-react@1.1.15-rc.1) (2025-03-11)
 
 ### Bug Fixes
