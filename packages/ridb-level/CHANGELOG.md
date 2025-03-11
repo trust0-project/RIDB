@@ -1,3 +1,9 @@
+## [1.1.17-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.17-rc.1...@trust0/ridb-level@1.1.17-rc.2) (2025-03-11)
+
+### Bug Fixes
+
+* packages ([86e3501](https://github.com/trust0-project/RIDB/commit/86e35010f5ccec90fc736b50e5b6c0e98758b909))
+
 ## [1.1.17-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.1.16...@trust0/ridb-level@1.1.17-rc.1) (2025-03-11)
 
 ### Bug Fixes
