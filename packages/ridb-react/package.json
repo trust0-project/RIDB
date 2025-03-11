@@ -13,7 +13,7 @@
     "scripts": {
         "clean": "rm -rf build node_modules",
         "docs": "echo 'No docs for this package'",
-        "build": "rm -rf build && npm run types && node ./esbuild.js",
+        "build": "rm -rf build && npm run types && node ./esbuild.config.js",
         "test": "vitest --run",
         "types": "npm run types:default",
         "types:default": "npx tsc",
@@ -39,7 +39,7 @@
         "@trust0/ridb": "^1.4.5"
     },
     "peerDependencies": {
-        "@trust0/ridb": "^1.4.2",
+        "@trust0/ridb": "^1.4.5",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
     },

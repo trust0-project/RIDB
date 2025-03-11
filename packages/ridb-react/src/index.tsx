@@ -1,5 +1,7 @@
 import React, { createContext, useMemo, useContext, useEffect } from 'react';
 import { RIDB, SchemaTypeRecord, BasePlugin, MigrationsParameter, WasmInternal } from "@trust0/ridb";
+await     WasmInternal();
+
 
 type DatabaseProps<T extends SchemaTypeRecord> = {
   dbName: string;
@@ -18,6 +20,9 @@ export function useDatabase<T extends SchemaTypeRecord>(): RIDB<T> {
   if (!context) {
     throw new Error('useDatabase must be used within a Database provider');
   }
+  useEffect(() => {
+    WasmInternal()
+  }, [WasmInternal]);
   return context as RIDB<T>;
 }
 

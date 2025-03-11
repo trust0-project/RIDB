@@ -35,12 +35,11 @@
     "scripts": {
         "clean": "rm -rf build node_modules",
         "docs": "typedoc",
-        "build": "rm -rf build && node esbuild.config.mjs && npm run types",
+        "build": "rm -rf build && node esbuild.config.js && npm run types",
         "test": "sh test.sh",
         "test:node": "sh test.sh -e node",
         "test:browser": "sh test.sh -e browser",
-        "types": "npm run types:default",
-        "types:default": "npx dts-bundle-generator src/index.ts  --no-check -o ./build/index.d.ts && npx dts-bundle-generator src/worker.ts  --no-check -o ./build/worker.d.ts && npx dts-bundle-generator src/testing/index.ts  --no-check -o ./build/testing/index.d.ts",
+        "types": "sh types.sh",
         "prepublishOnly": "npm run build && npm run docs"
     },
     "devDependencies": {

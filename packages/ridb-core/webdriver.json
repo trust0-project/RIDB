@@ -5,7 +5,12 @@
       "args": [
         "--headless",
         "--no-sandbox",
-        "--disable-dev-shm-usage"
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--window-size=1920,1080",
+        "--disable-extensions",
+        "--disable-setuid-sandbox",
+        "--ignore-certificate-errors"
       ],
       "prefs": {
         "profile": {
@@ -17,6 +22,12 @@
     },
     "goog:loggingPrefs": {
       "browser": "ALL"
+    },
+    "acceptInsecureCerts": true,
+    "timeouts": {
+      "script": 60000,
+      "pageLoad": 60000,
+      "implicit": 20000
     }
   }
 }
