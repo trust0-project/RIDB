@@ -28,7 +28,7 @@ export default {
       [
         "@semantic-release/exec",
         {
-          "verifyConditionsCmd": "bash -c 'git diff --name-only $(git describe --tags --abbrev=0)..HEAD | grep -v \"package-lock.json\" | grep -v \"CHANGELOG.md\" | grep -v \"docs/\" | grep -E \"\\.(rs|toml)$\" || exit 1'",
+          "verifyConditionsCmd": "bash -c 'git diff --name-only $(git describe --tags --abbrev=0)..HEAD | grep -v \"package-lock.json\" | grep -v \"CHANGELOG.md\" | grep -v \"docs/\" | grep -v \"\.rs\" | grep -v \"\.js\" || exit 1'",
           "prepareCmd": "npx npm-check-updates -u @trust0/ridb -t newest && npx npm-check-updates -u @trust0/ridb-core -t newest && npm i && npm run docs"
         }
       ],
