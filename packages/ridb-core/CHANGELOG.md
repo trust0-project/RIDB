@@ -1,3 +1,9 @@
+## [1.5.5-rc.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.5-rc.3...@trust0/ridb-core@1.5.5-rc.4) (2025-03-11)
+
+### Bug Fixes
+
+* packages ([86e3501](https://github.com/trust0-project/RIDB/commit/86e35010f5ccec90fc736b50e5b6c0e98758b909))
+
 ## [1.5.5-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.5-rc.2...@trust0/ridb-core@1.5.5-rc.3) (2025-03-11)
 
 ### Bug Fixes
