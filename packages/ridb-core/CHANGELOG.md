@@ -1,3 +1,9 @@
+## [0.12.1](https://github.com/trust0-project/RIDB/compare/v0.12.0...v0.12.1) (2025-03-11)
+
+### Bug Fixes
+
+* release ([09a15c0](https://github.com/trust0-project/RIDB/commit/09a15c095a13386c9d5623ad8696ba11bc9b18f1))
+
 ## @trust0/ridb-core [1.5.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.5.0...@trust0/ridb-core@1.5.1) (2025-03-09)
 
 ### Bug Fixes
