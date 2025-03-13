@@ -1,12 +1,18 @@
 
 
 import { StorageClass, type StorageType } from '../';
-import { default as Schemas } from './test/schemas.test';
+import { UnitTests, BenchTests } from './test/schemas.test';
 
-const Tests = {
-    Schemas
-}
-const suites = Object.values(Tests);
+
+const suites = Object.values({
+    UnitTests
+});
+
+
+const benchSuites = Object.values({
+    BenchTests
+});
+
 
 export enum TestPlatform {
     BROWSER = "BROWSER",
@@ -26,7 +32,16 @@ export async function runTests(platforms:TestPlatform[], storages:StoragesType[]
     })
 }
 
+export async function runBenchTests(platforms:TestPlatform[], storages:StoragesType[] ): Promise<void> {
+    platforms.forEach(platform => {
+        benchSuites.forEach(suite => {
+            suite(platform, storages)
+        })
+    })
+}
+
 export default {
     TestPlatform,
-    runTests
+    runTests,
+    runBenchTests
 }

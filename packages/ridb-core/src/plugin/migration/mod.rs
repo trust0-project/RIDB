@@ -78,9 +78,9 @@ impl MigrationPlugin {
             plugin_clone2.recover_hook(schema, migration, content)
         }) as Box<dyn Fn(JsValue,JsValue,JsValue) -> Result<JsValue, RIDBError>>);
 
-        let mut plugin = plugin;
-        plugin.base.doc_create_hook = create_hook.into_js_value();
-        plugin.base.doc_recover_hook = recover_hook.into_js_value();
+        let plugin = plugin;
+        plugin.base.set_doc_create_hook(create_hook.into_js_value());
+        plugin.base.set_doc_recover_hook(recover_hook.into_js_value());
         Ok(plugin)
     }
 

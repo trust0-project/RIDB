@@ -29,72 +29,46 @@ pub fn is_debug_mode() -> bool {
 }
 
 fn get_debug_mode() -> bool {
-    use wasm_bindgen::prelude::*;
-    use js_sys::Reflect;
+    return false;
+    // use wasm_bindgen::prelude::*;
+    // use js_sys::Reflect;
 
-    if let Some(win) = web_sys::window() {
-        // Browser environment
-        win.local_storage()
-            .ok()
-            .flatten()
-            .and_then(|storage| storage.get_item("DEBUG").ok().flatten())
-            .map(|debug_str| {
-                debug_str
-                    .split(',')
-                    .any(|s| s == "ridb" || s.starts_with("ridb:*"))
-            })
-            .unwrap_or(false)
-    } else {
-        // Node.js environment
-        // Access process.env.DEBUG directly
-        let global = js_sys::global();
+    // if let Some(win) = web_sys::window() {
+    //     // Browser environment
+    //     win.local_storage()
+    //         .ok()
+    //         .flatten()
+    //         .and_then(|storage| storage.get_item("DEBUG").ok().flatten())
+    //         .map(|debug_str| {
+    //             debug_str
+    //                 .split(',')
+    //                 .any(|s| s == "ridb" || s.starts_with("ridb:*"))
+    //         })
+    //         .unwrap_or(false)
+    // } else {
+    //     // Node.js environment
+    //     // Access process.env.DEBUG directly
+    //     let global = js_sys::global();
 
-        let process = Reflect::get(&global, &JsValue::from_str("process")).ok();
-        let env = process
-            .as_ref()
-            .and_then(|proc| Reflect::get(proc, &JsValue::from_str("env")).ok());
-        let debug_var = env
-            .as_ref()
-            .and_then(|env| Reflect::get(env, &JsValue::from_str("DEBUG")).ok());
+    //     let process = Reflect::get(&global, &JsValue::from_str("process")).ok();
+    //     let env = process
+    //         .as_ref()
+    //         .and_then(|proc| Reflect::get(proc, &JsValue::from_str("env")).ok());
+    //     let debug_var = env
+    //         .as_ref()
+    //         .and_then(|env| Reflect::get(env, &JsValue::from_str("DEBUG")).ok());
 
-        if let Some(debug_js_value) = debug_var {
-            if let Some(debug_str) = debug_js_value.as_string() {
-                debug_str
-                    .split(',')
-                    .any(|s| s == "ridb" || s.starts_with("ridb:*"))
-            } else {
-                false
-            }
-        } else {
-            false
-        }
-    }
+    //     if let Some(debug_js_value) = debug_var {
+    //         if let Some(debug_str) = debug_js_value.as_string() {
+    //             debug_str
+    //                 .split(',')
+    //                 .any(|s| s == "ridb" || s.starts_with("ridb:*"))
+    //         } else {
+    //             false
+    //         }
+    //     } else {
+    //         false
+    //     }
+    // }
 }
 
-mod logger {
-    use wasm_bindgen::prelude::*;
-    use web_sys::console;
-
-    pub struct Logger;
-
-    impl Logger {
-        pub fn log(component: &str, message: &JsValue) {
-            if crate::is_debug_mode() {
-                Logger::log_1(component, message);
-            }
-        }
-        pub fn debug(component: &str, message: &JsValue) {
-            if crate::is_debug_mode() {
-                Logger::log_1(component, message);
-            }
-        }
-
-        fn log_1(component: &str, message: &JsValue) {
-            console::log_1(
-                &JsValue::from(
-                    format!("[{}] {:?}", component, message)
-                )
-            );
-        }
-    }
-}
