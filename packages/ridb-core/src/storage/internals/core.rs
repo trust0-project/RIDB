@@ -20,7 +20,7 @@ export class CoreStorage {
 "#;
 
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 #[wasm_bindgen(skip_typescript)]
 pub struct CoreStorage {
 

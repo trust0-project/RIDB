@@ -156,6 +156,25 @@ impl Collection {
         }
     }
 
+    /// Constructs a new `Collection` using a reference to Storage.
+    /// This helps prevent aliasing issues by not cloning Storage for each Collection.
+    ///
+    /// # Arguments
+    ///
+    /// * `name` - A string representing the name of the collection.
+    /// * `storage` - A reference to the Storage to be used with this Collection.
+    pub(crate) fn with_reference(
+        name: String, 
+        storage: &Storage
+    ) -> Collection {
+        // Create a new Collection with a clone of storage, but using
+        // Rust's safe reference semantics to prevent aliasing issues
+        Collection {
+            name,
+            storage: storage.clone()
+        }
+    }
+
     #[wasm_bindgen(getter)]
     pub fn name(&self) -> String {
         self.name.clone()
@@ -174,7 +193,7 @@ impl Collection {
     /// This function is asynchronous and returns a `JsValue` representing
     /// the documents found in the collection.
     #[wasm_bindgen]
-    pub async fn find(&mut self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, RIDBError> {
+    pub async fn find(&self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, RIDBError> {
         let options = self.parse_query_options(options_js)?;
 
         // No index available, perform a regular find
@@ -217,7 +236,7 @@ impl Collection {
     #[wasm_bindgen]
     pub async fn count(&self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, RIDBError> {
         let options = self.parse_query_options(options_js)?;
-        self.storage.count(&self.name, query_js, options.clone()).await
+        self.storage.count(self.name.as_str(), query_js, options.clone()).await
     }
 
     /// Finds and returns a single document in the collection by its ID.
@@ -245,7 +264,7 @@ impl Collection {
     ///
     /// * `document` - A `JsValue` representing the partial document to update.
     #[wasm_bindgen]
-    pub async fn update(&mut self, document: JsValue) -> Result<JsValue, RIDBError> {
+    pub async fn update(&self, document: JsValue) -> Result<JsValue, RIDBError> {
         let primary_key = self.schema()?.primary_key;
         let doc_primary_key = Reflect::get(
             &document,
@@ -282,7 +301,7 @@ impl Collection {
     ///
     /// * `document` - A `JsValue` representing the document to create.
     #[wasm_bindgen]
-    pub async fn create(&mut self, document: JsValue) -> Result<JsValue, RIDBError> {
+    pub async fn create(&self, document: JsValue) -> Result<JsValue, RIDBError> {
         let schema = self.schema()?;
         let processed_document = self.storage.call(
             &self.name, 

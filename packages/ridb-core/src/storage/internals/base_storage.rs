@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::cell::RefCell;
 
 use js_sys::{Object, Reflect};
 use wasm_bindgen::JsValue;
@@ -56,7 +57,7 @@ pub struct BaseStorage {
     /// The name of the database.
     pub(crate) name: String,
     /// The schema associated with the storage.
-    pub(crate) schemas: HashMap<String, Schema>,
+    pub(crate) schemas: RefCell<HashMap<String, Schema>>,
     pub(crate) options: Option<Object>,
     pub(crate) core: CoreStorage,
 }
@@ -85,33 +86,39 @@ impl BaseStorage {
         }
         let base_storage = BaseStorage {
             name,
-            schemas,
+            schemas: RefCell::new(schemas),
             options,
             core: CoreStorage::new()
         };
         Ok(base_storage)
     }
 
-     fn get_index_schemas(&mut self) -> Result<HashMap<String, Schema>, RIDBError> {
+    // This method creates index schemas based on the current schemas
+    fn get_index_schemas(&self) -> Result<HashMap<String, Schema>, RIDBError> {
+        // Make a clone of the schemas to avoid borrow checker issues
+        let schemas_clone = self.schemas.borrow().clone();
         let mut new_schemas: HashMap<String, Schema> = HashMap::new();
-        for (collection_name, schema) in self.clone().schemas.into_iter() {
-            if schema.indexes.is_some() {
-                let indexes = schema.indexes.unwrap();
+        
+        for (collection_name, schema) in schemas_clone {
+            if let Some(indexes) = schema.indexes {
                 for index in indexes {
-                    let index_name = format!(
-                        "idx_{}_{}",
-                        &collection_name,
-                        index
-                    );
-                    let property_type = schema.properties.get(&index).unwrap().property_type;
-                    let item_type = schema.properties.get(&schema.primary_key).unwrap().property_type;
+                    let index_name = format!("idx_{}_{}", &collection_name, index);
+                    
+                    let property_type = schema.properties.get(&index)
+                        .ok_or_else(|| JsValue::from_str(&format!("Property {} not found", index)))?.property_type;
+                    
+                    let item_type = schema.properties.get(&schema.primary_key)
+                        .ok_or_else(|| JsValue::from_str(&format!("Primary key {} not found", schema.primary_key)))?.property_type;
+                    
                     let empty_vec: Vec<String> = Vec::new();
-                    let mut properties:HashMap<String, Property> = HashMap::new();
+                    let mut properties: HashMap<String, Property> = HashMap::new();
+                    
+                    // Add id property
                     properties.insert(
                         "id".to_string(),
                         Property {
                             property_type,
-                            items:None,
+                            items: None,
                             max_items: None,
                             min_length: None,
                             min_items: None,
@@ -121,11 +128,13 @@ impl BaseStorage {
                             max_length: None,
                         }
                     );
+                    
+                    // Add items property
                     properties.insert(
                         "items".to_string(),
                         Property {
                             property_type: PropertyType::Array,
-                            items:Some(
+                            items: Some(
                                 Box::from(
                                     Property {
                                         property_type: item_type,
@@ -153,34 +162,31 @@ impl BaseStorage {
                     let index_schema = Schema {
                         version: 0,
                         indexes: Some(empty_vec.clone()),
-                        encrypted:  Some(empty_vec.clone()),
+                        encrypted: Some(empty_vec.clone()),
                         primary_key: "id".to_string(),
                         schema_type: "object".to_string(),
                         properties,
                     };
 
-                    new_schemas.insert(
-                        index_name,
-                        index_schema
-                    );
-
+                    new_schemas.insert(index_name, index_schema);
                 }
             }
         }
-        Ok(
-            new_schemas
-        )
+        
+        Ok(new_schemas)
     }
 
     #[wasm_bindgen(js_name = addIndexSchemas)]
-    pub fn add_index_schemas(&mut self) -> Result<JsValue, RIDBError> {
+    pub fn add_index_schemas(&self) -> Result<JsValue, RIDBError> {
+        // Get the index schemas
         let index_schemas = self.get_index_schemas()?;
-        for (collection_name, schema) in index_schemas.into_iter() {
-            self.schemas.insert(
-                collection_name,
-                schema
-            );
+        
+        // Insert the index schemas into the schemas HashMap
+        let mut schemas = self.schemas.borrow_mut();
+        for (collection_name, schema) in index_schemas {
+            schemas.insert(collection_name, schema);
         }
+        
         Ok(JsValue::null())
     }
 
@@ -195,7 +201,9 @@ impl BaseStorage {
 
     #[wasm_bindgen(js_name = getSchema)]
     pub fn get_schema(&self, name: String) -> Result<Schema, RIDBError> {
-        let schema = self.schemas.get(name.as_str()).ok_or_else(|| JsValue::from_str("Schema not found"))?;
+        let schemas = self.schemas.borrow();
+        let schema = schemas.get(name.as_str())
+            .ok_or_else(|| JsValue::from_str("Schema not found"))?;
         Ok(schema.clone())
     }
 
@@ -203,5 +211,4 @@ impl BaseStorage {
     pub fn get_core(&self) -> Result<CoreStorage, RIDBError> {
         Ok(self.core.clone())
     }
-
 }

@@ -1,10 +1,11 @@
 use std::collections::HashMap;
+use std::cell::Cell;
 use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::collection::Collection;
 use crate::error::RIDBError;
-use crate::logger::Logger;
+use crate::utils::Logger;
 use crate::plugin::defaults::DefaultsPlugin;
 use crate::plugin::integrity::IntegrityPlugin;
 use crate::plugin::BasePlugin;
@@ -14,6 +15,7 @@ use crate::schema::Schema;
 use crate::storage::Storage;
 use crate::storages::base::StorageExternal;
 use crate::storages::inmemory::InMemory;
+use std::cell::RefCell;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -141,8 +143,10 @@ extern "C" {
 pub struct Database {
     /// The storage mechanism for the database.
     pub(crate) storage: Storage,
-    pub(crate) started: bool,
-    pub(crate) password: Option<String>
+    pub(crate) started: Cell<bool>,
+    pub(crate) password: Option<String>,
+    /// Cache for collection objects to prevent recursive use
+    pub(crate) cached_collections: RefCell<Option<Object>>
 }
 
 
@@ -150,11 +154,11 @@ pub struct Database {
 impl Database {
 
     #[wasm_bindgen(js_name = "start")]
-    pub async fn start(&mut self) -> Result<JsValue, RIDBError> {
+    pub async fn start(&self) -> Result<JsValue, RIDBError> {
         Logger::debug("DB", &"Starting the database...".into());
-        if !self.started {
-            let res = self.storage.internal.start().await?;
-            self.started = true;
+        if !self.started.get() {
+            let res = self.storage.get_internal().start().await?;
+            self.started.set(true);
             Logger::debug("DB", &"Database started successfully.".into());
             Ok(res)
         } else {
@@ -163,17 +167,17 @@ impl Database {
     }
 
     #[wasm_bindgen(js_name = "close")]
-    pub async fn close(mut self) -> Result<JsValue, RIDBError> {
+    pub async fn close(self) -> Result<JsValue, RIDBError> {
         Logger::debug("DB",&"Closing the database...".into());
-        let res = self.storage.internal.close().await;
-        self.started = false;
+        let res = self.storage.get_internal().close().await;
+        self.started.set(false);
         Logger::debug("DB",&"Database closed successfully.".into());
         res
     }
 
     #[wasm_bindgen(getter, js_name = "started")]
     pub fn started(&self) -> bool {
-        self.started
+        self.started.get()
     }
 
     #[wasm_bindgen]
@@ -199,20 +203,33 @@ impl Database {
     #[wasm_bindgen(getter)]
     pub fn collections(&self) -> Result<Object, RIDBError> {
         Logger::debug("DB",&"Retrieving collections...".into());
+        
+        // Check if we already have cached collections
+        if let Some(cached) = self.cached_collections.borrow().as_ref() {
+            Logger::debug("DB",&"Returning cached collections.".into());
+            return Ok(cached.clone());
+        }
+        
         let object = Object::new();
-        for (key, _) in self.storage.schemas.iter() {
+        for (key, _) in self.storage.get_schemas().iter() {
             Logger::debug("DB",&format!("Processing collection: {}", key).into());
-            let storage = self.storage.clone();
-            let collection = Collection::from(
+            
+            // Use with_reference instead of from to prevent unsafe aliasing
+            let collection = Collection::with_reference(
                 key.clone(),
-                storage
+                &self.storage
             );
+            
             Reflect::set(
                 &object,
                 &JsValue::from_str(key.as_str()),
                 &JsValue::from(collection)
             ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
         }
+        
+        // Cache the collections
+        *self.cached_collections.borrow_mut() = Some(object.clone());
+        
         Logger::debug("DB",&"Collections retrieved successfully.".into());
         Ok(object)
     }
@@ -260,15 +277,6 @@ impl Database {
             migrations.insert(collection_string.clone(), migration);
         }
 
-
-        let storage: StorageExternal = if let Some(storage) = storage {
-            Logger::debug("DB",&"Using provided storage.".into());
-            storage.into()
-        } else {
-            Logger::debug("DB",&"Creating InMemory storage.".into());
-            JsValue::from(InMemory::create(db_name, schemas_js.clone()).await?).into()
-        };
-
         let vec_plugins_js: Vec<JsValue> = module.apply(plugins)?;
         Logger::debug("DB",&"Plugins applied.".into());
         let mut vec_plugins: Vec<BasePlugin> = vec_plugins_js.into_iter()
@@ -290,6 +298,14 @@ impl Database {
             vec_plugins.push(encryption.base.clone());
         }
 
+        let storage: StorageExternal = if let Some(storage) = storage {
+            Logger::debug("DB",&"Using provided storage.".into());
+            storage.into()
+        } else {
+            Logger::debug("DB",&"Creating InMemory storage.".into());
+            JsValue::from(InMemory::create(db_name, schemas_js.clone()).await?).into()
+        };
+
         Logger::debug("DB",&"Creating storage with schemas and migrations.".into());
         let mounted_storage = Storage::create(
             schemas,
@@ -299,11 +315,14 @@ impl Database {
         ).map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
         Logger::debug("DB",&"Database created successfully.".into());
-        let db = Database { storage:mounted_storage, started: false, password };
-        
-        storage.start().await?;
-
-        Ok(db)
+        Ok(
+            Database { 
+                storage: mounted_storage, 
+                started: Cell::new(false), 
+                password,
+                cached_collections: RefCell::new(None)
+            }
+        )
     }
 }
 
@@ -374,7 +393,7 @@ mod tests {
         ).unwrap();
 
         // Create the database
-        let mut db = Database::create(
+        let  db = Database::create(
             "test-db",
             schemas.clone().unchecked_into(),
             migrations,
@@ -450,7 +469,7 @@ mod tests {
         ).unwrap();
 
         // Create the database
-        let mut db = Database::create(
+        let  db = Database::create(
             "test-db",
             schemas.clone().unchecked_into(),
             migrations,

@@ -1,10 +1,11 @@
 use std::collections::HashMap;
+use std::sync::Arc;
 use js_sys::{Reflect};
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast, JsValue};
 
 use crate::{error::RIDBError, operation::{OpType, Operation}, plugin::BasePlugin, schema::{property_type::PropertyType, Schema}, storages::base::StorageExternal};
-use crate::logger::Logger;
+use crate::utils::Logger;
 use crate::query::options::QueryOptions;
 
 pub mod internals;
@@ -15,18 +16,29 @@ pub(crate) enum HookType {
     Recover,
 }
 
-
+// Inner data structure that will be wrapped in Arc
 #[derive(Clone)]
-/// Represents the storage system containing a map of internal storages.
-pub struct Storage {
-    /// A map where the key is a string and the value is an instance of `Internals`.
+struct StorageInner {
     pub internal: StorageExternal,
     pub(crate) plugins: Vec<BasePlugin>,
     pub(crate) schemas: HashMap<String, Schema>,
     pub(crate) migrations: HashMap<String, JsValue>
 }
 
+#[derive(Clone)]
+/// Represents the storage system containing a map of internal storages.
+pub struct Storage {
+    /// The inner data wrapped in Arc for thread-safe reference counting
+    inner: Arc<StorageInner>,
+}
+
 impl Storage {
+    pub fn get_internal(&self) -> &StorageExternal {
+        &self.inner.internal
+    }
+    pub fn get_schemas(&self) -> &HashMap<String, Schema> {
+        &self.inner.schemas
+    }
     /// Creates a new `Storage` instance from a JavaScript object.
     ///
     /// # Arguments
@@ -42,17 +54,22 @@ impl Storage {
         plugins: Vec<BasePlugin>,
         storage: StorageExternal
     ) -> Result<Storage, RIDBError> {
-        let storage = Storage {
+        let inner = StorageInner {
             internal: storage,
             plugins,
             schemas,
             migrations
         };
+        
+        let storage = Storage {
+            inner: Arc::new(inner)
+        };
+        
         Ok(storage)
     }
 
     pub fn get_schema(&self, collection_name: &str) -> Result<&Schema, RIDBError> {
-        self.schemas.get(collection_name)
+        self.inner.schemas.get(collection_name)
             .ok_or(
                 RIDBError::error(
                     &format!("Invalid collection {}, not found", collection_name),
@@ -63,7 +80,7 @@ impl Storage {
     }
 
     pub fn get_migration(&self, collection_name: &str) -> Result<&JsValue, RIDBError> {
-        self.migrations.get(collection_name)
+        self.inner.migrations.get(collection_name)
             .ok_or(
                 RIDBError::error(
                     &format!("Invalid collection {}, not found", collection_name),
@@ -76,9 +93,9 @@ impl Storage {
     pub(crate) async fn call(&self, collection_name: &str, hook_type: HookType, mut doc: JsValue) -> Result<JsValue, RIDBError> {
         // Determine the order of plugins based on the hook type
         let plugins = match hook_type.clone() {
-            HookType::Create => self.plugins.clone(),
+            HookType::Create => self.inner.plugins.clone(),
             HookType::Recover => {
-                let mut reversed_plugins = self.plugins.clone();
+                let mut reversed_plugins = self.inner.plugins.clone();
                 reversed_plugins.reverse(); // Reverse the plugins for Recover
                 reversed_plugins
             },
@@ -218,6 +235,7 @@ impl Storage {
         ));
 
         let document = self
+            .inner
             .internal
             .write(operation)
             .await?;
@@ -232,16 +250,16 @@ impl Storage {
 
     pub(crate) async fn find(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError>{
         //TODO: Use indexes for more efficient document finding
-        self.internal.find(collection_name, query, options).await
+        self.inner.internal.find(collection_name, query, options).await
     }
 
     pub(crate) async fn count(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError>{
         //TODO: Use indexes for more efficient counting
-        self.internal.count(collection_name, query, options).await
+        self.inner.internal.count(collection_name, query, options).await
     }
 
     pub(crate) async fn find_document_by_id(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, RIDBError>{
-        match self.internal.find_document_by_id( 
+        match self.inner.internal.find_document_by_id( 
             collection_name, 
             primary_key
         ).await {
@@ -281,7 +299,7 @@ impl Storage {
                 "DELETE OPERATION {:?} ", op
             )));
             
-            let result = self.internal.write(op).await;
+            let result = self.inner.internal.write(op).await;
             
             match &result {
                 Ok(_) => Logger::debug("Storage-Remove",&JsValue::from("Remove operation completed successfully")),
