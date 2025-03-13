@@ -1,6 +1,6 @@
 {
     "name": "@trust0/ridb",
-    "version": "1.5.0-rc.1",
+    "version": "1.5.0",
     "description": "Lightweight db encrypted and secure database wrapper for browser and nodejs.",
     "module": "./build/index.js",
     "types": "./build/index.d.ts",
@@ -45,7 +45,7 @@
     "devDependencies": {
         "@babel/types": "^7.26.3",
         "@esbuild-plugins/node-resolve": "^0.2.2",
-        "@trust0/ridb-core": "^1.6.0-rc.1",
+        "@trust0/ridb-core": "^1.6.0",
         "@types/node": "^20.14.2",
         "@types/sharedworker": "^0.0.150",
         "dts-bundle-generator": "^9.5.0",
