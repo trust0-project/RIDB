@@ -1,3 +1,13 @@
+## [1.5.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.4.7...@trust0/ridb@1.5.0-rc.1) (2025-03-13)
+
+### Features
+
+* add performance improvements ([8e64b8a](https://github.com/trust0-project/RIDB/commit/8e64b8ac3ebd4e9eed5178c7f81a060827cbd28e))
+
+### Bug Fixes
+
+* performance improvements ([#70](https://github.com/trust0-project/RIDB/issues/70)) ([3a4e881](https://github.com/trust0-project/RIDB/commit/3a4e881fa200c0909591a869b70e5c8e14d18621))
+
 ## [1.4.7](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.4.6...@trust0/ridb@1.4.7) (2025-03-11)
 
 ### Bug Fixes
