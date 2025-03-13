@@ -8,7 +8,7 @@ use crate::storage::internals::base_storage::BaseStorage;
 use crate::storage::internals::core::CoreStorage;
 use std::sync::RwLock;
 use crate::error::RIDBError;
-use crate::logger::Logger;
+use crate::utils::Logger;
 use crate::query::options::QueryOptions;
 use super::base::Storage;
 
@@ -42,7 +42,7 @@ pub struct InMemory {
     core: CoreStorage,
     base: BaseStorage,
     by_index: RwLock<HashMap<String, HashMap<String, JsValue>>>,
-    started: bool,
+    started: RwLock<bool>,
 }
 
 impl Storage for InMemory {
@@ -56,7 +56,8 @@ impl Storage for InMemory {
             ))
         );
 
-        let schema = self.base.schemas
+        let schemas = self.base.schemas.borrow();
+        let schema = schemas
             .get(op.collection.as_str())
             .ok_or_else(|| {
                 let msg = "Collection not found".to_string();
@@ -285,7 +286,8 @@ impl Storage for InMemory {
                 collection_name
             ))
         );
-        let schema = self.base.schemas.get(collection_name).ok_or_else(|| {
+        let schemas = self.base.schemas.borrow();
+        let schema = schemas.get(collection_name).ok_or_else(|| {
             let msg = format!("Collection {} not found in findDocumentById", collection_name);
             Logger::log(
                 "InMemory::find_document_by_id",
@@ -340,7 +342,7 @@ impl Storage for InMemory {
         Ok(JsValue::from_f64(documents.len() as f64))
     }
 
-    async fn close(&mut self) -> Result<JsValue, RIDBError> {
+    async fn close(&self) -> Result<JsValue, RIDBError> {
         Logger::log(
             "InMemory::close",
             &JsValue::from_str("Close operation called.")
@@ -358,7 +360,17 @@ impl Storage for InMemory {
             })?;
         index_guard.clear();
 
-        self.started = false;
+        let mut started_guard = self.started.write().map_err(|_| {
+            let msg = "Failed to acquire write lock for started flag".to_string();
+            Logger::log(
+                "InMemory::close",
+                &JsValue::from_str(&format!("{}", msg))
+            );
+            JsValue::from(
+                RIDBError::error(&msg, 40)
+            )
+        })?;
+        *started_guard = false;
 
         Logger::log(
             "InMemory::close",
@@ -367,20 +379,44 @@ impl Storage for InMemory {
         Ok(JsValue::from_str("In-memory database closed and reset"))
     }
 
-    async fn start(&mut self) -> Result<JsValue, RIDBError> {
+    async fn start(&self) -> Result<JsValue, RIDBError> {
         Logger::log(
             "InMemory::start",
             &JsValue::from_str("Start operation called.")
         );
-        if self.started {
-            Logger::log(
-                "InMemory::start",
-                &JsValue::from_str("In-memory database already started.")
-            );
-            return Ok(JsValue::from_str("In-memory database already started"));
+        
+        {
+            let started_guard = self.started.read().map_err(|_| {
+                let msg = "Failed to acquire read lock for started flag".to_string();
+                Logger::log(
+                    "InMemory::start",
+                    &JsValue::from_str(&format!("{}", msg))
+                );
+                JsValue::from(
+                    RIDBError::error(&msg, 40)
+                )
+            })?;
+            
+            if *started_guard {
+                Logger::log(
+                    "InMemory::start",
+                    &JsValue::from_str("In-memory database already started.")
+                );
+                return Ok(JsValue::from_str("In-memory database already started"));
+            }
         }
 
-        self.started = true;
+        let mut started_guard = self.started.write().map_err(|_| {
+            let msg = "Failed to acquire write lock for started flag".to_string();
+            Logger::log(
+                "InMemory::start",
+                &JsValue::from_str(&format!("{}", msg))
+            );
+            JsValue::from(
+                RIDBError::error(&msg, 40)
+            )
+        })?;
+        *started_guard = true;
 
         Logger::log(
             "InMemory::start",
@@ -415,7 +451,8 @@ impl InMemory {
         let read_lock = self.by_index.read()
             .map_err(|_| JsValue::from_str("Failed to acquire read lock"))?;
 
-        let schema = self.base.schemas
+        let schemas = self.base.schemas.borrow();
+        let schema = schemas
             .get(collection_name)
             .ok_or_else(|| {
                 let msg = format!("Collection '{}' not found", collection_name);
@@ -562,7 +599,7 @@ impl InMemory {
         );
 
         match base_res {
-            Ok(mut base) => {
+            Ok(base) => {
                 //Adds extra index schemas
                 base.add_index_schemas()?;
                 Logger::log(
@@ -574,7 +611,7 @@ impl InMemory {
                         base,
                         by_index: RwLock::new(HashMap::new()),
                         core: CoreStorage {},
-                        started: false,
+                        started: RwLock::new(false),
                     }
                 )
             },
@@ -609,7 +646,8 @@ impl InMemory {
                 collection_name
             ))
         );
-        let schema = self.base.schemas.get(collection_name)
+        let schemas = self.base.schemas.borrow();
+        let schema = schemas.get(collection_name)
             .ok_or_else(|| JsValue::from( format!("Collection {} not found in find", collection_name)))?;
         let query = Query::new(query_js, schema.clone())?;
         self.find(collection_name, &query, &options).await
@@ -640,13 +678,14 @@ impl InMemory {
                 collection_name
             ))
         );
-        let schema = self.base.schemas.get(collection_name).ok_or_else(|| JsValue::from( format!("Collection {} not found in count", collection_name)))?;
+        let schemas = self.base.schemas.borrow();
+        let schema = schemas.get(collection_name).ok_or_else(|| JsValue::from( format!("Collection {} not found in count", collection_name)))?;
         let query = Query::new(query_js, schema.clone())?;
         self.count(collection_name, &query, &options).await
     }
 
     #[wasm_bindgen(js_name = "close")]
-    pub async fn close_js(&mut self) -> Result<JsValue, RIDBError> {
+    pub async fn close_js(&self) -> Result<JsValue, RIDBError> {
         Logger::log(
             "InMemory::close_js",
             &JsValue::from_str("close_js called.")
@@ -655,7 +694,7 @@ impl InMemory {
     }
 
     #[wasm_bindgen(js_name = "start")]
-    pub async fn start_js(&mut self) -> Result<JsValue, RIDBError> {
+    pub async fn start_js(&self) -> Result<JsValue, RIDBError> {
         Logger::log(
             "InMemory::start_js",
             &JsValue::from_str("start_js called.")
@@ -1070,7 +1109,7 @@ mod tests {
         let schema = json_str_to_js_value(schema_str).unwrap();
         Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
 
-        let mut inmem = InMemory::create("test_db", schemas_obj).await.unwrap();
+        let  inmem = InMemory::create("test_db", schemas_obj).await.unwrap();
 
         // Start the storage
         inmem.start_js().await.unwrap();

@@ -1,6 +1,6 @@
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsValue;
-use crate::{logger::Logger, plugin::BasePlugin, schema::Schema};
+use crate::{ plugin::BasePlugin, schema::Schema, utils::Logger};
 use js_sys::Reflect;
 use serde_wasm_bindgen::to_value;
 use crate::error::RIDBError;
@@ -21,8 +21,8 @@ impl DefaultsPlugin {
         let create_hook = Closure::wrap(Box::new(move |schema, _migration, document| {
             plugin_clone1.clone().add_defaults(schema, document)
         }) as Box<dyn Fn(JsValue, JsValue, JsValue) -> Result<JsValue, RIDBError>>);
-        let mut plugin = plugin;
-        plugin.base.doc_create_hook = create_hook.into_js_value();
+        let plugin = plugin;
+        plugin.base.set_doc_create_hook(create_hook.into_js_value());
         Ok(plugin)
     }
     

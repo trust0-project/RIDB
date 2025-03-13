@@ -3,7 +3,6 @@ import { defineConfig } from 'vite'
 import wasm from "vite-plugin-wasm";
 
 
-const isCI = process.env.CI === "true";
 
 export default defineConfig({
     plugins: [
@@ -33,7 +32,7 @@ export default defineConfig({
         },
         coverage: {
             provider: 'istanbul',
-            reporter: isCI ? ['json-summary'] : ['json-summary', "html"],
+            reporter: ['json-summary', "html"],
             thresholds: {
                 branches: 100,
                 functions: 100,
