@@ -11,7 +11,7 @@
   "dependencies": {
     "@trust0/ridb": "file:../../",
     "@types/sharedworker": "^0.0.150",
-    "next": "15.1.2",
+    "next": "15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "uuid": "^11.0.3"
