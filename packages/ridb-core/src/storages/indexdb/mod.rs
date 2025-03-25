@@ -55,7 +55,7 @@ pub struct IndexDB {
 
 
 impl Storage for IndexDB {
-    async fn write(&self, op: &Operation) -> Result<JsValue, RIDBError> {
+    async fn write(&self, op: Operation) -> Result<JsValue, RIDBError> {
         let store_name = &op.collection;
         let store = self.get_store(store_name)?;
         let schemas = self.base.schemas.borrow();
@@ -94,7 +94,7 @@ impl Storage for IndexDB {
         }
     }
 
-    async fn find(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, RIDBError> {
+    async fn find(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError> {
         // Logger::debug(
         //     "IndexDB-Find",
         //     &JsValue::from(format!("Find method {}", collection_name)),
@@ -129,7 +129,7 @@ impl Storage for IndexDB {
         }
     }
 
-    async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, RIDBError> {
+    async fn count(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError> {
         // Logger::debug(
         //     "IndexDB-Count",
         //     &JsValue::from(format!("Count method {}", collection_name)),
@@ -221,7 +221,7 @@ impl Storage for IndexDB {
             let schemas_clone = self.base.schemas.borrow().clone();
             
             // Create a new database connection
-            let new_db = create_database(&db_name, &schemas_clone).await?;
+            let new_db = create_database(&db_name, schemas_clone).await?;
             
             // Update the pool with new connection
             POOL.store_connection(db_name, Arc::downgrade(&new_db));
@@ -250,18 +250,19 @@ impl IndexDB {
     async fn collect_documents_for_query(
         &self,
         collection_name: &str,
-        query: &Query,
-        options: &QueryOptions
+        query: Query,
+        options: QueryOptions
     ) -> Result<Array, RIDBError> {
         // Acquire references to the object store and schema
         let store = self.get_store(collection_name)?;
         let schemas = self.base.schemas.borrow();
         let schema = schemas
             .get(collection_name)
-            .ok_or_else(|| JsValue::from_str("Collection not found"))?;
+            .ok_or_else(|| JsValue::from_str("Collection not found"))?
+            .clone();
 
         // Attempt to figure out if we can leverage a single index
-        let index_name_option = can_use_single_index_lookup(query, schema)?;
+        let index_name_option = can_use_single_index_lookup(query.clone(), schema)?;
 
         // Determine offset and limit
         let offset = options.offset.unwrap_or(0);
@@ -269,9 +270,8 @@ impl IndexDB {
 
         // Clone the query data for filtering
         let core = self.core.clone();
-        let normalized_query = query.parse()?;
+        let normalized_query = query.clone().parse()?;
         // Build a "value_query" for final in-memory filter
-        let value_query = Query::new(normalized_query.clone(), query.schema.clone())?;
 
         // Prepare the final, filtered documents array
         // but efficiently fetch them using a cursor approach.
@@ -284,13 +284,14 @@ impl IndexDB {
                     let key_array = Array::from(&index_value);
                     let merged_docs = Array::new();
                     for i in 0..key_array.length() {
+                        let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
                         let key = key_array.get(i);
                         let partial_result = cursor_fetch_and_filter(
                             Some(&index),
                             None,
                             &key,
-                            &core,
-                            &value_query,
+                            core,
+                            value_query,
                             offset,
                             limit,
                         ).await?;
@@ -301,39 +302,42 @@ impl IndexDB {
                     }
                     merged_docs
                 } else {
+                    let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
                     // Single key fetch from this index
                     cursor_fetch_and_filter(
                         Some(&index),
                         None,
                         &index_value,
-                        &core,
-                        &value_query,
+                        core,
+                        value_query,
                         offset,
                         limit,
                     )
                     .await?
                 }
             } else {
+                let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
                 // If we couldn't get the index, do a cursor fetch for the entire store
                 cursor_fetch_and_filter(
                     None,
                     Some(&store),
                     &JsValue::undefined(),
-                    &core,
-                    &value_query,
+                    core,
+                    value_query,
                     offset,
                     limit,
                 )
                 .await?
             }
         } else {
+            let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
             // No single index is usable; fetch everything via cursor on the store
             cursor_fetch_and_filter(
                 None,
                 Some(&store),
                 &JsValue::undefined(),
-                &core,
-                &value_query,
+                core,
+                value_query,
                 offset,
                 limit,
             )
@@ -397,7 +401,7 @@ impl IndexDB {
             None => {
                 // Create new connection if none exists
                 //Logger::debug("IndexDB-Create", &JsValue::from_str("Creating new database connection"));
-                let db = create_database(name, &schemas_clone).await?;
+                let db = create_database(name, schemas_clone).await?;
                 
                 // Store a weak reference in the pool to avoid circular references
                 POOL.store_connection(name.to_string(), Arc::downgrade(&db));
@@ -419,7 +423,7 @@ impl IndexDB {
     }
 
     #[wasm_bindgen(js_name = "write")]
-    pub async fn write_js(&self, op: &Operation) -> Result<JsValue, RIDBError> {
+    pub async fn write_js(&self, op: Operation) -> Result<JsValue, RIDBError> {
         self.write(op).await
     }
 
@@ -430,7 +434,7 @@ impl IndexDB {
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?;
         let query = Query::new(query, schema.clone())?;
-        self.find(collection_name, &query, &options)
+        self.find(collection_name, query, options)
             .await
     }
 
@@ -447,7 +451,7 @@ impl IndexDB {
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?;
         let query = Query::new(query.clone(), schema.clone())?;
-        self.count(collection_name, &query, &options).await
+        self.count(collection_name, query, options).await
     }
 
     #[wasm_bindgen(js_name = "close")]
@@ -564,7 +568,7 @@ mod tests {
         };
 
         // Test successful creation
-        let created = db.write(&op).await.unwrap();
+        let created = db.write(op).await.unwrap();
         assert_eq!(
             Reflect::get(&created, &JsValue::from_str("id")).unwrap(),
             JsValue::from_str("1234")
@@ -624,7 +628,7 @@ mod tests {
                 primary_key_field: Some("id".to_string()),
                 primary_key: Some(JsValue::from("1234"))
             };
-            db.write(&create_op).await.unwrap();
+            db.write(create_op).await.unwrap();
         }
 
         // Test find with query
@@ -693,7 +697,7 @@ mod tests {
                 primary_key_field: Some("id".to_string()),
                 primary_key: Some(primary_key)
             };
-            db.write(&create_op).await.unwrap();
+            db.write(create_op).await.unwrap();
         }
 
         // Test count with query
@@ -760,7 +764,7 @@ mod tests {
             primary_key: Some(JsValue::from("1"))
         };
 
-        db.write(&create_op).await.unwrap();
+        db.write(create_op).await.unwrap();
 
         // Query the empty products collection
         let empty_query = json_str_to_js_value("{}").unwrap();

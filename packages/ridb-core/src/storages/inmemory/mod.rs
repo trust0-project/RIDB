@@ -47,7 +47,7 @@ pub struct InMemory {
 
 impl Storage for InMemory {
 
-    async fn write(&self, op: &Operation) -> Result<JsValue, RIDBError> {
+    async fn write(&self, op: Operation) -> Result<JsValue, RIDBError> {
         Logger::log(
             "InMemory::write",
             &JsValue::from_str(&format!(
@@ -248,7 +248,7 @@ impl Storage for InMemory {
         }
     }
 
-    async fn find(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, RIDBError> {
+    async fn find(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError> {
         Logger::log(
             "InMemory::find",
             &JsValue::from_str(&format!(
@@ -257,7 +257,7 @@ impl Storage for InMemory {
                 query
             ))
         );
-        let documents = self.get_matching_documents(collection_name, &query, options).await?;
+        let documents = self.get_matching_documents(collection_name, query, options).await?;
         let results_array = Array::new();
 
         for doc in documents {
@@ -322,7 +322,7 @@ impl Storage for InMemory {
         Ok(JsValue::null())
     }
 
-    async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, RIDBError> {
+    async fn count(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError> {
         Logger::log(
             "InMemory::count",
             &JsValue::from_str(&format!(
@@ -331,7 +331,7 @@ impl Storage for InMemory {
                 query
             ))
         );
-        let documents = self.get_matching_documents(collection_name, &query, options).await?;
+        let documents = self.get_matching_documents(collection_name, query, options).await?;
         Logger::log(
             "InMemory::count",
             &JsValue::from_str(&format!(
@@ -436,15 +436,15 @@ impl InMemory {
     async fn get_matching_documents(
         &self,
         collection_name: &str,
-        query: &Query,
-        options: &QueryOptions
+        query: Query,
+        options: QueryOptions
     ) -> Result<Vec<JsValue>, RIDBError> {
         Logger::log(
             "InMemory::get_matching_documents",
             &JsValue::from_str(&format!(
                 "Called with collection_name='{}', query={:?}",
                 collection_name,
-                query
+                query.clone()
             ))
         );
 
@@ -497,7 +497,7 @@ impl InMemory {
             let table_name = format!("pk_{}_{}", collection_name, primary_key);
             if let Some(documents) = read_lock.get(&table_name) {
                 for (_, document) in documents.iter() {
-                    let matches = self.core.document_matches_query(document, query)?;
+                    let matches = self.core.document_matches_query(document, query.clone())?;
                     if matches {
                         matched_docs.push(document.clone());
                     }
@@ -550,7 +550,7 @@ impl InMemory {
             if let Some(pk_map) = read_lock.get(&table_name) {
                 for doc_id in intersection_ids {
                     if let Some(doc) = pk_map.get(&doc_id) {
-                        if self.core.document_matches_query(doc, query)? {
+                        if self.core.document_matches_query(doc, query.clone())? {
                             matched_docs.push(doc.clone());
                         }
                     }
@@ -629,7 +629,7 @@ impl InMemory {
     }
 
     #[wasm_bindgen(js_name = "write")]
-    pub async fn write_js(&self, op: &Operation) -> Result<JsValue, RIDBError> {
+    pub async fn write_js(&self, op: Operation) -> Result<JsValue, RIDBError> {
         Logger::log(
             "InMemory::write_js",
             &JsValue::from_str("write_js called.")
@@ -650,7 +650,7 @@ impl InMemory {
         let schema = schemas.get(collection_name)
             .ok_or_else(|| JsValue::from( format!("Collection {} not found in find", collection_name)))?;
         let query = Query::new(query_js, schema.clone())?;
-        self.find(collection_name, &query, &options).await
+        self.find(collection_name, query, options).await
     }
 
     #[wasm_bindgen(js_name = "findDocumentById")]
@@ -681,7 +681,7 @@ impl InMemory {
         let schemas = self.base.schemas.borrow();
         let schema = schemas.get(collection_name).ok_or_else(|| JsValue::from( format!("Collection {} not found in count", collection_name)))?;
         let query = Query::new(query_js, schema.clone())?;
-        self.count(collection_name, &query, &options).await
+        self.count(collection_name, query, options).await
     }
 
     #[wasm_bindgen(js_name = "close")]
@@ -799,7 +799,7 @@ mod tests {
         };
 
         // Test successful creation
-        let created = inmem.write(&op).await.unwrap();
+        let created = inmem.write(op).await.unwrap();
         assert_eq!(
             Reflect::get(&created, &JsValue::from_str("id")).unwrap(),
             JsValue::from_str("1234")
@@ -824,7 +824,7 @@ mod tests {
             primary_key: Some(JsValue::from_str("1234"))
         };
 
-        let duplicate_result = inmem.write(&duplicate_op).await;
+        let duplicate_result = inmem.write(duplicate_op).await;
         assert!(duplicate_result.is_err());
     }
 
@@ -874,7 +874,7 @@ mod tests {
                 primary_key_field: Some("id".to_string()),
                 primary_key: Some(primary_key)
             };
-            inmem.write(&create_op).await.unwrap();
+            inmem.write(create_op).await.unwrap();
         }
 
         // Test find with query
@@ -936,7 +936,7 @@ mod tests {
                 primary_key_field: Some("id".to_string()),
                 primary_key: Some(primary_key)
             };
-            inmem.write(&op).await.unwrap();
+            inmem.write(op).await.unwrap();
         }
 
         // Query all docs with no filter but limit=2, offset=0
@@ -1013,7 +1013,7 @@ mod tests {
                 primary_key_field: Some("id".to_string()),
                 primary_key: Some(primary_key)
             };
-            inmem.write(&create_op).await.unwrap();
+            inmem.write(create_op).await.unwrap();
         }
 
         // Test count with query
@@ -1076,7 +1076,7 @@ mod tests {
             primary_key_field: Some("id".to_string()),
             primary_key: Some(JsValue::from("1"))
         };
-        inmem.write(&create_op).await.unwrap();
+        inmem.write(create_op).await.unwrap();
 
         // Query the empty posts collection
         let empty_query = json_str_to_js_value("{}").unwrap();
@@ -1125,7 +1125,7 @@ mod tests {
             primary_key_field: Some("id".to_string()),
             primary_key: Some(JsValue::from("1"))
         };
-        inmem.write(&op).await.unwrap();
+        inmem.write(op).await.unwrap();
 
         // Close the storage
         inmem.close_js().await.unwrap();

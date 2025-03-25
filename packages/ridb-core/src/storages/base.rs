@@ -72,10 +72,10 @@ extern "C" {
 //Represents a rust storage
 pub trait Storage {
     #[allow(clippy::async_yields_async)]
-    async fn write(&self, op: &Operation) -> Result<JsValue, RIDBError>;
-    async fn find(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, RIDBError>;
+    async fn write(&self, op: Operation) -> Result<JsValue, RIDBError>;
+    async fn find(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError>;
     async fn find_document_by_id(&self, collection_name: &str, primary_key:JsValue) -> Result<JsValue, RIDBError>;
-    async fn count(&self, collection_name: &str, query: &Query, options: &QueryOptions) -> Result<JsValue, RIDBError>;
+    async fn count(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError>;
     async fn close(&self) -> Result<JsValue, RIDBError>;
     async fn start(&self) -> Result<JsValue, RIDBError>;
 }
