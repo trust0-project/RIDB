@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-level",
-  "version": "1.2.0",
+  "version": "1.2.1-rc.1",
   "description": "Level DB storage for @trust0/ridb.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
