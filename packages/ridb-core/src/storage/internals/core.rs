@@ -81,7 +81,7 @@ impl CoreStorage {
     pub fn document_matches_query(
         &self, 
         document: &JsValue, 
-        query: &Query
+        query: Query
     ) -> Result<bool, RIDBError> {
 
         if !document.is_object() {
@@ -105,7 +105,7 @@ impl CoreStorage {
                 for j in 0..arr.length() {
                     let item = arr.get(j);
                     let item_query = Query::new(item, query.schema.clone())?;
-                    let matches = self.document_matches_query(document, &item_query)?;
+                    let matches = self.document_matches_query(document, item_query)?;
                     if !matches {
                         return Ok(false);
                     }
@@ -121,7 +121,7 @@ impl CoreStorage {
                 for j in 0..arr.length() {
                     let item = arr.get(j);
                     let item_query = Query::new(item, query.schema.clone())?;
-                    let matches = self.document_matches_query(document, &item_query)?;
+                    let matches = self.document_matches_query(document, item_query)?;
                     if matches {
                         return Ok(true);
                     }

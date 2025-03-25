@@ -16,28 +16,27 @@ pub async fn cursor_fetch_and_filter(
     index: Option<&web_sys::IdbIndex>,
     store: Option<&web_sys::IdbObjectStore>,
     key_value: &JsValue,
-    core: &CoreStorage,
-    value_query: &Query,
+    core: CoreStorage,
+    value_query: Query,
     offset: u32,
     limit: u32,
 ) -> Result<Array, RIDBError> {
     use std::cell::RefCell;
-    use std::rc::Rc;
 
-    let result_array = Rc::new(RefCell::new(Array::new()));
-    let skipped_count = Rc::new(RefCell::new(0u32));
-    let matched_count = Rc::new(RefCell::new(0u32));
+    let result_array = RefCell::new(Array::new());
+    let skipped_count = RefCell::new(0u32);
+    let matched_count = RefCell::new(0u32);
     
     // Clone these before creating the promise to avoid ownership issues
     let core_cloned = core.clone();
-    let value_query_cloned = Rc::new(value_query.clone());
+    let value_query_cloned = value_query.clone();
 
     let promise = Promise::new(&mut |resolve, reject| {
         // Create references to the arrays and counters
-        let result_array_ref = Rc::clone(&result_array);
-        let skipped_count_ref = Rc::clone(&skipped_count);
-        let matched_count_ref = Rc::clone(&matched_count);
-        let value_query_ref = Rc::clone(&value_query_cloned);
+        let result_array_ref = result_array.clone();
+        let skipped_count_ref = skipped_count.clone();
+        let matched_count_ref = matched_count.clone();
+        let value_query_ref = value_query_cloned.clone();
         
         // References to resolver/rejecter
         let resolve_ref = resolve.clone();
@@ -89,9 +88,8 @@ pub async fn cursor_fetch_and_filter(
             };
 
             // Filter in-memory based on the original query
-            // Use reference instead of consuming the query
             if core_cloned
-                .document_matches_query(&doc, &value_query_ref)
+                .document_matches_query(&doc, value_query_ref.clone())
                 .unwrap_or(false)
             {
                 let mut skip_ref = skipped_count_ref.borrow_mut();
@@ -224,8 +222,8 @@ pub fn get_indexed_db() -> Result<IdbFactory, RIDBError> {
 }
 
 pub fn can_use_single_index_lookup(
-    query: &Query,
-    schema: &Schema
+    query: Query,
+    schema: Schema
 ) -> Result<Option<String>, RIDBError> {
     let fields = query.get_properties()?;
     let schema_indexes = &schema.indexes;
@@ -246,7 +244,7 @@ pub fn can_use_single_index_lookup(
 }
 
 
-pub async fn create_database(name: &str, schemas: &HashMap<String, Schema>) -> Result<Arc<IdbDatabase>, RIDBError> {
+pub async fn create_database(name: &str, schemas: HashMap<String, Schema>) -> Result<Arc<IdbDatabase>, RIDBError> {
     let idb = get_indexed_db()?;
 
     let version = 1;

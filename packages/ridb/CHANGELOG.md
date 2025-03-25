@@ -1,3 +1,9 @@
+## [1.5.1-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.5.0...@trust0/ridb@1.5.1-rc.1) (2025-03-25)
+
+### Bug Fixes
+
+* workaround for unsafe aliasing on indexDB ([3472ad0](https://github.com/trust0-project/RIDB/commit/3472ad02311da122d3dc13162b5fea1fdc822f6d))
+
 ## [1.5.0](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.4.7...@trust0/ridb@1.5.0) (2025-03-13)
 
 ### Features
