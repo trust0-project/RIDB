@@ -1,3 +1,9 @@
+## [1.3.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.2.1...@trust0/ridb-react@1.3.0-rc.1) (2025-03-26)
+
+### Features
+
+* add default dates to all records ([e5d7097](https://github.com/trust0-project/RIDB/commit/e5d7097c714f6e95c97b96f65950597d4df42e96))
+
 ## [1.2.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.2.0...@trust0/ridb-react@1.2.1) (2025-03-25)
 
 ### Bug Fixes
