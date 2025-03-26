@@ -73,6 +73,8 @@ export type Doc<T extends SchemaType> = {
     ExtractType<T["properties"][K]["type"]>
 } & {
   __version?: number;
+  createdAt?: number;
+  updatedAt?: number;
 };
 
 export type QueryOptions = {
