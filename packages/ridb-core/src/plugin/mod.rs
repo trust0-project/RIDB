@@ -2,6 +2,7 @@ pub mod encryption;
 pub mod migration;
 pub mod integrity;
 pub mod defaults;
+pub mod dates;
 
 use std::cell::RefCell;
 use wasm_bindgen::JsValue;
