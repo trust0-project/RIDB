@@ -1,3 +1,9 @@
+## [1.7.0-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.7.0-rc.1...@trust0/ridb-core@1.7.0-rc.2) (2025-04-20)
+
+### Bug Fixes
+
+* add missing main export ([cba26be](https://github.com/trust0-project/RIDB/commit/cba26be819f4d9a3330a96e66f3ce4ede4c6ed04))
+
 ## [1.7.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-core@1.6.1...@trust0/ridb-core@1.7.0-rc.1) (2025-03-26)
 
 ### Features
