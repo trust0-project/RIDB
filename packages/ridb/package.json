@@ -3,6 +3,7 @@
     "version": "1.6.0-rc.1",
     "description": "Lightweight db encrypted and secure database wrapper for browser and nodejs.",
     "module": "./build/index.js",
+    "main": "./build/index.js",
     "types": "./build/index.d.ts",
     "exports": {
         ".": {
