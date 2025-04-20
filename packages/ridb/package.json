@@ -1,25 +1,25 @@
 {
     "name": "@trust0/ridb",
-    "version": "1.6.0-rc.2",
+    "version": "1.6.0-rc.3",
     "description": "Lightweight db encrypted and secure database wrapper for browser and nodejs.",
     "module": "./build/index.js",
     "main": "./build/index.js",
     "types": "./build/index.d.ts",
     "exports": {
         ".": {
-            "types":"./build/index.d.ts",
+            "types": "./build/index.d.ts",
             "import": "./build/index.js",
             "default": "./build/index.js"
         },
         "./worker": {
-            "types":"./build/worker.d.ts",
+            "types": "./build/worker.d.ts",
             "import": "./build/worker.js",
-            "default":"./build/worker.js"
+            "default": "./build/worker.js"
         },
         "./testing": {
-            "types":"./build/testing/index.d.ts",
+            "types": "./build/testing/index.d.ts",
             "import": "./build/testing/index.js",
-            "default":"./build/testing/index.js"
+            "default": "./build/testing/index.js"
         }
     },
     "type": "module",
@@ -52,7 +52,7 @@
     "devDependencies": {
         "@babel/types": "^7.26.3",
         "@esbuild-plugins/node-resolve": "^0.2.2",
-        "@trust0/ridb-core": "^1.7.0-rc.2",
+        "@trust0/ridb-core": "^1.7.0-rc.3",
         "@types/node": "^20.14.2",
         "@types/sharedworker": "^0.0.150",
         "dts-bundle-generator": "^9.5.0",
