@@ -1,3 +1,9 @@
+## [1.3.0-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.3.0-rc.2...@trust0/ridb-level@1.3.0-rc.3) (2025-04-20)
+
+### Bug Fixes
+
+* improve exports ([51f9973](https://github.com/trust0-project/RIDB/commit/51f997317f0ed2bd887b204017369b7916aceadc))
+
 ## [1.3.0-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-level@1.3.0-rc.1...@trust0/ridb-level@1.3.0-rc.2) (2025-04-20)
 
 ### Bug Fixes
