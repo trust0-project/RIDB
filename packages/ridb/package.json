@@ -7,13 +7,19 @@
     "types": "./build/index.d.ts",
     "exports": {
         ".": {
-            "import": "./build/index.js"
+            "types":"./build/index.d.ts",
+            "import": "./build/index.js",
+            "default": "./build/index.js"
         },
         "./worker": {
-            "import": "./build/worker.js"
+            "types":"./build/worker.d.ts",
+            "import": "./build/worker.js",
+            "default":"./build/worker.js"
         },
         "./testing": {
-            "import": "./build/testing/index.js"
+            "types":"./build/testing/index.d.ts",
+            "import": "./build/testing/index.js",
+            "default":"./build/testing/index.js"
         }
     },
     "type": "module",
