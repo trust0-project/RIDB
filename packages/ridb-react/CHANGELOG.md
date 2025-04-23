@@ -1,3 +1,9 @@
+## [1.3.0-rc.6](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.3.0-rc.5...@trust0/ridb-react@1.3.0-rc.6) (2025-04-23)
+
+### Bug Fixes
+
+* improve path ([b0ea748](https://github.com/trust0-project/RIDB/commit/b0ea748ff67e5fdd299d7a65b32cfbc888209e1b))
+
 ## [1.3.0-rc.5](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.3.0-rc.4...@trust0/ridb-react@1.3.0-rc.5) (2025-04-23)
 
 ### Bug Fixes
