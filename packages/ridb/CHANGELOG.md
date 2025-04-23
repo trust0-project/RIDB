@@ -1,3 +1,9 @@
+## [1.6.0-rc.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.6.0-rc.3...@trust0/ridb@1.6.0-rc.4) (2025-04-23)
+
+### Bug Fixes
+
+* bundle buffer properly from esm cjs ([0352033](https://github.com/trust0-project/RIDB/commit/0352033855fa9056ae22d01cdc406e9dd40a67de))
+
 ## [1.6.0-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb@1.6.0-rc.2...@trust0/ridb@1.6.0-rc.3) (2025-04-20)
 
 ### Bug Fixes
