@@ -10,11 +10,11 @@ esbuild.build({
     external: ['buffer', '@trust0/ridb', '@trust0/ridb-core'],
     banner: {
         js: `import { createRequire } from 'module';
-import path from 'path';
+import pathWorkaround from 'path';
 import {fileURLToPath} from 'url';
 const require = createRequire(import.meta.url);
 global.__filename = fileURLToPath(import.meta.url);
-global.__dirname = path.dirname(__filename);
+global.__dirname = pathWorkaround.dirname(__filename);
 if (typeof Buffer === 'undefined') {
     global.Buffer = require('buffer').Buffer;
 }
