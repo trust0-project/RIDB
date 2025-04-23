@@ -1,3 +1,9 @@
+## [1.3.0-rc.5](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.3.0-rc.4...@trust0/ridb-react@1.3.0-rc.5) (2025-04-23)
+
+### Bug Fixes
+
+* improve cjs compatibility ([c2a5094](https://github.com/trust0-project/RIDB/commit/c2a5094d2ccd92b236ae14ef67e2fa13af83c8ed))
+
 ## [1.3.0-rc.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.3.0-rc.3...@trust0/ridb-react@1.3.0-rc.4) (2025-04-23)
 
 ### Bug Fixes
