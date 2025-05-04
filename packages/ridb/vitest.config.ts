@@ -26,7 +26,7 @@ export default defineConfig({
             headless: true,
             instances: [
                 {
-                    browser: 'chrome',
+                    browser: 'firefox',
                 }
             ],
         },

@@ -6,3 +6,14 @@ umd/*
 coverage
 build/*
 .turbo
+
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
+.nx/**
+./.nx/**/*
+./.nx
+./.nx/
+
+
+.nx/cache
+.nx/workspace-data

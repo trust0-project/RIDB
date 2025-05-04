@@ -20,3 +20,5 @@ else
   sed -i  's/"module": "ridb_core.js",/"main": "ridb_core.js",/' $PACKAGEJSON
   sed -i "/if (typeof input === 'undefined') {/,/}/d" $IMPORTFILE
 fi
+
+npx tsup --config tsup.config.ts --dts
