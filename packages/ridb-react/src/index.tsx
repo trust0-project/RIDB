@@ -1,6 +1,9 @@
 import React, { createContext, useMemo, useContext, useEffect } from 'react';
-import { RIDB, SchemaTypeRecord, BasePlugin, MigrationsParameter, WasmInternal } from "@trust0/ridb";
-await     WasmInternal();
+import { RIDB,  WasmInternal } from "@trust0/ridb";
+import { BasePlugin, MigrationsParameter } from '@trust0/ridb-core';
+import { SchemaTypeRecord } from '@trust0/ridb-core';
+
+await WasmInternal();
 
 
 type DatabaseProps<T extends SchemaTypeRecord> = {

@@ -1,4 +1,5 @@
-import { RIDB, SchemaTypeRecord, RIDBError } from './index';
+import { SchemaTypeRecord, RIDBError } from '@trust0/ridb-core';
+import { RIDB } from './index';
 
 // The SharedWorkerGlobalScope interface
 interface SharedWorkerGlobalScope {
