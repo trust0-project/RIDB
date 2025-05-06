@@ -80,5 +80,6 @@ jobs:
         run: |
           yarn install
           npm run build
+          npx nx release -y
 
       
