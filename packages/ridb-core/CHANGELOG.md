@@ -1,3 +1,13 @@
+## 1.7.0-rc.9 (2025-05-06)
+
+### 🩹 Fixes
+
+- release ([816b3c0](https://github.com/trust0-project/RIDB/commit/816b3c0))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.0-rc.8 (2025-05-06)
 
 ### 🩹 Fixes
