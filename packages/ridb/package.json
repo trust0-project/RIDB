@@ -1,64 +1,64 @@
 {
-    "name": "@trust0/ridb",
-    "version": "1.6.0-rc.6",
-    "description": "Lightweight db encrypted and secure database wrapper for browser and nodejs.",
-    "module": "./build/index.js",
-    "main": "./build/index.js",
-    "types": "./build/index.d.ts",
-    "exports": {
-        ".": {
-            "types": "./build/index.d.ts",
-            "import": "./build/index.js",
-            "default": "./build/index.js"
-        },
-        "./worker": {
-            "types": "./build/worker.d.ts",
-            "import": "./build/worker.js",
-            "default": "./build/worker.js"
-        },
-        "./testing": {
-            "types": "./build/testing/index.d.ts",
-            "import": "./build/testing/index.js",
-            "default": "./build/testing/index.js"
-        }
+  "name": "@trust0/ridb",
+  "version": "1.6.0-rc.7",
+  "description": "Lightweight db encrypted and secure database wrapper for browser and nodejs.",
+  "module": "./build/index.js",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.js",
+      "default": "./build/index.js"
     },
-    "type": "module",
-    "publishConfig": {
-        "access": "public"
+    "./worker": {
+      "types": "./build/worker.d.ts",
+      "import": "./build/worker.js",
+      "default": "./build/worker.js"
     },
-    "author": "elribonazo@gmail.com",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/trust0-project/RIDB.git"
-    },
-    "license": "Apache-2.0",
-    "files": [
-        "./build/**/*",
-        "./**/*.md"
-    ],
-    "engines": {
-        "node": ">=20"
-    },
-    "scripts": {
-        "clean": "rm -rf build node_modules",
-        "docs": "typedoc",
-        "build": "rm -rf build && npx tsup --config tsup.config.ts --dts",
-        "test": "sh test.sh",
-        "test:node": "sh test.sh -e node",
-        "test:browser": "sh test.sh -e browser",
-        "types": "sh types.sh",
-        "prepublishOnly": "npm run build && npm run docs"
-    },
-    "devDependencies": {
-        "@babel/types": "^7.26.3",
-        "@trust0/ridb-core": "^1.7.0-rc.6",
-        "@types/sharedworker": "^0.0.150",
-        "jsdom": "^24.1.3",
-        "typescript": "^5.4.5",
-        "uuid": "^11.0.3"
-    },
-    "optionalDependencies": {
-        "@esbuild/darwin-arm64": "^0.25.0",
-        "@rollup/rollup-linux-x64-gnu": "^4.24.0"
+    "./testing": {
+      "types": "./build/testing/index.d.ts",
+      "import": "./build/testing/index.js",
+      "default": "./build/testing/index.js"
     }
+  },
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "elribonazo@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/trust0-project/RIDB.git"
+  },
+  "license": "Apache-2.0",
+  "files": [
+    "./build/**/*",
+    "./**/*.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "clean": "rm -rf build node_modules",
+    "docs": "typedoc",
+    "build": "rm -rf build && npx tsup --config tsup.config.ts --dts",
+    "test": "sh test.sh",
+    "test:node": "sh test.sh -e node",
+    "test:browser": "sh test.sh -e browser",
+    "types": "sh types.sh",
+    "prepublishOnly": "npm run build && npm run docs"
+  },
+  "devDependencies": {
+    "@babel/types": "^7.26.3",
+    "@trust0/ridb-core": "^1.7.0-rc.7",
+    "@types/sharedworker": "^0.0.150",
+    "jsdom": "^24.1.3",
+    "typescript": "^5.4.5",
+    "uuid": "^11.0.3"
+  },
+  "optionalDependencies": {
+    "@esbuild/darwin-arm64": "^0.25.0",
+    "@rollup/rollup-linux-x64-gnu": "^4.24.0"
+  }
 }

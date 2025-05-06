@@ -1,3 +1,21 @@
+## 1.3.0-rc.7 (2025-05-06)
+
+### 🩹 Fixes
+
+- wrong version template for nx ([83df897](https://github.com/trust0-project/RIDB/commit/83df897))
+- release ([2092587](https://github.com/trust0-project/RIDB/commit/2092587))
+- pr improvements on ci ([ccda195](https://github.com/trust0-project/RIDB/commit/ccda195))
+- improve ([95d2510](https://github.com/trust0-project/RIDB/commit/95d2510))
+- add next generation build tools ([5a24aa8](https://github.com/trust0-project/RIDB/commit/5a24aa8))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb to 1.6.0-rc.7
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## [1.3.0-rc.6](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.3.0-rc.5...@trust0/ridb-react@1.3.0-rc.6) (2025-04-23)
 
 ### Bug Fixes
