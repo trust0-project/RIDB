@@ -334,7 +334,6 @@ function __wbg_adapter_335(arg0, arg1, arg2, arg3, arg4) {
 function __wbg_adapter_390(arg0, arg1, arg2, arg3) {
   wasm.wasm_bindgen__convert__closures__invoke2_mut__h36f949ecffe8079d(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
 }
-var Errors = Object.freeze({ Error: 0, "0": "Error", HookError: 1, "1": "HookError", QueryError: 2, "2": "QueryError", SerializationError: 3, "3": "SerializationError", ValidationError: 4, "4": "ValidationError", AuthenticationError: 5, "5": "AuthenticationError" });
 var OpType = Object.freeze({
   /**
   * Create operation.
@@ -362,6 +361,7 @@ var OpType = Object.freeze({
   COUNT: 4,
   "4": "COUNT"
 });
+var Errors = Object.freeze({ Error: 0, "0": "Error", HookError: 1, "1": "HookError", QueryError: 2, "2": "QueryError", SerializationError: 3, "3": "SerializationError", ValidationError: 4, "4": "ValidationError", AuthenticationError: 5, "5": "AuthenticationError" });
 var BasePluginFinalization = typeof FinalizationRegistry === "undefined" ? { register: () => {
 }, unregister: () => {
 } } : new FinalizationRegistry((ptr) => wasm.__wbg_baseplugin_free(ptr >>> 0));

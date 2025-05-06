@@ -17,3 +17,5 @@ vitest.config.*.timestamp*
 
 .nx/cache
 .nx/workspace-data
+./.yarn/*
+./.yarn
