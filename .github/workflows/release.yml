@@ -57,49 +57,29 @@ jobs:
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
+      - uses: crazy-max/ghaction-import-gpg@v5
+        id: import_gpg
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE }}
+          passphrase:  ${{ secrets.GPG_PASSWORD }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          git_config_global: true
+          git_tag_gpgsign: true
+          git_push_gpgsign: false
+          
       - name: Run Build package
         env:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_SECRET }}
+          GIT_AUTHOR_EMAIL: ${{ steps.import_gpg.outputs.email }}
+          GIT_COMMITTER_EMAIL: ${{ steps.import_gpg.outputs.email }}
+          GIT_AUTHOR_NAME: ${{ steps.import_gpg.outputs.name }}
+          GIT_COMMITTER_NAME: ${{ steps.import_gpg.outputs.name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           yarn install
           npm run build
+          npx nx release
 
-      - name: Release @trust0/ridb-core
-        env:
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_SECRET }}
-        run: |
-          cd packages/ridb-core && npx semantic-release --deps.prefix="^" --tag-format="@trust0/ridb-core@\${version}"
-
-      - name: Release @trust0/ridb
-        env:
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_SECRET }}
-        run: |
-          cd packages/ridb && npx semantic-release --deps.prefix="^" --tag-format="@trust0/ridb@\${version}"
-          
-      - name: Release @trust0/ridb-level
-        env:
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_SECRET }}
-        run: |
-          cd packages/ridb-level && npx semantic-release --deps.prefix="^" --tag-format="@trust0/ridb-level@\${version}"
-          
-      - name: Release @trust0/ridb-react
-        env:
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_SECRET }}
-        run: |
-          cd packages/ridb-react && npx semantic-release --deps.prefix="^" --tag-format="@trust0/ridb-react@\${version}"
-          
-      - name: Update dependencies and commit package.json files
-        env:
-          GH_TOKEN: ${{ secrets.GH_SECRET }}
-        run: |
-          git config --global user.name "elribonazo"
-          git config --global user.email "elribonazo@gmail.com"
-          npm install
-          git add package.json package-lock.json
-          git commit -m "chore: update dependencies after release [skip ci]" || echo "No changes to commit"
-          git push origin ${GITHUB_REF#refs/heads/}
+      
