@@ -33,6 +33,12 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org/'
           scope: '@trust0'
+          cache: 'npm'
+
+      - name: Enable Corepack and set up Yarn
+        run: |
+          corepack enable
+          yarn --version
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -56,7 +62,7 @@ jobs:
           NPM_TOKEN: ${{ env.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
-          npm install
+          yarn install
           npm run build
 
       - name: Release @trust0/ridb-core
