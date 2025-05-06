@@ -38,16 +38,6 @@ declare function __wbgtest_console_warn(args: Array<any>): void;
 */
 declare function __wbgtest_console_error(args: Array<any>): void;
 /**
-*/
-declare enum Errors {
-  Error = 0,
-  HookError = 1,
-  QueryError = 2,
-  SerializationError = 3,
-  ValidationError = 4,
-  AuthenticationError = 5,
-}
-/**
 * Represents the type of operation to be performed on the collection.
 */
 declare enum OpType {
@@ -71,6 +61,16 @@ declare enum OpType {
 * Count Operation.
 */
   COUNT = 4,
+}
+/**
+*/
+declare enum Errors {
+  Error = 0,
+  HookError = 1,
+  QueryError = 2,
+  SerializationError = 3,
+  ValidationError = 4,
+  AuthenticationError = 5,
 }
 
 type InternalsRecord = {

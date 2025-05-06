@@ -1,6 +1,6 @@
 {
   "capabilities": {
-    "browserName": "firefox",
+    "browserName": "chrome",
     "goog:chromeOptions": {
       "args": [
         "--headless",
