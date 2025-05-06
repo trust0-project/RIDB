@@ -1,3 +1,18 @@
+## 1.6.0-rc.8 (2025-05-06)
+
+### 🩹 Fixes
+
+- autopublish ([22315e1](https://github.com/trust0-project/RIDB/commit/22315e1))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.0-rc.8
+- Updated @trust0/ridb-core to 1.7.0-rc.8
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.6.0-rc.7 (2025-05-06)
 
 ### 🩹 Fixes
