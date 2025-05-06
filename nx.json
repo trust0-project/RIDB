@@ -5,6 +5,9 @@
   },
   "release": {
     "releaseTagPattern": "{projectName}@{version}",
+    "git": {
+      "commitMessage": "chore(release): {version} [skip ci]"
+    },
     "projectsRelationship": "independent",
     "versionPlans": false,
     "version": {
