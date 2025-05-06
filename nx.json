@@ -4,7 +4,7 @@
     "applyChanges": true
   },
   "release": {
-    "releaseTagPattern": "{projectName}@v{version}",
+    "releaseTagPattern": "{projectName}@{version}",
     "projectsRelationship": "independent",
     "versionPlans": false,
     "version": {
