@@ -1,0 +1,33 @@
+{
+  "capabilities": {
+    "browserName": "chrome",
+    "goog:chromeOptions": {
+      "args": [
+        "--headless",
+        "--no-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--window-size=1920,1080",
+        "--disable-extensions",
+        "--disable-setuid-sandbox",
+        "--ignore-certificate-errors"
+      ],
+      "prefs": {
+        "profile": {
+          "password_manager_enabled": false
+        }
+      },
+      "extensions": [],
+      "detach": false
+    },
+    "goog:loggingPrefs": {
+      "browser": "ALL"
+    },
+    "acceptInsecureCerts": true,
+    "timeouts": {
+      "script": 60000,
+      "pageLoad": 60000,
+      "implicit": 20000
+    }
+  }
+}

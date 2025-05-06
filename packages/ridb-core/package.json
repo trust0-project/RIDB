@@ -6,20 +6,35 @@
     "access": "public"
   },
   "version": "1.7.0-rc.6",
-  "main": "./pkg/ridb_core.js",
-  "types": "./pkg/ridb_core.d.ts",
-  "sideEffects": [
-    "./pkg/snippets/*"
-  ],
+  "main": "./build/ridb_core.js",
+  "types": "./build/ridb_core.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/ridb_core.d.ts",
+      "import": "./build/ridb_core.js",
+      "default": "./build/ridb_core.js"
+    },
+    "./wasm": {
+      "types": "./build/ridb_core_bg.d.ts",
+      "import": "./build/ridb_core_bg.js",
+      "default": "./build/ridb_core_bg.js"
+    }
+  },
   "scripts": {
     "clean": "rm -rf build node_modules",
     "test": "sh test.sh",
     "build": "sh build.sh",
     "docs": "echo 'No docs for this package'"
   },
+  "devDependencies": {
+    "@esbuild-plugins/node-resolve": "^0.2.2",
+    "chromedriver": "^136.0.0",
+    "esbuild": "^0.25.3"
+  },
   "files": [
-    "./pkg/ridb_core_bg.wasm",
-    "./pkg/ridb_core.js",
-    "./pkg/ridb_core.d.ts"
+    "./build/ridb_core_bg.js",
+    "./build/ridb_core_bg.d.ts",
+    "./build/ridb_core.js",
+    "./build/ridb_core.d.ts"
   ]
 }
