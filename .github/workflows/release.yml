@@ -81,6 +81,12 @@ jobs:
           yarn install
           npm run build
           npx nx release --skip-publish --verbose -p @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react
-          npx nx release publish --tag rc --verbose -p @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react
+          if [[ $GITHUB_REF == *"refs/heads/develop"* ]]; then
+            echo "Publishing with RC tag for develop branch"
+            npx nx release publish --tag rc --verbose -p @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react
+          else
+            echo "Publishing without RC tag for main branch"
+            npx nx release publish --verbose -p @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react
+          fi
 
       
