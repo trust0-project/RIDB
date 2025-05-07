@@ -1,3 +1,13 @@
+## 1.7.3 (2025-05-07)
+
+### 🩹 Fixes
+
+- improve readme ([e406e1f](https://github.com/trust0-project/RIDB/commit/e406e1f))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.2 (2025-05-07)
 
 ### 🩹 Fixes
