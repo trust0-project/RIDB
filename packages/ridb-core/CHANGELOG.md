@@ -1,3 +1,13 @@
+## 1.7.0-rc.13 (2025-05-07)
+
+### 🩹 Fixes
+
+- package release and publish order ([af599a7](https://github.com/trust0-project/RIDB/commit/af599a7))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.0-rc.12 (2025-05-07)
 
 ### 🩹 Fixes
