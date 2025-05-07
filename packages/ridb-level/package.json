@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-level",
-  "version": "1.3.0-rc.10",
+  "version": "1.3.0-rc.11",
   "description": "Level DB storage for @trust0/ridb.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -33,7 +33,7 @@
     "prepublishOnly": "npm run build && npm run docs"
   },
   "devDependencies": {
-    "@trust0/ridb": "^1.6.0-rc.10",
+    "@trust0/ridb": "^1.6.0-rc.11",
     "classic-level": "^2.0.0",
     "jsdom": "^24.1.3",
     "uuid": "^11.0.3",
