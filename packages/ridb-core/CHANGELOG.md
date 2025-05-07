@@ -1,3 +1,13 @@
+## 1.7.0-rc.12 (2025-05-07)
+
+### 🩹 Fixes
+
+- release tag ([cbc96af](https://github.com/trust0-project/RIDB/commit/cbc96af))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.0-rc.11 (2025-05-07)
 
 ### 🩹 Fixes
