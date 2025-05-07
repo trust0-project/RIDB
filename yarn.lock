@@ -4691,7 +4691,6 @@ __metadata:
   resolution: "@trust0/ridb-core@workspace:packages/ridb-core"
   dependencies:
     "@esbuild-plugins/node-resolve": "npm:^0.2.2"
-    chromedriver: "npm:^136.0.0"
     esbuild: "npm:^0.25.3"
   languageName: unknown
   linkType: soft
@@ -7073,9 +7072,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromedriver@npm:^136.0.0":
-  version: 136.0.0
-  resolution: "chromedriver@npm:136.0.0"
+"chromedriver@npm:^135.0.0":
+  version: 135.0.4
+  resolution: "chromedriver@npm:135.0.4"
   dependencies:
     "@testim/chrome-version": "npm:^1.1.4"
     axios: "npm:^1.7.4"
@@ -7086,7 +7085,7 @@ __metadata:
     tcp-port-used: "npm:^1.0.2"
   bin:
     chromedriver: bin/chromedriver
-  checksum: 10c0/ba804ceed3749f8dd10fa5dc714bf4b259ddb004d2b1382f7c0a1246bba84c85c35038f65fead268916f53fbbb3f126f20320bf72336bd3252ed9e95d2863daa
+  checksum: 10c0/02d2304efdcd2d01529c2bf00a61764b592f16b4b32673e664155c60a9937fc1b9c403446e8328dac812439bc4ca505ab32b4e4762f0c2a3d5e03d79d8ca0910
   languageName: node
   linkType: hard
 
@@ -17311,7 +17310,7 @@ __metadata:
     "@vitest/browser": "npm:^3.0.8"
     "@vitest/coverage-istanbul": "npm:^3.0.8"
     "@vitest/ui": "npm:^3.0.8"
-    chromedriver: "npm:^136.0.0"
+    chromedriver: "npm:^135.0.0"
     dts-bundle-generator: "npm:^9.5.1"
     esbuild: "npm:^0.25.3"
     esbuild-node-externals: "npm:^1.18.0"
