@@ -46,8 +46,7 @@
     "test": "sh test.sh",
     "test:node": "sh test.sh -e node",
     "test:browser": "sh test.sh -e browser",
-    "types": "sh types.sh",
-    "prepublishOnly": "npm run build && npm run docs"
+    "types": "sh types.sh"
   },
   "devDependencies": {
     "@babel/types": "^7.26.3",
