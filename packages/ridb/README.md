@@ -14,7 +14,7 @@
 ## Documentation
 For detailed API documentation, please visit the [RIDB Documentation](https://github.com/trust0-project/RIDB/blob/main/packages/ridb/docs/README.md).
 
-## Install
+## Installling RIDB
 In order to install simply run the following command
 npm:
 ``` 
