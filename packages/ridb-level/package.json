@@ -4,7 +4,6 @@
   "description": "Level DB storage for @trust0/ridb.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
-  "type": "module",
   "publishConfig": {
     "access": "public"
   },

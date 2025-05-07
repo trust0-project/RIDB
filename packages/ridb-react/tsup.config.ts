@@ -4,7 +4,7 @@ import { wasmPlugin } from '../../esbuild.base.js';
 
 export default defineConfig(({ watch }) => ({
   entry: ['src/index.tsx'],
-  format: 'esm',
+  format: 'cjs',
   outDir: 'build',
   target: 'esnext',
   minify: true,
@@ -18,18 +18,12 @@ export default defineConfig(({ watch }) => ({
     options = {
         ...options,
         ...generic,
-        format:'esm',
+        format:'cjs',
     platform: 'node',
     entryPoints: ['src/index.ts'],
     external: ['buffer', '@trust0/ridb', '@trust0/ridb-core'],
     banner: {
-        js: `import { createRequire } from 'module';
-import pathWorkaround from 'path';
-import {fileURLToPath} from 'url';
-const require = createRequire(import.meta.url);
-global.__filename = fileURLToPath(import.meta.url);
-global.__dirname = pathWorkaround.dirname(__filename);
-if (typeof Buffer === 'undefined') {
+        js: `if (typeof Buffer === 'undefined') {
     global.Buffer = require('buffer').Buffer;
 }
 `}
