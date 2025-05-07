@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@esbuild-plugins/node-resolve": "^0.2.2",
-    "esbuild": "^0.25.3"
+    "esbuild": "^0.25.4"
   },
   "files": [
     "./build/ridb_core_bg.js",
