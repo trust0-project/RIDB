@@ -4686,7 +4686,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trust0/ridb-core@npm:^1.7.1, @trust0/ridb-core@workspace:packages/ridb-core":
+"@trust0/ridb-core@npm:^1.7.0, @trust0/ridb-core@workspace:packages/ridb-core":
   version: 0.0.0-use.local
   resolution: "@trust0/ridb-core@workspace:packages/ridb-core"
   dependencies:
@@ -4737,7 +4737,7 @@ __metadata:
     "@babel/types": "npm:^7.26.3"
     "@esbuild/darwin-arm64": "npm:^0.25.0"
     "@rollup/rollup-linux-x64-gnu": "npm:^4.24.0"
-    "@trust0/ridb-core": "npm:^1.7.1"
+    "@trust0/ridb-core": "npm:^1.7.0"
     "@types/sharedworker": "npm:^0.0.150"
     jsdom: "npm:^24.1.3"
     typescript: "npm:^5.4.5"
