@@ -41,7 +41,7 @@
   },
   "scripts": {
     "clean": "rm -rf build node_modules",
-    "docs": "typedoc",
+    "docs": "npx typedoc",
     "build": "rm -rf build && npx tsup --config tsup.config.ts --dts",
     "test": "sh test.sh",
     "test:node": "sh test.sh -e node",
