@@ -1,3 +1,31 @@
+## 1.7.0 (2025-05-07)
+
+### 🚀 Features
+
+- add default dates to all records ([0858ba1](https://github.com/trust0-project/RIDB/commit/0858ba1))
+
+### 🩹 Fixes
+
+- ci [skip ci[ ([affed6c](https://github.com/trust0-project/RIDB/commit/affed6c))
+- release update ([ab2585d](https://github.com/trust0-project/RIDB/commit/ab2585d))
+- documentation ([89dd383](https://github.com/trust0-project/RIDB/commit/89dd383))
+- package release and publish order ([1aabf03](https://github.com/trust0-project/RIDB/commit/1aabf03))
+- release tag ([d7c5b0f](https://github.com/trust0-project/RIDB/commit/d7c5b0f))
+- revert ([e95de8c](https://github.com/trust0-project/RIDB/commit/e95de8c))
+- verbose ([fe819d7](https://github.com/trust0-project/RIDB/commit/fe819d7))
+- add logs ([1b78780](https://github.com/trust0-project/RIDB/commit/1b78780))
+- release ([659cd1f](https://github.com/trust0-project/RIDB/commit/659cd1f))
+- autopublish ([340f6be](https://github.com/trust0-project/RIDB/commit/340f6be))
+- wrong version template for nx ([15d0007](https://github.com/trust0-project/RIDB/commit/15d0007))
+- release ([69214c8](https://github.com/trust0-project/RIDB/commit/69214c8))
+- pr improvements on ci ([596471f](https://github.com/trust0-project/RIDB/commit/596471f))
+- improve ([c23fc77](https://github.com/trust0-project/RIDB/commit/c23fc77))
+- add next generation build tools ([40c7c9f](https://github.com/trust0-project/RIDB/commit/40c7c9f))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.0-rc.15 (2025-05-07)
 
 ### 🩹 Fixes
