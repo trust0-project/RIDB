@@ -1,3 +1,17 @@
+## 1.3.0-rc.11 (2025-05-07)
+
+### 🩹 Fixes
+
+- revert ([2cdb2ea](https://github.com/trust0-project/RIDB/commit/2cdb2ea))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb to 1.6.0-rc.11
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.3.0-rc.10 (2025-05-07)
 
 ### 🩹 Fixes
