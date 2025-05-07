@@ -4,7 +4,7 @@ import { wasmPlugin } from '../../esbuild.base.js';
 
 export default defineConfig(({ watch }) => ({
   entry: ['pkg/ridb_core.js', 'pkg/ridb_core_bg.wasm'],
-  format: 'esm',
+  format: 'cjs',
   outDir: 'build',
   target: 'esnext',
   minify: false,
@@ -25,10 +25,5 @@ global.Buffer = require('buffer').Buffer;
         ...generic,
         format:'cjs'
     } as any
-  },
-  outExtension({ format }) {
-    return {
-      js: `.js`,
-    };
   },
 }));

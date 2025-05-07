@@ -3,8 +3,8 @@ import { generic, plugins } from '../../esbuild.base';
 import { wasmPlugin } from '../../esbuild.base.js';
 
 export default defineConfig(({ watch }) => ({
-  entry: ['src/index.ts','src/worker.ts','src/testing/index.ts'],
-  format: 'esm',
+  entry: ['src/index.ts', 'src/worker.ts', 'src/testing/index.ts'],
+  format: 'cjs',
   outDir: 'build',
   target: 'esnext',
   minify: true,
@@ -14,27 +14,25 @@ export default defineConfig(({ watch }) => ({
     ...plugins
   ],
   banner: {
-    js: `import { createRequire } from 'module';
-import pathWorkaround from 'path';
-import {fileURLToPath} from 'url';
-const require = createRequire(import.meta.url);
-global.__filename = fileURLToPath(import.meta.url);
-global.__dirname = pathWorkaround.dirname(__filename);
-if (typeof Buffer === 'undefined') {
+    js: `if (typeof Buffer === 'undefined') {
 global.Buffer = require('buffer').Buffer;
 }
 `},
-  external: ['buffer', 'next','vitest', 'react-server-dom-webpack', 'tsup', 'react-server-dom-webpack/client.edge'],
+  external: [
+    'buffer',
+    'next',
+    'vitest',
+    'react-server-dom-webpack',
+    'tsup',
+    'react-server-dom-webpack/client.edge',
+    '@trust0/ridb-core',
+    '@trust0/ridb/worker'
+  ],
   esbuildOptions(options, context) {
     options = {
-        ...options,
-        ...generic,
-        format:'esm' as const,
+      ...options,
+      ...generic,
+      format: 'cjs' as const,
     } as any
-  },
-  outExtension({ format }) {
-    return {
-      js: `.js`,
-    };
   },
 }));

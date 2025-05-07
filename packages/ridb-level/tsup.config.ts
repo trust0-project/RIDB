@@ -4,7 +4,7 @@ import { wasmPlugin } from '../../esbuild.base.js';
 
 export default defineConfig(({ watch }) => ({
   entry: ['src/index.ts','src/worker.ts','src/testing/index.ts'],
-  format: 'esm',
+  format: 'cjs',
   outDir: 'build',
   target: 'esnext',
   minify: true,
@@ -18,7 +18,7 @@ export default defineConfig(({ watch }) => ({
     options = {
         ...options,
         ...generic,
-        format:'esm',
+        format:'cjs',
     platform: 'node',
     entryPoints: ['src/index.ts'],
     external: ['buffer', '@trust0/ridb', '@trust0/ridb-core'],

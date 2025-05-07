@@ -36,7 +36,6 @@
     "@vitest/browser": "^3.0.8",
     "@vitest/coverage-istanbul": "^3.0.8",
     "@vitest/ui": "^3.0.8",
-    "chromedriver": "^136.0.0",
     "dts-bundle-generator": "^9.5.1",
     "esbuild": "^0.25.3",
     "esbuild-node-externals": "^1.18.0",
@@ -69,5 +68,8 @@
   "optionalDependencies": {
     "@esbuild/darwin-arm64": "^0.25.0",
     "@rollup/rollup-linux-x64-gnu": "^4.24.0"
+  },
+  "dependencies": {
+    "chromedriver": "^135.0.0"
   }
 }

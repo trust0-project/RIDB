@@ -1,3 +1,34 @@
+## 1.5.4 (2025-05-07)
+
+### 🩹 Fixes
+
+- lock issue ([6a5dea5](https://github.com/trust0-project/RIDB/commit/6a5dea5))
+- move to cjs modules ([d6c7608](https://github.com/trust0-project/RIDB/commit/d6c7608))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.2
+- Updated @trust0/ridb-core to 1.7.2
+
+### ❤️ Thank You
+
+- Javier Ribó
+
+## 1.5.3 (2025-05-07)
+
+### 🩹 Fixes
+
+- cleaning packages ([c6fba7e](https://github.com/trust0-project/RIDB/commit/c6fba7e))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.1
+- Updated @trust0/ridb-core to 1.7.1
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.2 (2025-05-07)
 
 ### 🩹 Fixes

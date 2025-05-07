@@ -9,8 +9,8 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 log = "0.4.20"
-wasm-bindgen = { version = "0.2.90", features = ["serde-serialize"] }
-wasm-bindgen-futures = "0.4.40"
+wasm-bindgen = { version = "0.2.92", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.42"
 console_error_panic_hook = { version = "0.1.1", optional = true }
 js-sys = {version="0.3.69", features = []}
 serde = { version = "1.0.195", features = ["derive"] }
