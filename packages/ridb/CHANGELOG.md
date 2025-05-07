@@ -1,3 +1,19 @@
+## 1.6.0-rc.10 (2025-05-07)
+
+### 🩹 Fixes
+
+- verbose ([d66eda7](https://github.com/trust0-project/RIDB/commit/d66eda7))
+- add logs ([8d1418f](https://github.com/trust0-project/RIDB/commit/8d1418f))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.0-rc.10
+- Updated @trust0/ridb-core to 1.7.0-rc.10
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.6.0-rc.9 (2025-05-06)
 
 ### 🩹 Fixes
