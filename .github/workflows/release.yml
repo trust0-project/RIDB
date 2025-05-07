@@ -81,6 +81,6 @@ jobs:
           yarn install
           npm run build
           npx nx release --skip-publish --verbose
-          npx nx publish --tag rc --verbose
+          npx  nx release publish --tag rc --verbose
 
       
