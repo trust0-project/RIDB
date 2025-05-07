@@ -1,3 +1,13 @@
+## 1.7.1 (2025-05-07)
+
+### 🩹 Fixes
+
+- cleaning packages ([c6fba7e](https://github.com/trust0-project/RIDB/commit/c6fba7e))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.0 (2025-05-07)
 
 ### 🚀 Features

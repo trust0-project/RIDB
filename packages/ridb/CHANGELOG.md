@@ -1,3 +1,18 @@
+## 1.5.3 (2025-05-07)
+
+### 🩹 Fixes
+
+- cleaning packages ([c6fba7e](https://github.com/trust0-project/RIDB/commit/c6fba7e))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.1
+- Updated @trust0/ridb-core to 1.7.1
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.2 (2025-05-07)
 
 ### 🩹 Fixes
