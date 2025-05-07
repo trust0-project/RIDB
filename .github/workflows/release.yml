@@ -80,7 +80,7 @@ jobs:
         run: |
           yarn install
           npm run build
-          npx nx release --skip-publish --verbose
-          npx  nx release publish --tag @rc --verbose
+          npx nx release --skip-publish --verbose -p @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react
+          npx nx release publish --tag rc --verbose -p @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react
 
       
