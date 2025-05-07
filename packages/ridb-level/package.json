@@ -29,8 +29,7 @@
     "test:node": "sh test.sh -e node",
     "test:browser": "sh test.sh -e browser",
     "types": "npm run types:default",
-    "types:default": "npx tsc",
-    "prepublishOnly": "npm run build && npm run docs"
+    "types:default": "npx tsc"
   },
   "devDependencies": {
     "@trust0/ridb": "^1.6.0-rc.14",
