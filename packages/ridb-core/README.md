@@ -11,7 +11,7 @@
     <a href="https://www.npmjs.com/package/@trust0/ridb"><img src="https://img.shields.io/npm/dm/@trust0/ridb?color=c63a3b&style=flat-square"></a>   
 </p>
 
-## Introduction
+## CORE Introduction
 RIDB secure database wrapper for the web with multiple storage engines, written in rust.
 This package serves as wasm wrapper for the [RIDB](https://github.com/trust0-project/RIDB) project, providing a secure and lightweight database solution for the web.
 
