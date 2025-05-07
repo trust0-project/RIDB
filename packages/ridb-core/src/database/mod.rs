@@ -16,6 +16,7 @@ use crate::storage::Storage;
 use crate::storages::base::StorageExternal;
 use crate::storages::inmemory::InMemory;
 use std::cell::RefCell;
+use crate::plugin::dates::TimestampPlugin;
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -285,6 +286,9 @@ impl Database {
 
         Logger::debug("DB",&"Adding defaults plugin.".into());
         vec_plugins.push(DefaultsPlugin::new()?.base.clone());
+
+        Logger::debug("DB",&"Adding timestamps plugin.".into());
+        vec_plugins.push(TimestampPlugin::new()?.base.clone());
 
         Logger::debug("DB",&"Adding migration plugin.".into());
         vec_plugins.push(MigrationPlugin::new()?.base.clone());

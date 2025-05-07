@@ -27,7 +27,13 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org/'
-          scope: '@trust0'  # Replace with your organization scope
+          scope: '@trust0'
+          cache: 'npm'
+
+      - name: Enable Corepack and set up Yarn
+        run: |
+          corepack enable
+          yarn --version
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -48,6 +54,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_SECRET }}
         run: |
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-          npm install
+          yarn install
           npm run build
           npm test

@@ -1,6 +1,6 @@
 
-import { StorageType } from '@trust0/ridb';
-import { runTests, TestPlatform } from '@trust0/ridb/testing';
+import { StorageType } from '../src/index';
+import { runTests, TestPlatform } from '../src/testing';
 
 runTests([TestPlatform.BROWSER], [
     {name: "InMemory", storage: StorageType.InMemory}, 

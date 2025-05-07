@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, bench } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
-import { RIDB, SchemaFieldType, Doc } from '../../index';
+import { RIDB, SchemaFieldType } from '../../index';
 import { StoragesType } from '..';
 import { Options } from 'tinybench';
+import { Doc } from '@trust0/ridb-core';
 
 
 const defaultBenchConfig: Options = {

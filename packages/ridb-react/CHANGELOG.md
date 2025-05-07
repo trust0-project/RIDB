@@ -1,3 +1,128 @@
+## 1.3.0-rc.12 (2025-05-07)
+
+### 🩹 Fixes
+
+- release tag ([cbc96af](https://github.com/trust0-project/RIDB/commit/cbc96af))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb to 1.6.0-rc.12
+
+### ❤️ Thank You
+
+- Javier Ribó
+
+## 1.3.0-rc.11 (2025-05-07)
+
+### 🩹 Fixes
+
+- revert ([2cdb2ea](https://github.com/trust0-project/RIDB/commit/2cdb2ea))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb to 1.6.0-rc.11
+
+### ❤️ Thank You
+
+- Javier Ribó
+
+## 1.3.0-rc.10 (2025-05-07)
+
+### 🩹 Fixes
+
+- verbose ([d66eda7](https://github.com/trust0-project/RIDB/commit/d66eda7))
+- add logs ([8d1418f](https://github.com/trust0-project/RIDB/commit/8d1418f))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb to 1.6.0-rc.10
+
+### ❤️ Thank You
+
+- Javier Ribó
+
+## 1.3.0-rc.9 (2025-05-06)
+
+### 🩹 Fixes
+
+- release ([816b3c0](https://github.com/trust0-project/RIDB/commit/816b3c0))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb to 1.6.0-rc.9
+
+### ❤️ Thank You
+
+- Javier Ribó
+
+## 1.3.0-rc.8 (2025-05-06)
+
+### 🩹 Fixes
+
+- autopublish ([22315e1](https://github.com/trust0-project/RIDB/commit/22315e1))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb to 1.6.0-rc.8
+
+### ❤️ Thank You
+
+- Javier Ribó
+
+## 1.3.0-rc.7 (2025-05-06)
+
+### 🩹 Fixes
+
+- wrong version template for nx ([83df897](https://github.com/trust0-project/RIDB/commit/83df897))
+- release ([2092587](https://github.com/trust0-project/RIDB/commit/2092587))
+- pr improvements on ci ([ccda195](https://github.com/trust0-project/RIDB/commit/ccda195))
+- improve ([95d2510](https://github.com/trust0-project/RIDB/commit/95d2510))
+- add next generation build tools ([5a24aa8](https://github.com/trust0-project/RIDB/commit/5a24aa8))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb to 1.6.0-rc.7
+
+### ❤️ Thank You
+
+- Javier Ribó
+
+## [1.3.0-rc.6](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.3.0-rc.5...@trust0/ridb-react@1.3.0-rc.6) (2025-04-23)
+
+### Bug Fixes
+
+* improve path ([b0ea748](https://github.com/trust0-project/RIDB/commit/b0ea748ff67e5fdd299d7a65b32cfbc888209e1b))
+
+## [1.3.0-rc.5](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.3.0-rc.4...@trust0/ridb-react@1.3.0-rc.5) (2025-04-23)
+
+### Bug Fixes
+
+* improve cjs compatibility ([c2a5094](https://github.com/trust0-project/RIDB/commit/c2a5094d2ccd92b236ae14ef67e2fa13af83c8ed))
+
+## [1.3.0-rc.4](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.3.0-rc.3...@trust0/ridb-react@1.3.0-rc.4) (2025-04-23)
+
+### Bug Fixes
+
+* bundle buffer properly from esm cjs ([0352033](https://github.com/trust0-project/RIDB/commit/0352033855fa9056ae22d01cdc406e9dd40a67de))
+
+## [1.3.0-rc.3](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.3.0-rc.2...@trust0/ridb-react@1.3.0-rc.3) (2025-04-20)
+
+### Bug Fixes
+
+* improve exports ([51f9973](https://github.com/trust0-project/RIDB/commit/51f997317f0ed2bd887b204017369b7916aceadc))
+
+## [1.3.0-rc.2](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.3.0-rc.1...@trust0/ridb-react@1.3.0-rc.2) (2025-04-20)
+
+### Bug Fixes
+
+* add missing main export ([cba26be](https://github.com/trust0-project/RIDB/commit/cba26be819f4d9a3330a96e66f3ce4ede4c6ed04))
+
+## [1.3.0-rc.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.2.1...@trust0/ridb-react@1.3.0-rc.1) (2025-03-26)
+
+### Features
+
+* add default dates to all records ([e5d7097](https://github.com/trust0-project/RIDB/commit/e5d7097c714f6e95c97b96f65950597d4df42e96))
+
 ## [1.2.1](https://github.com/trust0-project/RIDB/compare/@trust0/ridb-react@1.2.0...@trust0/ridb-react@1.2.1) (2025-03-25)
 
 ### Bug Fixes

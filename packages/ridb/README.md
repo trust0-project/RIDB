@@ -11,10 +11,10 @@
     <a href="https://www.npmjs.com/package/@trust0/ridb"><img src="https://img.shields.io/npm/dm/@trust0/ridb?color=c63a3b&style=flat-square"></a>   
 </p>
 
-## Documentation
+## RIDB Documentation
 For detailed API documentation, please visit the [RIDB Documentation](https://github.com/trust0-project/RIDB/blob/main/packages/ridb/docs/README.md).
 
-## Install
+## Installling
 In order to install simply run the following command
 npm:
 ``` 

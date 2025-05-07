@@ -1,6 +1,6 @@
 
-import { StorageType } from '@trust0/ridb';
-import { runBenchTests, TestPlatform } from '@trust0/ridb/testing';
+import { StorageType } from '../src/index';
+import { runBenchTests, TestPlatform } from '../src/testing';
 
 runBenchTests(
     [TestPlatform.NODE], 

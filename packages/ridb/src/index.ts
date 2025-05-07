@@ -131,52 +131,6 @@ export type StartOptions<T extends SchemaTypeRecord> = {
   [name: string]: any
 }
 
-export type {
-  OpType,
-  IndexDB,
-  Operators,
-  InOperator,
-  OperatorOrType,
-  LogicalOperators,
-  QueryType,
-  Query,
-  QueryOptions,
-  InternalsRecord,
-  ExtractType,
-  Doc,
-  Collection,
-  InMemory,
-  Operation,
-  Property,
-  CoreStorage,
-  EnumerateUpTo,
-  EnumerateFrom1To,
-  IsVersionGreaterThan0,
-  AnyVersionGreaterThan1,
-  MigrationFunction,
-  MigrationPathsForSchema,
-  MigrationPathsForSchemas,
-  MigrationsParameter,
-  BaseStorageOptions,
-  BaseStorage,
-  SchemaType,
-  Schema,
-  Database,
-  CreateStorage,
-  RIDBModule,
-  Hook,
-  BasePluginOptions,
-  BasePlugin,
-  SchemaTypeRecord,
-  StorageInternal,
-} from "@trust0/ridb-core";
-
-export { 
-  RIDBError
-} from "@trust0/ridb-core";
-
-
-
 /**
  * Options for the RIDB constructor.
  *
@@ -190,12 +144,13 @@ type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
   worker?: boolean
 } & MigrationsParameter<T>
 
-import wasmBuffer from "@trust0/ridb-core/pkg/ridb_core_bg.wasm";
+import wasmBuffer from "@trust0/ridb-core/wasm";
 
 let loaded : typeof import("@trust0/ridb-core") | undefined;
 export async function WasmInternal() {
     if (!loaded) {
         const module = await import("@trust0/ridb-core");
+        debugger;
         const wasmInstance = module.initSync(wasmBuffer);
         await module.default(wasmInstance);
         loaded = module;
