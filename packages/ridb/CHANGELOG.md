@@ -1,3 +1,20 @@
+## 1.5.8 (2025-05-09)
+
+### 🩹 Fixes
+
+- ridb build version ([ae70c49](https://github.com/trust0-project/RIDB/commit/ae70c49))
+- add packages ([2942ec7](https://github.com/trust0-project/RIDB/commit/2942ec7))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.2
+- Updated @trust0/ridb-core to 1.7.6
+- Updated @trust0/ridb-core to 1.7.6
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.7 (2025-05-09)
 
 ### 🩹 Fixes
