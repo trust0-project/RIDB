@@ -1,3 +1,20 @@
+## 1.5.6 (2025-05-09)
+
+### 🩹 Fixes
+
+- ridb-build avoid ([4312bc3](https://github.com/trust0-project/RIDB/commit/4312bc3))
+- improve nx config for build package which is private ([9586263](https://github.com/trust0-project/RIDB/commit/9586263))
+- add ridb library dependencies and improvements ([6bbad24](https://github.com/trust0-project/RIDB/commit/6bbad24))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.4
+- Updated @trust0/ridb-core to 1.7.4
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.5 (2025-05-07)
 
 ### 🧱 Updated Dependencies
