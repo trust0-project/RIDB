@@ -13,7 +13,8 @@
     "version": {
       "conventionalCommits": true,
       "generatorOptions": {
-        "preserveLocalDependencyProtocols": true
+        "preserveLocalDependencyProtocols": true,
+        "fallbackCurrentVersionResolver": "disk"
       }
     },
     "changelog": {
