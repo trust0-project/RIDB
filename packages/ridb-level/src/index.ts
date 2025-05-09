@@ -40,8 +40,6 @@ import {
 import type { ClassicLevel } from "classic-level";
 type Level = ClassicLevel<string, string>;
 
-
-
 export default async function createLevelDB() {
     const {BaseStorage} = await WasmInternal();
     class Instance<T extends SchemaTypeRecord> extends BaseStorage<T> {

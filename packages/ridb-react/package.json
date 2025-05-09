@@ -3,6 +3,9 @@
   "description": "React bindings for RIDB.",
   "version": "1.2.5",
   "author": "elribonazo@gmail.com",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/trust0-project/RIDB.git"
@@ -13,7 +16,7 @@
   "scripts": {
     "clean": "rm -rf build node_modules",
     "docs": "echo 'No docs for this package'",
-    "build": "rm -rf build && npx tsup --config tsup.config.ts --dts",
+    "build": "sh build.sh",
     "test": "npx nx vite:test --run",
     "types": "npm run types:default",
     "types:default": "npx tsc",
@@ -28,6 +31,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@trust0/ridb": "^1.5.5",
+    "@trust0/ridb-build": "workspace:*",
     "@types/react": "^18.2.8",
     "@types/react-dom": "^18.2.4",
     "jsdom": "^25.0.1",
@@ -39,8 +43,5 @@
     "@trust0/ridb": "^1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
-  },
-  "type": "module",
-  "typings": "./build/index.d.ts",
-  "main": "./build/index.js"
+  }
 }

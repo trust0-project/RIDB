@@ -1,51 +1,4 @@
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
 // pkg/ridb_core.js
-var ridb_core_exports = {};
-__export(ridb_core_exports, {
-  BasePlugin: () => BasePlugin,
-  BaseStorage: () => BaseStorage,
-  Collection: () => Collection,
-  CoreStorage: () => CoreStorage,
-  Database: () => Database,
-  Errors: () => Errors,
-  InMemory: () => InMemory,
-  IndexDB: () => IndexDB,
-  OpType: () => OpType,
-  Operation: () => Operation,
-  Property: () => Property,
-  Query: () => Query,
-  QueryOptions: () => QueryOptions,
-  RIDBError: () => RIDBError,
-  Schema: () => Schema,
-  WasmBindgenTestContext: () => WasmBindgenTestContext,
-  __wbgtest_console_debug: () => __wbgtest_console_debug,
-  __wbgtest_console_error: () => __wbgtest_console_error,
-  __wbgtest_console_info: () => __wbgtest_console_info,
-  __wbgtest_console_log: () => __wbgtest_console_log,
-  __wbgtest_console_warn: () => __wbgtest_console_warn,
-  default: () => ridb_core_default,
-  initSync: () => initSync,
-  is_debug_mode: () => is_debug_mode,
-  main_js: () => main_js
-});
-module.exports = __toCommonJS(ridb_core_exports);
 var wasm;
 var heap = new Array(128).fill(void 0);
 heap.push(void 0, null, true, false);
@@ -3084,8 +3037,7 @@ async function __wbg_init(input) {
   return __wbg_finalize_init(instance, module2);
 }
 var ridb_core_default = __wbg_init;
-// Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
+export {
   BasePlugin,
   BaseStorage,
   Collection,
@@ -3107,7 +3059,8 @@ var ridb_core_default = __wbg_init;
   __wbgtest_console_info,
   __wbgtest_console_log,
   __wbgtest_console_warn,
+  ridb_core_default as default,
   initSync,
   is_debug_mode,
   main_js
-});
+};

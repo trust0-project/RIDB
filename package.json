@@ -12,7 +12,7 @@
   "scripts": {
     "clean": "nx run-many --target=clean --verbose && rm -rf node_modules",
     "docs": "nx run-many --target=docs --verbose",
-    "build": "nx run-many --verbose -p @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react --target=build",
+    "build": "nx run-many --verbose -p @trust0/ridb-build @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react --target=build",
     "test": "nx run-many --target=test",
     "lint": "nx run-many --target=lint",
     "ci-check": "npx semantic-release --deps.prefix=\"^\" --dry-run"

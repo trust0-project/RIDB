@@ -52,10 +52,11 @@ pub struct IndexDB {
     _success_handler: Arc<Mutex<Option<Closure<dyn FnMut(web_sys::Event)>>>>,
 }
 
-
-
 impl Storage for IndexDB {
     async fn write(&self, op: Operation) -> Result<JsValue, RIDBError> {
+        // Clean pool occasionally to prevent stale connections
+        POOL.clean_connections();
+        
         let store_name = &op.collection;
         let store = self.get_store(store_name)?;
         let schemas = self.base.schemas.borrow();
@@ -95,6 +96,9 @@ impl Storage for IndexDB {
     }
 
     async fn find(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError> {
+        // Clean pool occasionally to prevent stale connections
+        POOL.clean_connections();
+        
         // Logger::debug(
         //     "IndexDB-Find",
         //     &JsValue::from(format!("Find method {}", collection_name)),
@@ -107,6 +111,9 @@ impl Storage for IndexDB {
     }
 
     async fn find_document_by_id(&self, collection_name: &str, primary_key_value: JsValue) -> Result<JsValue, RIDBError> {
+        // Clean pool occasionally to prevent stale connections
+        POOL.clean_connections();
+        
         let store_name = collection_name;
         if primary_key_value.is_undefined() || primary_key_value.is_null() {
             return Err(RIDBError::from("Primary key value is required"));
@@ -130,6 +137,9 @@ impl Storage for IndexDB {
     }
 
     async fn count(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError> {
+        // Clean pool occasionally to prevent stale connections
+        POOL.clean_connections();
+        
         // Logger::debug(
         //     "IndexDB-Count",
         //     &JsValue::from(format!("Count method {}", collection_name)),
@@ -140,6 +150,9 @@ impl Storage for IndexDB {
         Ok(JsValue::from_f64(filtered_docs.length() as f64))
     }
     async fn close(&self) -> Result<JsValue, RIDBError> {
+        // Clean all connections before attempting to close this one
+        POOL.clean_connections();
+        
         // First, extract the name so we can remove from pool later
         let db_name = self.base.name.clone();
         
@@ -155,13 +168,22 @@ impl Storage for IndexDB {
                 .collect();
         }
 
+        // Remove the connection from the pool first, before any transactions
+        // This prevents other code from getting this connection while we're closing it
+        POOL.remove_connection(&db_name);
+
         // Create a read transaction for each store to ensure all operations are complete
         for store_name in stores {
-            let transaction;
-            {
+            // Keep the lock for the entire transaction creation and handling
+            // to prevent the database from being accessed concurrently
+            let transaction = {
                 let db = self.db.lock();
-                transaction = db.transaction_with_str(&store_name)?;
-            }
+                // If transaction creation fails, it might mean the database is already closed
+                match db.transaction_with_str(&store_name) {
+                    Ok(t) => t,
+                    Err(_) => continue, // Skip this store and continue with others
+                }
+            };
 
             // Wait for the transaction to complete
             let promise = Promise::new(&mut |resolve, reject| {
@@ -176,15 +198,20 @@ impl Storage for IndexDB {
                 transaction.set_oncomplete(Some(oncomplete.as_ref().unchecked_ref()));
                 transaction.set_onerror(Some(onerror.as_ref().unchecked_ref()));
 
+                // These closures are only used for this transaction
                 oncomplete.forget();
                 onerror.forget();
             });
 
-            JsFuture::from(promise).await?;
+            // Await the transaction completion
+            match JsFuture::from(promise).await {
+                Ok(_) => {},
+                Err(_) => {
+                    // Even if a transaction fails, we should continue closing others
+                    continue;
+                }
+            }
         }
-
-        // Remove the connection from the pool first
-        POOL.remove_connection(&db_name);
 
         // Now close the database
         {
@@ -192,10 +219,22 @@ impl Storage for IndexDB {
             db.close();
         }
         
+        // Clear any stored handlers
+        {
+            let mut error_handler = self._error_handler.lock();
+            *error_handler = None;
+            
+            let mut success_handler = self._success_handler.lock();
+            *success_handler = None;
+        }
+        
         Ok(JsValue::from_str("IndexDB database closed"))
     }
 
     async fn start(&self) -> Result<JsValue, RIDBError> {
+        // Clean all connections before attempting to start this one
+        POOL.clean_connections();
+        
         // Save the database name before testing the connection
         let db_name = self.base.name.clone();
         
@@ -208,8 +247,12 @@ impl Storage for IndexDB {
             if store_names.length() == 0 {
                 true // No stores, likely closed or connection issue
             } else {
-                let test_store = store_names.get(0).unwrap();
-                db_guard.transaction_with_str(&test_store).is_err()
+                // Don't unwrap, as this could cause panic if store_names is empty
+                if let Some(test_store) = store_names.get(0) {
+                    db_guard.transaction_with_str(&test_store).is_err()
+                } else {
+                    true // Consider it closed if we can't get store names
+                }
             }
         };
         
@@ -221,15 +264,34 @@ impl Storage for IndexDB {
             let schemas_clone = self.base.schemas.borrow().clone();
             
             // Create a new database connection
-            let new_db = create_database(&db_name, schemas_clone).await?;
+            let new_db = match create_database(&db_name, schemas_clone).await {
+                Ok(db) => db,
+                Err(e) => {
+                    // If we can't create a new database, make sure to clean up any dangling references
+                    POOL.remove_connection(&db_name);
+                    return Err(e);
+                }
+            };
             
-            // Update the pool with new connection
+            // Create a strong reference to store in the IndexDB struct
+            let new_db_strong = Arc::clone(&new_db);
+            
+            // Update the pool with new connection - we use a weak reference in the pool
             POOL.store_connection(db_name, Arc::downgrade(&new_db));
             
             // Update our internal database reference
             {
                 let mut db_guard = self.db.lock();
-                *db_guard = (*new_db).clone();
+                *db_guard = (*new_db_strong).clone();
+            }
+            
+            // Reset the handlers if needed
+            {
+                let mut error_handler = self._error_handler.lock();
+                *error_handler = None;
+                
+                let mut success_handler = self._success_handler.lock();
+                *success_handler = None;
             }
             
             Ok(JsValue::from_str("IndexDB database started"))
@@ -239,9 +301,6 @@ impl Storage for IndexDB {
         }
     }
 }
-
-
-
 
 #[wasm_bindgen]
 impl IndexDB {
@@ -382,6 +441,9 @@ impl IndexDB {
     }
     #[wasm_bindgen]
     pub async fn create(name: &str, schemas_js: Object) -> Result<IndexDB, RIDBError> {
+        // Clean the pool before creating a new connection
+        POOL.clean_connections();
+        
         // Create the base storage with the provided schemas
         let base = BaseStorage::new(
             name.to_string(),
@@ -464,12 +526,6 @@ impl IndexDB {
         self.start().await
     }
 }
-
-
-
-
-
-
 
 #[cfg(test)]
 mod tests {

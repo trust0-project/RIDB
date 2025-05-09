@@ -73,6 +73,129 @@ declare enum Errors {
   AuthenticationError = 5,
 }
 
+/**
+ * Represents a property within a schema, including various constraints and nested properties.
+ */
+declare class Property {
+    /**
+     * The type of the property.
+     */
+    readonly type: string;
+
+    /**
+     * The version of the property, if applicable.
+     */
+    readonly version?: number;
+
+    /**
+     * The primary key of the property, if applicable.
+     */
+    readonly primaryKey?: string;
+
+    /**
+     * An optional array of nested properties for array-type properties.
+     */
+    readonly items?: Property;
+
+    /**
+     * The maximum number of items for array-type properties, if applicable.
+     */
+    readonly maxItems?: number;
+
+    /**
+     * The minimum number of items for array-type properties, if applicable.
+     */
+    readonly minItems?: number;
+
+    /**
+     * The maximum length for string-type properties, if applicable.
+     */
+    readonly maxLength?: number;
+
+    /**
+     * The minimum length for string-type properties, if applicable.
+     */
+    readonly minLength?: number;
+
+    /**
+     * An optional array of required fields for object-type properties.
+     */
+    readonly required?: boolean;
+
+    /**
+     * An optional default value for the property.
+     */
+    readonly default?: any;
+
+    /**
+     * An optional map of nested properties for object-type properties.
+     */
+    readonly properties?: {
+        [name: string]: Property;
+    };
+}
+
+
+
+type Operators<T> = {
+    $gte?: number,
+    $gt?: number
+    $lt?: number,
+    $lte?: number,
+    $eq?: T,
+    $ne?: T
+};
+
+type InOperator<T> = {  $in?: T[] };
+type NInOperator<T> = {  $nin?: T[] };
+
+type OperatorOrType<T> = T extends number ? 
+    T | Operators<T> | InOperator<T> | NInOperator<T> : 
+    T | InOperator<T> | NInOperator<T>;
+
+type LogicalOperators<T extends SchemaType> = {
+    $and?: Partial<QueryType<T>>[];
+    $or?: Partial<QueryType<T>>[];
+};
+
+type QueryType<T extends SchemaType> = Partial<{
+    [K in keyof T['properties']]: OperatorOrType<
+        ExtractType<
+            T['properties'][K]['type']
+        >
+    >
+}> & LogicalOperators<T> | LogicalOperators<T>[];
+
+declare class Query<T extends SchemaType> {
+    constructor(query: QueryType<T>, schema:Schema<T>);
+    readonly query: QueryType<T>;
+}
+
+
+
+/**
+ * Represents an IndexDB storage system extending the base storage functionality.
+ *
+ * @template T - The schema type.
+ */
+declare class IndexDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
+    /**
+     * Frees the resources used by the in-memory storage.
+     */
+    free(): void;
+
+    static create<SchemasCreate extends SchemaTypeRecord>(
+        dbName: string,
+        schemas: SchemasCreate,
+    ): Promise<
+        IndexDB<
+            SchemasCreate
+        >
+    >;
+}
+
+
+
 type InternalsRecord = {
     [name: string]: BaseStorage<SchemaTypeRecord>
 };
@@ -174,6 +297,46 @@ declare class Collection<T extends SchemaType> {
 
 
 
+declare class CoreStorage {
+    /**
+    * @param {any} document
+    * @param {Query} query
+    * @returns {boolean}
+    */
+    matchesQuery(document: any, query: Query<any>): boolean;
+    getPrimaryKeyTyped(value: any): string | number;
+    getIndexes(schema: Schema<any>, op: Operation): string[];
+}
+
+
+
+/**
+ * Represents an operation to be performed on a collection.
+ *
+ * @template T - The schema type of the collection.
+ */
+type Operation<T extends SchemaType = SchemaType> = {
+    /**
+     * The name of the collection on which the operation will be performed.
+     */
+    collection: string,
+
+    /**
+     * The type of operation to be performed (e.g., CREATE, UPDATE, DELETE).
+     */
+    opType: OpType,
+
+    /**
+     * The data involved in the operation, conforming to the schema type.
+     */
+    data: Doc<T>,
+
+    primaryKeyField?: string,
+    primaryKey?: string
+}
+
+
+
 /**
  * Represents an in-memory storage system extending the base storage functionality.
  *
@@ -234,40 +397,142 @@ declare class BaseStorage<Schemas extends SchemaTypeRecord> extends StorageInter
 
 
 
-type Operators<T> = {
-    $gte?: number,
-    $gt?: number
-    $lt?: number,
-    $lte?: number,
-    $eq?: T,
-    $ne?: T
-};
+/**
+ * Represents a database containing collections of documents.
+ * RIDB extends from this class and is used to expose collections.
+ * 
+ * So if you specify:
+ * ```typescript
+ * const db = new RIDB(
+ *     {
+ *         schemas: {
+ *             demo: {
+ *                 version: 0,
+ *                 primaryKey: 'id',
+ *                 type: SchemaFieldType.object,
+ *                 properties: {
+ *                     id: {
+ *                         type: SchemaFieldType.string,
+ *                         maxLength: 60
+ *                     }
+ *                 }
+ *             }
+ *         } as const
+ *     }
+ * )
+ * ```
+ * 
+ * The collection will be available as `db.collections.demo` and all the methods for the collection (find, count, findById, update, create, delete) will be available.
+ *
+ * @template T - A record of schema types.
+ */
+declare class Database<T extends SchemaTypeRecord> {
 
-type InOperator<T> = {  $in?: T[] };
-type NInOperator<T> = {  $nin?: T[] };
+    /**
+     * Creates a new `Database` instance with the provided schemas and storage module.
+     *
+     * @template TS - A record of schema types.
+     * @param {TS} schemas - The schemas to use for the collections.
+     * @param migrations
+     * @param plugins
+     * @param options
+     * @param password
+     * @returns {Promise<Database<TS>>} A promise that resolves to the created `Database` instance.
+     */
+    static create<TS extends SchemaTypeRecord>(
+        db_name: string,
+        schemas: TS,
+        migrations: MigrationPathsForSchemas<TS> | MigrationPathsForSchema<TS[string]>,
+        plugins:Array<typeof BasePlugin>,
+        options: RIDBModule,
+        password?:string,
+        storage?: BaseStorage<TS>
+    ): Promise<Database<TS>>;
 
-type OperatorOrType<T> = T extends number ? 
-    T | Operators<T> | InOperator<T> | NInOperator<T> : 
-    T | InOperator<T> | NInOperator<T>;
+    authenticate(password: string): Promise<boolean>;
 
-type LogicalOperators<T extends SchemaType> = {
-    $and?: Partial<QueryType<T>>[];
-    $or?: Partial<QueryType<T>>[];
-};
+    /**
+     * The collections in the database.
+     *
+     * This is a read-only property where the key is the name of the collection and the value is a `Collection` instance.
+     */
+    readonly collections: {
+        [name in keyof T]: Collection<Schema<T[name]>>
+    }
 
-type QueryType<T extends SchemaType> = Partial<{
-    [K in keyof T['properties']]: OperatorOrType<
-        ExtractType<
-            T['properties'][K]['type']
-        >
-    >
-}> & LogicalOperators<T> | LogicalOperators<T>[];
+    readonly started: boolean;
 
-declare class Query<T extends SchemaType> {
-    constructor(query: QueryType<T>, schema:Schema<T>);
-    readonly query: QueryType<T>;
+    /**
+     * Starts the database.
+     *
+     * @returns {Promise<void>} A promise that resolves when the database is started.
+     */
+    start(): Promise<void>;
+
+    /**
+     * Closes the database.
+     *
+     * @returns {Promise<void>} A promise that resolves when the database is closed.
+     */
+    close(): Promise<void>;
 }
 
+/**
+ * Represents a function type for creating storage with the provided schema type records.
+ *
+ * @template T - The schema type record.
+ * @param {T} records - The schema type records.
+ * @returns {Promise<InternalsRecord>} A promise that resolves to the created internals record.
+ */
+type CreateStorage = <T extends SchemaTypeRecord>(
+    records: T
+) => Promise<BaseStorage<T>>;
+
+/**
+ * Represents a storage module with a method for creating storage.
+ */
+type RIDBModule = {
+
+    /**
+     * Plugin constructors array
+     */
+    apply: (plugins:Array<typeof BasePlugin>) => Array<BasePlugin>;
+};
+
+
+
+/**
+ * Represents a record of schema types, where each key is a string and the value is a `SchemaType`.
+ */
+type SchemaTypeRecord = {
+    [name: string]: SchemaType
+};
+
+declare abstract class StorageInternal<Schemas extends SchemaTypeRecord> {
+    constructor(
+        name: string, 
+        schemas: Schemas
+    );
+    abstract start(): Promise<void>;
+    abstract close(): Promise<void>;
+    abstract count(
+        colectionName: keyof Schemas, 
+        query: QueryType<Schemas[keyof Schemas]>,
+        options?: QueryOptions
+    ): Promise<number>;
+    abstract findDocumentById(
+        collectionName: keyof Schemas, 
+        id: string
+    ): Promise<Doc<Schemas[keyof Schemas]> | null>;
+    abstract find(
+        collectionName: keyof Schemas, 
+        query: QueryType<Schemas[keyof Schemas]>,
+        options?: QueryOptions
+    ): Promise<Doc<Schemas[keyof Schemas]>[]>;
+    abstract write(
+        op: Operation<Schemas[keyof Schemas]>
+    ): Promise<Doc<Schemas[keyof Schemas]>>;
+}
 
 
 /**
@@ -443,271 +708,6 @@ declare class BasePlugin implements BasePluginOptions {
 }
 
 
-
-/**
- * Represents an IndexDB storage system extending the base storage functionality.
- *
- * @template T - The schema type.
- */
-declare class IndexDB<T extends SchemaTypeRecord> extends BaseStorage<T> {
-    /**
-     * Frees the resources used by the in-memory storage.
-     */
-    free(): void;
-
-    static create<SchemasCreate extends SchemaTypeRecord>(
-        dbName: string,
-        schemas: SchemasCreate,
-    ): Promise<
-        IndexDB<
-            SchemasCreate
-        >
-    >;
-}
-
-
-
-/**
- * Represents a property within a schema, including various constraints and nested properties.
- */
-declare class Property {
-    /**
-     * The type of the property.
-     */
-    readonly type: string;
-
-    /**
-     * The version of the property, if applicable.
-     */
-    readonly version?: number;
-
-    /**
-     * The primary key of the property, if applicable.
-     */
-    readonly primaryKey?: string;
-
-    /**
-     * An optional array of nested properties for array-type properties.
-     */
-    readonly items?: Property;
-
-    /**
-     * The maximum number of items for array-type properties, if applicable.
-     */
-    readonly maxItems?: number;
-
-    /**
-     * The minimum number of items for array-type properties, if applicable.
-     */
-    readonly minItems?: number;
-
-    /**
-     * The maximum length for string-type properties, if applicable.
-     */
-    readonly maxLength?: number;
-
-    /**
-     * The minimum length for string-type properties, if applicable.
-     */
-    readonly minLength?: number;
-
-    /**
-     * An optional array of required fields for object-type properties.
-     */
-    readonly required?: boolean;
-
-    /**
-     * An optional default value for the property.
-     */
-    readonly default?: any;
-
-    /**
-     * An optional map of nested properties for object-type properties.
-     */
-    readonly properties?: {
-        [name: string]: Property;
-    };
-}
-
-
-
-declare class CoreStorage {
-    /**
-    * @param {any} document
-    * @param {Query} query
-    * @returns {boolean}
-    */
-    matchesQuery(document: any, query: Query<any>): boolean;
-    getPrimaryKeyTyped(value: any): string | number;
-    getIndexes(schema: Schema<any>, op: Operation): string[];
-}
-
-
-
-/**
- * Represents an operation to be performed on a collection.
- *
- * @template T - The schema type of the collection.
- */
-type Operation<T extends SchemaType = SchemaType> = {
-    /**
-     * The name of the collection on which the operation will be performed.
-     */
-    collection: string,
-
-    /**
-     * The type of operation to be performed (e.g., CREATE, UPDATE, DELETE).
-     */
-    opType: OpType,
-
-    /**
-     * The data involved in the operation, conforming to the schema type.
-     */
-    data: Doc<T>,
-
-    primaryKeyField?: string,
-    primaryKey?: string
-}
-
-
-
-/**
- * Represents a record of schema types, where each key is a string and the value is a `SchemaType`.
- */
-type SchemaTypeRecord = {
-    [name: string]: SchemaType
-};
-
-declare abstract class StorageInternal<Schemas extends SchemaTypeRecord> {
-    constructor(
-        name: string, 
-        schemas: Schemas
-    );
-    abstract start(): Promise<void>;
-    abstract close(): Promise<void>;
-    abstract count(
-        colectionName: keyof Schemas, 
-        query: QueryType<Schemas[keyof Schemas]>,
-        options?: QueryOptions
-    ): Promise<number>;
-    abstract findDocumentById(
-        collectionName: keyof Schemas, 
-        id: string
-    ): Promise<Doc<Schemas[keyof Schemas]> | null>;
-    abstract find(
-        collectionName: keyof Schemas, 
-        query: QueryType<Schemas[keyof Schemas]>,
-        options?: QueryOptions
-    ): Promise<Doc<Schemas[keyof Schemas]>[]>;
-    abstract write(
-        op: Operation<Schemas[keyof Schemas]>
-    ): Promise<Doc<Schemas[keyof Schemas]>>;
-}
-
-
-/**
- * Represents a database containing collections of documents.
- * RIDB extends from this class and is used to expose collections.
- * 
- * So if you specify:
- * ```typescript
- * const db = new RIDB(
- *     {
- *         schemas: {
- *             demo: {
- *                 version: 0,
- *                 primaryKey: 'id',
- *                 type: SchemaFieldType.object,
- *                 properties: {
- *                     id: {
- *                         type: SchemaFieldType.string,
- *                         maxLength: 60
- *                     }
- *                 }
- *             }
- *         } as const
- *     }
- * )
- * ```
- * 
- * The collection will be available as `db.collections.demo` and all the methods for the collection (find, count, findById, update, create, delete) will be available.
- *
- * @template T - A record of schema types.
- */
-declare class Database<T extends SchemaTypeRecord> {
-
-    /**
-     * Creates a new `Database` instance with the provided schemas and storage module.
-     *
-     * @template TS - A record of schema types.
-     * @param {TS} schemas - The schemas to use for the collections.
-     * @param migrations
-     * @param plugins
-     * @param options
-     * @param password
-     * @returns {Promise<Database<TS>>} A promise that resolves to the created `Database` instance.
-     */
-    static create<TS extends SchemaTypeRecord>(
-        db_name: string,
-        schemas: TS,
-        migrations: MigrationPathsForSchemas<TS> | MigrationPathsForSchema<TS[string]>,
-        plugins:Array<typeof BasePlugin>,
-        options: RIDBModule,
-        password?:string,
-        storage?: BaseStorage<TS>
-    ): Promise<Database<TS>>;
-
-    authenticate(password: string): Promise<boolean>;
-
-    /**
-     * The collections in the database.
-     *
-     * This is a read-only property where the key is the name of the collection and the value is a `Collection` instance.
-     */
-    readonly collections: {
-        [name in keyof T]: Collection<Schema<T[name]>>
-    }
-
-    readonly started: boolean;
-
-    /**
-     * Starts the database.
-     *
-     * @returns {Promise<void>} A promise that resolves when the database is started.
-     */
-    start(): Promise<void>;
-
-    /**
-     * Closes the database.
-     *
-     * @returns {Promise<void>} A promise that resolves when the database is closed.
-     */
-    close(): Promise<void>;
-}
-
-/**
- * Represents a function type for creating storage with the provided schema type records.
- *
- * @template T - The schema type record.
- * @param {T} records - The schema type records.
- * @returns {Promise<InternalsRecord>} A promise that resolves to the created internals record.
- */
-type CreateStorage = <T extends SchemaTypeRecord>(
-    records: T
-) => Promise<BaseStorage<T>>;
-
-/**
- * Represents a storage module with a method for creating storage.
- */
-type RIDBModule = {
-
-    /**
-     * Plugin constructors array
-     */
-    apply: (plugins:Array<typeof BasePlugin>) => Array<BasePlugin>;
-};
-
-
 /**
 */
 declare class RIDBError {
@@ -819,33 +819,18 @@ type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Modul
 
 interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly __wbg_collection_free: (a: number) => void;
-  readonly collection_name: (a: number, b: number) => void;
-  readonly collection_schema: (a: number, b: number) => void;
-  readonly collection_find: (a: number, b: number, c: number) => number;
-  readonly collection_parse_query_options: (a: number, b: number, c: number) => void;
-  readonly collection_count: (a: number, b: number, c: number) => number;
-  readonly collection_findById: (a: number, b: number) => number;
-  readonly collection_update: (a: number, b: number) => number;
-  readonly collection_create: (a: number, b: number) => number;
-  readonly collection_delete: (a: number, b: number) => number;
-  readonly __wbg_inmemory_free: (a: number) => void;
-  readonly inmemory_create: (a: number, b: number, c: number) => number;
-  readonly inmemory_write: (a: number, b: number) => number;
-  readonly inmemory_find: (a: number, b: number, c: number, d: number, e: number) => number;
-  readonly inmemory_findDocumentById: (a: number, b: number, c: number, d: number) => number;
-  readonly inmemory_count: (a: number, b: number, c: number, d: number, e: number) => number;
-  readonly inmemory_close: (a: number) => number;
-  readonly inmemory_start: (a: number) => number;
-  readonly __wbg_basestorage_free: (a: number) => void;
-  readonly basestorage_new: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly basestorage_addIndexSchemas: (a: number, b: number) => void;
-  readonly basestorage_getOption: (a: number, b: number, c: number, d: number) => void;
-  readonly basestorage_getSchema: (a: number, b: number, c: number, d: number) => void;
-  readonly basestorage_core: (a: number, b: number) => void;
-  readonly __wbg_queryoptions_free: (a: number) => void;
-  readonly queryoptions_limit: (a: number, b: number) => void;
-  readonly queryoptions_offset: (a: number, b: number) => void;
+  readonly __wbg_property_free: (a: number) => void;
+  readonly property_is_valid: (a: number, b: number) => void;
+  readonly property_type: (a: number) => number;
+  readonly property_items: (a: number, b: number) => void;
+  readonly property_maxItems: (a: number, b: number) => void;
+  readonly property_minItems: (a: number, b: number) => void;
+  readonly property_maxLength: (a: number, b: number) => void;
+  readonly property_minLength: (a: number, b: number) => void;
+  readonly property_properties: (a: number, b: number) => void;
+  readonly __wbgt_test_property_creation_0: (a: number) => void;
+  readonly __wbgt_test_property_validation_1: (a: number) => void;
+  readonly __wbgt_test_invalid_property_2: (a: number) => void;
   readonly __wbg_query_free: (a: number) => void;
   readonly query_new: (a: number, b: number, c: number) => void;
   readonly query_query: (a: number, b: number) => void;
@@ -882,6 +867,76 @@ interface InitOutput {
   readonly __wbgt_test_query_parse_eq_operator_wrong_type_32: (a: number) => void;
   readonly __wbgt_test_query_parse_ne_operator_33: (a: number) => void;
   readonly __wbgt_test_query_parse_ne_operator_wrong_type_34: (a: number) => void;
+  readonly __wbg_ridberror_free: (a: number) => void;
+  readonly ridberror_new: (a: number, b: number, c: number, d: number, e: number) => number;
+  readonly ridberror_type: (a: number, b: number) => void;
+  readonly ridberror_code: (a: number) => number;
+  readonly ridberror_message: (a: number, b: number) => void;
+  readonly ridberror_from: (a: number) => number;
+  readonly ridberror_error: (a: number, b: number, c: number) => number;
+  readonly ridberror_query: (a: number, b: number, c: number) => number;
+  readonly ridberror_authentication: (a: number, b: number, c: number) => number;
+  readonly ridberror_serialisation: (a: number, b: number, c: number) => number;
+  readonly ridberror_validation: (a: number, b: number, c: number) => number;
+  readonly ridberror_hook: (a: number, b: number, c: number) => number;
+  readonly __wbg_indexdb_free: (a: number) => void;
+  readonly indexdb_get_stores: (a: number, b: number) => void;
+  readonly indexdb_get_store: (a: number, b: number, c: number, d: number) => void;
+  readonly indexdb_create: (a: number, b: number, c: number) => number;
+  readonly indexdb_write: (a: number, b: number) => number;
+  readonly indexdb_find: (a: number, b: number, c: number, d: number, e: number) => number;
+  readonly indexdb_findDocumentById: (a: number, b: number, c: number, d: number) => number;
+  readonly indexdb_count: (a: number, b: number, c: number, d: number, e: number) => number;
+  readonly indexdb_close: (a: number) => number;
+  readonly indexdb_start: (a: number) => number;
+  readonly main_js: () => void;
+  readonly is_debug_mode: () => number;
+  readonly __wbg_collection_free: (a: number) => void;
+  readonly collection_name: (a: number, b: number) => void;
+  readonly collection_schema: (a: number, b: number) => void;
+  readonly collection_find: (a: number, b: number, c: number) => number;
+  readonly collection_parse_query_options: (a: number, b: number, c: number) => void;
+  readonly collection_count: (a: number, b: number, c: number) => number;
+  readonly collection_findById: (a: number, b: number) => number;
+  readonly collection_update: (a: number, b: number) => number;
+  readonly collection_create: (a: number, b: number) => number;
+  readonly collection_delete: (a: number, b: number) => number;
+  readonly corestorage_new: () => number;
+  readonly corestorage_getPrimaryKeyTyped: (a: number, b: number, c: number) => void;
+  readonly corestorage_getIndexes: (a: number, b: number, c: number, d: number) => void;
+  readonly corestorage_matchesQuery: (a: number, b: number, c: number, d: number) => void;
+  readonly __wbg_operation_free: (a: number) => void;
+  readonly operation_collection: (a: number, b: number) => void;
+  readonly operation_opType: (a: number) => number;
+  readonly operation_data: (a: number) => number;
+  readonly operation_primaryKeyField: (a: number) => number;
+  readonly operation_primaryKey: (a: number) => number;
+  readonly operation_primaryKeyIndex: (a: number, b: number) => void;
+  readonly __wbg_corestorage_free: (a: number) => void;
+  readonly __wbg_inmemory_free: (a: number) => void;
+  readonly inmemory_create: (a: number, b: number, c: number) => number;
+  readonly inmemory_write: (a: number, b: number) => number;
+  readonly inmemory_find: (a: number, b: number, c: number, d: number, e: number) => number;
+  readonly inmemory_findDocumentById: (a: number, b: number, c: number, d: number) => number;
+  readonly inmemory_count: (a: number, b: number, c: number, d: number, e: number) => number;
+  readonly inmemory_close: (a: number) => number;
+  readonly inmemory_start: (a: number) => number;
+  readonly __wbg_basestorage_free: (a: number) => void;
+  readonly basestorage_new: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly basestorage_addIndexSchemas: (a: number, b: number) => void;
+  readonly basestorage_getOption: (a: number, b: number, c: number, d: number) => void;
+  readonly basestorage_getSchema: (a: number, b: number, c: number, d: number) => void;
+  readonly basestorage_core: (a: number, b: number) => void;
+  readonly __wbg_database_free: (a: number) => void;
+  readonly database_start: (a: number) => number;
+  readonly database_close: (a: number) => number;
+  readonly database_started: (a: number) => number;
+  readonly database_authenticate: (a: number, b: number, c: number) => number;
+  readonly database_collections: (a: number, b: number) => void;
+  readonly database_create: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => number;
+  readonly __wbg_queryoptions_free: (a: number) => void;
+  readonly queryoptions_limit: (a: number, b: number) => void;
+  readonly queryoptions_offset: (a: number, b: number) => void;
   readonly __wbg_schema_free: (a: number) => void;
   readonly schema_validate: (a: number, b: number, c: number) => void;
   readonly schema_is_valid: (a: number, b: number) => void;
@@ -902,61 +957,6 @@ interface InitOutput {
   readonly baseplugin_get_doc_recover_hook: (a: number) => number;
   readonly baseplugin_set_doc_create_hook: (a: number, b: number) => void;
   readonly baseplugin_set_doc_recover_hook: (a: number, b: number) => void;
-  readonly main_js: () => void;
-  readonly is_debug_mode: () => number;
-  readonly __wbg_indexdb_free: (a: number) => void;
-  readonly indexdb_get_stores: (a: number, b: number) => void;
-  readonly indexdb_get_store: (a: number, b: number, c: number, d: number) => void;
-  readonly indexdb_create: (a: number, b: number, c: number) => number;
-  readonly indexdb_write: (a: number, b: number) => number;
-  readonly indexdb_find: (a: number, b: number, c: number, d: number, e: number) => number;
-  readonly indexdb_findDocumentById: (a: number, b: number, c: number, d: number) => number;
-  readonly indexdb_count: (a: number, b: number, c: number, d: number, e: number) => number;
-  readonly indexdb_close: (a: number) => number;
-  readonly indexdb_start: (a: number) => number;
-  readonly __wbg_property_free: (a: number) => void;
-  readonly property_is_valid: (a: number, b: number) => void;
-  readonly property_type: (a: number) => number;
-  readonly property_items: (a: number, b: number) => void;
-  readonly property_maxItems: (a: number, b: number) => void;
-  readonly property_minItems: (a: number, b: number) => void;
-  readonly property_maxLength: (a: number, b: number) => void;
-  readonly property_minLength: (a: number, b: number) => void;
-  readonly property_properties: (a: number, b: number) => void;
-  readonly __wbgt_test_property_creation_0: (a: number) => void;
-  readonly __wbgt_test_property_validation_1: (a: number) => void;
-  readonly __wbgt_test_invalid_property_2: (a: number) => void;
-  readonly corestorage_new: () => number;
-  readonly corestorage_getPrimaryKeyTyped: (a: number, b: number, c: number) => void;
-  readonly corestorage_getIndexes: (a: number, b: number, c: number, d: number) => void;
-  readonly corestorage_matchesQuery: (a: number, b: number, c: number, d: number) => void;
-  readonly __wbg_operation_free: (a: number) => void;
-  readonly operation_collection: (a: number, b: number) => void;
-  readonly operation_opType: (a: number) => number;
-  readonly operation_data: (a: number) => number;
-  readonly operation_primaryKeyField: (a: number) => number;
-  readonly operation_primaryKey: (a: number) => number;
-  readonly operation_primaryKeyIndex: (a: number, b: number) => void;
-  readonly __wbg_corestorage_free: (a: number) => void;
-  readonly __wbg_ridberror_free: (a: number) => void;
-  readonly ridberror_new: (a: number, b: number, c: number, d: number, e: number) => number;
-  readonly ridberror_type: (a: number, b: number) => void;
-  readonly ridberror_code: (a: number) => number;
-  readonly ridberror_message: (a: number, b: number) => void;
-  readonly ridberror_from: (a: number) => number;
-  readonly ridberror_error: (a: number, b: number, c: number) => number;
-  readonly ridberror_query: (a: number, b: number, c: number) => number;
-  readonly ridberror_authentication: (a: number, b: number, c: number) => number;
-  readonly ridberror_serialisation: (a: number, b: number, c: number) => number;
-  readonly ridberror_validation: (a: number, b: number, c: number) => number;
-  readonly ridberror_hook: (a: number, b: number, c: number) => number;
-  readonly __wbg_database_free: (a: number) => void;
-  readonly database_start: (a: number) => number;
-  readonly database_close: (a: number) => number;
-  readonly database_started: (a: number) => number;
-  readonly database_authenticate: (a: number, b: number, c: number) => number;
-  readonly database_collections: (a: number, b: number) => void;
-  readonly database_create: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => number;
   readonly __wbg_wasmbindgentestcontext_free: (a: number) => void;
   readonly wasmbindgentestcontext_new: () => number;
   readonly wasmbindgentestcontext_args: (a: number, b: number, c: number) => void;

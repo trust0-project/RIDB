@@ -59,7 +59,7 @@
       "dependsOn": [
         "build"
       ],
-      "cache": true
+      "cache": false
     },
     "pods": {
       "cache": false
