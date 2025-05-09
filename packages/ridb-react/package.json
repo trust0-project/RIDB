@@ -31,7 +31,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@trust0/ridb": "^1.5.7",
-    "@trust0/ridb-build": "^0.0.0",
+    "@trust0/ridb-build": "^0.0.1",
     "@types/react": "^18.2.8",
     "@types/react-dom": "^18.2.4",
     "jsdom": "^25.0.1",
