@@ -22,14 +22,12 @@ pub fn extract_property<T>(js_value: &JsValue, key: &str) -> Result<T, RIDBError
 
     impl Logger {
         pub fn log(component: &str, message: &JsValue) {
-            if crate::is_debug_mode() {
                 Logger::log_1(component, message);
-            }
+        
         }
         pub fn debug(component: &str, message: &JsValue) {
-            if crate::is_debug_mode() {
+           
                 Logger::log_1(component, message);
-            }
         }
 
         fn log_1(component: &str, message: &JsValue) {

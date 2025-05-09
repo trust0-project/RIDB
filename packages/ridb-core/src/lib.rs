@@ -29,7 +29,7 @@ pub fn is_debug_mode() -> bool {
 }
 
 fn get_debug_mode() -> bool {
-    return false;
+    return true;
     // use wasm_bindgen::prelude::*;
     // use js_sys::Reflect;
 
