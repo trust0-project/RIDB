@@ -6,27 +6,30 @@
   },
   "version": "1.7.3",
   "main": "./build/ridb_core.js",
+  "module": "./build/ridb_core.mjs",
   "types": "./build/ridb_core.d.ts",
   "exports": {
     ".": {
       "types": "./build/ridb_core.d.ts",
-      "import": "./build/ridb_core.js",
-      "default": "./build/ridb_core.js"
+      "import": "./build/ridb_core.mjs",
+      "require": "./build/ridb_core.js",
+      "default": "./build/ridb_core.mjs"
     },
     "./wasm": {
       "types": "./build/ridb_core_bg.d.ts",
-      "import": "./build/ridb_core_bg.js",
-      "default": "./build/ridb_core_bg.js"
+      "import": "./build/ridb_core_bg.mjs",
+      "default": "./build/ridb_core_bg.mjs"
     }
   },
   "scripts": {
     "clean": "rm -rf build node_modules",
     "test": "sh test.sh",
-    "build": "sh build.sh",
+    "build": "rm -rf build && sh build.sh",
     "docs": "echo 'No docs for this package'"
   },
   "devDependencies": {
     "@esbuild-plugins/node-resolve": "^0.2.2",
+    "@trust0/ridb-build": "workspace:*",
     "esbuild": "^0.25.4"
   },
   "files": [

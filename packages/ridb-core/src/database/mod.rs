@@ -203,11 +203,8 @@ impl Database {
     /// * `Result<Object, JsValue>` - A result containing an `Object` with the collections or an error.
     #[wasm_bindgen(getter)]
     pub fn collections(&self) -> Result<Object, RIDBError> {
-        Logger::debug("DB",&"Retrieving collections...".into());
-        
         // Check if we already have cached collections
         if let Some(cached) = self.cached_collections.borrow().as_ref() {
-            Logger::debug("DB",&"Returning cached collections.".into());
             return Ok(cached.clone());
         }
         

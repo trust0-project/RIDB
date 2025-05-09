@@ -27,9 +27,13 @@ pub async fn cursor_fetch_and_filter(
     let skipped_count = RefCell::new(0u32);
     let matched_count = RefCell::new(0u32);
     
-    // Clone these before creating the promise to avoid ownership issues
+    // Pre-evaluate query components if possible to avoid repeated work in callback
     let core_cloned = core.clone();
     let value_query_cloned = value_query.clone();
+
+    // Limit the frequency of processing - batch process documents
+    const BATCH_SIZE: u32 = 50; // Process documents in batches
+    let batch_docs = RefCell::new(Vec::with_capacity(BATCH_SIZE as usize));
 
     let promise = Promise::new(&mut |resolve, reject| {
         // Create references to the arrays and counters
@@ -37,6 +41,7 @@ pub async fn cursor_fetch_and_filter(
         let skipped_count_ref = skipped_count.clone();
         let matched_count_ref = matched_count.clone();
         let value_query_ref = value_query_cloned.clone();
+        let batch_docs_ref = batch_docs.clone();
         
         // References to resolver/rejecter
         let resolve_ref = resolve.clone();
@@ -56,15 +61,29 @@ pub async fn cursor_fetch_and_filter(
             };
 
             let cursor_value = target.result();
+            
+            // If cursor is done, process any remaining batch and return result
             if cursor_value.is_err()
                 || cursor_value.as_ref().unwrap().is_null()
                 || cursor_value.as_ref().unwrap().is_undefined()
             {
+                // Process any remaining documents in the batch
+                let mut batch = batch_docs_ref.borrow_mut();
+                if !batch.is_empty() {
+                    process_batch(
+                        &mut batch, 
+                        &core_cloned, 
+                        &value_query_ref,
+                        &result_array_ref,
+                        &skipped_count_ref,
+                        &matched_count_ref,
+                        offset,
+                        limit
+                    );
+                }
+                
                 // Cursor finished: resolve with the final array
-                let _ = resolve_ref.call1(
-                    &JsValue::NULL,
-                    &result_array_ref.borrow(),
-                );
+                let _ = resolve_ref.call1(&JsValue::NULL, &result_array_ref.borrow());
                 return;
             }
 
@@ -79,41 +98,42 @@ pub async fn cursor_fetch_and_filter(
                 }
             };
 
-            let doc = match cursor.value() {
-                Ok(val) => val,
+            // Get the document value
+            match cursor.value() {
+                Ok(doc) => {
+                    // Add document to batch for processing
+                    let mut batch = batch_docs_ref.borrow_mut();
+                    batch.push(doc);
+                    
+                    // If batch is full or we've reached the limit, process it
+                    let matched = *matched_count_ref.borrow();
+                    if batch.len() >= BATCH_SIZE as usize || matched >= limit {
+                        process_batch(
+                            &mut batch, 
+                            &core_cloned, 
+                            &value_query_ref,
+                            &result_array_ref,
+                            &skipped_count_ref,
+                            &matched_count_ref,
+                            offset,
+                            limit
+                        );
+                        
+                        // If we have enough matches, resolve immediately
+                        if *matched_count_ref.borrow() >= limit {
+                            let _ = resolve_ref.call1(&JsValue::NULL, &result_array_ref.borrow());
+                            return;
+                        }
+                    }
+                    
+                    // Continue cursor to next record
+                    if let Err(err) = cursor.continue_() {
+                        let _ = reject_ref.call1(&JsValue::NULL, &err);
+                    }
+                },
                 Err(err) => {
                     let _ = reject_ref.call1(&JsValue::NULL, &err);
-                    return;
                 }
-            };
-
-            // Filter in-memory based on the original query
-            if core_cloned
-                .document_matches_query(&doc, value_query_ref.clone())
-                .unwrap_or(false)
-            {
-                let mut skip_ref = skipped_count_ref.borrow_mut();
-                let mut match_ref = matched_count_ref.borrow_mut();
-
-                if *skip_ref < offset {
-                    *skip_ref += 1;
-                } else if *match_ref < limit {
-                    result_array_ref.borrow().push(&doc);
-                    *match_ref += 1;
-                }
-                if *match_ref >= limit {
-                    // Found enough docs: resolve immediately
-                    let _ = resolve_ref.call1(
-                        &JsValue::NULL,
-                        &result_array_ref.borrow(),
-                    );
-                    return;
-                }
-            }
-
-            // Advance cursor
-            if let Err(err) = cursor.continue_() {
-                let _ = reject_ref.call1(&JsValue::NULL, &err);
             }
         }) as Box<dyn FnMut(_)>);
 
@@ -167,6 +187,45 @@ pub async fn cursor_fetch_and_filter(
     Ok(Array::from(&js_result))
 }
 
+// Separate function to process a batch of documents - this improves performance
+// by reducing the amount of work done in the success handler
+fn process_batch(
+    batch: &mut Vec<JsValue>,
+    core: &CoreStorage,
+    query: &Query,
+    result_array: &std::cell::RefCell<Array>,
+    skipped_count: &std::cell::RefCell<u32>,
+    matched_count: &std::cell::RefCell<u32>,
+    offset: u32,
+    limit: u32
+) {
+    // Early return if we already have enough matches
+    if *matched_count.borrow() >= limit {
+        batch.clear();
+        return;
+    }
+    
+    // Process all documents in the batch
+    for doc in batch.drain(..) {
+        // Only bother with filtering if we haven't hit the limit
+        if *matched_count.borrow() < limit {
+            if core.document_matches_query(&doc, query.clone()).unwrap_or(false) {
+                let mut skip_ref = skipped_count.borrow_mut();
+                let mut match_ref = matched_count.borrow_mut();
+                
+                if *skip_ref < offset {
+                    *skip_ref += 1;
+                } else if *match_ref < limit {
+                    result_array.borrow().push(&doc);
+                    *match_ref += 1;
+                }
+            }
+        } else {
+            // If we've hit the limit, stop processing
+            break;
+        }
+    }
+}
 
 pub async fn idb_request_result(request: IdbRequest) -> Result<JsValue, JsValue> {
     let promise = Promise::new(&mut |resolve, reject| {

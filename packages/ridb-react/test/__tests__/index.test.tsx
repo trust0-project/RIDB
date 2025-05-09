@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, waitFor } from '@testing-library/react'
-import { SchemaFieldType } from '@trust0/ridb'
+import { SchemaFieldType, WasmInternal } from '@trust0/ridb'
 import { describe, expect, it } from 'vitest'
 import { Database, useDatabase } from '../..'
 

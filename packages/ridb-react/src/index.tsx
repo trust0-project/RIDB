@@ -3,8 +3,7 @@ import { RIDB,  WasmInternal } from "@trust0/ridb";
 import { BasePlugin, MigrationsParameter } from '@trust0/ridb-core';
 import { SchemaTypeRecord } from '@trust0/ridb-core';
 
-
-
+await WasmInternal();
 
 type DatabaseProps<T extends SchemaTypeRecord> = {
   dbName: string;
@@ -23,18 +22,12 @@ export function useDatabase<T extends SchemaTypeRecord>(): RIDB<T> {
   if (!context) {
     throw new Error('useDatabase must be used within a Database provider');
   }
-  useEffect(() => {
-    WasmInternal()
-  }, [WasmInternal]);
   return context as RIDB<T>;
 }
 
 export function Database<T extends SchemaTypeRecord>({ children, ...props }: DatabaseComponentProps<T>) {
   const dbInit = props as DatabaseProps<T>;
   const db = useMemo(() => new RIDB<T>(dbInit), [props]);
-  useEffect(() => {
-    WasmInternal();
-  }, []);
   return (
     <DatabaseContext.Provider value={db}>
       {children}

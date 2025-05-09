@@ -37,7 +37,7 @@ export default defineConfig({
                 statements: 100
             },
             include: [
-                'build/esm/**/*'
+                'build/**/*'
             ],
         },
 

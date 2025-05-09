@@ -21,4 +21,7 @@ else
   sed -i "/if (typeof input === 'undefined') {/,/}/d" $IMPORTFILE
 fi
 
-npx tsup --config tsup.config.ts --dts
+npx tsup --config tsup/tsup.core.cjs.ts 
+npx tsup --config tsup/tsup.core.esm.ts
+npx tsup --config tsup/tsup.core.cjs.ts --dts-only
+npx tsup --config tsup/tsup.wasm.esm.ts

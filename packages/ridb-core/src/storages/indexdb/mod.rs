@@ -1,6 +1,7 @@
 use js_sys::{Array, Object, Promise, Reflect};
 use pool::POOL;
 use utils::{can_use_single_index_lookup, create_database, cursor_fetch_and_filter, idb_request_result};
+use crate::utils::Logger;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::{wasm_bindgen, Closure};
 use wasm_bindgen_futures::JsFuture;
@@ -52,42 +53,69 @@ pub struct IndexDB {
     _success_handler: Arc<Mutex<Option<Closure<dyn FnMut(web_sys::Event)>>>>,
 }
 
-
-
 impl Storage for IndexDB {
     async fn write(&self, op: Operation) -> Result<JsValue, RIDBError> {
+        // Clean pool occasionally to prevent stale connections
+        POOL.clean_connections();
+        
         let store_name = &op.collection;
-        let store = self.get_store(store_name)?;
-        let schemas = self.base.schemas.borrow();
-        let schema = schemas.get(op.collection.as_str())
-            .ok_or_else(|| RIDBError::from("Collection not found"))?;
-
+        
+        // Get schema information before acquiring store lock
+        let primary_key_field;
+        let primary_key_value;
+        
+        {
+            let schemas = self.base.schemas.borrow();
+            let schema = schemas.get(op.collection.as_str())
+                .ok_or_else(|| RIDBError::from("Collection not found"))?;
+            
+            // Extract primary key field name
+            primary_key_field = schema.primary_key.clone();
+        }
+        
+        // Extract necessary information from the operation
+        let document = op.data.clone();
+        
+        // Handle based on operation type
         match op.op_type {
             OpType::CREATE | OpType::UPDATE => {
-                let document = op.data.clone();
-
-                // Extract primary key
-                let primary_key = schema.primary_key.clone();
-                let pk_value =  Reflect::get(&document, &JsValue::from_str(&primary_key))?;
-
-                if pk_value.is_undefined() || pk_value.is_null() {
+                // Extract primary key value before transaction
+                primary_key_value = Reflect::get(&document, &JsValue::from_str(&primary_key_field))?;
+                
+                if primary_key_value.is_undefined() || primary_key_value.is_null() {
                     return Err(RIDBError::from("Document must contain a primary key"));
                 }
+                
+                // Get the store - this creates a transaction
+                let store = self.get_store(store_name)?;
+                
                 // Store the document and wait for completion
-                let request = store.put_with_key(&document, &pk_value)?;
+                let request = store.put_with_key(&document, &primary_key_value)?;
+                
+                // Wait for the request to complete
                 idb_request_result(request).await?;
+                
+                // Return the document
                 Ok(document.clone())
             },
             OpType::DELETE => {
-                let pk_value = op.data.clone();
-                if pk_value.is_undefined() || pk_value.is_null() {
+                // Get the primary key value to delete
+                primary_key_value = op.data.clone();
+                
+                if primary_key_value.is_undefined() || primary_key_value.is_null() {
                     return Err(RIDBError::from("Primary key value is required for delete operation"));
                 }
-
+                
+                // Get the store - this creates a transaction
+                let store = self.get_store(store_name)?;
+                
                 // Delete the document using the primary key
-                let request = store.delete(&pk_value)?;
+                let request = store.delete(&primary_key_value)?;
+                
+                // Wait for the request to complete
                 idb_request_result(request).await?;
-
+                
+                // Return success message
                 Ok(JsValue::from_str("Document deleted"))
             },
             _ => Err(RIDBError::from("Unsupported operation type")),
@@ -95,10 +123,13 @@ impl Storage for IndexDB {
     }
 
     async fn find(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError> {
-        // Logger::debug(
-        //     "IndexDB-Find",
-        //     &JsValue::from(format!("Find method {}", collection_name)),
-        // );
+        // Clean pool occasionally to prevent stale connections
+        POOL.clean_connections();
+        
+        Logger::debug(
+            "IndexDB-Find",
+            &JsValue::from(format!("Find method {}", collection_name)),
+        );
 
         let filtered_docs = self
             .collect_documents_for_query(collection_name, query, options)
@@ -107,6 +138,9 @@ impl Storage for IndexDB {
     }
 
     async fn find_document_by_id(&self, collection_name: &str, primary_key_value: JsValue) -> Result<JsValue, RIDBError> {
+        // Clean pool occasionally to prevent stale connections
+        POOL.clean_connections();
+        
         let store_name = collection_name;
         if primary_key_value.is_undefined() || primary_key_value.is_null() {
             return Err(RIDBError::from("Primary key value is required"));
@@ -114,88 +148,76 @@ impl Storage for IndexDB {
 
         let store = self.get_store(store_name)?;
 
-        // Logger::debug("IndexDB-Find-By-Id", &JsValue::from(&format!("Finding document with primary key: {:?}", primary_key_value)));
+        Logger::debug("IndexDB-Find-By-Id", &JsValue::from(&format!("Finding document with primary key: {:?}", primary_key_value)));
 
         let request = store.get(&primary_key_value)?;
 
         let result = idb_request_result(request).await?;
 
         if result.is_undefined() || result.is_null() {
-            // Logger::debug("IndexDB-Find-By-Id",&JsValue::from("Document not found"));
+            Logger::debug("IndexDB-Find-By-Id",&JsValue::from("Document not found"));
             Ok(JsValue::null())
         } else {
-            // Logger::debug("IndexDB-Find-By-Id",&JsValue::from("Document found"));
+            Logger::debug("IndexDB-Find-By-Id",&JsValue::from("Document found"));
             Ok(result)
         }
     }
 
     async fn count(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError> {
-        // Logger::debug(
-        //     "IndexDB-Count",
-        //     &JsValue::from(format!("Count method {}", collection_name)),
-        // );
+        // Clean pool occasionally to prevent stale connections
+        POOL.clean_connections();
+        
+        Logger::debug(
+            "IndexDB-Count",
+            &JsValue::from(format!("Count method {}", collection_name)),
+        );
         let filtered_docs = self
             .collect_documents_for_query(collection_name, query, options)
             .await?;
         Ok(JsValue::from_f64(filtered_docs.length() as f64))
     }
     async fn close(&self) -> Result<JsValue, RIDBError> {
+        Logger::debug("IndexDB-Close", &JsValue::from_str("Starting close operation"));
+        
+        // Clean all connections before attempting to close this one
+        POOL.clean_connections();
+        Logger::debug("IndexDB-Close", &JsValue::from_str("Pool connections cleaned"));
+        
         // First, extract the name so we can remove from pool later
         let db_name = self.base.name.clone();
+        Logger::debug("IndexDB-Close", &JsValue::from_str(&format!("Closing database: {}", db_name)));
         
-        // Create a list of store names before locking the database
-        let stores: Vec<String>;
-        {
-            // Minimize the time the lock is held by using a scoped block
-            let db = self.db.lock();
-            stores = (0..db.object_store_names().length())
-                .filter_map(|i| {
-                    db.object_store_names().get(i).map(|name| name.as_str().to_string())
-                })
-                .collect();
-        }
-
-        // Create a read transaction for each store to ensure all operations are complete
-        for store_name in stores {
-            let transaction;
-            {
-                let db = self.db.lock();
-                transaction = db.transaction_with_str(&store_name)?;
-            }
-
-            // Wait for the transaction to complete
-            let promise = Promise::new(&mut |resolve, reject| {
-                let oncomplete = Closure::once(Box::new(move |_: web_sys::Event| {
-                    resolve.call0(&JsValue::undefined()).unwrap();
-                }));
-
-                let onerror = Closure::once(Box::new(move |e| {
-                    reject.call1(&JsValue::undefined(), &e).unwrap();
-                }));
-
-                transaction.set_oncomplete(Some(oncomplete.as_ref().unchecked_ref()));
-                transaction.set_onerror(Some(onerror.as_ref().unchecked_ref()));
-
-                oncomplete.forget();
-                onerror.forget();
-            });
-
-            JsFuture::from(promise).await?;
-        }
-
         // Remove the connection from the pool first
+        Logger::debug("IndexDB-Close", &JsValue::from_str(&format!("Removing database connection from pool: {}", db_name)));
         POOL.remove_connection(&db_name);
 
-        // Now close the database
+        // Now close the database - keep lock scope as small as possible
         {
+            Logger::debug("IndexDB-Close", &JsValue::from_str("Acquiring lock to close database"));
             let db = self.db.lock();
+            Logger::debug("IndexDB-Close", &JsValue::from_str("Closing database connection"));
             db.close();
         }
         
+        // Clear any stored handlers
+        {
+            Logger::debug("IndexDB-Close", &JsValue::from_str("Clearing stored handlers"));
+            let mut error_handler = self._error_handler.lock();
+            *error_handler = None;
+            
+            let mut success_handler = self._success_handler.lock();
+            *success_handler = None;
+        }
+        
+        Logger::debug("IndexDB-Close", &JsValue::from_str("Database close operation completed successfully"));
         Ok(JsValue::from_str("IndexDB database closed"))
     }
 
     async fn start(&self) -> Result<JsValue, RIDBError> {
+        // Clean all connections before attempting to start this one
+        POOL.clean_connections();
+        Logger::debug("IndexDB-Start", &JsValue::from_str("Starting database"));
+        
         // Save the database name before testing the connection
         let db_name = self.base.name.clone();
         
@@ -206,42 +228,75 @@ impl Storage for IndexDB {
             let store_names = db_guard.object_store_names();
             
             if store_names.length() == 0 {
+                Logger::debug("IndexDB-Start", &JsValue::from_str("Database appears closed (no stores)"));
                 true // No stores, likely closed or connection issue
             } else {
-                let test_store = store_names.get(0).unwrap();
-                db_guard.transaction_with_str(&test_store).is_err()
+                // Don't unwrap, as this could cause panic if store_names is empty
+                if let Some(test_store) = store_names.get(0) {
+                    let is_err = db_guard.transaction_with_str(&test_store).is_err();
+                    Logger::debug("IndexDB-Start", &JsValue::from_str(&format!("Test transaction failed: {}", is_err)));
+                    is_err
+                } else {
+                    Logger::debug("IndexDB-Start", &JsValue::from_str("No store names available"));
+                    true // Consider it closed if we can't get store names
+                }
             }
         };
         
         if db_is_closed {
             // Database is closed, we need to reopen it
-            //Logger::debug("IndexDB-Start", &JsValue::from_str("Reopening closed database connection"));
+            Logger::debug("IndexDB-Start", &JsValue::from_str("Reopening closed database connection"));
             
             // Clone the schemas for create_database
             let schemas_clone = self.base.schemas.borrow().clone();
             
             // Create a new database connection
-            let new_db = create_database(&db_name, schemas_clone).await?;
+            Logger::debug("IndexDB-Start", &JsValue::from_str(&format!("Creating new database: {}", db_name)));
+            let new_db = match create_database(&db_name, schemas_clone).await {
+                Ok(db) => {
+                    Logger::debug("IndexDB-Start", &JsValue::from_str("Database created successfully"));
+                    db
+                },
+                Err(e) => {
+                    // If we can't create a new database, make sure to clean up any dangling references
+                    Logger::debug("IndexDB-Start", &JsValue::from_str(&format!("Failed to create database: {:?}", e)));
+                    POOL.remove_connection(&db_name);
+                    return Err(e);
+                }
+            };
             
-            // Update the pool with new connection
+            // Create a strong reference to store in the IndexDB struct
+            let new_db_strong = Arc::clone(&new_db);
+            
+            // Update the pool with new connection - we use a weak reference in the pool
+            Logger::debug("IndexDB-Start", &JsValue::from_str("Storing connection in pool"));
             POOL.store_connection(db_name, Arc::downgrade(&new_db));
             
             // Update our internal database reference
             {
+                Logger::debug("IndexDB-Start", &JsValue::from_str("Updating internal database reference"));
                 let mut db_guard = self.db.lock();
-                *db_guard = (*new_db).clone();
+                *db_guard = (*new_db_strong).clone();
             }
             
+            // Reset the handlers if needed
+            {
+                Logger::debug("IndexDB-Start", &JsValue::from_str("Resetting event handlers"));
+                let mut error_handler = self._error_handler.lock();
+                *error_handler = None;
+                
+                let mut success_handler = self._success_handler.lock();
+                *success_handler = None;
+            }
+            
+            Logger::debug("IndexDB-Start", &JsValue::from_str("Database started successfully"));
             Ok(JsValue::from_str("IndexDB database started"))
         } else {
-            //Logger::debug("IndexDB-Start", &JsValue::from_str("Database already started"));
+            Logger::debug("IndexDB-Start", &JsValue::from_str("Database already started"));
             Ok(JsValue::from_str("IndexDB database already started"))
         }
     }
 }
-
-
-
 
 #[wasm_bindgen]
 impl IndexDB {
@@ -253,6 +308,8 @@ impl IndexDB {
         query: Query,
         options: QueryOptions
     ) -> Result<Array, RIDBError> {
+        Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Collecting documents for query in {}", collection_name)));
+        
         // Acquire references to the object store and schema
         let store = self.get_store(collection_name)?;
         let schemas = self.base.schemas.borrow();
@@ -262,11 +319,13 @@ impl IndexDB {
             .clone();
 
         // Attempt to figure out if we can leverage a single index
+        Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Checking for index optimization"));
         let index_name_option = can_use_single_index_lookup(query.clone(), schema)?;
 
         // Determine offset and limit
         let offset = options.offset.unwrap_or(0);
         let limit = options.limit.unwrap_or(u32::MAX);
+        Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Using offset: {}, limit: {}", offset, limit)));
 
         // Clone the query data for filtering
         let core = self.core.clone();
@@ -276,16 +335,20 @@ impl IndexDB {
         // Prepare the final, filtered documents array
         // but efficiently fetch them using a cursor approach.
         let documents = if let Some(index_name) = index_name_option {
+            Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Using index: {}", index_name)));
             // There's a single suitable index
             let index_value = query.get(index_name.as_str())?;
             if let Ok(index) = store.index(&index_name) {
+                Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Successfully obtained index: {}", index_name)));
                 // If "index_value" is an array of keys, we merge from multiple cursors
                 if Array::is_array(&index_value) {
+                    Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Index value is an array, merging from multiple cursors"));
                     let key_array = Array::from(&index_value);
                     let merged_docs = Array::new();
                     for i in 0..key_array.length() {
                         let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
                         let key = key_array.get(i);
+                        Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Processing array key {}/{}", i+1, key_array.length())));
                         let partial_result = cursor_fetch_and_filter(
                             Some(&index),
                             None,
@@ -295,16 +358,19 @@ impl IndexDB {
                             offset,
                             limit,
                         ).await?;
+                        Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Found {} results for key {}", partial_result.length(), i+1)));
                         // Merge partial_result into merged_docs
                         for j in 0..partial_result.length() {
                             merged_docs.push(&partial_result.get(j));
                         }
                     }
+                    Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Total merged results: {}", merged_docs.length())));
                     merged_docs
                 } else {
+                    Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Using single key index lookup"));
                     let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
                     // Single key fetch from this index
-                    cursor_fetch_and_filter(
+                    let results = cursor_fetch_and_filter(
                         Some(&index),
                         None,
                         &index_value,
@@ -313,12 +379,15 @@ impl IndexDB {
                         offset,
                         limit,
                     )
-                    .await?
+                    .await?;
+                    Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Found {} results with index", results.length())));
+                    results
                 }
             } else {
+                Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Failed to get index: {}, falling back to full store scan", index_name)));
                 let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
                 // If we couldn't get the index, do a cursor fetch for the entire store
-                cursor_fetch_and_filter(
+                let results = cursor_fetch_and_filter(
                     None,
                     Some(&store),
                     &JsValue::undefined(),
@@ -327,23 +396,29 @@ impl IndexDB {
                     offset,
                     limit,
                 )
-                .await?
+                .await?;
+                Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Found {} results with full store scan", results.length())));
+                results
             }
         } else {
+            Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("No suitable index found, using full store scan"));
             let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
             // No single index is usable; fetch everything via cursor on the store
-            cursor_fetch_and_filter(
+            let results = cursor_fetch_and_filter(
                 None,
-                Some(&store),
+                Some(&store.clone()),
                 &JsValue::undefined(),
                 core,
                 value_query,
                 offset,
                 limit,
             )
-            .await?
+            .await?;
+            Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Found {} results with full store scan", results.length())));
+            results
         };
 
+        Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Document collection completed"));
         Ok(documents)
     }
 
@@ -360,29 +435,80 @@ impl IndexDB {
             .collect();
         stores
     }
-    pub fn get_store(&self, store_name: &str) -> Result<IdbObjectStore, RIDBError>{
+    
+    pub fn get_store(&self, store_name: &str) -> Result<IdbObjectStore, RIDBError> {
+        Logger::debug("IndexDB-GetStore", &JsValue::from_str(&format!("Getting store: {}", store_name)));
+        
+        // First check if store exists
         let stores = self.get_stores();
-        let transaction = match self.db.lock().transaction_with_str_and_mode(
-            store_name,
-            web_sys::IdbTransactionMode::Readwrite,
-        ) {
-            Ok(t) => t,
+        if !stores.contains(&store_name.to_string()) {
+            Logger::debug("IndexDB-GetStore", &JsValue::from_str(&format!("Store '{}' does not exist", store_name)));
+            return Err(RIDBError::from(&format!(
+                "Store '{}' does not exist. Available stores: {:?}",
+                store_name, stores
+            )));
+        }
+
+        // Get a lock on the DB but release it quickly
+        let transaction = {
+            Logger::debug("IndexDB-GetStore", &JsValue::from_str("Acquiring database lock"));
+            let db = self.db.lock(); // Minimize lock time
+            Logger::debug("IndexDB-GetStore", &JsValue::from_str("Creating transaction"));
+            db.transaction_with_str_and_mode(
+                store_name,
+                web_sys::IdbTransactionMode::Readwrite,
+            )
+        };
+
+        // Process transaction result after releasing the lock
+        let transaction = match transaction {
+            Ok(t) => {
+                Logger::debug("IndexDB-GetStore", &JsValue::from_str("Transaction created successfully"));
+                t
+            },
             Err(_e) => {
+                Logger::debug("IndexDB-GetStore", &JsValue::from_str(&format!("Failed to create transaction for store '{}'", store_name)));
                 return Err(RIDBError::from(&format!(
-                    "Failed to access store '{}'. Available stores: {:?}",
-                    store_name, stores
+                    "Failed to create transaction for store '{}'",
+                    store_name
                 )));
             }
         };
 
-        let store = transaction.object_store(store_name)
-            .map_err(|e| RIDBError::from(e));
+        // Set up abort and complete handlers to improve transaction management
+        Logger::debug("IndexDB-GetStore", &JsValue::from_str("Setting up transaction complete handler"));
+        let complete_promise = Promise::new(&mut |resolve, _| {
+            let oncomplete = Closure::once(Box::new(move |_: web_sys::Event| {
+                resolve.call0(&JsValue::undefined()).unwrap();
+            }));
+            
+            transaction.set_oncomplete(Some(oncomplete.as_ref().unchecked_ref()));
+            oncomplete.forget();
+        });
+        
+        // Create a future from the promise, but don't await it
+        // This ensures we track the transaction but don't block
+        Logger::debug("IndexDB-GetStore", &JsValue::from_str("Creating future from transaction complete promise"));
+        let _future = wasm_bindgen_futures::JsFuture::from(complete_promise);
 
-        store
+        // Get object store from transaction
+        Logger::debug("IndexDB-GetStore", &JsValue::from_str(&format!("Getting object store: {}", store_name)));
+        let store = transaction.object_store(store_name).map_err(|e| RIDBError::from(e))?;
+        Logger::debug("IndexDB-GetStore", &JsValue::from_str("Object store obtained successfully"));
+        
+        Ok(store)
     }
+
     #[wasm_bindgen]
     pub async fn create(name: &str, schemas_js: Object) -> Result<IndexDB, RIDBError> {
+        Logger::debug("IndexDB-Create", &JsValue::from_str(&format!("Creating IndexDB: {}", name)));
+        
+        // Clean the pool before creating a new connection
+        POOL.clean_connections();
+        Logger::debug("IndexDB-Create", &JsValue::from_str("Pool connections cleaned"));
+        
         // Create the base storage with the provided schemas
+        Logger::debug("IndexDB-Create", &JsValue::from_str("Creating base storage"));
         let base = BaseStorage::new(
             name.to_string(),
             schemas_js.clone(),
@@ -393,26 +519,30 @@ impl IndexDB {
         let schemas_clone = base.schemas.borrow().clone();
         
         // Try to get an existing connection from the pool
+        Logger::debug("IndexDB-Create", &JsValue::from_str("Attempting to get existing connection from pool"));
         let db = match POOL.get_connection(name) {
             Some(db) => {
-                //Logger::debug("IndexDB-Create", &JsValue::from_str("Reusing existing database connection"));
+                Logger::debug("IndexDB-Create", &JsValue::from_str("Reusing existing database connection"));
                 db
             },
             None => {
                 // Create new connection if none exists
-                //Logger::debug("IndexDB-Create", &JsValue::from_str("Creating new database connection"));
+                Logger::debug("IndexDB-Create", &JsValue::from_str("Creating new database connection"));
                 let db = create_database(name, schemas_clone).await?;
                 
                 // Store a weak reference in the pool to avoid circular references
+                Logger::debug("IndexDB-Create", &JsValue::from_str("Storing connection in pool"));
                 POOL.store_connection(name.to_string(), Arc::downgrade(&db));
                 db
             }
         };
         
         // Wrap the database in an Arc<Mutex<>> for thread-safe access
+        Logger::debug("IndexDB-Create", &JsValue::from_str("Creating thread-safe database wrapper"));
         let db_mutex = Arc::new(Mutex::new((*db).clone()));
         
         // Create the storage instance
+        Logger::debug("IndexDB-Create", &JsValue::from_str("Finalizing IndexDB creation"));
         Ok(IndexDB {
             base,
             core: CoreStorage {},
@@ -464,12 +594,6 @@ impl IndexDB {
         self.start().await
     }
 }
-
-
-
-
-
-
 
 #[cfg(test)]
 mod tests {
