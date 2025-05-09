@@ -26,7 +26,8 @@
       }
     },
     "projects": [
-      "packages/**/*"
+      "packages/**/*",
+      "!packages/ridb-build"
     ]
   },
   "targetDefaults": {
