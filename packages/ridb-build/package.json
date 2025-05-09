@@ -12,7 +12,9 @@
       "default": "./build/index.js"
     }
   },
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "elribonazo@gmail.com",
   "repository": {
     "type": "git",
