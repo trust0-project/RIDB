@@ -12,7 +12,7 @@
     "projectsRelationship": "independent",
     "versionPlans": false,
     "version": {
-      "preVersionCommand": "",
+      "preVersionCommand": "sh release.sh",
       "conventionalCommits": true,
       "generatorOptions": {
         "preserveLocalDependencyProtocols": true,
