@@ -1,3 +1,13 @@
+## 0.0.5 (2025-05-10)
+
+### 🩹 Fixes
+
+- improve exports ([56b34b5](https://github.com/trust0-project/RIDB/commit/56b34b5))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.4 (2025-05-10)
 
 ### 🩹 Fixes

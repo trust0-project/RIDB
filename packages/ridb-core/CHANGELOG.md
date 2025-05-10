@@ -1,3 +1,17 @@
+## 1.7.9 (2025-05-10)
+
+### 🩹 Fixes
+
+- improve exports ([56b34b5](https://github.com/trust0-project/RIDB/commit/56b34b5))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.5
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.8 (2025-05-10)
 
 ### 🩹 Fixes

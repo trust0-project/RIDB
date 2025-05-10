@@ -6,7 +6,7 @@
 
 # Class: RIDB\<T\>
 
-Defined in: [index.ts:167](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L167)
+Defined in: [index.ts:167](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L167)
 
 ## Type Parameters
 
@@ -20,7 +20,7 @@ Defined in: [index.ts:167](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **new RIDB**\<`T`\>(`options`): `RIDB`\<`T`\>
 
-Defined in: [index.ts:205](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L205)
+Defined in: [index.ts:205](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L205)
 
 Creates an instance of RIDB.
 
@@ -40,7 +40,7 @@ Creates an instance of RIDB.
 
 > `private` **\_db**: `undefined` \| `Database`\<`T`\>
 
-Defined in: [index.ts:168](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L168)
+Defined in: [index.ts:168](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L168)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [index.ts:168](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > `private` **\_sessionId**: `undefined` \| `string`
 
-Defined in: [index.ts:170](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L170)
+Defined in: [index.ts:170](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L170)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [index.ts:170](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > `private` **\_worker**: `undefined` \| `SharedWorker`
 
-Defined in: [index.ts:169](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L169)
+Defined in: [index.ts:169](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L169)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [index.ts:169](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > `private` **options**: [`DBOptions`](../type-aliases/DBOptions.md)\<`T`\>
 
-Defined in: [index.ts:205](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L205)
+Defined in: [index.ts:205](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L205)
 
 ***
 
@@ -72,7 +72,7 @@ Defined in: [index.ts:205](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > `private` **pendingRequests**: [`PendingRequests`](../type-aliases/PendingRequests.md)
 
-Defined in: [index.ts:173](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L173)
+Defined in: [index.ts:173](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L173)
 
 ***
 
@@ -80,7 +80,7 @@ Defined in: [index.ts:173](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **started**: `boolean` = `false`
 
-Defined in: [index.ts:171](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L171)
+Defined in: [index.ts:171](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L171)
 
 ## Accessors
 
@@ -90,7 +90,7 @@ Defined in: [index.ts:171](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **get** **collections**(): \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
 
-Defined in: [index.ts:274](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L274)
+Defined in: [index.ts:274](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L274)
 
 ##### Returns
 
@@ -104,7 +104,7 @@ Defined in: [index.ts:274](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **get** `private` **db**(): `Database`\<`T`\>
 
-Defined in: [index.ts:219](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L219)
+Defined in: [index.ts:219](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L219)
 
 Gets the database instance. Throws an error if the database has not been started.
 
@@ -124,7 +124,7 @@ Will throw an error if the database is not started.
 
 > **get** `private` **dbCollections**(): \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
 
-Defined in: [index.ts:238](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L238)
+Defined in: [index.ts:238](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L238)
 
 Gets the collections from the database.
 
@@ -142,7 +142,7 @@ The collections object.
 
 > **get** `private` **dbName**(): `string`
 
-Defined in: [index.ts:175](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L175)
+Defined in: [index.ts:175](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L175)
 
 ##### Returns
 
@@ -156,7 +156,7 @@ Defined in: [index.ts:175](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **get** `private` **migrations**(): `MigrationPathsForSchemas`\<`T`\>
 
-Defined in: [index.ts:183](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L183)
+Defined in: [index.ts:183](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L183)
 
 ##### Returns
 
@@ -170,7 +170,7 @@ Defined in: [index.ts:183](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **get** `private` **plugins**(): *typeof* `BasePlugin`[]
 
-Defined in: [index.ts:187](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L187)
+Defined in: [index.ts:187](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L187)
 
 ##### Returns
 
@@ -184,7 +184,7 @@ Defined in: [index.ts:187](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **get** `private` **schemas**(): `T`
 
-Defined in: [index.ts:179](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L179)
+Defined in: [index.ts:179](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L179)
 
 ##### Returns
 
@@ -198,7 +198,7 @@ Defined in: [index.ts:179](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **get** **useWorker**(): `boolean`
 
-Defined in: [index.ts:191](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L191)
+Defined in: [index.ts:191](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L191)
 
 ##### Returns
 
@@ -212,7 +212,7 @@ Defined in: [index.ts:191](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **get** `private` **worker**(): `SharedWorker`
 
-Defined in: [index.ts:226](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L226)
+Defined in: [index.ts:226](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L226)
 
 ##### Returns
 
@@ -226,7 +226,7 @@ Defined in: [index.ts:226](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **get** `private` **workerCollections**(): \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
 
-Defined in: [index.ts:242](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L242)
+Defined in: [index.ts:242](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L242)
 
 ##### Returns
 
@@ -238,7 +238,7 @@ Defined in: [index.ts:242](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **authenticate**(`password`): `Promise`\<`boolean`\>
 
-Defined in: [index.ts:197](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L197)
+Defined in: [index.ts:197](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L197)
 
 #### Parameters
 
@@ -256,7 +256,7 @@ Defined in: [index.ts:197](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [index.ts:368](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L368)
+Defined in: [index.ts:368](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L368)
 
 #### Returns
 
@@ -268,7 +268,7 @@ Defined in: [index.ts:368](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > `private` **createDatabase**(`options?`): `Promise`\<`Database`\<`T`\>\>
 
-Defined in: [index.ts:308](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L308)
+Defined in: [index.ts:308](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L308)
 
 #### Parameters
 
@@ -286,7 +286,7 @@ Defined in: [index.ts:308](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > `private` **createWorker**(): `SharedWorker`
 
-Defined in: [index.ts:278](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L278)
+Defined in: [index.ts:278](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L278)
 
 #### Returns
 
@@ -298,7 +298,7 @@ Defined in: [index.ts:278](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > `private` **getStorageType**\<`T`\>(`storageType`): `Promise`\<*typeof* `InMemory`\>
 
-Defined in: [index.ts:207](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L207)
+Defined in: [index.ts:207](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L207)
 
 #### Type Parameters
 
@@ -322,7 +322,7 @@ Defined in: [index.ts:207](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > `private` **handleWorkerMessage**(`event`): `Promise`\<`void`\>
 
-Defined in: [index.ts:290](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L290)
+Defined in: [index.ts:290](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L290)
 
 #### Parameters
 
@@ -340,7 +340,7 @@ Defined in: [index.ts:290](https://github.com/trust0-project/RIDB/blob/40b5c2c88
 
 > **start**(`options?`): `Promise`\<`void`\>
 
-Defined in: [index.ts:341](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L341)
+Defined in: [index.ts:341](https://github.com/trust0-project/RIDB/blob/56b34b55eb2e1db503c7f982959ad7caf6927218/packages/ridb/src/index.ts#L341)
 
 Starts the database.
 
