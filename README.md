@@ -5,7 +5,6 @@
   <h3 align="center">A secure light-weight and dependency free database wrapper for the web.</h3>
 </p>
 
-
 <p align="center">
     <a href="https://github.com/trust0-project/RIDB/releases"><img src="https://img.shields.io/github/v/release/trust0-project/ridb?color=%23ff00a0&include_prereleases&label=version&sort=semver&style=flat-square"></a>
     &nbsp;
@@ -26,6 +25,11 @@ Our project consists of three main packages, each designed to enhance your datab
 | **ridb**     | Main project with RIDB core functionality. | [View on GitHub](./packages/ridb/README.md) |
 | **ridb-level** | An Storage for level-based storage (NODEJS). | [View on GitHub](./packages/ridb-level/README.md) |
 | **ridb-react** | Use RIDB in react directly with JSX. | [View on GitHub](./packages/ridb-react/README.md) |
+
+### Requirements
+* Bash
+* Have Rust ([cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)) and [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/)) installed.
+* Node JS Version (20/LTS Recommended)
 
 ### Security
 We take security very seriously and have implemented robust measures to ensure data protection. Below are the specifications for our security features:
