@@ -1,3 +1,13 @@
+## 0.0.9 (2025-05-10)
+
+### 🩹 Fixes
+
+- building tools ([0889f61](https://github.com/trust0-project/RIDB/commit/0889f61))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.8 (2025-05-10)
 
 ### 🩹 Fixes

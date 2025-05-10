@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-level",
-  "version": "1.2.14",
+  "version": "1.2.15",
   "description": "Level DB storage for @trust0/ridb.",
   "main": "./build/index.js",
   "module": "./build/index.mjs",
@@ -33,8 +33,8 @@
     "types:default": "npx tsc"
   },
   "devDependencies": {
-    "@trust0/ridb": "^1.5.14",
-    "@trust0/ridb-build": "^0.0.8",
+    "@trust0/ridb": "^1.5.15",
+    "@trust0/ridb-build": "^0.0.9",
     "classic-level": "^2.0.0",
     "jsdom": "^24.1.3",
     "uuid": "^11.0.3",

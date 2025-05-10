@@ -8,7 +8,7 @@
 
 > **\_\_\_wbg\_init**(`input`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:3130
+Defined in: ridb\_core.js:3144
 
 ## Parameters
 

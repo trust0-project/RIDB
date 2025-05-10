@@ -6,9 +6,9 @@
 
 ## Type Aliases
 
-- [DatabaseComponentProps](type-aliases/DatabaseComponentProps.md)
+- [RIDBComponentProps](type-aliases/RIDBComponentProps.md)
 
 ## Functions
 
-- [Database](functions/Database.md)
-- [useDatabase](functions/useDatabase.md)
+- [RIDBDatabase](functions/RIDBDatabase.md)
+- [useRIDB](functions/useRIDB.md)

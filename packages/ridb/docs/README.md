@@ -70,7 +70,7 @@ await db.start({
 })
 ```
 
-A compatible storage should be a class implementing [BaseStorage<SchemaType> ](../../ridb-core/docs/classes/BaseStorage.md) and its methods.
+A compatible storage should be a class implementing [BaseStorage<SchemaType> ](_media/BaseStorage.md) and its methods.
 
 ### Using with migration plugin
 The migration plugin will automatically migrate your documents for you as you upgrade and change your schemas over the time. 
