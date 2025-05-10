@@ -41,9 +41,10 @@ export const plugins = [
     }),
 ]
 
-export default function createConfig({format, entry}:{
+export default function createConfig({format, entry, banner}:{
   format: Format | Format[] | undefined,
-  entry: string[] | undefined
+  entry: string[] | undefined,
+  banner?: {js:string}
 }) {
   return defineConfig(({ watch }) => ({
     entry,
@@ -56,6 +57,7 @@ export default function createConfig({format, entry}:{
       wasmPlugin,
       ...plugins
     ],
+    banner,
     external: [
       'buffer',
       'next',
