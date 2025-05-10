@@ -11,7 +11,7 @@
     "projectsRelationship": "independent",
     "versionPlans": false,
     "version": {
-      "preVersionCommand": "yarn build && yarn docs",
+      "preVersionCommand": "yarn build && yarn docs && git add .",
       "conventionalCommits": true,
       "generatorOptions": {
         "preserveLocalDependencyProtocols": true,
