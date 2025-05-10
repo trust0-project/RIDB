@@ -12,7 +12,7 @@
     "projectsRelationship": "independent",
     "versionPlans": false,
     "version": {
-      "preVersionCommand": "yarn build && yarn docs && git add packages/ridb/docs packages/ridb-core/docs packages/ridb-level/docs packages/ridb-react/docs",
+      "preVersionCommand": "yarn build && yarn docs && git add packages/ridb/docs/**/*.md packages/ridb-core/docs/**/*.md packages/ridb-level/docs/**/*.md packages/ridb-react/docs/**/*.md",
       "conventionalCommits": true,
       "generatorOptions": {
         "preserveLocalDependencyProtocols": true,
