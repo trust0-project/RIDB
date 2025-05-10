@@ -25,7 +25,7 @@
     "clean": "rm -rf build node_modules",
     "test": "sh test.sh",
     "build": "rm -rf build && sh build.sh",
-    "docs": "echo 'No docs for this package'"
+    "docs": "npx typedoc"
   },
   "devDependencies": {
     "@esbuild-plugins/node-resolve": "^0.2.2",

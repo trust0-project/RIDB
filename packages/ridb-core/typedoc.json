@@ -1,9 +1,9 @@
 {
     "$schema": "https://typedoc-plugin-markdown.org/schema.json",
     "entryPoints": [
-        "./src/index.ts",
+        "./pkg/ridb_core.js",
     ],
-    "basePath": "./src",
+    "basePath": "./pkg",
     "readme": "none",
     "out": "docs",
     "plugin": [
