@@ -1,3 +1,18 @@
+## 1.2.12 (2025-05-10)
+
+### 🩹 Fixes
+
+- improve docs ([74c8f18](https://github.com/trust0-project/RIDB/commit/74c8f18))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.6
+- Updated @trust0/ridb to 1.5.12
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.2.11 (2025-05-10)
 
 ### 🩹 Fixes

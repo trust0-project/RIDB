@@ -1,3 +1,13 @@
+## 0.0.6 (2025-05-10)
+
+### 🩹 Fixes
+
+- improve docs ([74c8f18](https://github.com/trust0-project/RIDB/commit/74c8f18))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.5 (2025-05-10)
 
 ### 🩹 Fixes
