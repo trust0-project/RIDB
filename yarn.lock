@@ -1520,6 +1520,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@enio.ai/typedoc@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "@enio.ai/typedoc@npm:1.0.8"
+  dependencies:
+    "@nrwl/devkit": "npm:15.8.5"
+    tslib: "npm:2.5.0"
+  peerDependencies:
+    typedoc: ^0.23.26
+    typedoc-plugin-rename-defaults: ^0.6.4
+    typedoc-theme-hierarchy: ^3.0.0
+  checksum: 10c0/6404e56304ad9255e2bdebc8751900d2aaa40b3b7912cf8508583f2ecd8e3c38d65a839edf172349828d69e8c21173309c935847f43a768e31628d473efd48b5
+  languageName: node
+  linkType: hard
+
 "@esbuild-plugins/node-resolve@npm:^0.2.2":
   version: 0.2.2
   resolution: "@esbuild-plugins/node-resolve@npm:0.2.2"
@@ -3442,6 +3456,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nrwl/devkit@npm:15.8.5":
+  version: 15.8.5
+  resolution: "@nrwl/devkit@npm:15.8.5"
+  dependencies:
+    "@phenomnomnominal/tsquery": "npm:4.1.1"
+    ejs: "npm:^3.1.7"
+    ignore: "npm:^5.0.4"
+    semver: "npm:7.3.4"
+    tmp: "npm:~0.2.1"
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    nx: ">= 14.1 <= 16"
+  checksum: 10c0/8350397c1c0af94eb805fd32f89346847981ca21d188cd9140d5f77bfacf18f473feeece4c3d51de06f591d0a87d19988ad03e8da33e6be7e3dacf4fe24f0d42
+  languageName: node
+  linkType: hard
+
 "@nx/devkit@npm:20.8.1, @nx/devkit@npm:>=17.1.2 < 21":
   version: 20.8.1
   resolution: "@nx/devkit@npm:20.8.1"
@@ -3857,6 +3887,17 @@ __metadata:
   dependencies:
     "@octokit/openapi-types": "npm:^24.2.0"
   checksum: 10c0/f66a401b89d653ec28e5c1529abdb7965752db4d9d40fa54c80e900af4c6bf944af6bd0a83f5b4f1eecb72e3d646899dfb27ffcf272ac243552de7e3b97a038d
+  languageName: node
+  linkType: hard
+
+"@phenomnomnominal/tsquery@npm:4.1.1":
+  version: 4.1.1
+  resolution: "@phenomnomnominal/tsquery@npm:4.1.1"
+  dependencies:
+    esquery: "npm:^1.0.1"
+  peerDependencies:
+    typescript: ^3 || ^4
+  checksum: 10c0/cd600f67232dca9c58457257d607c10d271721758de515a3d9642eff53da0e3e13985403192644b5d359b05add29804e899832ef622a79d68661dba5fdf8f6d4
   languageName: node
   linkType: hard
 
@@ -4866,6 +4907,7 @@ __metadata:
   resolution: "@trust0/ridb-build@workspace:packages/ridb-build"
   dependencies:
     "@babel/types": "npm:^7.26.3"
+    "@enio.ai/typedoc": "npm:^1.0.8"
     "@esbuild/darwin-arm64": "npm:^0.25.0"
     "@rollup/rollup-linux-x64-gnu": "npm:^4.24.0"
     "@types/sharedworker": "npm:^0.0.150"
@@ -9476,7 +9518,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esquery@npm:^1.4.0, esquery@npm:^1.5.0":
+"esquery@npm:^1.0.1, esquery@npm:^1.4.0, esquery@npm:^1.5.0":
   version: 1.6.0
   resolution: "esquery@npm:1.6.0"
   dependencies:
@@ -16302,6 +16344,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"semver@npm:7.3.4":
+  version: 7.3.4
+  resolution: "semver@npm:7.3.4"
+  dependencies:
+    lru-cache: "npm:^6.0.0"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/16b77752071597135b934bb33258badbac6c1cebbabe507ce31f68db3229acae7afa9602265c375c34df092339caa738b105e0c62240536ea1efd4767c36e674
+  languageName: node
+  linkType: hard
+
 "semver@npm:7.6.3":
   version: 7.6.3
   resolution: "semver@npm:7.6.3"
@@ -17667,6 +17720,13 @@ __metadata:
     minimist: "npm:^1.2.6"
     strip-bom: "npm:^3.0.0"
   checksum: 10c0/09a5877402d082bb1134930c10249edeebc0211f36150c35e1c542e5b91f1047b1ccf7da1e59babca1ef1f014c525510f4f870de7c9bda470c73bb4e2721b3ea
+  languageName: node
+  linkType: hard
+
+"tslib@npm:2.5.0":
+  version: 2.5.0
+  resolution: "tslib@npm:2.5.0"
+  checksum: 10c0/e32fc99cc730dd514e53c44e668d76016e738f0bcc726aad5dbd2d335cf19b87a95a9b1e4f0a9993e370f1d702b5e471cdd4acabcac428a3099d496b9af2021e
   languageName: node
   linkType: hard
 

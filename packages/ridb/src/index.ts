@@ -137,7 +137,7 @@ export type StartOptions<T extends SchemaTypeRecord> = {
  * @typedef {DBOptions}
  * @template {SchemaTypeRecord} [T=SchemaTypeRecord] 
  */
-type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
+export type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
   dbName: string,
   schemas: T,
   plugins?: Array<typeof BasePlugin>,
@@ -158,7 +158,7 @@ export async function WasmInternal() {
     return loaded;
 };
 
-type PendingRequests = Map<
+export type PendingRequests = Map<
   string,
   { resolve: (resp: any) => void; reject: (err: any) => void }
 >;
