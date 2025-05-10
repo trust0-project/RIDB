@@ -17,21 +17,30 @@ pub fn extract_property<T>(js_value: &JsValue, key: &str) -> Result<T, RIDBError
 
 
     use web_sys::console;
+use crate::is_debug_mode;
 
-    pub struct Logger;
+pub struct Logger;
 
     impl Logger {
         pub fn log(component: &str, message: &JsValue) {
-                Logger::log_1(component, message);
-        
+            Logger::log_1(component, message);
         }
         pub fn debug(component: &str, message: &JsValue) {
-           
-                Logger::log_1(component, message);
+           if is_debug_mode() {
+                Logger::debug_1(component, message);
+           }
         }
 
         fn log_1(component: &str, message: &JsValue) {
             console::log_1(
+                &JsValue::from(
+                    format!("[{:?}] {:?}", component, message.clone())
+                )
+            );
+        }
+
+        fn debug_1(component: &str, message: &JsValue) {
+            console::debug_1(
                 &JsValue::from(
                     format!("[{:?}] {:?}", component, message.clone())
                 )

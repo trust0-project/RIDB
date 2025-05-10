@@ -5,33 +5,33 @@ import { SchemaTypeRecord } from '@trust0/ridb-core';
 
 await WasmInternal();
 
-type DatabaseProps<T extends SchemaTypeRecord> = {
+type RIDBProps<T extends SchemaTypeRecord> = {
   dbName: string;
   schemas: T;
   plugins?: Array<typeof BasePlugin>;
 } & MigrationsParameter<T>;
 
-const DatabaseContext = createContext<RIDB<any> | null>(null);
+const RIDBContext = createContext<RIDB<any> | null>(null);
 
-export type DatabaseComponentProps<T extends SchemaTypeRecord> = DatabaseProps<T> & {
+export type RIDBComponentProps<T extends SchemaTypeRecord> = RIDBProps<T> & {
   children?: React.ReactNode;
 };
 
-export function useDatabase<T extends SchemaTypeRecord>(): RIDB<T> {
-  const context = useContext(DatabaseContext);
+export function useRIDB<T extends SchemaTypeRecord>(): RIDB<T> {
+  const context = useContext(RIDBContext);
   if (!context) {
-    throw new Error('useDatabase must be used within a Database provider');
+    throw new Error('useRIDB must be used within a RIDB provider');
   }
   return context as RIDB<T>;
 }
 
-export function Database<T extends SchemaTypeRecord>({ children, ...props }: DatabaseComponentProps<T>) {
-  const dbInit = props as DatabaseProps<T>;
+export function RIDBDatabase<T extends SchemaTypeRecord>({ children, ...props }: RIDBComponentProps<T>) {
+  const dbInit = props as RIDBProps<T>;
   const db = useMemo(() => new RIDB<T>(dbInit), [props]);
   return (
-    <DatabaseContext.Provider value={db}>
+    <RIDBContext.Provider value={db}>
       {children}
-    </DatabaseContext.Provider>
+    </RIDBContext.Provider>
   );
 }
 

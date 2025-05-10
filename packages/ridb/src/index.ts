@@ -144,6 +144,7 @@ export type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
   worker?: boolean
 } & MigrationsParameter<T>
 
+// @ts-ignore @ignore
 import wasmBuffer from "@trust0/ridb-core/wasm";
 
 let loaded : typeof import("@trust0/ridb-core") | undefined;

@@ -29,46 +29,45 @@ pub fn is_debug_mode() -> bool {
 }
 
 fn get_debug_mode() -> bool {
-    return true;
-    // use wasm_bindgen::prelude::*;
-    // use js_sys::Reflect;
+    use wasm_bindgen::prelude::*;
+    use js_sys::Reflect;
 
-    // if let Some(win) = web_sys::window() {
-    //     // Browser environment
-    //     win.local_storage()
-    //         .ok()
-    //         .flatten()
-    //         .and_then(|storage| storage.get_item("DEBUG").ok().flatten())
-    //         .map(|debug_str| {
-    //             debug_str
-    //                 .split(',')
-    //                 .any(|s| s == "ridb" || s.starts_with("ridb:*"))
-    //         })
-    //         .unwrap_or(false)
-    // } else {
-    //     // Node.js environment
-    //     // Access process.env.DEBUG directly
-    //     let global = js_sys::global();
+    if let Some(win) = web_sys::window() {
+        // Browser environment
+        win.local_storage()
+            .ok()
+            .flatten()
+            .and_then(|storage| storage.get_item("DEBUG").ok().flatten())
+            .map(|debug_str| {
+                debug_str
+                    .split(',')
+                    .any(|s| s == "ridb" || s.starts_with("ridb:*"))
+            })
+            .unwrap_or(false)
+    } else {
+        // Node.js environment
+        // Access process.env.DEBUG directly
+        let global = js_sys::global();
 
-    //     let process = Reflect::get(&global, &JsValue::from_str("process")).ok();
-    //     let env = process
-    //         .as_ref()
-    //         .and_then(|proc| Reflect::get(proc, &JsValue::from_str("env")).ok());
-    //     let debug_var = env
-    //         .as_ref()
-    //         .and_then(|env| Reflect::get(env, &JsValue::from_str("DEBUG")).ok());
+        let process = Reflect::get(&global, &JsValue::from_str("process")).ok();
+        let env = process
+            .as_ref()
+            .and_then(|proc| Reflect::get(proc, &JsValue::from_str("env")).ok());
+        let debug_var = env
+            .as_ref()
+            .and_then(|env| Reflect::get(env, &JsValue::from_str("DEBUG")).ok());
 
-    //     if let Some(debug_js_value) = debug_var {
-    //         if let Some(debug_str) = debug_js_value.as_string() {
-    //             debug_str
-    //                 .split(',')
-    //                 .any(|s| s == "ridb" || s.starts_with("ridb:*"))
-    //         } else {
-    //             false
-    //         }
-    //     } else {
-    //         false
-    //     }
-    // }
+        if let Some(debug_js_value) = debug_var {
+            if let Some(debug_str) = debug_js_value.as_string() {
+                debug_str
+                    .split(',')
+                    .any(|s| s == "ridb" || s.starts_with("ridb:*"))
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    }
 }
 

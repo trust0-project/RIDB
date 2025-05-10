@@ -1,8 +1,8 @@
 import React from 'react'
 import { render, waitFor } from '@testing-library/react'
-import { SchemaFieldType, WasmInternal } from '@trust0/ridb'
+import { SchemaFieldType } from '@trust0/ridb'
 import { describe, expect, it } from 'vitest'
-import { Database, useDatabase } from '../..'
+import { RIDBDatabase, useRIDB } from '../..'
 
 const users = {
   version: 0 as const,
@@ -24,7 +24,7 @@ type DatabaseSchemas = typeof schemas;
 
 
 const MyComponent: React.FC = () => {
-    const db = useDatabase<DatabaseSchemas>();
+    const db = useRIDB<DatabaseSchemas>();
     const [isDbReady, setIsDbReady] = React.useState(false);
 
     React.useEffect(() => {
@@ -54,18 +54,18 @@ describe('MyComponent', () => {
 
   it('renders correctly while db is loading', async () => {
     const { asFragment, getByText } = render(
-      <Database dbName="testDB" schemas={schemas}>
+      <RIDBDatabase dbName="testDB" schemas={schemas}>
         <MyComponent />
-      </Database>
+      </RIDBDatabase>
     );
     expect(asFragment()).toMatchSnapshot();
   });
 
   it('renders correctly when db is ready', async () => {
     const { asFragment, getByText } = render(
-      <Database dbName="testDB" schemas={schemas}>
+      <RIDBDatabase dbName="testDB" schemas={schemas}>
         <MyComponent />
-      </Database>
+      </RIDBDatabase>
     );
     await waitFor(() => {
       const element = getByText('My Component');

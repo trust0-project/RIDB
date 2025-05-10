@@ -23,5 +23,6 @@
     "excludeInternal": false,
     "excludeNotDocumented": false,
     "theme": "markdown",
-    "excludeExternals": false
+    "excludeExternals": false,
+    "exclude": ["node_modules", "build", "./src/testing/**/*"]
 }

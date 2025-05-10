@@ -64,7 +64,8 @@ export default function createConfig({format, entry, banner}:{
       'vitest', 
       'react-server-dom-webpack', 
       'tsup', 
-      'react-server-dom-webpack/client.edge'
+      'react-server-dom-webpack/client.edge',
+      '@trust0/ridb/worker'
     ],
   }));
 }

@@ -18,3 +18,7 @@ vitest.config.*.timestamp*
 .nx/workspace-data
 .yarn/*
 .yarn/cache
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*

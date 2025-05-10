@@ -10,12 +10,11 @@
     "packages/*"
   ],
   "scripts": {
-    "clean": "nx run-many --target=clean --verbose && rm -rf node_modules",
-    "docs": "nx run-many --target=docs --verbose",
-    "build": "nx run-many --verbose -p @trust0/ridb-build @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react --target=build",
-    "test": "nx run-many --target=test",
-    "lint": "nx run-many --target=lint",
-    "ci-check": "npx semantic-release --deps.prefix=\"^\" --dry-run"
+    "clean": "npx nx run-many --target=clean --verbose && rm -rf node_modules",
+    "docs": "npx nx run-many -p @trust0/ridb-build @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react --target=docs --verbose",
+    "build": "npx nx run-many --verbose -p @trust0/ridb-build @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react --target=build",
+    "test": "npx nx run-many --target=test",
+    "lint": "npx nx run-many --target=lint"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3",
@@ -52,12 +51,11 @@
     "nx": "20.8.1",
     "prettier": "^3.5.3",
     "tsup": "^8.4.0",
-    "typedoc": "^0.28",
-    "typedoc-plugin-external-module-map": "^2.2.0",
+    "typedoc": "^0.28.4",
     "typedoc-plugin-markdown": "^4.6.3",
     "typedoc-plugin-rename-defaults": "^0.7.3",
     "typedoc-theme-hierarchy": "^6.0.0",
-    "typescript": "^5.7.2",
+    "typescript": "^5.8.3",
     "vite": "^6.2.1",
     "vite-plugin-top-level-await": "^1.5.0",
     "vite-plugin-wasm": "^3.4.1",
