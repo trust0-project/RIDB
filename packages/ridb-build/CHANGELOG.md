@@ -1,3 +1,13 @@
+## 0.0.7 (2025-05-10)
+
+### 🩹 Fixes
+
+- run release command to regenerate docs ([3fa3e32](https://github.com/trust0-project/RIDB/commit/3fa3e32))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.6 (2025-05-10)
 
 ### 🩹 Fixes

@@ -1,3 +1,17 @@
+## 1.7.11 (2025-05-10)
+
+### 🩹 Fixes
+
+- run release command to regenerate docs ([3fa3e32](https://github.com/trust0-project/RIDB/commit/3fa3e32))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.7
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.10 (2025-05-10)
 
 ### 🩹 Fixes

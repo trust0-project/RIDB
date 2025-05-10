@@ -70,7 +70,7 @@ await db.start({
 })
 ```
 
-A compatible storage should be a class implementing [StorageInternal<SchemaType> ](_media/StorageInternal.md) and its methods.
+A compatible storage should be a class implementing [BaseStorage<SchemaType> ](../../ridb-core/docs/classes/BaseStorage.md) and its methods.
 
 ### Using with migration plugin
 The migration plugin will automatically migrate your documents for you as you upgrade and change your schemas over the time. 
@@ -112,52 +112,16 @@ await db.start()
 
 ## Enumerations
 
-- [OpType](enumerations/OpType.md)
 - [StorageType](enumerations/StorageType.md)
 
 ## Classes
 
-- [BasePlugin](classes/BasePlugin.md)
-- [BaseStorage](classes/BaseStorage.md)
-- [Collection](classes/Collection.md)
-- [CoreStorage](classes/CoreStorage.md)
-- [Database](classes/Database.md)
-- [IndexDB](classes/IndexDB.md)
-- [InMemory](classes/InMemory.md)
-- [Property](classes/Property.md)
-- [Query](classes/Query.md)
 - [RIDB](classes/RIDB.md)
-- [RIDBError](classes/RIDBError.md)
-- [Schema](classes/Schema.md)
-- [StorageInternal](classes/StorageInternal.md)
 
 ## Type Aliases
 
-- [AnyVersionGreaterThan1](type-aliases/AnyVersionGreaterThan1.md)
-- [BasePluginOptions](type-aliases/BasePluginOptions.md)
-- [BaseStorageOptions](type-aliases/BaseStorageOptions.md)
-- [CreateStorage](type-aliases/CreateStorage.md)
-- [Doc](type-aliases/Doc.md)
-- [EnumerateFrom1To](type-aliases/EnumerateFrom1To.md)
-- [EnumerateUpTo](type-aliases/EnumerateUpTo.md)
-- [ExtractType](type-aliases/ExtractType.md)
-- [Hook](type-aliases/Hook.md)
-- [InOperator](type-aliases/InOperator.md)
-- [InternalsRecord](type-aliases/InternalsRecord.md)
-- [IsVersionGreaterThan0](type-aliases/IsVersionGreaterThan0.md)
-- [LogicalOperators](type-aliases/LogicalOperators.md)
-- [MigrationFunction](type-aliases/MigrationFunction.md)
-- [MigrationPathsForSchema](type-aliases/MigrationPathsForSchema.md)
-- [MigrationPathsForSchemas](type-aliases/MigrationPathsForSchemas.md)
-- [MigrationsParameter](type-aliases/MigrationsParameter.md)
-- [Operation](type-aliases/Operation.md)
-- [OperatorOrType](type-aliases/OperatorOrType.md)
-- [Operators](type-aliases/Operators.md)
-- [QueryOptions](type-aliases/QueryOptions.md)
-- [QueryType](type-aliases/QueryType.md)
-- [RIDBModule](type-aliases/RIDBModule.md)
-- [SchemaType](type-aliases/SchemaType.md)
-- [SchemaTypeRecord](type-aliases/SchemaTypeRecord.md)
+- [DBOptions](type-aliases/DBOptions.md)
+- [PendingRequests](type-aliases/PendingRequests.md)
 - [StartOptions](type-aliases/StartOptions.md)
 - [StorageClass](type-aliases/StorageClass.md)
 

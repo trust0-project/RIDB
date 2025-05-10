@@ -22,6 +22,14 @@ Specifying a different path is not yet supported.
 
 # SDK Rerefence
 
+## Classes
+
+- [LevelDBStorage](classes/LevelDBStorage.md)
+
+## Type Aliases
+
+- [Level](type-aliases/Level.md)
+
 ## Functions
 
 - [createLevelDB](functions/createLevelDB.md)
