@@ -67,7 +67,7 @@
  * })
  * ```
  * 
- * A compatible storage should be a class implementing [StorageInternal<SchemaType> ](../docs/classes/StorageInternal.md) and its methods.
+ * A compatible storage should be a class implementing [BaseStorage<SchemaType> ](../../ridb-core/docs/classes/BaseStorage.md) and its methods.
  * 
  * ### Using with migration plugin
  * The migration plugin will automatically migrate your documents for you as you upgrade and change your schemas over the time. 
@@ -137,7 +137,7 @@ export type StartOptions<T extends SchemaTypeRecord> = {
  * @typedef {DBOptions}
  * @template {SchemaTypeRecord} [T=SchemaTypeRecord] 
  */
-type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
+export type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
   dbName: string,
   schemas: T,
   plugins?: Array<typeof BasePlugin>,
@@ -158,7 +158,7 @@ export async function WasmInternal() {
     return loaded;
 };
 
-type PendingRequests = Map<
+export type PendingRequests = Map<
   string,
   { resolve: (resp: any) => void; reject: (err: any) => void }
 >;

@@ -11,6 +11,7 @@
     "projectsRelationship": "independent",
     "versionPlans": false,
     "version": {
+      "preVersionCommand": "yarn build && yarn docs",
       "conventionalCommits": true,
       "generatorOptions": {
         "preserveLocalDependencyProtocols": true,
@@ -39,10 +40,10 @@
         "{projectRoot}/.next/**",
         "{projectRoot}/dist/**"
       ],
-      "cache": true
+      "cache": false
     },
     "lint": {
-      "cache": true
+      "cache": false
     },
     "dev": {
       "cache": false
@@ -69,7 +70,7 @@
       "cache": false
     },
     "types": {
-      "cache": true
+      "cache": false
     }
   },
   "plugins": [
