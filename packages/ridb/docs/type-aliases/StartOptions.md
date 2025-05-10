@@ -6,24 +6,32 @@
 
 # Type Alias: StartOptions\<T\>
 
-> **StartOptions**\<`T`\>: `object`
+> **StartOptions**\<`T`\> = `object`
 
-Defined in: [ridb/src/index.ts:128](https://github.com/trust0-project/RIDB/blob/d38eef11afab02ff553dc9a0b8f3134db7bc4135/packages/ridb/src/index.ts#L128)
+Defined in: [index.ts:128](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L128)
 
 ## Type Parameters
 
-• **T** *extends* [`SchemaTypeRecord`](SchemaTypeRecord.md)
+### T
 
-## Type declaration
+`T` *extends* `SchemaTypeRecord`
 
-## Index Signature
+## Indexable
 
 \[`name`: `string`\]: `any`
+
+## Properties
 
 ### password?
 
 > `optional` **password**: `string`
 
+Defined in: [index.ts:130](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L130)
+
+***
+
 ### storageType?
 
 > `optional` **storageType**: [`StorageClass`](StorageClass.md)\<`T`\> \| [`StorageType`](../enumerations/StorageType.md)
+
+Defined in: [index.ts:129](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L129)

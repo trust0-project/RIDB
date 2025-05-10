@@ -1,3 +1,16 @@
+## 0.0.4 (2025-05-10)
+
+### 🩹 Fixes
+
+- nx add command ([bb80f6a](https://github.com/trust0-project/RIDB/commit/bb80f6a))
+- commit only required changes ([84977cd](https://github.com/trust0-project/RIDB/commit/84977cd))
+- commit files ([0b6d0b0](https://github.com/trust0-project/RIDB/commit/0b6d0b0))
+- generate and commit docs ([df09ef6](https://github.com/trust0-project/RIDB/commit/df09ef6))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.3 (2025-05-10)
 
 ### 🩹 Fixes

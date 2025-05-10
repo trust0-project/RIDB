@@ -1,3 +1,22 @@
+## 1.2.10 (2025-05-10)
+
+### 🩹 Fixes
+
+- release ridb-docs ([40b5c2c](https://github.com/trust0-project/RIDB/commit/40b5c2c))
+- nx add command ([bb80f6a](https://github.com/trust0-project/RIDB/commit/bb80f6a))
+- commit only required changes ([84977cd](https://github.com/trust0-project/RIDB/commit/84977cd))
+- commit files ([0b6d0b0](https://github.com/trust0-project/RIDB/commit/0b6d0b0))
+- generate and commit docs ([df09ef6](https://github.com/trust0-project/RIDB/commit/df09ef6))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.4
+- Updated @trust0/ridb to 1.5.10
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.2.9 (2025-05-10)
 
 ### 🩹 Fixes

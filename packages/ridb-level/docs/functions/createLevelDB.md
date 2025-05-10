@@ -6,10 +6,20 @@
 
 # Function: createLevelDB()
 
-> **createLevelDB**(): `Promise`\<*typeof* `Instance`\>
+> **createLevelDB**\<`T`\>(): `Promise`\<*typeof* `BaseStorage`\>
 
-Defined in: [index.ts:45](https://github.com/trust0-project/RIDB/blob/10423183d2c31f7e4e11630023f5b3c28f7eb90f/packages/ridb-level/src/index.ts#L45)
+Defined in: [index.ts:249](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb-level/src/index.ts#L249)
+
+Create a LevelDB storage instance
+
+## Type Parameters
+
+### T
+
+`T` *extends* `SchemaTypeRecord`
 
 ## Returns
 
-`Promise`\<*typeof* `Instance`\>
+`Promise`\<*typeof* `BaseStorage`\>
+
+A factory function that creates LevelDB storage instances

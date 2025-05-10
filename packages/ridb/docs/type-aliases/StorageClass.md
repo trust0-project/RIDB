@@ -6,19 +6,23 @@
 
 # Type Alias: StorageClass\<T\>
 
-> **StorageClass**\<`T`\>: `object`
+> **StorageClass**\<`T`\> = `object`
 
-Defined in: [ridb/src/index.ts:115](https://github.com/trust0-project/RIDB/blob/d38eef11afab02ff553dc9a0b8f3134db7bc4135/packages/ridb/src/index.ts#L115)
+Defined in: [index.ts:115](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L115)
 
 ## Type Parameters
 
-• **T** *extends* [`SchemaTypeRecord`](SchemaTypeRecord.md)
+### T
 
-## Type declaration
+`T` *extends* `SchemaTypeRecord`
+
+## Properties
 
 ### create()
 
-> **create**: (`name`, `schemas`, `options`) => `Promise`\<[`BaseStorage`](../classes/BaseStorage.md)\<`T`\>\>
+> **create**: (`name`, `schemas`, `options`) => `Promise`\<`BaseStorage`\<`T`\>\>
+
+Defined in: [index.ts:116](https://github.com/trust0-project/RIDB/blob/40b5c2c88b47dd5db201bd993b2e70350246bff3/packages/ridb/src/index.ts#L116)
 
 #### Parameters
 
@@ -36,4 +40,4 @@ Defined in: [ridb/src/index.ts:115](https://github.com/trust0-project/RIDB/blob/
 
 #### Returns
 
-`Promise`\<[`BaseStorage`](../classes/BaseStorage.md)\<`T`\>\>
+`Promise`\<`BaseStorage`\<`T`\>\>
