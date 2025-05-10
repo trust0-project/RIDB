@@ -12,7 +12,7 @@
     "projectsRelationship": "independent",
     "versionPlans": false,
     "version": {
-      "preVersionCommand": "yarn build && yarn docs && git add packages/ridb/docs/**/*.md packages/ridb-core/docs/**/*.md packages/ridb-level/docs/**/*.md packages/ridb-react/docs/**/*.md",
+      "preVersionCommand": "",
       "conventionalCommits": true,
       "generatorOptions": {
         "preserveLocalDependencyProtocols": true,
@@ -40,6 +40,12 @@
         "{projectRoot}/build/**",
         "{projectRoot}/.next/**",
         "{projectRoot}/dist/**"
+      ],
+      "cache": true
+    },
+    "docs": {
+      "dependsOn": [
+        "build"
       ],
       "cache": false
     },

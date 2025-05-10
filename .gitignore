@@ -13,8 +13,7 @@ vitest.config.*.timestamp*
 ./.nx/**/*
 ./.nx
 ./.nx/
-
-
+.npmrc
 .nx/cache
 .nx/workspace-data
 .yarn/*
