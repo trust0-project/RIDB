@@ -41,10 +41,11 @@ export const plugins = [
     }),
 ]
 
-export default function createConfig({format, entry, banner}:{
+export default function createConfig({format, entry, banner, platform}:{
   format: Format | Format[] | undefined,
   entry: string[] | undefined,
-  banner?: {js:string}
+  banner?: {js:string},
+  platform?: 'neutral' | 'node' | 'browser'
 }) {
   return defineConfig(({ watch }) => ({
     entry,
@@ -58,6 +59,9 @@ export default function createConfig({format, entry, banner}:{
       ...plugins
     ],
     banner,
+    esbuildOptions:(options, context) => {
+      options.platform = platform || 'neutral'
+    },
     external: [
       'buffer',
       'next',

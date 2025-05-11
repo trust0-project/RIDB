@@ -7,12 +7,13 @@ declare const wasmPlugin: {
     setup(build: any): void;
 };
 declare const plugins: esbuild.Plugin[];
-declare function createConfig({ format, entry, banner }: {
+declare function createConfig({ format, entry, banner, platform }: {
     format: Format | Format[] | undefined;
     entry: string[] | undefined;
     banner?: {
         js: string;
     };
+    platform?: 'neutral' | 'node' | 'browser';
 }): tsup.Options | tsup.Options[] | ((overrideOptions: tsup.Options) => tsup.Options | tsup.Options[] | Promise<tsup.Options | tsup.Options[]>);
 
 export { createConfig as default, plugins, wasmPlugin };
