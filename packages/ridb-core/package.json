@@ -34,9 +34,10 @@
     "esbuild": "^0.25.4"
   },
   "files": [
-    "./build/ridb_core_bg.js",
-    "./build/ridb_core_bg.d.ts",
+    "./build/ridb_core_bg.mjs",
+    "./build/ridb_core_bg.d.mts",
     "./build/ridb_core.js",
+    "./build/ridb_core.mjs",
     "./build/ridb_core.d.ts"
   ]
 }
