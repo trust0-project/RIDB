@@ -1,3 +1,13 @@
+## 0.0.10 (2025-05-11)
+
+### 🩹 Fixes
+
+- missing lock ([3fef9bf](https://github.com/trust0-project/RIDB/commit/3fef9bf))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.9 (2025-05-10)
 
 ### 🩹 Fixes

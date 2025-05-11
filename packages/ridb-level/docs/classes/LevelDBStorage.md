@@ -6,7 +6,7 @@
 
 # Class: LevelDBStorage\<T\>
 
-Defined in: [index.ts:46](https://github.com/trust0-project/RIDB/blob/0889f61b208d392afc348597eadd8727a108be5a/packages/ridb-level/src/index.ts#L46)
+Defined in: [index.ts:46](https://github.com/trust0-project/RIDB/blob/3fef9bf80465dd783ae3324da85c4932c9fbae5d/packages/ridb-level/src/index.ts#L46)
 
 LevelDB storage implementation class
 
@@ -26,7 +26,7 @@ LevelDB storage implementation class
 
 > **new LevelDBStorage**\<`T`\>(`level`, `name`, `schemas`, `options`): `LevelDBStorage`\<`T`\>
 
-Defined in: [index.ts:47](https://github.com/trust0-project/RIDB/blob/0889f61b208d392afc348597eadd8727a108be5a/packages/ridb-level/src/index.ts#L47)
+Defined in: [index.ts:47](https://github.com/trust0-project/RIDB/blob/3fef9bf80465dd783ae3324da85c4932c9fbae5d/packages/ridb-level/src/index.ts#L47)
 
 #### Parameters
 
@@ -84,7 +84,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:196
 
 > **level**: [`Level`](../type-aliases/Level.md)
 
-Defined in: [index.ts:47](https://github.com/trust0-project/RIDB/blob/0889f61b208d392afc348597eadd8727a108be5a/packages/ridb-level/src/index.ts#L47)
+Defined in: [index.ts:47](https://github.com/trust0-project/RIDB/blob/3fef9bf80465dd783ae3324da85c4932c9fbae5d/packages/ridb-level/src/index.ts#L47)
 
 ***
 
@@ -132,7 +132,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:209
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [index.ts:76](https://github.com/trust0-project/RIDB/blob/0889f61b208d392afc348597eadd8727a108be5a/packages/ridb-level/src/index.ts#L76)
+Defined in: [index.ts:76](https://github.com/trust0-project/RIDB/blob/3fef9bf80465dd783ae3324da85c4932c9fbae5d/packages/ridb-level/src/index.ts#L76)
 
 Close the database
 
@@ -150,7 +150,7 @@ Close the database
 
 > **count**(`collectionName`, `query`, `options?`): `Promise`\<`number`\>
 
-Defined in: [index.ts:147](https://github.com/trust0-project/RIDB/blob/0889f61b208d392afc348597eadd8727a108be5a/packages/ridb-level/src/index.ts#L147)
+Defined in: [index.ts:147](https://github.com/trust0-project/RIDB/blob/3fef9bf80465dd783ae3324da85c4932c9fbae5d/packages/ridb-level/src/index.ts#L147)
 
 Count documents matching a query (supports offset & limit)
 
@@ -182,7 +182,7 @@ keyof `T`
 
 > **find**(`collectionName`, `query`, `options?`): `Promise`\<`Doc`\<`T`\[keyof `T`\]\>[]\>
 
-Defined in: [index.ts:196](https://github.com/trust0-project/RIDB/blob/0889f61b208d392afc348597eadd8727a108be5a/packages/ridb-level/src/index.ts#L196)
+Defined in: [index.ts:196](https://github.com/trust0-project/RIDB/blob/3fef9bf80465dd783ae3324da85c4932c9fbae5d/packages/ridb-level/src/index.ts#L196)
 
 Find documents matching a query with pagination
 
@@ -214,7 +214,7 @@ keyof `T`
 
 > **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| `Doc`\<`T`\[keyof `T`\]\>\>
 
-Defined in: [index.ts:81](https://github.com/trust0-project/RIDB/blob/0889f61b208d392afc348597eadd8727a108be5a/packages/ridb-level/src/index.ts#L81)
+Defined in: [index.ts:81](https://github.com/trust0-project/RIDB/blob/3fef9bf80465dd783ae3324da85c4932c9fbae5d/packages/ridb-level/src/index.ts#L81)
 
 Find a document by its ID
 
@@ -286,7 +286,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:207
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: [index.ts:71](https://github.com/trust0-project/RIDB/blob/0889f61b208d392afc348597eadd8727a108be5a/packages/ridb-level/src/index.ts#L71)
+Defined in: [index.ts:71](https://github.com/trust0-project/RIDB/blob/3fef9bf80465dd783ae3324da85c4932c9fbae5d/packages/ridb-level/src/index.ts#L71)
 
 Start the database
 
@@ -304,7 +304,7 @@ Start the database
 
 > **write**(`op`): `Promise`\<`Doc`\<`T`\[keyof `T`\]\>\>
 
-Defined in: [index.ts:103](https://github.com/trust0-project/RIDB/blob/0889f61b208d392afc348597eadd8727a108be5a/packages/ridb-level/src/index.ts#L103)
+Defined in: [index.ts:103](https://github.com/trust0-project/RIDB/blob/3fef9bf80465dd783ae3324da85c4932c9fbae5d/packages/ridb-level/src/index.ts#L103)
 
 Write an operation (insert, update, delete)
 
@@ -328,7 +328,7 @@ Write an operation (insert, update, delete)
 
 > `static` **create**\<`SchemasCreate`\>(`name`, `schemas`, `options?`): `Promise`\<`LevelDBStorage`\<`SchemasCreate`\>\>
 
-Defined in: [index.ts:59](https://github.com/trust0-project/RIDB/blob/0889f61b208d392afc348597eadd8727a108be5a/packages/ridb-level/src/index.ts#L59)
+Defined in: [index.ts:59](https://github.com/trust0-project/RIDB/blob/3fef9bf80465dd783ae3324da85c4932c9fbae5d/packages/ridb-level/src/index.ts#L59)
 
 Create a new LevelDB storage instance
 

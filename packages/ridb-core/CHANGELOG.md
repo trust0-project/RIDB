@@ -1,3 +1,17 @@
+## 1.7.14 (2025-05-11)
+
+### 🩹 Fixes
+
+- missing lock ([3fef9bf](https://github.com/trust0-project/RIDB/commit/3fef9bf))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.10
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.13 (2025-05-10)
 
 ### 🩹 Fixes
