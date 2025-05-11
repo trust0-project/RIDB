@@ -1,3 +1,13 @@
+## 1.2.20 (2025-05-11)
+
+### 🩹 Fixes
+
+- improve ridb-react ([4f509ac](https://github.com/trust0-project/RIDB/commit/4f509ac))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.2.19 (2025-05-11)
 
 ### 🩹 Fixes

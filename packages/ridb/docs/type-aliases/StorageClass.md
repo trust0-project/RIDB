@@ -8,7 +8,7 @@
 
 > **StorageClass**\<`T`\> = `object`
 
-Defined in: [index.ts:115](https://github.com/trust0-project/RIDB/blob/b71ce91cfc44b88b1d5f76b82531ce1519db6624/packages/ridb/src/index.ts#L115)
+Defined in: [index.ts:115](https://github.com/trust0-project/RIDB/blob/4f509ace700a81f7b619907a7f52dd8788b6e257/packages/ridb/src/index.ts#L115)
 
 ## Type Parameters
 
@@ -22,7 +22,7 @@ Defined in: [index.ts:115](https://github.com/trust0-project/RIDB/blob/b71ce91cf
 
 > **create**: (`name`, `schemas`, `options`) => `Promise`\<`BaseStorage`\<`T`\>\>
 
-Defined in: [index.ts:116](https://github.com/trust0-project/RIDB/blob/b71ce91cfc44b88b1d5f76b82531ce1519db6624/packages/ridb/src/index.ts#L116)
+Defined in: [index.ts:116](https://github.com/trust0-project/RIDB/blob/4f509ace700a81f7b619907a7f52dd8788b6e257/packages/ridb/src/index.ts#L116)
 
 #### Parameters
 

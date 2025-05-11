@@ -6,9 +6,9 @@
 
 # Function: useRIDB()
 
-> **useRIDB**\<`T`\>(): `RIDBContextValue`\<`T`\>
+> **useRIDB**\<`T`\>(): `RIDB`\<`T`\>
 
-Defined in: [index.tsx:25](https://github.com/trust0-project/RIDB/blob/b71ce91cfc44b88b1d5f76b82531ce1519db6624/packages/ridb-react/src/index.tsx#L25)
+Defined in: [index.tsx:15](https://github.com/trust0-project/RIDB/blob/4f509ace700a81f7b619907a7f52dd8788b6e257/packages/ridb-react/src/index.tsx#L15)
 
 ## Type Parameters
 
@@ -18,4 +18,4 @@ Defined in: [index.tsx:25](https://github.com/trust0-project/RIDB/blob/b71ce91cf
 
 ## Returns
 
-`RIDBContextValue`\<`T`\>
+`RIDB`\<`T`\>
