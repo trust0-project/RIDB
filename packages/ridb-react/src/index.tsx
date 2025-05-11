@@ -23,7 +23,7 @@ export function useRIDB<T extends SchemaTypeRecord>() {
 
 export function RIDBDatabase<T extends SchemaTypeRecord>({ children, ...props }: RIDBComponentProps<T>) {
   const dbInit = props as RIDBProps<T>;
-  const db = useMemo(() => new RIDB<T>(dbInit), [props]);
+  const db = useMemo(() => new RIDB<T>(dbInit), []);
   return (
     <RIDBContext.Provider value={db}>
       {children}
