@@ -1,3 +1,13 @@
+## 1.2.21 (2025-05-11)
+
+### 🩹 Fixes
+
+- db re-rendering in react ridb ([99f8e06](https://github.com/trust0-project/RIDB/commit/99f8e06))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.2.20 (2025-05-11)
 
 ### 🩹 Fixes
