@@ -1,3 +1,14 @@
+## 1.5.19 (2025-05-11)
+
+### 🩹 Fixes
+
+- fix authentication removal ([7186e3c](https://github.com/trust0-project/RIDB/commit/7186e3c))
+- ridb start options dbName fallback to previous in constructor ([df51713](https://github.com/trust0-project/RIDB/commit/df51713))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.18 (2025-05-11)
 
 ### 🧱 Updated Dependencies
