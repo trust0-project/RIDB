@@ -1,3 +1,13 @@
+## 0.0.11 (2025-05-11)
+
+### 🩹 Fixes
+
+- restore neutral ridb esbuild settings ([90393d0](https://github.com/trust0-project/RIDB/commit/90393d0))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.10 (2025-05-11)
 
 ### 🩹 Fixes
