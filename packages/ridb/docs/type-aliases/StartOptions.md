@@ -8,7 +8,7 @@
 
 > **StartOptions**\<`T`\> = `object`
 
-Defined in: [index.ts:128](https://github.com/trust0-project/RIDB/blob/4815311545e43c9df945cbfb5e22c6947392dfb7/packages/ridb/src/index.ts#L128)
+Defined in: [types.ts:16](https://github.com/trust0-project/RIDB/blob/7fefdb506c021235200393ecaaa3bb6ff87b0ea9/packages/ridb/src/types.ts#L16)
 
 ## Type Parameters
 
@@ -26,7 +26,7 @@ Defined in: [index.ts:128](https://github.com/trust0-project/RIDB/blob/481531154
 
 > `optional` **dbName**: `string`
 
-Defined in: [index.ts:131](https://github.com/trust0-project/RIDB/blob/4815311545e43c9df945cbfb5e22c6947392dfb7/packages/ridb/src/index.ts#L131)
+Defined in: [types.ts:19](https://github.com/trust0-project/RIDB/blob/7fefdb506c021235200393ecaaa3bb6ff87b0ea9/packages/ridb/src/types.ts#L19)
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: [index.ts:131](https://github.com/trust0-project/RIDB/blob/481531154
 
 > `optional` **password**: `string`
 
-Defined in: [index.ts:130](https://github.com/trust0-project/RIDB/blob/4815311545e43c9df945cbfb5e22c6947392dfb7/packages/ridb/src/index.ts#L130)
+Defined in: [types.ts:18](https://github.com/trust0-project/RIDB/blob/7fefdb506c021235200393ecaaa3bb6ff87b0ea9/packages/ridb/src/types.ts#L18)
 
 ***
 
@@ -42,4 +42,4 @@ Defined in: [index.ts:130](https://github.com/trust0-project/RIDB/blob/481531154
 
 > `optional` **storageType**: [`StorageClass`](StorageClass.md)\<`T`\> \| [`StorageType`](../enumerations/StorageType.md)
 
-Defined in: [index.ts:129](https://github.com/trust0-project/RIDB/blob/4815311545e43c9df945cbfb5e22c6947392dfb7/packages/ridb/src/index.ts#L129)
+Defined in: [types.ts:17](https://github.com/trust0-project/RIDB/blob/7fefdb506c021235200393ecaaa3bb6ff87b0ea9/packages/ridb/src/types.ts#L17)

@@ -8,7 +8,7 @@
 
 > **DBOptions**\<`T`\> = `object` & `MigrationsParameter`\<`T`\>
 
-Defined in: [index.ts:141](https://github.com/trust0-project/RIDB/blob/4815311545e43c9df945cbfb5e22c6947392dfb7/packages/ridb/src/index.ts#L141)
+Defined in: [types.ts:29](https://github.com/trust0-project/RIDB/blob/7fefdb506c021235200393ecaaa3bb6ff87b0ea9/packages/ridb/src/types.ts#L29)
 
 Options for the RIDB constructor.
 

@@ -1,3 +1,17 @@
+## 1.2.24 (2025-05-11)
+
+### 🩹 Fixes
+
+- improve circle dependency ([7fefdb5](https://github.com/trust0-project/RIDB/commit/7fefdb5))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb to 1.5.21
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.2.23 (2025-05-11)
 
 ### 🧱 Updated Dependencies
