@@ -4678,7 +4678,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@trust0/ridb-react@workspace:packages/ridb-react":
+"@trust0/ridb-react@npm:^1.2.15, @trust0/ridb-react@workspace:packages/ridb-react":
   version: 0.0.0-use.local
   resolution: "@trust0/ridb-react@workspace:packages/ridb-react"
   dependencies:
@@ -4687,6 +4687,7 @@ __metadata:
     "@testing-library/react": "npm:^16.1.0"
     "@trust0/ridb": "npm:^1.5.15"
     "@trust0/ridb-build": "npm:^0.0.9"
+    "@trust0/ridb-react": "npm:^1.2.15"
     "@types/react": "npm:^18.2.8"
     "@types/react-dom": "npm:^18.2.4"
     jsdom: "npm:^25.0.1"
