@@ -1,52 +1,21 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`RIDB React Components > Data Operations > shows correct states during data operations > MockDataComponent-data-ready-state 1`] = `
-<div>
-  <div
-    data-testid="data-ready"
-  >
-    <h1>
-      Data Operations Complete
-    </h1>
-    <div
-      data-testid="user-data"
-    >
-      John Doe (Age: 30)
-    </div>
-  </div>
-</div>
-`;
-
-exports[`RIDB React Components > Data Operations > shows correct states during data operations > MockDataComponent-loading-state 1`] = `
-<div>
-  <div
-    data-testid="loading"
-  >
-    Loading database...
-  </div>
-</div>
-`;
-
-exports[`RIDB React Components > MyComponent > renders loading state initially > MyComponent-loading-state 1`] = `
-<div>
-  <div
-    data-testid="loading"
-  >
-    Database is initializing...
-  </div>
-</div>
-`;
-
-exports[`RIDB React Components > MyComponent > renders successfully when database is ready > MyComponent-ready-state 1`] = `
-<div>
-  <div
-    data-testid="ready-component"
-  >
+exports[`MyComponent > renders correctly when db is ready 1`] = `
+<DocumentFragment>
+  <div>
      
     <h1>
       My Component
     </h1>
      
   </div>
-</div>
+</DocumentFragment>
+`;
+
+exports[`MyComponent > renders correctly while db is loading 1`] = `
+<DocumentFragment>
+  <div>
+    Loading...
+  </div>
+</DocumentFragment>
 `;

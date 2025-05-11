@@ -14,11 +14,9 @@ export type RIDBComponentProps<T extends SchemaTypeRecord> = RIDBProps<T> & {
 // Hook that returns the database and loading state
 export function useRIDB<T extends SchemaTypeRecord>() {
   const context = useContext(RIDBContext);
-  
   if (!context) {
     throw new Error('useRIDB must be used within a RIDB provider');
   }
-  
   return context as RIDB<T>;
 }
 
