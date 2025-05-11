@@ -139,7 +139,10 @@ export type StartOptions<T extends SchemaTypeRecord> = {
  * @template {SchemaTypeRecord} [T=SchemaTypeRecord] 
  */
 export type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
-  dbName: string,
+  /**
+   * @deprecated Use the dbName option in the start method instead.
+   */
+  dbName?: string,
   schemas: T,
   plugins?: Array<typeof BasePlugin>,
   worker?: boolean
