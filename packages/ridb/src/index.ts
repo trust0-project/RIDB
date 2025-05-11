@@ -196,6 +196,10 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
     return useWorker && supportsWorker;
   }
 
+  public authenticate(password: string) {
+    return this.db?.authenticate(password) ?? false;
+  }
+
   /**
    * Creates an instance of RIDB.
    * @param options
