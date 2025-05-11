@@ -4,7 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.7.15",
+  "version": "1.7.16",
   "main": "./build/ridb_core.js",
   "module": "./build/ridb_core.mjs",
   "types": "./build/ridb_core.d.ts",

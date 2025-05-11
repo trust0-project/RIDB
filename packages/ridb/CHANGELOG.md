@@ -1,3 +1,10 @@
+## 1.5.18 (2025-05-11)
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.16
+- Updated @trust0/ridb-core to 1.7.16
+
 ## 1.5.17 (2025-05-11)
 
 ### 🧱 Updated Dependencies

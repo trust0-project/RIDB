@@ -1,3 +1,13 @@
+## 1.7.16 (2025-05-11)
+
+### 🩹 Fixes
+
+- invalid ridb-core exports ([163d1e5](https://github.com/trust0-project/RIDB/commit/163d1e5))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.15 (2025-05-11)
 
 ### 🧱 Updated Dependencies
