@@ -1,5 +1,5 @@
 import React, { createContext, useMemo, useContext, useEffect, useState } from 'react';
-import { DBOptions, RIDB, StartOptions, WasmInternal } from "@trust0/ridb";
+import { DBOptions, RIDB, StartOptions } from "@trust0/ridb";
 import { SchemaTypeRecord } from '@trust0/ridb-core';
 
 type RIDBProps<T extends SchemaTypeRecord> = DBOptions<T> & {startOptions?: StartOptions<T>};

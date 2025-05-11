@@ -1,3 +1,18 @@
+import {
+  BasePlugin,
+  Collection,
+  Database,
+  MigrationPathsForSchemas,
+  Schema,
+  SchemaTypeRecord
+} from "@trust0/ridb-core";
+
+import { v4 as uuidv4 } from 'uuid';
+import { WasmInternal } from "./wasm";
+import { StartOptions } from "./types";
+import { RIDBCore } from "./core";
+import { createWorkerInstance, setupWorkerMessageHandler } from "./worker-factory";
+
 /**
  * @packageDocumentation
  *
@@ -56,7 +71,7 @@
  *         } as const
  *     },
  *     worker: true
- * )
+ * })
  * ```
  * 
  * ### Using with encryption plugin
@@ -107,91 +122,14 @@
  * ```
  * # SDK Rerefence
  */
-
-// @ts-ignore @ignore
-import { BasePlugin, BaseStorage, Collection, Database, MigrationPathsForSchemas, MigrationsParameter, Schema, SchemaTypeRecord } from "@trust0/ridb-core";
-import { v4 as uuidv4 } from 'uuid';
-
-export type StorageClass<T extends SchemaTypeRecord> = {
-  create: (
-    name: string,
-    schemas: T,
-    options: any
-  ) => Promise<BaseStorage<T>>;
-}
-
-export enum StorageType {
-  InMemory = "InMemory",
-  IndexDB = "IndexDB"
-}
-
-export type StartOptions<T extends SchemaTypeRecord> = {
-  storageType?: StorageClass<T> | StorageType;
-  password?: string;
-  dbName?: string;
-  [name: string]: any
-}
-
-/**
- * Options for the RIDB constructor.
- *
- * @typedef {DBOptions}
- * @template {SchemaTypeRecord} [T=SchemaTypeRecord] 
- */
-export type DBOptions<T extends SchemaTypeRecord = SchemaTypeRecord> = {
-  /**
-   * @deprecated Use the dbName option in the start method instead.
-   */
-  dbName?: string,
-  schemas: T,
-  plugins?: Array<typeof BasePlugin>,
-  worker?: boolean
-} & MigrationsParameter<T>
-
-// @ts-ignore @ignore
-import wasmBuffer from "@trust0/ridb-core/wasm";
-
-let loaded : typeof import("@trust0/ridb-core") | undefined;
-
-export async function WasmInternal() {
-    if (!loaded) {
-        const module = await import("@trust0/ridb-core");
-        const wasmInstance = module.initSync(wasmBuffer);
-        await module.default(wasmInstance);
-        loaded = module;
-    }
-    return loaded;
-};
-
-export type PendingRequests = Map<
-  string,
-  { resolve: (resp: any) => void; reject: (err: any) => void }
->;
+export * from './types';
+export * from './wasm';
 
 
-export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
-  private _db: Database<T> | undefined;
+export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> extends RIDBCore<T> {
+  
   private _worker: SharedWorker | undefined;
   private _sessionId: string | undefined;
-  public started: boolean = false;
-
-  private pendingRequests:PendingRequests = new Map();
-
-  private get dbName() {
-    return this.options.dbName;
-  }
-
-  private get schemas() {
-    return this.options.schemas;
-  }
-
-  private get migrations() {
-    return this.options.migrations ?? {} as MigrationPathsForSchemas<T>;
-  }
-
-  private get plugins() {
-    return this.options.plugins ?? [];
-  }
 
   get useWorker() {
     const useWorker = this.options.worker ?? false;
@@ -203,38 +141,12 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
     return this.db?.authenticate(password) ?? false;
   }
 
-  /**
-   * Creates an instance of RIDB.
-   * @param options
-   */
-  constructor(private options: DBOptions<T>) { }
-
-  private async getStorageType<T extends StorageType>(storageType: T) {
-    const { InMemory, IndexDB } = await WasmInternal();
-    return storageType === StorageType.InMemory ?
-      InMemory :
-      IndexDB;
-  }
-
-  /**
-   * Gets the database instance. Throws an error if the database has not been started.
-   * @throws Will throw an error if the database is not started.
-   * @private
-   */
-  private get db() {
-    if (!this._db) {
-      throw new Error("Start the database first");
-    }
-    return this._db;
-  }
-
   private get worker() {
     if (!this._worker) {
       throw new Error("Start the worker first");
     }
     return this._worker;
   }
-
 
   /**
    * Gets the collections from the database.
@@ -280,69 +192,26 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
     return this.useWorker ? this.workerCollections : this.dbCollections;
   }
 
-  private createWorker() {
-    let worker: SharedWorker | undefined;
-    try {
-      worker = new SharedWorker(new URL('@trust0/ridb/worker', import.meta.url), { type: 'module' });
-    } catch (err) {
-      const workerPath = require.resolve('@trust0/ridb/worker');
-      worker = new SharedWorker(workerPath, { type: 'module' });
-    }
-    worker.port.onmessage = this.handleWorkerMessage.bind(this);
-    return worker;
-  }
-
-  private async handleWorkerMessage(event: MessageEvent) {
-    const { RIDBError } = await WasmInternal();
-    const { requestId, status, data } = event.data || {};
-    console.log('[RIDBWorker] Received message from worker:', event.data);
-    if (requestId && this.pendingRequests.has(requestId)) {
-      const pendingRequest = this.pendingRequests.get(requestId)!;
-      if (status === 'success') {
-        console.log(`[RIDBWorker] Request ${requestId} successful. Data:`, data);
-        pendingRequest.resolve(data);
-      } else {
-        console.error(`[RIDBWorker] Request ${requestId} failed. Error:`, data);
+  private async initializeWorker() {
+    const { worker, sessionId } = createWorkerInstance();
+    this._worker = worker;
+    this._sessionId = sessionId;
+    setupWorkerMessageHandler(worker, this.pendingRequests, async (event) => {
+      const { RIDBError } = await WasmInternal();
+      // If the event contains error data, convert it to a proper error object
+      const { requestId, status, data } = event.data || {};
+      if (status === 'error' && requestId && this.pendingRequests.has(requestId)) {
+        const pendingRequest = this.pendingRequests.get(requestId)!;
         const error = RIDBError.from(data);
         pendingRequest.reject(error);
+        this.pendingRequests.delete(requestId);
       }
-      this.pendingRequests.delete(requestId);
-    } 
-  }
-
-  private async createDatabase(options?: StartOptions<T>) {
-    await WasmInternal();
-    const { storageType, password } = options ?? {};
-    const StorageClass = typeof storageType === "string" ?
-      await this.getStorageType(storageType) :
-      storageType ?? undefined;
-    if (StorageClass && !StorageClass.create) {
-      throw new Error("Your storage does not have an async create function, please check documentation")
-    }
-    const dbName = options?.dbName ?? this.dbName;
-    if (!dbName) {
-      throw new Error("dbName is required");
-    }
-    const storage = StorageClass ?
-      await StorageClass.create(dbName, this.schemas, options) :
-      undefined;
-
-    return Database.create<T>(
-      dbName,
-      this.schemas,
-      this.migrations,
-      this.plugins,
-      {
-        apply: (plugins: Array<typeof BasePlugin> = []) => plugins.map((Plugin) => new Plugin()),
-      },
-      password,
-      storage
-    );
+    });
   }
 
   /**
    * Starts the database.
-   * @returns {Promise<Database<T>>} A promise that resolves to the database instance.
+   * @returns {Promise<void>} A promise that resolves when the database is started.
    * @param options
    */
   async start(
@@ -350,13 +219,15 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
   ): Promise<void> {
     const withWorker = this.useWorker;
     if (withWorker) {
-      this._sessionId ??= uuidv4();
-      this._worker ??= this.createWorker();
+      if (!this._worker) {
+        await this.initializeWorker();
+      }
+      
       return new Promise((resolve, reject) => {
         this.pendingRequests.set(this._sessionId!, { resolve, reject });
         this.worker.port.postMessage({
           action: 'start',
-          requestId:this._sessionId!,
+          requestId: this._sessionId!,
           data: {
             dbName: this.options.dbName ?? this.dbName,
             schemas: this.options.schemas,
@@ -377,7 +248,7 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
     if (this.useWorker) {
       this._worker?.port.postMessage({
         action: 'close',
-        requestId:this._sessionId!,
+        requestId: this._sessionId!,
         data: {
           dbName: this.options.dbName,
         }

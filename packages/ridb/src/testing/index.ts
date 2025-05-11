@@ -1,6 +1,6 @@
 
 
-import { StorageClass, type StorageType } from '../';
+import { StorageClass, StorageType } from '../types';
 import { UnitTests, BenchTests } from './test/schemas.test';
 
 

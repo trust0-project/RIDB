@@ -1,5 +1,5 @@
-import { SchemaTypeRecord, RIDBError } from '@trust0/ridb-core';
-import { RIDB } from './index';
+import { RIDBError } from '@trust0/ridb-core';
+import { WorkerDB } from './worker-core';
 
 // The SharedWorkerGlobalScope interface
 interface SharedWorkerGlobalScope {
@@ -7,9 +7,9 @@ interface SharedWorkerGlobalScope {
 }
 
 /**
- * Maps a dbName -> RIDB instance
+ * Maps a dbName -> WorkerDB instance
  */
-const dbMap = new Map<string, RIDB>();
+const dbMap = new Map<string, WorkerDB>();
 
 /**
  * Tracks which ports are using a given dbName.
@@ -29,43 +29,22 @@ function requireDB(data: any) {
     return dbMap.get(data.dbName)!;
 }
 
-async function find(db: RIDB<SchemaTypeRecord>, data: any) {
+async function executeDBOperation(db: WorkerDB, action: string, data: any) {
     const { collection, body } = data;
-    return db.collections[collection].find(body);
-}
-
-async function count(db: RIDB<SchemaTypeRecord>, data: any) {
-    const { collection, body } = data;
-    return db.collections[collection].count(body);
-}
-
-async function create(db: RIDB<SchemaTypeRecord>, data: any) {
-    const { collection, body } = data;
-    return db.collections[collection].create(body);
-}
-
-async function update(db: RIDB<SchemaTypeRecord>, data: any) {
-    const { collection, body } = data;
-    return db.collections[collection].update(body);
-}
-
-async function findById(db: RIDB<SchemaTypeRecord>, data: any) {
-    const { collection, id } = data;
-    return db.collections[collection].findById(id);
-}
-
-function getRequest(action: string) {
+    
     switch (action) {
         case 'find':
-            return find;
+            return db.find(collection, body);
         case 'count':
-            return count;
+            return db.count(collection, body);
         case 'create':
-            return create;
-        case 'findById':
-            return findById;
+            return db.create(collection, body);
         case 'update':
-            return update;
+            return db.update(collection, body);
+        case 'findById':
+            return db.findById(collection, body);
+        case 'delete':
+            return db.delete(collection, body);
         default:
             throw new Error(`Unknown action: ${action}`);
     }
@@ -80,20 +59,14 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
     try {
         switch (action) {
             case 'start': {
-                const { dbName, schemas, migrations,options } = data;
+                const { dbName, schemas, migrations, options } = data;
                 let db = dbMap.get(dbName);
 
                 if (!db) {
-                    db = new RIDB({ 
-                        dbName, 
-                        schemas, 
-                        migrations, 
-                        worker: false 
-                    });
+                    db = new WorkerDB(dbName, schemas, migrations);
                     dbMap.set(dbName, db);
                 } 
                 
-
                 // Track usage of this db by the current port
                 let portSet = dbUsageMap.get(dbName);
                 if (!portSet) {
@@ -103,7 +76,7 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
                 portSet.add(port);
 
                 await db.start(options);
-                await db.authenticate(options.password ?? '');
+                await db.authenticate(options?.password ?? '');
 
                 port.postMessage({
                     status: 'success',
@@ -123,10 +96,11 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
 
                         // If no ports are using this db anymore, tear it down
                         if (usageSet.size === 0) {
-                            console.log(`[Worker] Tearing down RIDB instance for: ${dbName}`);
-                            // If your RIDB class has a close or teardown method,
-                            // call it here. For example:
-                            // await dbMap.get(dbName)?.close();
+                            console.log(`[Worker] Tearing down DB instance for: ${dbName}`);
+                            const db = dbMap.get(dbName);
+                            if (db) {
+                                await db.close();
+                            }
                             dbMap.delete(dbName);
                             dbUsageMap.delete(dbName);
                         }
@@ -138,13 +112,9 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
                 break;
             }
             default: {
-                // For other actions, we require the database and run the request
+                // For other actions, we require the database and run the operation
                 const db = requireDB(data);
-                const request = getRequest(action);
-                if (!request) {
-                    throw new Error(`Unknown action: ${action}`);
-                }
-                const result = await request(db, data);
+                const result = await executeDBOperation(db, action, data);
                 port.postMessage({ 
                     status: 'success', 
                     action: action, 
