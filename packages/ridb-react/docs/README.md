@@ -12,3 +12,4 @@
 
 - [RIDBDatabase](functions/RIDBDatabase.md)
 - [useRIDB](functions/useRIDB.md)
+- [useRIDBInstance](functions/useRIDBInstance.md)

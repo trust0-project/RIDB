@@ -1,3 +1,13 @@
+## 1.2.19 (2025-05-11)
+
+### 🩹 Fixes
+
+- improve react testing and integration ([b71ce91](https://github.com/trust0-project/RIDB/commit/b71ce91))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.2.18 (2025-05-11)
 
 ### 🧱 Updated Dependencies
