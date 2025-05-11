@@ -1,3 +1,14 @@
+## 1.5.20 (2025-05-11)
+
+### 🩹 Fixes
+
+- ridb create database fix ([4815311](https://github.com/trust0-project/RIDB/commit/4815311))
+- deprecating dbOptions.dbName ([f66b64a](https://github.com/trust0-project/RIDB/commit/f66b64a))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.19 (2025-05-11)
 
 ### 🩹 Fixes

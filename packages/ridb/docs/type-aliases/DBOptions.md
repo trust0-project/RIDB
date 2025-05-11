@@ -8,15 +8,19 @@
 
 > **DBOptions**\<`T`\> = `object` & `MigrationsParameter`\<`T`\>
 
-Defined in: [index.ts:141](https://github.com/trust0-project/RIDB/blob/7186e3c53446e30ba6bd6372c643e48c6837c634/packages/ridb/src/index.ts#L141)
+Defined in: [index.ts:141](https://github.com/trust0-project/RIDB/blob/4815311545e43c9df945cbfb5e22c6947392dfb7/packages/ridb/src/index.ts#L141)
 
 Options for the RIDB constructor.
 
 ## Type declaration
 
-### dbName
+### ~~dbName?~~
 
-> **dbName**: `string`
+> `optional` **dbName**: `string`
+
+#### Deprecated
+
+Use the dbName option in the start method instead.
 
 ### plugins?
 

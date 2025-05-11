@@ -8,7 +8,7 @@
 
 > **RIDBDatabase**\<`T`\>(`__namedParameters`): `Element`
 
-Defined in: [index.tsx:24](https://github.com/trust0-project/RIDB/blob/7186e3c53446e30ba6bd6372c643e48c6837c634/packages/ridb-react/src/index.tsx#L24)
+Defined in: [index.tsx:24](https://github.com/trust0-project/RIDB/blob/4815311545e43c9df945cbfb5e22c6947392dfb7/packages/ridb-react/src/index.tsx#L24)
 
 ## Type Parameters
 
