@@ -126,8 +126,9 @@ export enum StorageType {
 }
 
 export type StartOptions<T extends SchemaTypeRecord> = {
-  storageType?: StorageClass<T> | StorageType,
-  password?: string,
+  storageType?: StorageClass<T> | StorageType;
+  password?: string;
+  dbName?: string;
   [name: string]: any
 }
 
@@ -193,10 +194,6 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
     const useWorker = this.options.worker ?? false;
     const supportsWorker = typeof SharedWorker !== 'undefined';
     return useWorker && supportsWorker;
-  }
-
-  authenticate(password: string) {
-    return this.db?.authenticate(password) ?? false;
   }
 
   /**
@@ -352,7 +349,7 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
           action: 'start',
           requestId:this._sessionId!,
           data: {
-            dbName: this.options.dbName,
+            dbName: this.options.dbName ?? this.dbName,
             schemas: this.options.schemas,
             migrations: this.options.migrations || {},
             options
@@ -362,6 +359,7 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
     } else {
       this._db ??= await this.createDatabase(options);
       await this.db.start();
+      await this.db.authenticate(options?.password ?? "");
     }
     this.started = true;
   }
