@@ -1,4 +1,4 @@
-import { SchemaTypeRecord, BaseStorage, BasePlugin, MigrationsParameter } from "@trust0/ridb-core";
+import { SchemaTypeRecord, BaseStorage, BasePlugin, MigrationsParameter, Collection, Schema } from "@trust0/ridb-core";
 
 export type StorageClass<T extends SchemaTypeRecord> = {
     create: (
@@ -41,4 +41,34 @@ export type StorageClass<T extends SchemaTypeRecord> = {
     string,
     { resolve: (resp: any) => void; reject: (err: any) => void }
   >;
+  
+
+  export interface RIDBAbstract<T extends SchemaTypeRecord> {
+    /**
+     * Start the database with the given options
+     */
+    start(options?: StartOptions<T>): Promise<void>;
+    
+    /**
+     * Close the database connection
+     */
+    close(): Promise<void>;
+    
+    /**
+     * Get the collections for this database
+     */
+    getCollections(): { [name in keyof T]: Collection<Schema<T[name]>> };
+    
+    /**
+     * Check if the database has been started
+     */
+    isStarted(): boolean;
+  } 
+
+
+  export interface WorkerInstance {
+    worker: SharedWorker;
+    sessionId: string;
+  }
+  
   
