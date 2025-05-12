@@ -17,7 +17,7 @@ export class WorkerDBAdapter<T extends SchemaTypeRecord> implements RIDBAbstract
  createWorkerInstance(): WorkerInstance {
   const sessionId = uuidv4();
   let worker: SharedWorker;
-
+  
   try {
     worker = new SharedWorker(new URL('@trust0/ridb/worker', import.meta.url), { type: 'module' });
   } catch (err) {

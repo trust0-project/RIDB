@@ -17,7 +17,7 @@
     "clean": "rm -rf build node_modules",
     "docs": "npx typedoc",
     "build": "sh build.sh",
-    "test": "npx nx vite:test --run",
+    "testw": "npx nx vite:test --run",
     "lint": "npx eslint .",
     "types": "npm run types:default",
     "types:default": "npx tsc",

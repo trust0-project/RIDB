@@ -13,7 +13,6 @@ export class RIDBFactory {
    */
   static createAdapter<T extends SchemaTypeRecord>(options: DBOptions<T>): RIDBAbstract<T> {
     const useWorker = options.worker && typeof SharedWorker !== 'undefined';
-    
     if (useWorker) {
         return new WorkerDBAdapter<T>(options);
     } else {
