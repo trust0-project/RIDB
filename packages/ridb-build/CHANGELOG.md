@@ -1,3 +1,13 @@
+## 0.0.12 (2025-05-12)
+
+### 🩹 Fixes
+
+- improvements ([70af937](https://github.com/trust0-project/RIDB/commit/70af937))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.11 (2025-05-11)
 
 ### 🩹 Fixes

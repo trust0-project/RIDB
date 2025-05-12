@@ -12,6 +12,11 @@
 
 - [RIDB](classes/RIDB.md)
 
+## Interfaces
+
+- [RIDBAbstract](interfaces/RIDBAbstract.md)
+- [WorkerInstance](interfaces/WorkerInstance.md)
+
 ## Type Aliases
 
 - [DBOptions](type-aliases/DBOptions.md)

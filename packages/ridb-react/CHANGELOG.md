@@ -1,3 +1,19 @@
+## 1.2.25 (2025-05-12)
+
+### 🩹 Fixes
+
+- testing ([cff6912](https://github.com/trust0-project/RIDB/commit/cff6912))
+- improvements ([70af937](https://github.com/trust0-project/RIDB/commit/70af937))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.12
+- Updated @trust0/ridb to 1.5.22
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.2.24 (2025-05-11)
 
 ### 🩹 Fixes
