@@ -12,7 +12,7 @@
 </p>
 
 ## Documentation
-This package provides everything u need to use RIDB on react easily
+This package provides everything you need to use RIDB with React easily
 
 ## Install
 ```
@@ -22,7 +22,8 @@ npm i @trust0/ridb-react
 ## Usage
 ```typescript
 import React from 'react'
-import { Database, useDatabase, DatabaseProvider } from '@trust0/ridb-react'
+import { RIDBDatabase, useRIDB } from '@trust0/ridb-react'
+import { SchemaFieldType } from '@trust0/ridb'
 ```
 
 Create your schemas and type them for better inference.
@@ -45,22 +46,24 @@ const schemas = {
 type DatabaseSchemas = typeof schemas;
 ```
 
-Now just create your component and use the `useDatabase` hook to get the database instance.
+Now just create your component and use the `useRIDB` hook to get the database instance.
 
 ```typescript
 const MyComponent: React.FC = () => {
-    const db = useDatabase<DatabaseSchemas>();
+    const db = useRIDB<DatabaseSchemas>();
     const [isDbReady, setIsDbReady] = React.useState(false);
 
     React.useEffect(() => {
-        const startDb = async () => {
-            if (db) {
-                await db.start();
-                setIsDbReady(true);
-            }
-        };
-        startDb();
-    }, [db]);
+       if (!isDbReady) {
+        db.start()
+         .then(() => {
+          setIsDbReady(true);
+         })
+         .catch((err) => {
+          console.error(err);
+         });
+       }
+    }, [isDbReady]);
 
     if (!db) {
         return <div>No database available</div>;
@@ -76,12 +79,12 @@ const MyComponent: React.FC = () => {
 };
 ```
 
-Wrap your component with the `DatabaseProvider` component to provide the database instance to your component.
+Wrap your component with the `RIDBDatabase` component to provide the database instance to your component.
 
 ```typescript
-<DatabaseProvider>
+<RIDBDatabase dbName="myDB" schemas={schemas}>
     <MyComponent />
-</DatabaseProvider>
+</RIDBDatabase>
 ```
 
-All the database methods and operations from RIDB are supported, for more details check the [RIDB documentation](https://github.com/trust0-project/RIDB/packages/ridb/README.md)
+All the database methods and operations from RIDB are supported, for more details check the [RIDB documentation](https://github.com/trust0-project/RIDB/blob/main/packages/ridb/README.md)
