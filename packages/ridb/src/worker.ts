@@ -1,5 +1,6 @@
 import { RIDBError } from '@trust0/ridb-core';
-import { WorkerDB } from './worker-core';
+import { RIDBCore } from './core';
+import { SchemaTypeRecord } from '@trust0/ridb-core';
 
 // The SharedWorkerGlobalScope interface
 interface SharedWorkerGlobalScope {
@@ -7,9 +8,9 @@ interface SharedWorkerGlobalScope {
 }
 
 /**
- * Maps a dbName -> WorkerDB instance
+ * Maps a dbName -> RIDBCore instance
  */
-const dbMap = new Map<string, WorkerDB>();
+const dbMap = new Map<string, RIDBCore<any>>();
 
 /**
  * Tracks which ports are using a given dbName.
@@ -29,22 +30,23 @@ function requireDB(data: any) {
     return dbMap.get(data.dbName)!;
 }
 
-async function executeDBOperation(db: WorkerDB, action: string, data: any) {
+async function executeDBOperation(db: RIDBCore<any>, action: string, data: any) {
     const { collection, body } = data;
+    const collections = db.collections;
     
     switch (action) {
         case 'find':
-            return db.find(collection, body);
+            return collections[collection].find(body);
         case 'count':
-            return db.count(collection, body);
+            return collections[collection].count(body);
         case 'create':
-            return db.create(collection, body);
+            return collections[collection].create(body);
         case 'update':
-            return db.update(collection, body);
+            return collections[collection].update(body);
         case 'findById':
-            return db.findById(collection, body);
+            return collections[collection].findById(body);
         case 'delete':
-            return db.delete(collection, body);
+            return collections[collection].delete(body);
         default:
             throw new Error(`Unknown action: ${action}`);
     }
@@ -63,7 +65,11 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
                 let db = dbMap.get(dbName);
 
                 if (!db) {
-                    db = new WorkerDB(dbName, schemas, migrations);
+                    db = new RIDBCore({
+                        dbName,
+                        schemas,
+                        migrations: migrations || {},
+                    });
                     dbMap.set(dbName, db);
                 } 
                 
@@ -76,7 +82,6 @@ async function handleMessage(event: MessageEvent, port: MessagePort) {
                 portSet.add(port);
 
                 await db.start(options);
-                await db.authenticate(options?.password ?? '');
 
                 port.postMessage({
                     status: 'success',

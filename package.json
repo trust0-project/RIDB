@@ -11,9 +11,9 @@
   ],
   "scripts": {
     "clean": "npx nx run-many --target=clean --verbose && rm -rf node_modules",
-    "docs": "npx nx run-many -p @trust0/ridb-build @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react --target=docs --verbose",
+    "docs": "npx nx run-many -p @trust0/ridb-build @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react --target=docs",
     "build": "npx nx run-many --verbose -p @trust0/ridb-build @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react --target=build",
-    "test": "npx nx run-many --target=test",
+    "test": "npx nx run-many --target=test --verbose",
     "lint": "npx nx run-many --target=lint"
   },
   "devDependencies": {

@@ -242,7 +242,7 @@ export const BenchTests = (platform: string, storages: StoragesType[]) => {
     })
 }
 
-export const UnitTests = (platform: string, storages: StoragesType[]) => {
+export const UnitTests = (platform: string, storages: StoragesType[], worker = false) => {
     return describe(`[${platform}] Testing`, () => {
         let dbName: string;
 
@@ -252,11 +252,12 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
         storages.forEach(({ name, storage }) => {
 
-            describe(`[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}] Testing Storage`, () => {
+            describe(`[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}] Testing Storage with worker: ${worker ? 'true' : 'false'}`, () => {
 
                 it('It should be able to create a new document from JSON schema', async () => {
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 demo: {
@@ -295,6 +296,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                     const db = new RIDB(
                         {
                             dbName,
+                            worker,
                             schemas: {
                                 demo: {
                                     version: 0 as const,
@@ -341,6 +343,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                     const db = new RIDB(
                         {
                             dbName,
+                            worker,
                             schemas: {
                                 demo2: {
                                     version: 0 as const,
@@ -415,6 +418,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 it("Should be able to create a default database with a valid schema", async () => {
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 demo: {
@@ -440,6 +444,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 it("Should be able to find a created schema entry", async () => {
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 demo: {
@@ -493,6 +498,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 it("Should be able to count a created schema entry", async () => {
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 demo: {
@@ -549,6 +555,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error with a schema with invalid type", async () => {
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 demo: {
@@ -568,6 +575,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error when schema properties type is invalid", async () => {
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 demo: {
@@ -592,6 +600,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error when the minLength is lower than 0", async () => {
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 demo: {
@@ -616,6 +625,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error when schemaType with a property that has min higher than max", async () => {
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 demo: {
@@ -641,6 +651,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 it("Should throw an error if migrations are declared wrong", async () => {
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 demo: {
@@ -674,6 +685,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 it("Should handle multiple collections independently", async () => {
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 users: {
@@ -735,6 +747,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 it("Should handle migrations and integrity with default fields", async () => {
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 demo: {
@@ -789,6 +802,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                     const db = new RIDB(
                         {
+                            worker,
                             dbName,
                             schemas: {
                                 demo: schema
@@ -824,6 +838,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 })
                 it('Should handle array types in schema', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             demo: {
@@ -854,6 +869,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                 it('Should handle nested object properties', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             demo: {
@@ -893,6 +909,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                 it('Should throw error when required property is missing', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             demo: {
@@ -917,6 +934,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                 it('Should support boolean types in schema', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             demo: {
@@ -944,6 +962,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                 it('Should apply default values when creating documents', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             demo: {
@@ -970,6 +989,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                 it('Should handle updates without affecting unspecified fields', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             demo: {
@@ -1005,6 +1025,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                 it('Should validate maxItems constraint on arrays', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             demo: {
@@ -1034,6 +1055,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                 it('Should handle deletion of documents', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             demo: {
@@ -1062,6 +1084,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                 it('Should enforce maxLength on string properties', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             demo: {
@@ -1088,6 +1111,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                 it('Should handle querying with complex conditions', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             users: {
@@ -1142,6 +1166,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                     }
 
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             users: usersSchema
@@ -1183,6 +1208,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                 it('Should work correctly without indexes', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             users: {
@@ -1223,6 +1249,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
 
                 it('Should maintain index integrity during CRUD operations', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             users: {
@@ -1280,6 +1307,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                 it('Should correctly count documents using advanced indexing', async () => {
                     // Define the schema with indexes
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             users: {
@@ -1370,6 +1398,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents with age > 30', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {
@@ -1412,6 +1441,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents with age >= 25 AND status = "active"', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {
@@ -1453,6 +1483,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents with age < 20', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {
@@ -1491,6 +1522,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents with (age <= 25) OR (status = "pending")', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {
@@ -1534,6 +1566,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents with age in [18, 25, 28]', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {
@@ -1574,6 +1607,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents (age >= 25) AND (status in ["active","pending"])', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {
@@ -1616,6 +1650,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents where (age < 20) OR (status = "pending")', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {
@@ -1660,6 +1695,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents with status in ["active","pending"] AND ( age >= 30 OR age < 20 )', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {
@@ -1705,6 +1741,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents where age not in [25, 30]', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {
@@ -1753,6 +1790,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents where status not in ["active", "pending"]', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {
@@ -1800,6 +1838,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents where age = 25', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {
@@ -1841,6 +1880,7 @@ export const UnitTests = (platform: string, storages: StoragesType[]) => {
                  */
                 it('should retrieve documents where age != 25', async () => {
                     const db = new RIDB({
+                        worker,
                         dbName,
                         schemas: {
                             smallIndexTest: {

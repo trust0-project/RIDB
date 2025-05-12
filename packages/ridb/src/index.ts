@@ -1,17 +1,11 @@
 import {
-  BasePlugin,
   Collection,
-  Database,
-  MigrationPathsForSchemas,
   Schema,
   SchemaTypeRecord
 } from "@trust0/ridb-core";
 
-import { v4 as uuidv4 } from 'uuid';
-import { WasmInternal } from "./wasm";
-import { StartOptions } from "./types";
-import { RIDBCore } from "./core";
-import { createWorkerInstance, setupWorkerMessageHandler } from "./worker-factory";
+import { DBOptions, RIDBAbstract, StartOptions } from "./types";
+import { RIDBFactory } from "./factory";
 
 /**
  * @packageDocumentation
@@ -125,141 +119,45 @@ import { createWorkerInstance, setupWorkerMessageHandler } from "./worker-factor
 export * from './types';
 export * from './wasm';
 
-
-export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> extends RIDBCore<T> {
+/**
+ * Main RIDB class that provides database functionality with optional worker support
+ */
+export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
+  private adapter: RIDBAbstract<T>;
   
-  private _worker: SharedWorker | undefined;
-  private _sessionId: string | undefined;
-
-  get useWorker() {
-    const useWorker = this.options.worker ?? false;
-    const supportsWorker = typeof SharedWorker !== 'undefined';
-    return useWorker && supportsWorker;
-  }
-
-  public authenticate(password: string) {
-    return this.db?.authenticate(password) ?? false;
-  }
-
-  private get worker() {
-    if (!this._worker) {
-      throw new Error("Start the worker first");
-    }
-    return this._worker;
+  /**
+   * Creates a new RIDB instance
+   */
+  constructor(private options: DBOptions<T>) {
+    this.adapter = RIDBFactory.createAdapter<T>(options);
   }
 
   /**
-   * Gets the collections from the database.
-   * @returns The collections object.
+   * Get the collections from the database
    */
-  private get dbCollections() {
-    return this.db.collections;
-  }
-
-  private get workerCollections(): { [name in keyof T]: Collection<Schema<T[name]>>; } {
-    const { schemas } = this.options;
-    const result = {} as { [name in keyof T]: Collection<Schema<T[name]>>; };
-    const validOperations = ['find', 'count', 'findById', 'update', 'create', 'delete'];
-    for (const key of Object.keys(schemas) as Array<keyof T>) {
-      result[key] = new Proxy({} as any, {
-        get: (target, prop, receiver) => {
-          if (validOperations.includes(prop.toString())) {
-            return async (data: any) => {
-              const requestId = uuidv4();
-              console.log(`[RIDBWorker] Posting message to worker. Operation: ${prop.toString()}, Collection: ${String(key)}, Data:`, data);
-              return new Promise((resolve, reject) => {
-                this.pendingRequests.set(requestId, { resolve, reject });
-                this.worker.port.postMessage({
-                  action: prop.toString(),
-                  requestId,
-                  data: {
-                    dbName: this.options.dbName,
-                    collection: key,
-                    body: data
-                  }
-                });
-              });
-            };
-          }
-          return Reflect.get(target, prop, receiver);
-        }
-      });
-    }
-    return result;
-  }
-
-  get collections() {
-    return this.useWorker ? this.workerCollections : this.dbCollections;
-  }
-
-  private async initializeWorker() {
-    const { worker, sessionId } = createWorkerInstance();
-    this._worker = worker;
-    this._sessionId = sessionId;
-    setupWorkerMessageHandler(worker, this.pendingRequests, async (event) => {
-      const { RIDBError } = await WasmInternal();
-      // If the event contains error data, convert it to a proper error object
-      const { requestId, status, data } = event.data || {};
-      if (status === 'error' && requestId && this.pendingRequests.has(requestId)) {
-        const pendingRequest = this.pendingRequests.get(requestId)!;
-        const error = RIDBError.from(data);
-        pendingRequest.reject(error);
-        this.pendingRequests.delete(requestId);
-      }
-    });
+  get collections(): { [name in keyof T]: Collection<Schema<T[name]>> } {
+    return this.adapter.getCollections();
   }
 
   /**
-   * Starts the database.
-   * @returns {Promise<void>} A promise that resolves when the database is started.
-   * @param options
+   * Starts the database
    */
-  async start(
-    options?: StartOptions<T>
-  ): Promise<void> {
-    const withWorker = this.useWorker;
-    if (withWorker) {
-      if (!this._worker) {
-        await this.initializeWorker();
-      }
-      
-      return new Promise((resolve, reject) => {
-        this.pendingRequests.set(this._sessionId!, { resolve, reject });
-        this.worker.port.postMessage({
-          action: 'start',
-          requestId: this._sessionId!,
-          data: {
-            dbName: this.options.dbName ?? this.dbName,
-            schemas: this.options.schemas,
-            migrations: this.options.migrations || {},
-            options
-          }
-        });
-      });
-    } else {
-      this._db ??= await this.createDatabase(options);
-      await this.db.start();
-      await this.db.authenticate(options?.password ?? "");
-    }
-    this.started = true;
+  async start(options?: StartOptions<T>): Promise<void> {
+    await this.adapter.start(options);
   }
 
-  async close() {
-    if (this.useWorker) {
-      this._worker?.port.postMessage({
-        action: 'close',
-        requestId: this._sessionId!,
-        data: {
-          dbName: this.options.dbName,
-        }
-      });
-      await this._worker?.port.close();
-      this._worker = undefined;
-    } else {
-      await this.db.close();
-      this._db = undefined;
-    }
-    this.started = false;
+  /**
+   * Closes the database
+   */
+  async close(): Promise<void> {
+    await this.adapter.close();
+  }
+
+  /**
+   * Whether the database has been started
+   */
+  get started(): boolean {
+    return this.adapter.isStarted();
   }
 }
 
