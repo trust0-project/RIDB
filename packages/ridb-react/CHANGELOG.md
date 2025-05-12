@@ -1,3 +1,13 @@
+## 1.2.26 (2025-05-12)
+
+### 🩹 Fixes
+
+- improve ridb react readme ([de5a409](https://github.com/trust0-project/RIDB/commit/de5a409))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.2.25 (2025-05-12)
 
 ### 🩹 Fixes

@@ -6,7 +6,7 @@
 
 # Class: RIDB\<T\>
 
-Defined in: [index.ts:125](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/index.ts#L125)
+Defined in: [index.ts:125](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L125)
 
 Main RIDB class that provides database functionality with optional worker support
 
@@ -22,7 +22,7 @@ Main RIDB class that provides database functionality with optional worker suppor
 
 > **new RIDB**\<`T`\>(`options`): `RIDB`\<`T`\>
 
-Defined in: [index.ts:131](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/index.ts#L131)
+Defined in: [index.ts:131](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L131)
 
 Creates a new RIDB instance
 
@@ -42,7 +42,7 @@ Creates a new RIDB instance
 
 > `private` **adapter**: [`RIDBAbstract`](../interfaces/RIDBAbstract.md)\<`T`\>
 
-Defined in: [index.ts:126](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/index.ts#L126)
+Defined in: [index.ts:126](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L126)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [index.ts:126](https://github.com/trust0-project/RIDB/blob/96bdd9e98
 
 > `private` **options**: [`DBOptions`](../type-aliases/DBOptions.md)\<`T`\>
 
-Defined in: [index.ts:131](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/index.ts#L131)
+Defined in: [index.ts:131](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L131)
 
 ## Accessors
 
@@ -60,7 +60,7 @@ Defined in: [index.ts:131](https://github.com/trust0-project/RIDB/blob/96bdd9e98
 
 > **get** **collections**(): \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
 
-Defined in: [index.ts:138](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/index.ts#L138)
+Defined in: [index.ts:138](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L138)
 
 Get the collections from the database
 
@@ -76,7 +76,7 @@ Get the collections from the database
 
 > **get** **started**(): `boolean`
 
-Defined in: [index.ts:159](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/index.ts#L159)
+Defined in: [index.ts:159](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L159)
 
 Whether the database has been started
 
@@ -90,7 +90,7 @@ Whether the database has been started
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [index.ts:152](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/index.ts#L152)
+Defined in: [index.ts:152](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L152)
 
 Closes the database
 
@@ -104,7 +104,7 @@ Closes the database
 
 > **start**(`options?`): `Promise`\<`void`\>
 
-Defined in: [index.ts:145](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/index.ts#L145)
+Defined in: [index.ts:145](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L145)
 
 Starts the database
 

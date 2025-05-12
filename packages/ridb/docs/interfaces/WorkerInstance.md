@@ -6,7 +6,7 @@
 
 # Interface: WorkerInstance
 
-Defined in: [types.ts:69](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/types.ts#L69)
+Defined in: [types.ts:69](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L69)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:69](https://github.com/trust0-project/RIDB/blob/96bdd9e989
 
 > **sessionId**: `string`
 
-Defined in: [types.ts:71](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/types.ts#L71)
+Defined in: [types.ts:71](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L71)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [types.ts:71](https://github.com/trust0-project/RIDB/blob/96bdd9e989
 
 > **worker**: `SharedWorker`
 
-Defined in: [types.ts:70](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/types.ts#L70)
+Defined in: [types.ts:70](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L70)

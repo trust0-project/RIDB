@@ -6,7 +6,7 @@
 
 # Interface: RIDBAbstract\<T\>
 
-Defined in: [types.ts:46](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/types.ts#L46)
+Defined in: [types.ts:46](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L46)
 
 ## Type Parameters
 
@@ -20,7 +20,7 @@ Defined in: [types.ts:46](https://github.com/trust0-project/RIDB/blob/96bdd9e989
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [types.ts:55](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/types.ts#L55)
+Defined in: [types.ts:55](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L55)
 
 Close the database connection
 
@@ -34,7 +34,7 @@ Close the database connection
 
 > **getCollections**(): \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
 
-Defined in: [types.ts:60](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/types.ts#L60)
+Defined in: [types.ts:60](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L60)
 
 Get the collections for this database
 
@@ -48,7 +48,7 @@ Get the collections for this database
 
 > **isStarted**(): `boolean`
 
-Defined in: [types.ts:65](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/types.ts#L65)
+Defined in: [types.ts:65](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L65)
 
 Check if the database has been started
 
@@ -62,7 +62,7 @@ Check if the database has been started
 
 > **start**(`options?`): `Promise`\<`void`\>
 
-Defined in: [types.ts:50](https://github.com/trust0-project/RIDB/blob/96bdd9e989f3b9d3bb9f1e9e2333148433a17232/packages/ridb/src/types.ts#L50)
+Defined in: [types.ts:50](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L50)
 
 Start the database with the given options
 
