@@ -4,59 +4,107 @@ import { StartOptions, PendingRequests, RIDBAbstract, WorkerInstance, DBOptions 
 import { WasmInternal } from "../wasm";
 
 /**
- * An adapter for database operations that runs in a SharedWorker
+ * An adapter for database operations that runs in a SharedWorker.
+ * 
+ * This adapter provides a communication interface between the main thread and
+ * a SharedWorker that handles actual database operations. This allows database
+ * operations to be performed in a separate thread, improving performance and
+ * avoiding main thread blocking.
+ * 
+ * @template T The schema type record defining the database structure
  */
 export class WorkerDBAdapter<T extends SchemaTypeRecord> implements RIDBAbstract<T> {
+  /**
+   * The SharedWorker instance handling database operations
+   */
   private _worker: SharedWorker | undefined;
+  
+  /**
+   * Unique session ID for this worker connection
+   */
   private _sessionId: string | undefined;
+  
+  /**
+   * Flag indicating whether the database has been started
+   */
   private _started: boolean = false;
+  
+  /**
+   * Map of pending requests awaiting worker responses
+   */
   private _pendingRequests: PendingRequests = new Map();
-/**
- * Creates a shared worker instance for RIDB
- */
- createWorkerInstance(): WorkerInstance {
-  const sessionId = uuidv4();
-  let worker: SharedWorker;
   
-  try {
-    worker = new SharedWorker(new URL('@trust0/ridb/worker', import.meta.url), { type: 'module' });
-  } catch (err) {
-    const workerPath = require.resolve('@trust0/ridb/worker');
-    worker = new SharedWorker(workerPath, { type: 'module' });
-  }
-  
-  return { worker, sessionId };
-}
+  /**
+   * Creates a new WorkerDBAdapter instance.
+   * 
+   * @param options Database configuration options
+   */
+  constructor(protected options: DBOptions<T>) { }
 
-/**
- * Sets up worker message handling
- */
- setupWorkerMessageHandler(
-  worker: SharedWorker, 
-  pendingRequests: PendingRequests, 
-  onMessage?: (event: MessageEvent) => void
-) {
-  worker.port.onmessage = (event: MessageEvent) => {
-    const { requestId, status, data } = event.data || {};
+  /**
+   * Creates a new SharedWorker instance for RIDB.
+   * 
+   * This method attempts to create a worker using the dynamic import URL first,
+   * and falls back to require.resolve if that fails.
+   * 
+   * @returns An object containing the worker instance and a unique session ID
+   */
+  createWorkerInstance(): WorkerInstance {
+    const sessionId = uuidv4();
+    let worker: SharedWorker;
     
-    if (requestId && pendingRequests.has(requestId)) {
-      const pendingRequest = pendingRequests.get(requestId)!;
-      if (status === 'success') {
-        pendingRequest.resolve(data);
-      } else {
-        pendingRequest.reject(data);
+    try {
+      worker = new SharedWorker(new URL('@trust0/ridb/worker', import.meta.url), { type: 'module' });
+    } catch (err) {
+      const workerPath = require.resolve('@trust0/ridb/worker');
+      worker = new SharedWorker(workerPath, { type: 'module' });
+    }
+    
+    return { worker, sessionId };
+  }
+
+  /**
+   * Sets up message handling for worker communication.
+   * 
+   * This method configures the worker port to handle message events and resolve
+   * or reject pending promises based on the worker's response.
+   * 
+   * @param worker The SharedWorker instance to configure
+   * @param pendingRequests Map of pending requests awaiting responses
+   * @param onMessage Optional callback for additional message handling
+   */
+  setupWorkerMessageHandler(
+    worker: SharedWorker, 
+    pendingRequests: PendingRequests, 
+    onMessage?: (event: MessageEvent) => void
+  ) {
+    worker.port.onmessage = (event: MessageEvent) => {
+      const { requestId, status, data } = event.data || {};
+      
+      if (requestId && pendingRequests.has(requestId)) {
+        const pendingRequest = pendingRequests.get(requestId)!;
+        if (status === 'success') {
+          pendingRequest.resolve(data);
+        } else {
+          pendingRequest.reject(data);
+        }
+        pendingRequests.delete(requestId);
       }
-      pendingRequests.delete(requestId);
-    }
 
-    if (onMessage) {
-      onMessage(event);
-    }
-  };
-} 
+      if (onMessage) {
+        onMessage(event);
+      }
+    };
+  }
 
-constructor(protected options: DBOptions<T>) { }
-
+  /**
+   * Initializes the worker connection.
+   * 
+   * Creates a SharedWorker instance and sets up message handling
+   * for communication with the worker.
+   * 
+   * @private
+   */
   private async initializeWorker() {
     const { worker, sessionId } = this.createWorkerInstance();
     this._worker = worker;
@@ -73,6 +121,13 @@ constructor(protected options: DBOptions<T>) { }
     });
   }
 
+  /**
+   * Gets the initialized worker, ensuring it has been created.
+   * 
+   * @private
+   * @throws Error if the worker has not been started
+   * @returns The initialized SharedWorker instance
+   */
   private get worker() {
     if (!this._worker) {
       throw new Error("Start the worker first");
@@ -80,8 +135,21 @@ constructor(protected options: DBOptions<T>) { }
     return this._worker;
   }
   
+  /**
+   * The database name being used by this adapter
+   */
   private dbName!: string;
 
+  /**
+   * Starts the database with the provided options.
+   * 
+   * This method initializes the worker if needed, then sends a start message
+   * to the worker to initialize the database.
+   * 
+   * @param options Optional configuration for startup including storage type and encryption
+   * @returns A Promise that resolves when the database has successfully started
+   * @throws Error if dbName is missing
+   */
   async start(options?: StartOptions<T>): Promise<void> {
     if (!this._worker) {
       await this.initializeWorker();
@@ -109,6 +177,13 @@ constructor(protected options: DBOptions<T>) { }
     });
   }
 
+  /**
+   * Closes the database connection and releases worker resources.
+   * 
+   * Sends a close message to the worker and closes the worker port.
+   * 
+   * @returns A Promise that resolves when the database has been successfully closed
+   */
   async close(): Promise<void> {
     if (!this._worker) return;
     this.worker.port.postMessage({
@@ -123,6 +198,14 @@ constructor(protected options: DBOptions<T>) { }
     this._started = false;
   }
 
+  /**
+   * Gets the collections for this database.
+   * 
+   * Creates proxy objects that delegate collection operations to the worker,
+   * allowing transparent access to collections as if they were local.
+   * 
+   * @returns An object containing proxied collections for all schemas
+   */
   getCollections(): { [name in keyof T]: Collection<Schema<T[name]>> } {
     // Create proxy collections for worker communication
     const result = {} as { [name in keyof T]: Collection<Schema<T[name]>>; };
@@ -155,6 +238,11 @@ constructor(protected options: DBOptions<T>) { }
     return result;
   }
 
+  /**
+   * Checks if the database has been started.
+   * 
+   * @returns True if the database is started, false otherwise
+   */
   isStarted(): boolean {
     return this._started;
   }

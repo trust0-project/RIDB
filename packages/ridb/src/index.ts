@@ -24,7 +24,10 @@ import { RIDBFactory } from "./factory";
  * </p>
  * <h1>Introduction</h1>
  * 
- * ### Usage
+ * RIDB is a secure, lightweight database designed for the web with a focus on performance and ease of use.
+ * It supports multiple storage options, encryption, and migrations while maintaining a simple API.
+ * 
+ * ### Basic Usage
  * ```typescript
  * const db = new RIDB(
  *     {
@@ -44,9 +47,20 @@ import { RIDBFactory } from "./factory";
  *         } as const
  *     }
  * )
+ * 
+ * // Start the database
+ * await db.start();
+ * 
+ * // Access collections
+ * const demoCollection = db.collections.demo;
+ * 
+ * // Perform operations
+ * await demoCollection.insert({ id: "doc1", title: "Example" });
  * ```
  * 
  * ### Using with SharedWorker
+ * 
+ * Use the `worker` option to run RIDB in a SharedWorker for improved performance and concurrency:
  * 
  * ```typescript
  * const db = new RIDB({
@@ -68,18 +82,32 @@ import { RIDBFactory } from "./factory";
  * })
  * ```
  * 
- * ### Using with encryption plugin
- * You can also optionally specify storageType with a compatible storage of your choice and an optional password to enable encryption plugin
+ * ### Using with Encryption Plugin
+ * 
+ * Enable data encryption by providing a password when starting the database:
+ * 
  * ```typescript
  * await db.start({
  *     password: "my-password"
  * })
  * ```
  * 
- * A compatible storage should be a class implementing [BaseStorage<SchemaType> ](../../ridb-core/docs/classes/BaseStorage.md) and its methods.
+ * You can also specify a custom storage implementation:
  * 
- * ### Using with migration plugin
- * The migration plugin will automatically migrate your documents for you as you upgrade and change your schemas over the time. 
+ * ```typescript
+ * import { MyCustomStorage } from './my-storage';
+ * 
+ * await db.start({
+ *     storageType: MyCustomStorage,
+ *     password: "my-password"
+ * })
+ * ```
+ * 
+ * A compatible storage should be a class implementing [BaseStorage<SchemaType>](../../ridb-core/docs/classes/BaseStorage.md) and its methods.
+ * 
+ * ### Using with Migration Plugin
+ * 
+ * The migration plugin automatically migrates documents as you upgrade schemas:
  * 
  * ```typescript
  * const db = new RIDB(
@@ -105,7 +133,9 @@ import { RIDBFactory } from "./factory";
  *         migrations: {
  *             demo: {
  *                 1: function (doc) {
- *                     return doc
+ *                     // Transform document for version 1
+ *                     doc.age = doc.age || 0;
+ *                     return doc;
  *                 }
  *             }
  *         }
@@ -114,47 +144,116 @@ import { RIDBFactory } from "./factory";
  * 
  * await db.start()
  * ```
- * # SDK Rerefence
+ * # SDK Reference
  */
 export * from './types';
 export * from './wasm';
 
 /**
- * Main RIDB class that provides database functionality with optional worker support
+ * Main RIDB class that provides database functionality with optional worker support.
+ * 
+ * This class serves as the primary entry point for interacting with the RIDB database.
+ * It manages the lifecycle of the database connection and provides access to collections.
+ * 
+ * @template T Schema type record defining the database schema structure
  */
 export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
   private adapter: RIDBAbstract<T>;
   
   /**
-   * Creates a new RIDB instance
+   * Creates a new RIDB instance.
+   * 
+   * @param options Database configuration options including schemas and optional worker settings
+   * @example
+   * ```typescript
+   * const db = new RIDB({
+   *   schemas: {
+   *     users: {
+   *       version: 1,
+   *       primaryKey: 'id',
+   *       type: SchemaFieldType.object,
+   *       properties: {
+   *         id: { type: SchemaFieldType.string },
+   *         name: { type: SchemaFieldType.string }
+   *       }
+   *     }
+   *   }
+   * });
+   * ```
    */
   constructor(private options: DBOptions<T>) {
     this.adapter = RIDBFactory.createAdapter<T>(options);
   }
 
   /**
-   * Get the collections from the database
+   * Access the database collections.
+   * 
+   * @returns An object containing all collections defined in the schema
+   * @example
+   * ```typescript
+   * // Get the users collection
+   * const usersCollection = db.collections.users;
+   * 
+   * // Query documents
+   * const allUsers = await usersCollection.find({}).exec();
+   * ```
    */
   get collections(): { [name in keyof T]: Collection<Schema<T[name]>> } {
     return this.adapter.getCollections();
   }
 
   /**
-   * Starts the database
+   * Starts the database and initializes all collections.
+   * 
+   * @param options Optional configuration for startup including storage type and encryption
+   * @returns A promise that resolves when the database has successfully started
+   * @example
+   * ```typescript
+   * // Start with default options
+   * await db.start();
+   * 
+   * // Start with encryption
+   * await db.start({ password: "secure-password" });
+   * 
+   * // Start with custom storage
+   * await db.start({ 
+   *   storageType: StorageType.IndexDB,
+   *   dbName: "myApp"
+   * });
+   * ```
    */
   async start(options?: StartOptions<T>): Promise<void> {
     await this.adapter.start(options);
   }
 
   /**
-   * Closes the database
+   * Closes the database connection and releases resources.
+   * 
+   * @returns A promise that resolves when the database has been successfully closed
+   * @example
+   * ```typescript
+   * // Close the database connection
+   * await db.close();
+   * ```
    */
   async close(): Promise<void> {
     await this.adapter.close();
   }
 
   /**
-   * Whether the database has been started
+   * Checks if the database has been successfully started.
+   * 
+   * @returns True if the database is started, false otherwise
+   * @example
+   * ```typescript
+   * if (db.started) {
+   *   // Database is ready for use
+   *   const docs = await db.collections.users.find({}).exec();
+   * } else {
+   *   // Database needs to be started first
+   *   await db.start();
+   * }
+   * ```
    */
   get started(): boolean {
     return this.adapter.isStarted();
@@ -162,13 +261,52 @@ export class RIDB<T extends SchemaTypeRecord = SchemaTypeRecord> {
 }
 
 /**
- * An enumeration of schema field types.
+ * An enumeration of schema field types for defining document structures.
+ * 
+ * These types correspond to JavaScript primitive types and are used when
+ * defining schemas for RIDB collections.
+ * 
+ * @example
+ * ```typescript
+ * // Define a schema with different field types
+ * const schema = {
+ *   version: 1,
+ *   primaryKey: 'id',
+ *   type: SchemaFieldType.object,
+ *   properties: {
+ *     id: { type: SchemaFieldType.string },
+ *     age: { type: SchemaFieldType.number },
+ *     isActive: { type: SchemaFieldType.boolean },
+ *     tags: { type: SchemaFieldType.array },
+ *     address: { type: SchemaFieldType.object }
+ *   }
+ * };
+ * ```
  */
 export const SchemaFieldType = {
+  /**
+   * String type for text data
+   */
   string: 'string' as const,
+  
+  /**
+   * Number type for numeric data (integers and floats)
+   */
   number: 'number' as const,
+  
+  /**
+   * Boolean type for true/false values
+   */
   boolean: 'boolean' as const,
+  
+  /**
+   * Array type for ordered collections of items
+   */
   array: 'array' as const,
+  
+  /**
+   * Object type for nested document structures
+   */
   object: 'object' as const,
 };
 
