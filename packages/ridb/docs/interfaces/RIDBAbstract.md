@@ -6,7 +6,11 @@
 
 # Interface: RIDBAbstract\<T\>
 
-Defined in: [types.ts:46](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L46)
+Defined in: [types.ts:112](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/types.ts#L112)
+
+Abstract interface for RIDB implementations.
+
+Defines the core operations that any RIDB adapter must implement.
 
 ## Type Parameters
 
@@ -14,19 +18,23 @@ Defined in: [types.ts:46](https://github.com/trust0-project/RIDB/blob/de5a4094c6
 
 `T` *extends* `SchemaTypeRecord`
 
+The schema type record defining the database structure
+
 ## Methods
 
 ### close()
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [types.ts:55](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L55)
+Defined in: [types.ts:126](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/types.ts#L126)
 
-Close the database connection
+Close the database connection.
 
 #### Returns
 
 `Promise`\<`void`\>
+
+A promise that resolves when the database has been successfully closed
 
 ***
 
@@ -34,13 +42,15 @@ Close the database connection
 
 > **getCollections**(): \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
 
-Defined in: [types.ts:60](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L60)
+Defined in: [types.ts:133](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/types.ts#L133)
 
-Get the collections for this database
+Get the collections for this database.
 
 #### Returns
 
 \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
+
+An object containing all collections defined in the schema
 
 ***
 
@@ -48,13 +58,15 @@ Get the collections for this database
 
 > **isStarted**(): `boolean`
 
-Defined in: [types.ts:65](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L65)
+Defined in: [types.ts:140](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/types.ts#L140)
 
-Check if the database has been started
+Check if the database has been started.
 
 #### Returns
 
 `boolean`
+
+True if the database is started, false otherwise
 
 ***
 
@@ -62,9 +74,9 @@ Check if the database has been started
 
 > **start**(`options?`): `Promise`\<`void`\>
 
-Defined in: [types.ts:50](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L50)
+Defined in: [types.ts:119](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/types.ts#L119)
 
-Start the database with the given options
+Start the database with the given options.
 
 #### Parameters
 
@@ -72,6 +84,10 @@ Start the database with the given options
 
 [`StartOptions`](../type-aliases/StartOptions.md)\<`T`\>
 
+Optional configuration for startup
+
 #### Returns
 
 `Promise`\<`void`\>
+
+A promise that resolves when the database has successfully started

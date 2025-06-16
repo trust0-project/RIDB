@@ -1,3 +1,13 @@
+## 1.7.18 (2025-06-16)
+
+### 🩹 Fixes
+
+- reduce inMemory logs if debug is not explicitly set ([347f467](https://github.com/trust0-project/RIDB/commit/347f467))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.17 (2025-05-12)
 
 ### 🩹 Fixes

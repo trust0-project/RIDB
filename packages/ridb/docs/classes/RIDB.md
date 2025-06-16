@@ -6,9 +6,12 @@
 
 # Class: RIDB\<T\>
 
-Defined in: [index.ts:125](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L125)
+Defined in: [index.ts:160](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/index.ts#L160)
 
-Main RIDB class that provides database functionality with optional worker support
+Main RIDB class that provides database functionality with optional worker support.
+
+This class serves as the primary entry point for interacting with the RIDB database.
+It manages the lifecycle of the database connection and provides access to collections.
 
 ## Type Parameters
 
@@ -16,15 +19,17 @@ Main RIDB class that provides database functionality with optional worker suppor
 
 `T` *extends* `SchemaTypeRecord` = `SchemaTypeRecord`
 
+Schema type record defining the database schema structure
+
 ## Constructors
 
 ### Constructor
 
 > **new RIDB**\<`T`\>(`options`): `RIDB`\<`T`\>
 
-Defined in: [index.ts:131](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L131)
+Defined in: [index.ts:184](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/index.ts#L184)
 
-Creates a new RIDB instance
+Creates a new RIDB instance.
 
 #### Parameters
 
@@ -32,9 +37,29 @@ Creates a new RIDB instance
 
 [`DBOptions`](../type-aliases/DBOptions.md)\<`T`\>
 
+Database configuration options including schemas and optional worker settings
+
 #### Returns
 
 `RIDB`\<`T`\>
+
+#### Example
+
+```typescript
+const db = new RIDB({
+  schemas: {
+    users: {
+      version: 1,
+      primaryKey: 'id',
+      type: SchemaFieldType.object,
+      properties: {
+        id: { type: SchemaFieldType.string },
+        name: { type: SchemaFieldType.string }
+      }
+    }
+  }
+});
+```
 
 ## Properties
 
@@ -42,7 +67,7 @@ Creates a new RIDB instance
 
 > `private` **adapter**: [`RIDBAbstract`](../interfaces/RIDBAbstract.md)\<`T`\>
 
-Defined in: [index.ts:126](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L126)
+Defined in: [index.ts:161](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/index.ts#L161)
 
 ***
 
@@ -50,7 +75,9 @@ Defined in: [index.ts:126](https://github.com/trust0-project/RIDB/blob/de5a4094c
 
 > `private` **options**: [`DBOptions`](../type-aliases/DBOptions.md)\<`T`\>
 
-Defined in: [index.ts:131](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L131)
+Defined in: [index.ts:184](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/index.ts#L184)
+
+Database configuration options including schemas and optional worker settings
 
 ## Accessors
 
@@ -60,13 +87,25 @@ Defined in: [index.ts:131](https://github.com/trust0-project/RIDB/blob/de5a4094c
 
 > **get** **collections**(): \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
 
-Defined in: [index.ts:138](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L138)
+Defined in: [index.ts:201](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/index.ts#L201)
 
-Get the collections from the database
+Access the database collections.
+
+##### Example
+
+```typescript
+// Get the users collection
+const usersCollection = db.collections.users;
+
+// Query documents
+const allUsers = await usersCollection.find({}).exec();
+```
 
 ##### Returns
 
 \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
+
+An object containing all collections defined in the schema
 
 ***
 
@@ -76,13 +115,27 @@ Get the collections from the database
 
 > **get** **started**(): `boolean`
 
-Defined in: [index.ts:159](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L159)
+Defined in: [index.ts:258](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/index.ts#L258)
 
-Whether the database has been started
+Checks if the database has been successfully started.
+
+##### Example
+
+```typescript
+if (db.started) {
+  // Database is ready for use
+  const docs = await db.collections.users.find({}).exec();
+} else {
+  // Database needs to be started first
+  await db.start();
+}
+```
 
 ##### Returns
 
 `boolean`
+
+True if the database is started, false otherwise
 
 ## Methods
 
@@ -90,13 +143,22 @@ Whether the database has been started
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [index.ts:152](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L152)
+Defined in: [index.ts:239](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/index.ts#L239)
 
-Closes the database
+Closes the database connection and releases resources.
 
 #### Returns
 
 `Promise`\<`void`\>
+
+A promise that resolves when the database has been successfully closed
+
+#### Example
+
+```typescript
+// Close the database connection
+await db.close();
+```
 
 ***
 
@@ -104,9 +166,9 @@ Closes the database
 
 > **start**(`options?`): `Promise`\<`void`\>
 
-Defined in: [index.ts:145](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/index.ts#L145)
+Defined in: [index.ts:225](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/index.ts#L225)
 
-Starts the database
+Starts the database and initializes all collections.
 
 #### Parameters
 
@@ -114,6 +176,26 @@ Starts the database
 
 [`StartOptions`](../type-aliases/StartOptions.md)\<`T`\>
 
+Optional configuration for startup including storage type and encryption
+
 #### Returns
 
 `Promise`\<`void`\>
+
+A promise that resolves when the database has successfully started
+
+#### Example
+
+```typescript
+// Start with default options
+await db.start();
+
+// Start with encryption
+await db.start({ password: "secure-password" });
+
+// Start with custom storage
+await db.start({ 
+  storageType: StorageType.IndexDB,
+  dbName: "myApp"
+});
+```

@@ -1,3 +1,9 @@
+## 1.2.27 (2025-06-16)
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb to 1.5.23
+
 ## 1.2.26 (2025-05-12)
 
 ### 🩹 Fixes

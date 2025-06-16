@@ -8,15 +8,17 @@
 
 > **DBOptions**\<`T`\> = `object` & `MigrationsParameter`\<`T`\>
 
-Defined in: [types.ts:29](https://github.com/trust0-project/RIDB/blob/de5a4094c694d51819d91971ce014aab5116343a/packages/ridb/src/types.ts#L29)
+Defined in: [types.ts:71](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/types.ts#L71)
 
-Options for the RIDB constructor.
+Options for initializing the RIDB database.
 
 ## Type declaration
 
 ### ~~dbName?~~
 
 > `optional` **dbName**: `string`
+
+Database name
 
 #### Deprecated
 
@@ -26,16 +28,24 @@ Use the dbName option in the start method instead.
 
 > `optional` **plugins**: *typeof* `BasePlugin`[]
 
+Optional plugins to extend database functionality
+
 ### schemas
 
 > **schemas**: `T`
 
+Schema definitions for all collections in the database
+
 ### worker?
 
 > `optional` **worker**: `boolean`
+
+Whether to use a SharedWorker for database operations
 
 ## Type Parameters
 
 ### T
 
 `T` *extends* `SchemaTypeRecord` = `SchemaTypeRecord`
+
+The schema type record defining the database structure
