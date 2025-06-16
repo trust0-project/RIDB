@@ -48,7 +48,7 @@ pub struct InMemory {
 impl Storage for InMemory {
 
     async fn write(&self, op: Operation) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::write",
             &JsValue::from_str(&format!(
                 "Write operation started. Collection: '{}', OpType: '{:?}', Primary Key Field: '{:?}'",
@@ -61,7 +61,7 @@ impl Storage for InMemory {
             .get(op.collection.as_str())
             .ok_or_else(|| {
                 let msg = "Collection not found".to_string();
-                Logger::log(
+                Logger::debug(
                     "InMemory::write",
                     &JsValue::from_str(msg.as_str())
                 );
@@ -79,7 +79,7 @@ impl Storage for InMemory {
 
         let mut index_guard = self.by_index.write().map_err(|_| {
             let msg = "Failed to acquire write lock".to_string();
-            Logger::log(
+            Logger::debug(
                 "InMemory::write",
                 &JsValue::from_str(msg.as_str())
             );
@@ -94,7 +94,7 @@ impl Storage for InMemory {
                 let pk_value = Reflect::get(&document, &JsValue::from_str(&primary_key))
                     .map_err(|e| {
                         let msg = format!("Failed to get primary key: {:?}", e);
-                        Logger::log("InMemory::write", &JsValue::from_str(msg.as_str()));
+                        Logger::debug("InMemory::write", &JsValue::from_str(msg.as_str()));
                         JsValue::from(
                             RIDBError::error(&msg, 40)
                         )
@@ -102,7 +102,7 @@ impl Storage for InMemory {
                 let pk_str = self.core.get_primary_key_typed(pk_value.clone())?;
                 match op.op_type {
                     OpType::CREATE => {
-                        Logger::log(
+                        Logger::debug(
                             "InMemory::write",
                             &JsValue::from_str(&format!("CREATE operation for primary key: '{}'", pk_str))
                         );
@@ -112,7 +112,7 @@ impl Storage for InMemory {
                                 .or_insert_with(HashMap::new);
                             if pk_map.contains_key(&pk_str) {
                                 let msg = "Document with this primary key already exists".to_string();
-                                Logger::log(
+                                Logger::debug(
                                     "InMemory::write",
                                     &JsValue::from_str(&format!("{}", msg))
                                 );
@@ -177,14 +177,14 @@ impl Storage for InMemory {
                                 );
                             }
                         }
-                        Logger::log(
+                        Logger::debug(
                             "InMemory::write",
                             &JsValue::from_str("CREATE operation completed successfully.")
                         );
                         Ok(document)
                     }
                     OpType::UPDATE => {
-                        Logger::log(
+                        Logger::debug(
                             "InMemory::write",
                             &JsValue::from_str(&format!("UPDATE operation for primary key: '{}'", pk_str))
                         );
@@ -195,18 +195,18 @@ impl Storage for InMemory {
 
                         if !index.contains_key(&pk_str) {
                             let msg = "Document with this primary key does not exist".to_string();
-                            Logger::log("InMemory::write", &JsValue::from_str(&format!("{}", msg)));
+                            Logger::debug("InMemory::write", &JsValue::from_str(&format!("{}", msg)));
                             return Err(
                                     RIDBError::error(&msg, 40)
                             );
                         }
                         index.insert(pk_str.clone(), document.clone());
-                        Logger::log("InMemory::write", &JsValue::from_str("UPDATE operation completed successfully."));
+                        Logger::debug("InMemory::write", &JsValue::from_str("UPDATE operation completed successfully."));
                         Ok(document)
                     }
                     _ => {
                         let msg = "Unsupported operation type for this data".to_string();
-                        Logger::log("InMemory::write", &JsValue::from_str(&format!("{}", msg)));
+                        Logger::debug("InMemory::write", &JsValue::from_str(&format!("{}", msg)));
                         Err(
                                 RIDBError::error(&msg, 40)
                         )
@@ -214,25 +214,25 @@ impl Storage for InMemory {
                 }
             }
             OpType::DELETE => {
-                Logger::log(
+                Logger::debug(
                     "InMemory::write",
                     &JsValue::from_str("DELETE operation")
                 );
                 let pk_str = self.core.get_primary_key_typed(op.data.clone())?;
                 if let Some(index) = index_guard.get_mut(&index_name) {
                     if index.remove(&pk_str).is_some() {
-                        Logger::log("InMemory::write", &JsValue::from_str("DELETE operation completed successfully."));
+                        Logger::debug("InMemory::write", &JsValue::from_str("DELETE operation completed successfully."));
                         Ok(JsValue::from_str("Document deleted"))
                     } else {
                         let msg = "Document with this primary key does not exist".to_string();
-                        Logger::log("InMemory::write", &JsValue::from_str(&format!("{}", msg)));
+                        Logger::debug("InMemory::write", &JsValue::from_str(&format!("{}", msg)));
                         Err(
                                 RIDBError::error(&msg, 40)
                         )
                     }
                 } else {
                     let msg = "Document with this primary key does not exist".to_string();
-                    Logger::log("InMemory::write", &JsValue::from_str(&format!("{}", msg)));
+                    Logger::debug("InMemory::write", &JsValue::from_str(&format!("{}", msg)));
                     Err(
                             RIDBError::error(&msg, 40)
                     )
@@ -240,7 +240,7 @@ impl Storage for InMemory {
             }
             _ => {
                 let msg = "Unsupported operation type".to_string();
-                Logger::log("InMemory::write", &JsValue::from_str(&format!("{}", msg)));
+                Logger::debug("InMemory::write", &JsValue::from_str(&format!("{}", msg)));
                 Err(
                         RIDBError::error(&msg, 40)
                 )
@@ -249,7 +249,7 @@ impl Storage for InMemory {
     }
 
     async fn find(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::find",
             &JsValue::from_str(&format!(
                 "Find called for collection '{}', query: {:?}",
@@ -264,7 +264,7 @@ impl Storage for InMemory {
             results_array.push(&doc);
         }
 
-        Logger::log(
+        Logger::debug(
             "InMemory::find",
             &JsValue::from_str(&format!(
                 "Find completed. Number of documents found: {}",
@@ -279,7 +279,7 @@ impl Storage for InMemory {
         collection_name: &str,
         primary_key_value: JsValue,
     ) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::find_document_by_id",
             &JsValue::from_str(&format!(
                 "Find document by ID called for collection '{}'.",
@@ -289,7 +289,7 @@ impl Storage for InMemory {
         let schemas = self.base.schemas.borrow();
         let schema = schemas.get(collection_name).ok_or_else(|| {
             let msg = format!("Collection {} not found in findDocumentById", collection_name);
-            Logger::log(
+            Logger::debug(
                 "InMemory::find_document_by_id",
                 &JsValue::from_str(&format!("{}", msg))
             );
@@ -308,14 +308,14 @@ impl Storage for InMemory {
         if let Some(index) = self.by_index.read().unwrap().get(&index_name) {
             let pk_str = self.core.get_primary_key_typed(primary_key_value.clone())?;
             if let Some(doc) = index.get(&pk_str) {
-                Logger::log(
+                Logger::debug(
                     "InMemory::find_document_by_id",
                     &JsValue::from_str("Document found.")
                 );
                 return Ok(doc.clone());
             }
         }
-        Logger::log(
+        Logger::debug(
             "InMemory::find_document_by_id",
             &JsValue::from_str("Document not found.")
         );
@@ -323,7 +323,7 @@ impl Storage for InMemory {
     }
 
     async fn count(&self, collection_name: &str, query: Query, options: QueryOptions) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::count",
             &JsValue::from_str(&format!(
                 "Count called for collection '{}', query: {:?}",
@@ -332,7 +332,7 @@ impl Storage for InMemory {
             ))
         );
         let documents = self.get_matching_documents(collection_name, query, options).await?;
-        Logger::log(
+        Logger::debug(
             "InMemory::count",
             &JsValue::from_str(&format!(
                 "Count completed. Number of documents matching: {}",
@@ -343,14 +343,14 @@ impl Storage for InMemory {
     }
 
     async fn close(&self) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::close",
             &JsValue::from_str("Close operation called.")
         );
         let mut index_guard = self.by_index.write()
             .map_err(|_| {
                 let msg = "Failed to acquire write lock".to_string();
-                Logger::log(
+                Logger::debug(
                     "InMemory::close",
                     &JsValue::from_str(&format!("{}", msg))
                 );
@@ -362,7 +362,7 @@ impl Storage for InMemory {
 
         let mut started_guard = self.started.write().map_err(|_| {
             let msg = "Failed to acquire write lock for started flag".to_string();
-            Logger::log(
+            Logger::debug(
                 "InMemory::close",
                 &JsValue::from_str(&format!("{}", msg))
             );
@@ -372,7 +372,7 @@ impl Storage for InMemory {
         })?;
         *started_guard = false;
 
-        Logger::log(
+        Logger::debug(
             "InMemory::close",
             &JsValue::from_str("In-memory database closed and reset.")
         );
@@ -380,7 +380,7 @@ impl Storage for InMemory {
     }
 
     async fn start(&self) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::start",
             &JsValue::from_str("Start operation called.")
         );
@@ -388,7 +388,7 @@ impl Storage for InMemory {
         {
             let started_guard = self.started.read().map_err(|_| {
                 let msg = "Failed to acquire read lock for started flag".to_string();
-                Logger::log(
+                Logger::debug(
                     "InMemory::start",
                     &JsValue::from_str(&format!("{}", msg))
                 );
@@ -398,7 +398,7 @@ impl Storage for InMemory {
             })?;
             
             if *started_guard {
-                Logger::log(
+                Logger::debug(
                     "InMemory::start",
                     &JsValue::from_str("In-memory database already started.")
                 );
@@ -408,7 +408,7 @@ impl Storage for InMemory {
 
         let mut started_guard = self.started.write().map_err(|_| {
             let msg = "Failed to acquire write lock for started flag".to_string();
-            Logger::log(
+            Logger::debug(
                 "InMemory::start",
                 &JsValue::from_str(&format!("{}", msg))
             );
@@ -418,7 +418,7 @@ impl Storage for InMemory {
         })?;
         *started_guard = true;
 
-        Logger::log(
+        Logger::debug(
             "InMemory::start",
             &JsValue::from_str("In-memory database started.")
         );
@@ -439,7 +439,7 @@ impl InMemory {
         query: Query,
         options: QueryOptions
     ) -> Result<Vec<JsValue>, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::get_matching_documents",
             &JsValue::from_str(&format!(
                 "Called with collection_name='{}', query={:?}",
@@ -456,7 +456,7 @@ impl InMemory {
             .get(collection_name)
             .ok_or_else(|| {
                 let msg = format!("Collection '{}' not found", collection_name);
-                Logger::log(
+                Logger::debug(
                     "InMemory::get_matching_documents",
                     &JsValue::from_str(&format!("{}", msg))
                 );
@@ -479,7 +479,7 @@ impl InMemory {
             })
             .collect();
 
-        Logger::log(
+        Logger::debug(
             "InMemory::get_matching_documents",
             &JsValue::from_str(&format!(
                 "Indexed properties in use: {:?}",
@@ -490,7 +490,7 @@ impl InMemory {
         // If no indexed fields match the query, do a full table scan.
         // Otherwise, gather an intersection of document IDs from all relevant indexes.
         if query_properties_with_index.is_empty() {
-            Logger::log(
+            Logger::debug(
                 "InMemory::get_matching_documents",
                 &JsValue::from_str("No indexed fields match. Performing full table scan.")
             );
@@ -558,7 +558,7 @@ impl InMemory {
             }
         }
 
-        Logger::log(
+        Logger::debug(
             "InMemory::get_matching_documents",
             &JsValue::from_str(&format!(
                 "Found {} matching documents before applying limit/offset.",
@@ -572,7 +572,7 @@ impl InMemory {
         let end = offset.saturating_add(limit).min(matched_docs.len());
         let result_docs = matched_docs[offset..end].to_vec();
 
-        Logger::log(
+        Logger::debug(
             "InMemory::get_matching_documents",
             &JsValue::from_str(&format!(
                 "Returning {} documents after applying limit/offset.",
@@ -585,7 +585,7 @@ impl InMemory {
     
     #[wasm_bindgen]
     pub async fn create(name: &str, schemas_js: Object) -> Result<InMemory, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::create",
             &JsValue::from_str(&format!(
                 "Creating a new InMemory instance with DB name '{}'",
@@ -602,7 +602,7 @@ impl InMemory {
             Ok(base) => {
                 //Adds extra index schemas
                 base.add_index_schemas()?;
-                Logger::log(
+                Logger::debug(
                     "InMemory::create",
                     &JsValue::from_str("Successfully created BaseStorage and added index schemas.")
                 );
@@ -616,7 +616,7 @@ impl InMemory {
                 )
             },
             Err(e) => {
-                Logger::log(
+                Logger::debug(
                     "InMemory::create",
                     &JsValue::from_str(&format!(
                         "Error creating BaseStorage: {:?}",
@@ -630,7 +630,7 @@ impl InMemory {
 
     #[wasm_bindgen(js_name = "write")]
     pub async fn write_js(&self, op: Operation) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::write_js",
             &JsValue::from_str("write_js called.")
         );
@@ -639,7 +639,7 @@ impl InMemory {
 
     #[wasm_bindgen(js_name = "find")]
     pub async fn find_js(&self, collection_name: &str, query_js: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::find_js",
             &JsValue::from_str(&format!(
                 "find_js called for collection '{}'",
@@ -659,7 +659,7 @@ impl InMemory {
         collection_name: &str,
         primary_key: JsValue,
     ) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::find_document_by_id_js",
             &JsValue::from_str(&format!(
                 "findDocumentById called for collection '{}'",
@@ -671,7 +671,7 @@ impl InMemory {
 
     #[wasm_bindgen(js_name = "count")]
     pub async fn count_js(&self, collection_name: &str, query_js: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::count_js",
             &JsValue::from_str(&format!(
                 "count_js called for collection '{}'",
@@ -686,7 +686,7 @@ impl InMemory {
 
     #[wasm_bindgen(js_name = "close")]
     pub async fn close_js(&self) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::close_js",
             &JsValue::from_str("close_js called.")
         );
@@ -695,7 +695,7 @@ impl InMemory {
 
     #[wasm_bindgen(js_name = "start")]
     pub async fn start_js(&self) -> Result<JsValue, RIDBError> {
-        Logger::log(
+        Logger::debug(
             "InMemory::start_js",
             &JsValue::from_str("start_js called.")
         );
