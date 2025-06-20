@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb",
-  "version": "1.5.23",
+  "version": "1.5.24",
   "description": "Lightweight db encrypted and secure database wrapper for browser and nodejs.",
   "module": "./build/index.js",
   "main": "./build/index.js",
@@ -51,7 +51,7 @@
     "types": "sh types.sh"
   },
   "dependencies": {
-    "@trust0/ridb-core": "^1.7.18"
+    "@trust0/ridb-core": "^1.7.19"
   },
   "devDependencies": {
     "@trust0/ridb-build": "^0.0.12",

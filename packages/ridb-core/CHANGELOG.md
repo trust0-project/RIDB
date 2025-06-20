@@ -1,3 +1,13 @@
+## 1.7.19 (2025-06-20)
+
+### 🩹 Fixes
+
+- improve QueryType optional field management ([1bab2ea](https://github.com/trust0-project/RIDB/commit/1bab2ea))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.18 (2025-06-16)
 
 ### 🩹 Fixes

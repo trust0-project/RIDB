@@ -8,7 +8,7 @@
 
 > **RIDBComponentProps**\<`T`\> = `RIDBProps`\<`T`\> & `object`
 
-Defined in: [index.tsx:10](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb-react/src/index.tsx#L10)
+Defined in: [index.tsx:10](https://github.com/trust0-project/RIDB/blob/1bab2eafbebd794b08d4290d79a11be8a690c8ca/packages/ridb-react/src/index.tsx#L10)
 
 ## Type declaration
 

@@ -8,7 +8,7 @@
 
 > `const` **SchemaFieldType**: `object`
 
-Defined in: [index.ts:286](https://github.com/trust0-project/RIDB/blob/347f467e47dba14448a2117604cb967d519654fe/packages/ridb/src/index.ts#L286)
+Defined in: [index.ts:286](https://github.com/trust0-project/RIDB/blob/1bab2eafbebd794b08d4290d79a11be8a690c8ca/packages/ridb/src/index.ts#L286)
 
 An enumeration of schema field types for defining document structures.
 
