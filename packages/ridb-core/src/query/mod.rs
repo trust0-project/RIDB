@@ -32,13 +32,13 @@ export type LogicalOperators<T extends SchemaType> = {
     $or?: Partial<QueryType<T>>[];
 };
 
-export type QueryType<T extends SchemaType> = Partial<{
-    [K in keyof T['properties']]: OperatorOrType<
+export type QueryType<T extends SchemaType> = ({
+    [K in keyof T['properties']as ExtractType<T['properties'][K]['type']> extends undefined ? never : K]?: OperatorOrType<
         ExtractType<
             T['properties'][K]['type']
         >
     >
-}> & LogicalOperators<T> | LogicalOperators<T>[];
+} & LogicalOperators<T>) | LogicalOperators<T>[];
 
 export class Query<T extends SchemaType> {
     constructor(query: QueryType<T>, schema:Schema<T>);
