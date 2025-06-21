@@ -6,9 +6,9 @@
 
 # Function: useRIDB()
 
-> **useRIDB**\<`T`\>(): `RIDB`\<`T`\>
+> **useRIDB**\<`T`\>(): `object`
 
-Defined in: [index.tsx:15](https://github.com/trust0-project/RIDB/blob/59a8c69664bdaee614fc6abad891923f5042c1d4/packages/ridb-react/src/index.tsx#L15)
+Defined in: [index.tsx:17](https://github.com/trust0-project/RIDB/blob/8ef2acdf8f7728d4b713a8e974a8b0b7bd04144a/packages/ridb-react/src/index.tsx#L17)
 
 ## Type Parameters
 
@@ -18,4 +18,34 @@ Defined in: [index.tsx:15](https://github.com/trust0-project/RIDB/blob/59a8c6966
 
 ## Returns
 
-`RIDB`\<`T`\>
+`object`
+
+### db
+
+> **db**: `RIDB`\<`T`\>
+
+### start()
+
+> **start**: (`options`) => `Promise`\<`void`\>
+
+#### Parameters
+
+##### options
+
+`StartOptions`\<`T`\>
+
+#### Returns
+
+`Promise`\<`void`\>
+
+### state
+
+> **state**: [`DatabaseState`](../type-aliases/DatabaseState.md)
+
+### stop()
+
+> **stop**: () => `Promise`\<`void`\>
+
+#### Returns
+
+`Promise`\<`void`\>

@@ -6,7 +6,7 @@
 
 ## Type Aliases
 
-- [RIDBComponentProps](type-aliases/RIDBComponentProps.md)
+- [DatabaseState](type-aliases/DatabaseState.md)
 
 ## Functions
 

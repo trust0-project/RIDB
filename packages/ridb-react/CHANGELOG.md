@@ -1,3 +1,13 @@
+## 1.4.1 (2025-06-21)
+
+### 🩹 Fixes
+
+- small improvement ([8ef2acd](https://github.com/trust0-project/RIDB/commit/8ef2acd))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.2.31 (2025-06-21)
 
 ### 🧱 Updated Dependencies
