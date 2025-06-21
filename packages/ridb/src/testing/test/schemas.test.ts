@@ -313,8 +313,7 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                         },
                                         name: {
                                             type: SchemaFieldType.string,
-                                            maxLength: 20,
-                                            required: false
+                                            maxLength: 20
                                         }
                                     }
                                 }
@@ -340,6 +339,53 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                     expect(created).to.not.be.undefined;
                     expect(created).to.haveOwnProperty("id");
                     expect(created).to.haveOwnProperty("name");
+
+                    expect(created.id).to.eq("12345")
+
+                })
+                it("should allow optional numeric fields", async () => {
+                    const db = new RIDB(
+                        {
+                            dbName,
+                            worker,
+                            schemas: {
+                                demo: {
+                                    version: 0 as const,
+                                    primaryKey: 'id',
+                                    type: SchemaFieldType.object,
+                                    properties: {
+                                        id: {
+                                            type: SchemaFieldType.string,
+                                            required: true,
+                                            maxLength: 60
+                                        },
+                                        age: {
+                                            type: SchemaFieldType.number
+                                        }
+                                    }
+                                }
+                            } as const
+                        }
+                    )
+
+                    await db.start({
+                        storageType: storage,
+                        password: "test"
+                    });
+
+                    expect(db).to.not.be.undefined;
+                    expect(db.collections).to.not.be.undefined;
+                    expect(db.collections).to.haveOwnProperty("demo");
+                    expect(db.collections.demo).to.not.be.undefined;
+                    expect(db.collections.demo.find).to.not.be.undefined;
+
+                    const created = await db.collections.demo.create({
+                        id: "12345",
+                        age: 1
+                    });
+                    expect(created).to.not.be.undefined;
+                    expect(created).to.haveOwnProperty("id");
+                    expect(created).to.haveOwnProperty("age");
 
                     expect(created.id).to.eq("12345")
 

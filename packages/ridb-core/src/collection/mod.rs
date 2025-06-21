@@ -53,10 +53,14 @@ export type ExtractType<T extends string> =
   T extends "boolean" ? boolean : 
   T extends "object" ? object : 
   T extends "array" ? any[] : 
-  never;
+  undefined;
 
 export type IsOptional<T> = 
-  T extends { required: false } | { required: true, default: never } ? true : false;
+  T extends { required: true } 
+    ? T extends { default: any } 
+      ? true 
+      : false
+    : true;
 
 /**
  * Doc is a utility type that transforms a schema type into a document type where each property is mapped to its extracted type.
@@ -67,13 +71,29 @@ export type IsOptional<T> =
  */
 export type Doc<T extends SchemaType> = {
   [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends true ? K : never]?: 
-    ExtractType<T['properties'][K]['type']> extends undefined ? `${T['properties'][K]['type']}` : ExtractType<T['properties'][K]['type']>
-
+    ExtractType<T['properties'][K]['type']>
 } & {
-  [K in keyof T["properties"]]: 
-                ExtractType<T['properties'][K]['type']> extends undefined ? `${T['properties'][K]['type']}` : ExtractType<T['properties'][K]['type']>
-
+  [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends true ? never : K]: 
+    ExtractType<T['properties'][K]['type']>
 } & {
+  __version?: number;
+  createdAt?: number;
+  updatedAt?: number;
+};
+
+/**
+ * CreateDoc is a utility type for document creation that properly handles required vs optional fields
+ * during the creation process. Fields with default values or required: false become optional.
+ *
+ * @template T - A schema type with a 'properties' field where each property's type is represented as a string.
+ */
+export type CreateDoc<T extends SchemaType> = {
+  [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends true ? K : never]?: 
+    ExtractType<T['properties'][K]['type']>
+} & {
+  [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends true ? never : K]: 
+    ExtractType<T['properties'][K]['type']>
+} &  {
   __version?: number;
   createdAt?: number;
   updatedAt?: number;
@@ -122,7 +142,7 @@ export class Collection<T extends SchemaType> {
 	 * @param document - The document to create.
 	 * @returns A promise that resolves to the created document.
 	 */
-	create(document: Partial<Doc<T>>): Promise<Doc<T>>;
+	create(document: CreateDoc<T>): Promise<Doc<T>>;
 	/**
 	 * Deletes a document in the collection by its ID.
 	 *
