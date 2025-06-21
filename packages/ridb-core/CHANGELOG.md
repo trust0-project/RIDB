@@ -1,3 +1,13 @@
+## 1.7.21 (2025-06-21)
+
+### 🩹 Fixes
+
+- schema create types ([c6b6693](https://github.com/trust0-project/RIDB/commit/c6b6693))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.20 (2025-06-21)
 
 ### 🩹 Fixes

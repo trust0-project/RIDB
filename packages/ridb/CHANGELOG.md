@@ -1,3 +1,18 @@
+## 1.5.26 (2025-06-21)
+
+### 🩹 Fixes
+
+- schema create types ([c6b6693](https://github.com/trust0-project/RIDB/commit/c6b6693))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.21
+- Updated @trust0/ridb-core to 1.7.21
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.25 (2025-06-21)
 
 ### 🩹 Fixes
