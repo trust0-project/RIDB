@@ -24,10 +24,6 @@
 - [StartOptions](type-aliases/StartOptions.md)
 - [StorageClass](type-aliases/StorageClass.md)
 
-## Variables
-
-- [SchemaFieldType](variables/SchemaFieldType.md)
-
 ## Functions
 
 - [WasmInternal](functions/WasmInternal.md)

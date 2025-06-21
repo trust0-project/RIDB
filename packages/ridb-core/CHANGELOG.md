@@ -1,3 +1,13 @@
+## 1.7.22 (2025-06-21)
+
+### 🩹 Fixes
+
+- schema inference ([59a8c69](https://github.com/trust0-project/RIDB/commit/59a8c69))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.21 (2025-06-21)
 
 ### 🩹 Fixes

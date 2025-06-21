@@ -1,3 +1,18 @@
+## 1.5.27 (2025-06-21)
+
+### 🩹 Fixes
+
+- schema inference ([59a8c69](https://github.com/trust0-project/RIDB/commit/59a8c69))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.22
+- Updated @trust0/ridb-core to 1.7.22
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.26 (2025-06-21)
 
 ### 🩹 Fixes
