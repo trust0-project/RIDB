@@ -57,9 +57,9 @@ export type ExtractType<T extends string> =
 
 export type IsOptional<T> = 
   T extends { required: true } 
-    ? T extends { default: any } 
-      ? true 
-      : false
+    ? T extends { default: never } 
+      ? false 
+      : true
     : true;
 
 /**
@@ -70,10 +70,7 @@ export type IsOptional<T> =
  * type Document = Doc<Schema>; // Document is { name: string; age: number; }
  */
 export type Doc<T extends SchemaType> = {
-  [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends true ? K : never]?: 
-    ExtractType<T['properties'][K]['type']>
-} & {
-  [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends true ? never : K]: 
+  [K in keyof T["properties"]]: 
     ExtractType<T['properties'][K]['type']>
 } & {
   __version?: number;

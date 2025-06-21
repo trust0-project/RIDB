@@ -4,9 +4,41 @@ use serde::de::{Error, Visitor};
 use serde::ser::Error as SerError;
 use wasm_bindgen::prelude::*;
 
+
+#[wasm_bindgen(typescript_custom_section)]
+const TS_APPEND_CONTENT: &'static str = r#"
+export const SchemaFieldType = {
+  /**
+   * String type for text data
+   */
+  string: 'string' as const,
+  
+  /**
+   * Number type for numeric data (integers and floats)
+   */
+  number: 'number' as const,
+  
+  /**
+   * Boolean type for true/false values
+   */
+  boolean: 'boolean' as const,
+  
+  /**
+   * Array type for ordered collections of items
+   */
+  array: 'array' as const,
+  
+  /**
+   * Object type for nested document structures
+   */
+  object: 'object' as const,
+};
+"#;
+
+
 #[wasm_bindgen(skip_typescript)]
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub enum PropertyType {
+pub enum SchemaFieldType {
     String="string",
     Number="number",
     Boolean="boolean",
@@ -15,12 +47,12 @@ pub enum PropertyType {
 }
 
 
-impl Serialize for PropertyType {
-    /// Serializes a `PropertyType` into a string value.
+impl Serialize for SchemaFieldType {
+    /// Serializes a `SchemaFieldType` into a string value.
     ///
     /// # Arguments
     ///
-    /// * `serializer` - The serializer to use for converting the `PropertyType`.
+    /// * `serializer` - The serializer to use for converting the `SchemaFieldType`.
     ///
     /// # Returns
     ///
@@ -30,18 +62,18 @@ impl Serialize for PropertyType {
             S: Serializer
     {
         match self {
-            PropertyType::String => serializer.serialize_str("string"),
-            PropertyType::Number => serializer.serialize_str("number"),
-            PropertyType::Boolean => serializer.serialize_str("boolean"),
-            PropertyType::Array => serializer.serialize_str("array"),
-            PropertyType::Object => serializer.serialize_str("object"),
-            _ => Err(SerError::custom("Wrong key")),
+            SchemaFieldType::String => serializer.serialize_str("string"),
+            SchemaFieldType::Number => serializer.serialize_str("number"),
+            SchemaFieldType::Boolean => serializer.serialize_str("boolean"),
+            SchemaFieldType::Array => serializer.serialize_str("array"),
+            SchemaFieldType::Object => serializer.serialize_str("object"),
+            _ => unreachable!("This variant should never be constructed"),
         }
     }
 }
 
-impl<'de> Deserialize<'de> for PropertyType {
-    /// Deserializes a string value into a `PropertyType`.
+impl<'de> Deserialize<'de> for SchemaFieldType {
+    /// Deserializes a string value into a `SchemaFieldType`.
     ///
     /// # Arguments
     ///
@@ -58,11 +90,11 @@ impl<'de> Deserialize<'de> for PropertyType {
     }
 }
 
-/// Visitor for deserializing a `PropertyType` from a string.
+/// Visitor for deserializing a `SchemaFieldType` from a string.
 struct PropertyTypeVisitor;
 
 impl<'de> Visitor<'de> for PropertyTypeVisitor {
-    type Value = PropertyType;
+    type Value = SchemaFieldType;
 
     /// Describes what the visitor expects to receive.
     ///
@@ -82,16 +114,16 @@ impl<'de> Visitor<'de> for PropertyTypeVisitor {
         E: Error,
     {
         match  value {
-            0 =>  Ok(PropertyType::String),
-            1 => Ok(PropertyType::Number),
-            2 => Ok(PropertyType::Boolean),
-            3 => Ok(PropertyType::Array),
-            4 => Ok(PropertyType::Object),
+            0 =>  Ok(SchemaFieldType::String),
+            1 => Ok(SchemaFieldType::Number),
+            2 => Ok(SchemaFieldType::Boolean),
+            3 => Ok(SchemaFieldType::Array),
+            4 => Ok(SchemaFieldType::Object),
             _ => Err(E::invalid_value(de::Unexpected::Str("Wrong key"), &self)),
         }
     }
 
-    /// Visits a string value and attempts to convert it into a `PropertyType`.
+    /// Visits a string value and attempts to convert it into a `SchemaFieldType`.
     ///
     /// # Arguments
     ///
@@ -99,17 +131,17 @@ impl<'de> Visitor<'de> for PropertyTypeVisitor {
     ///
     /// # Returns
     ///
-    /// * `Result<PropertyType, E>` - A result indicating success or failure.
-    fn visit_str<E>(self, value: &str) -> Result<PropertyType, E>
+    /// * `Result<SchemaFieldType, E>` - A result indicating success or failure.
+    fn visit_str<E>(self, value: &str) -> Result<SchemaFieldType, E>
         where
             E: de::Error,
     {
         match value {
-            "string" => Ok(PropertyType::String),
-            "number" => Ok(PropertyType::Number),
-            "boolean" => Ok(PropertyType::Boolean),
-            "array" => Ok(PropertyType::Array),
-            "object" => Ok(PropertyType::Object),
+            "string" => Ok(SchemaFieldType::String),
+            "number" => Ok(SchemaFieldType::Number),
+            "boolean" => Ok(SchemaFieldType::Boolean),
+            "array" => Ok(SchemaFieldType::Array),
+            "object" => Ok(SchemaFieldType::Object),
             _ => Err(E::invalid_value(de::Unexpected::Str(value), &self)),
         }
     }

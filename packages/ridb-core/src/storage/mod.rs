@@ -4,7 +4,7 @@ use js_sys::{Reflect};
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast, JsValue};
 
-use crate::{error::RIDBError, operation::{OpType, Operation}, plugin::BasePlugin, schema::{property_type::PropertyType, Schema}, storages::base::StorageExternal};
+use crate::{error::RIDBError, operation::{OpType, Operation}, plugin::BasePlugin, schema::{property_type::SchemaFieldType, Schema}, storages::base::StorageExternal};
 use crate::utils::Logger;
 use crate::query::options::QueryOptions;
 
@@ -169,7 +169,7 @@ impl Storage {
         let primary_key_type = primary_key_property.property_type();
 
         if doc_property.is_null() || doc_property.is_undefined() {
-            if primary_key_type == PropertyType::String {
+            if primary_key_type == SchemaFieldType::String {
                 Reflect::set(&document, &JsValue::from(&key), &JsValue::from("12345"))
                     .map_err(|e| JsValue::from(RIDBError::from(e)))?;
             } else {
@@ -181,9 +181,9 @@ impl Storage {
         let doc_property = Reflect::get(&document, &JsValue::from(&key))
             .map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
-        if primary_key_type == PropertyType::String && !doc_property.is_string() {
+        if primary_key_type == SchemaFieldType::String && !doc_property.is_string() {
             Err(RIDBError::validation("Unexpected primary key should be a string", 0))
-        } else if primary_key_type == PropertyType::Number && !doc_property.is_bigint() {
+        } else if primary_key_type == SchemaFieldType::Number && !doc_property.is_bigint() {
             Err(RIDBError::validation("Unexpected primary key should be number", 0))
         } else {
             Ok(document)

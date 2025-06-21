@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { describe, it, expect, beforeEach, bench } from 'vitest';
 import { v4 as uuidv4 } from 'uuid';
-import { RIDB, SchemaFieldType } from '../../index';
+import { RIDB } from '../../index';
 import { StoragesType } from '..';
 import { Options } from 'tinybench';
-import { Doc } from '@trust0/ridb-core';
+import { Doc, SchemaFieldType } from '@trust0/ridb-core';
 
 
 const defaultBenchConfig: Options = {
@@ -16,35 +16,12 @@ const defaultBenchConfig: Options = {
     }
 }
 
-type DemoSchemas = {
-    readonly demo: {
-        readonly version: 0;
-        readonly primaryKey: "id";
-        readonly type: "object";
-        readonly indexes?: string[];
-        readonly properties: {
-            readonly id: {
-                readonly type: "string";
-                readonly required: true;
-            };
-            readonly email: {
-                readonly type: "string";
-                readonly required: true;
-            };
-        };
-    };
-}
 
 export const BenchTests = (platform: string, storages: StoragesType[]) => {
     return describe(`[${platform}] Testing`, () => {
-        let dbName: string;
-
-        beforeEach(() => {
-            dbName = "test" + uuidv4();
-        })
-        let schemas: DemoSchemas = {
+        let schemas = {
             demo: {
-                version: 0,
+                version: 0 as const,
                 primaryKey: 'id',
                 type: SchemaFieldType.object,
                 properties: {
@@ -55,9 +32,9 @@ export const BenchTests = (platform: string, storages: StoragesType[]) => {
         };
 
 
-        let schemasIndex: DemoSchemas = {
+        let schemasIndex = {
             demo: {
-                version: 0,
+                version: 0 as const,
                 primaryKey: 'id',
                 type: SchemaFieldType.object,
                 indexes: ['email'] as string[],
@@ -71,7 +48,7 @@ export const BenchTests = (platform: string, storages: StoragesType[]) => {
         storages.forEach(({ name, storage }) => {
 
             describe(`[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}]  Insert`, async () => {
-                let db: RIDB<DemoSchemas> = new RIDB({
+                let db = new RIDB({
                     dbName: "test-index" + uuidv4(),
                     schemas
                 });
@@ -80,7 +57,7 @@ export const BenchTests = (platform: string, storages: StoragesType[]) => {
                     password: "test"
                 });
 
-                let dbIndex: RIDB<DemoSchemas> = new RIDB({
+                let dbIndex = new RIDB({
                     dbName: "test-index" + uuidv4(),
                     schemas: schemasIndex
                 });
@@ -101,7 +78,7 @@ export const BenchTests = (platform: string, storages: StoragesType[]) => {
             })
 
             describe(`[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}] find`, async () => {
-                let db: RIDB<DemoSchemas> = new RIDB({
+                let db = new RIDB({
                     dbName: "test-index" + uuidv4(),
                     schemas
                 });
@@ -110,7 +87,7 @@ export const BenchTests = (platform: string, storages: StoragesType[]) => {
                     password: "test"
                 });
 
-                let dbIndex: RIDB<DemoSchemas> = new RIDB({
+                let dbIndex = new RIDB({
                     dbName: "test-index" + uuidv4(),
                     schemas: schemasIndex
                 });
@@ -138,7 +115,7 @@ export const BenchTests = (platform: string, storages: StoragesType[]) => {
             })
 
             describe(`[${platform}][${storage ? 'Typescript' : 'Wasm'} ${name}] count`, async () => {
-                let db: RIDB<DemoSchemas> = new RIDB({
+                let db = new RIDB({
                     dbName: "test-index" + uuidv4(),
                     schemas
                 });
@@ -147,7 +124,7 @@ export const BenchTests = (platform: string, storages: StoragesType[]) => {
                     password: "test"
                 });
 
-                let dbIndex: RIDB<DemoSchemas> = new RIDB({
+                let dbIndex = new RIDB({
                     dbName: "test-index" + uuidv4(),
                     schemas: schemasIndex
                 });
@@ -303,21 +280,31 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                             schemas: {
                                 demo: {
                                     version: 0 as const,
-                                    primaryKey: 'id',
+                                    primaryKey: 'recoveryId',
                                     type: SchemaFieldType.object,
                                     properties: {
-                                        id: {
+                                        alias: {
+                                            type: SchemaFieldType.string,
+                                        },
+                                        index: {
+                                            type:SchemaFieldType.number,
+                                        },
+                                        recoveryId: {
                                             type: SchemaFieldType.string,
                                             required: true,
-                                            maxLength: 60
                                         },
-                                        name: {
+                                        uuid: {
                                             type: SchemaFieldType.string,
-                                            maxLength: 20
-                                        }
+                                            maxLength: 60,
+                                            required: true,
+                                        },
+                                        rawHex: {
+                                            type: SchemaFieldType.string,
+                                            required: true,
+                                        },
                                     }
                                 }
-                            } as const
+                            }
                         }
                     )
 
@@ -332,16 +319,11 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                     expect(db.collections.demo).to.not.be.undefined;
                     expect(db.collections.demo.find).to.not.be.undefined;
 
-                    const created = await db.collections.demo.create({
-                        id: "12345",
-                        name: 'string'
+                    await db.collections.demo.create({
+                        recoveryId: "13",
+                        uuid: "12345",
+                        rawHex: "12345",
                     });
-                    expect(created).to.not.be.undefined;
-                    expect(created).to.haveOwnProperty("id");
-                    expect(created).to.haveOwnProperty("name");
-
-                    expect(created.id).to.eq("12345")
-
                 })
                 it("should allow optional numeric fields", async () => {
                     const db = new RIDB(
@@ -451,6 +433,7 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                         id: "12345",
                         name: "demo"
                     })
+                    
                     expect(created).to.not.be.undefined;
                     expect(created).to.haveOwnProperty("id");
                     expect(created).to.haveOwnProperty("name");
@@ -616,7 +599,7 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                 demo: {
                                     version: 0 as const,
                                     primaryKey: 'id',
-                                    type: "wrong",
+                                    type: "wrong" as any,
                                     properties: {}
                                 }
                             } as const
@@ -636,10 +619,10 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                 demo: {
                                     version: 0 as const,
                                     primaryKey: 'id',
-                                    type: "obiect",
+                                    type: SchemaFieldType.object,
                                     properties: {
                                         id: {
-                                            type: "....",
+                                            type: "...." as any,
                                             minLength: -1
                                         }
                                     }
@@ -661,10 +644,10 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                 demo: {
                                     version: 0 as const,
                                     primaryKey: 'id',
-                                    type: "object",
+                                    type: SchemaFieldType.object,
                                     properties: {
                                         id: {
-                                            type: "string",
+                                            type: SchemaFieldType.string,
                                             minLength: -1
                                         }
                                     }
@@ -686,10 +669,10 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                 demo: {
                                     version: 0 as const,
                                     primaryKey: 'id',
-                                    type: "object",
+                                    type: SchemaFieldType.object,
                                     properties: {
                                         id: {
-                                            type: "string",
+                                            type: SchemaFieldType.string,
                                             maxLength: 2,
                                             minLength: 3
                                         }

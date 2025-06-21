@@ -30,7 +30,7 @@ export type SchemaType = {
     /**
      * The type of the schema.
      */
-     type: string;
+     type: SchemaFieldType;
      indexes?:  string[];
      encrypted?:  string[];
     /**
@@ -86,7 +86,7 @@ export class Schema<T extends SchemaType> {
     /**
      * The type of the schema.
      */
-    readonly type: string;
+    readonly type: SchemaFieldType;
 
     /**
      * An optional array of indexes.
@@ -205,7 +205,7 @@ impl Schema {
 
     fn is_type_correct(&self, key: &String, value: &JsValue, property: &Property) -> Result<bool, RIDBError> {
         match property.property_type {
-            PropertyType::String => {
+            SchemaFieldType::String => {
                 if let Some(string) = value.as_string() {
                     // Check maxLength and minLength if they exist
                     if let Some(max_length) = property.max_length {
@@ -233,18 +233,18 @@ impl Schema {
                 }
                 Ok(false)
             },
-            PropertyType::Number => {
+            SchemaFieldType::Number => {
                 // Check if the value can be converted to an f64
                 Ok(value.as_f64().is_some())
             },
-            PropertyType::Boolean => Ok(value.as_bool().is_some()),
-            PropertyType::Object => {
+            SchemaFieldType::Boolean => Ok(value.as_bool().is_some()),
+            SchemaFieldType::Object => {
                 // Exclude null, arrays, and functions
                 Ok(value.is_object()
                     && !value.is_null()
                     && !js_sys::Array::is_array(value))
             },
-            PropertyType::Array => {
+            SchemaFieldType::Array => {
                 let arr = js_sys::Array::from(value);
                 if let Some(max_length) = property.max_items {
                     let len_js = arr.length();
@@ -368,11 +368,11 @@ impl Schema {
 
             // Get the 'type' field as a string
             let prop_type_str = match property.property_type {
-                PropertyType::String => "string",
-                PropertyType::Number => "number",
-                PropertyType::Boolean => "boolean",
-                PropertyType::Array => "array",
-                PropertyType::Object => "object",
+                SchemaFieldType::String => "string",
+                SchemaFieldType::Number => "number",
+                SchemaFieldType::Boolean => "boolean",
+                SchemaFieldType::Array => "array",
+                SchemaFieldType::Object => "object",
                 _ => "object",
             };
 
@@ -398,7 +398,7 @@ impl Schema {
 
 #[cfg(feature = "browser")]
 use wasm_bindgen_test::{wasm_bindgen_test_configure};
-use crate::schema::property_type::PropertyType;
+use crate::schema::property_type::{SchemaFieldType};
 
 #[cfg(feature = "browser")]
 wasm_bindgen_test_configure!(run_in_browser);

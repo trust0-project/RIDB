@@ -6,7 +6,7 @@ use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::error::RIDBError;
 use crate::schema::property::Property;
-use crate::schema::property_type::PropertyType;
+use crate::schema::property_type::SchemaFieldType;
 use crate::schema::Schema;
 
 use super::core::CoreStorage;
@@ -133,7 +133,7 @@ impl BaseStorage {
                     properties.insert(
                         "items".to_string(),
                         Property {
-                            property_type: PropertyType::Array,
+                            property_type: SchemaFieldType::Array,
                             items: Some(
                                 Box::from(
                                     Property {

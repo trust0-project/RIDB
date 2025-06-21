@@ -9,7 +9,7 @@ use serde_wasm_bindgen::to_value;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use crate::error::RIDBError;
-use crate::schema::property_type::PropertyType;
+use crate::schema::property_type::SchemaFieldType;
 
 
 #[wasm_bindgen(typescript_custom_section)]
@@ -21,7 +21,7 @@ export class Property {
     /**
      * The type of the property.
      */
-    readonly type: string;
+    readonly type: SchemaFieldType;
 
     /**
      * The version of the property, if applicable.
@@ -84,7 +84,7 @@ export class Property {
 pub struct Property {
     /// The type of the property.
     #[serde(rename = "type")]
-    pub(crate) property_type: PropertyType,
+    pub(crate) property_type: SchemaFieldType,
 
     /// Optional nested items for array-type properties.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -129,7 +129,7 @@ impl Property {
     #[wasm_bindgen]
     pub fn is_valid(&self) -> Result<bool, RIDBError> {
         match self.property_type {
-            PropertyType::String => {
+            SchemaFieldType::String => {
                 let min = self.min_length.unwrap_or_else(|| 0);
                 let max = self.max_length.unwrap_or_else(|| -1);
                 if min < 0 {
@@ -144,9 +144,9 @@ impl Property {
                     Ok(true)
                 }
             },
-            PropertyType::Number => Ok(true),
-            PropertyType::Boolean => Ok(true),
-            PropertyType::Array => match self.clone().items {
+            SchemaFieldType::Number => Ok(true),
+            SchemaFieldType::Boolean => Ok(true),
+            SchemaFieldType::Array => match self.clone().items {
                 Some(item) => {
                     let is_valid = item.is_valid().unwrap();
                     match is_valid {
@@ -174,7 +174,7 @@ impl Property {
                         RIDBError::validation("Items is empty", 26)
                 )
             },
-            PropertyType::Object => match self.clone().properties {
+            SchemaFieldType::Object => match self.clone().properties {
                 Some(props) => {
                     if props.len() > 0 {
                         Ok(true)
@@ -199,7 +199,7 @@ impl Property {
     ///
     /// * `PropertyType` - The type of the property.
     #[wasm_bindgen(getter, js_name = "type")]
-    pub fn property_type(&self) -> PropertyType {
+    pub fn property_type(&self) -> SchemaFieldType {
         self.property_type
     }
 
@@ -279,12 +279,12 @@ mod tests {
     use std::collections::HashMap;
     use crate::error::RIDBError;
     use crate::schema::property::Property;
-    use crate::schema::property_type::PropertyType;
+    use crate::schema::property_type::{SchemaFieldType};
 
     #[test]
     fn test_property_defaults() {
         let default_property = Property {
-            property_type: PropertyType::String,
+            property_type: SchemaFieldType::String,
             items: None,
             max_items: None,
             min_items: None,
@@ -294,7 +294,7 @@ mod tests {
             default: None,
             required: Some(true)
         };
-        assert_eq!(default_property.property_type, PropertyType::String);
+        assert_eq!(default_property.property_type, SchemaFieldType::String);
         assert!(default_property.items.is_none());
         assert!(default_property.max_items.is_none());
         assert!(default_property.min_items.is_none());
@@ -307,7 +307,7 @@ mod tests {
     #[test]
     fn test_property_array_items_required() {
         let default_property = Property {
-            property_type: PropertyType::Array,
+            property_type: SchemaFieldType::Array,
             items: None,
             max_items: None,
             min_items: None,
@@ -318,7 +318,7 @@ mod tests {
             required: Some(true)
         };
         // Test default values to ensure proper initialization
-        assert_eq!(default_property.property_type, PropertyType::Array);
+        assert_eq!(default_property.property_type, SchemaFieldType::Array);
         assert!(default_property.items.is_none());
         assert!(default_property.max_items.is_none());
         assert!(default_property.min_items.is_none());
@@ -339,7 +339,7 @@ mod tests {
     #[test]
     fn test_property_array_items_with_max_min_items_wrong() {
         let prop = Property {
-            property_type: PropertyType::String,
+            property_type: SchemaFieldType::String,
             items:None,
             max_items: None,
             min_items: None,
@@ -350,7 +350,7 @@ mod tests {
             required: Some(true)
         };
         let default_property = Property {
-            property_type: PropertyType::Array,
+            property_type: SchemaFieldType::Array,
             items: Some(Box::new(prop)),
             max_items: Some(-1),
             min_items: Some(-1),
@@ -375,7 +375,7 @@ mod tests {
     #[test]
     fn test_property_array_items_with_max_min_items_wrong_min_higher() {
         let prop = Property {
-            property_type: PropertyType::String,
+            property_type: SchemaFieldType::String,
             items:None,
             max_items: None,
             min_items: None,
@@ -387,7 +387,7 @@ mod tests {
         };
 
         let default_property2 = Property {
-            property_type: PropertyType::Array,
+            property_type: SchemaFieldType::Array,
             items: Some(Box::new(prop)),
             max_items: Some(1),
             min_items: Some(2),
@@ -415,7 +415,7 @@ mod tests {
     #[test]
     fn test_property_array_items_with_max_min_items_wrong_min_lower0() {
         let prop = Property {
-            property_type: PropertyType::String,
+            property_type: SchemaFieldType::String,
             items:None,
             max_items: None,
             min_items: None,
@@ -427,7 +427,7 @@ mod tests {
         };
 
         let default_property2 = Property {
-            property_type: PropertyType::Array,
+            property_type: SchemaFieldType::Array,
             items: Some(Box::new(prop)),
             max_items: Some(1),
             min_items: Some(-1),
@@ -454,7 +454,7 @@ mod tests {
     #[test]
     fn test_property_number_ok() {
         let default_property2 = Property {
-            property_type: PropertyType::Number,
+            property_type: SchemaFieldType::Number,
             items: None,
             max_items: None,
             min_items: None,
@@ -475,7 +475,7 @@ mod tests {
     #[test]
     fn test_property_boolean_ok() {
         let default_property2 = Property {
-            property_type: PropertyType::Boolean,
+            property_type: SchemaFieldType::Boolean,
             items: None,
             max_items: None,
             min_items: None,
@@ -496,7 +496,7 @@ mod tests {
     #[test]
     fn test_property_string_with_max_min_length_wrong_min_higher() {
         let default_property2 = Property {
-            property_type: PropertyType::String,
+            property_type: SchemaFieldType::String,
             items: None,
             max_items: None,
             min_items: None,
@@ -521,7 +521,7 @@ mod tests {
     #[test]
     fn test_property_string_with_max_min_length_wrong_min_lower0() {
         let default_property2 = Property {
-            property_type: PropertyType::String,
+            property_type: SchemaFieldType::String,
             items: None,
             max_items: None,
             min_items: None,
@@ -546,7 +546,7 @@ mod tests {
     #[test]
     fn test_property_object_no_props_err() {
         let result = Property {
-            property_type: PropertyType::Object,
+            property_type: SchemaFieldType::Object,
             items: None,
             max_items: None,
             min_items: None,
@@ -571,7 +571,7 @@ mod tests {
     #[test]
     fn test_property_object_props_empty_err() {
         let result = Property {
-            property_type: PropertyType::Object,
+            property_type: SchemaFieldType::Object,
             items: None,
             max_items: None,
             min_items: None,
@@ -605,7 +605,7 @@ fn test_property_creation() {
     let property_value = JSON::parse(property_js).unwrap();
     let property = serde_wasm_bindgen::from_value::<Property>(property_value).unwrap();
 
-    assert_eq!(property.property_type(), PropertyType::String);
+    assert_eq!(property.property_type(), SchemaFieldType::String);
     assert_eq!(property.max_length().unwrap(), JsValue::from(50));
     assert_eq!(property.min_length().unwrap(), JsValue::from(1));
 }
