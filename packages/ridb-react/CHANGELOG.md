@@ -1,3 +1,13 @@
+## 1.4.2 (2025-06-21)
+
+### 🩹 Fixes
+
+- code improvement ([104aa28](https://github.com/trust0-project/RIDB/commit/104aa28))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.4.1 (2025-06-21)
 
 ### 🩹 Fixes
