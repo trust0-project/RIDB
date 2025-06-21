@@ -13,7 +13,6 @@ type Context<T extends SchemaTypeRecord> = {
 
 const RIDBContext = createContext<Context<any>>(null);
 
-// Hook that returns the database and loading state
 export function useRIDB<T extends SchemaTypeRecord>() {
   const context = useContext<Context<T>>(RIDBContext);
   if (!context) {
