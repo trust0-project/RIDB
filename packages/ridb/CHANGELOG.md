@@ -1,3 +1,18 @@
+## 1.5.25 (2025-06-21)
+
+### 🩹 Fixes
+
+- improve schemas and default fields ([bfbcdff](https://github.com/trust0-project/RIDB/commit/bfbcdff))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.20
+- Updated @trust0/ridb-core to 1.7.20
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.24 (2025-06-20)
 
 ### 🧱 Updated Dependencies

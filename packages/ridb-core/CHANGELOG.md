@@ -1,3 +1,13 @@
+## 1.7.20 (2025-06-21)
+
+### 🩹 Fixes
+
+- improve schemas and default fields ([bfbcdff](https://github.com/trust0-project/RIDB/commit/bfbcdff))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.19 (2025-06-20)
 
 ### 🩹 Fixes
