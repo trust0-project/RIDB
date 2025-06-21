@@ -55,8 +55,8 @@ export type ExtractType<T extends string> =
   T extends "array" ? any[] : 
   never;
 
-export type IsOptional<T> = T extends { required: false } ? true :
-  T extends { default: any } ? true : false;
+export type IsOptional<T> = 
+  T extends { required: false } | { required: true, default: never } ? true : false;
 
 /**
  * Doc is a utility type that transforms a schema type into a document type where each property is mapped to its extracted type.
@@ -67,10 +67,12 @@ export type IsOptional<T> = T extends { required: false } ? true :
  */
 export type Doc<T extends SchemaType> = {
   [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends true ? K : never]?: 
-    ExtractType<T["properties"][K]["type"]>
+    ExtractType<T['properties'][K]['type']> extends undefined ? `${T['properties'][K]['type']}` : ExtractType<T['properties'][K]['type']>
+
 } & {
-  [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends false ? K : never]: 
-    ExtractType<T["properties"][K]["type"]>
+  [K in keyof T["properties"]]: 
+                ExtractType<T['properties'][K]['type']> extends undefined ? `${T['properties'][K]['type']}` : ExtractType<T['properties'][K]['type']>
+
 } & {
   __version?: number;
   createdAt?: number;
@@ -120,7 +122,7 @@ export class Collection<T extends SchemaType> {
 	 * @param document - The document to create.
 	 * @returns A promise that resolves to the created document.
 	 */
-	create(document: Doc<T>): Promise<Doc<T>>;
+	create(document: Partial<Doc<T>>): Promise<Doc<T>>;
 	/**
 	 * Deletes a document in the collection by its ID.
 	 *

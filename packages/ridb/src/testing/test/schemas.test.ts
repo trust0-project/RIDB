@@ -25,9 +25,11 @@ type DemoSchemas = {
         readonly properties: {
             readonly id: {
                 readonly type: "string";
+                readonly required: true;
             };
             readonly email: {
                 readonly type: "string";
+                readonly required: true;
             };
         };
     };
@@ -46,8 +48,8 @@ export const BenchTests = (platform: string, storages: StoragesType[]) => {
                 primaryKey: 'id',
                 type: SchemaFieldType.object,
                 properties: {
-                    id: { type: SchemaFieldType.string },
-                    email: { type: SchemaFieldType.string }
+                    id: { type: SchemaFieldType.string, required: true },
+                    email: { type: SchemaFieldType.string, required: true }
                 }
             }
         };
@@ -60,8 +62,8 @@ export const BenchTests = (platform: string, storages: StoragesType[]) => {
                 type: SchemaFieldType.object,
                 indexes: ['email'] as string[],
                 properties: {
-                    id: { type: SchemaFieldType.string },
-                    email: { type: SchemaFieldType.string }
+                    id: { type: SchemaFieldType.string, required: true },
+                    email: { type: SchemaFieldType.string, required: true }
                 }
             }
         };
@@ -183,10 +185,10 @@ export const BenchTests = (platform: string, storages: StoragesType[]) => {
                             // Index on multiple fields to test query complexity
                             indexes: ['category', 'score', 'group'],
                             properties: {
-                                id: { type: SchemaFieldType.string },
-                                category: { type: SchemaFieldType.string, maxLength: 20 },
-                                score: { type: SchemaFieldType.number },
-                                group: { type: SchemaFieldType.string },
+                                id: { type: SchemaFieldType.string, required: true },
+                                category: { type: SchemaFieldType.string, maxLength: 20, required: true },
+                                score: { type: SchemaFieldType.number, required: true },
+                                group: { type: SchemaFieldType.string, required: true },
                             }
                         }
                     }
@@ -267,6 +269,7 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                     properties: {
                                         id: {
                                             type: SchemaFieldType.string,
+                                            required: true,
                                             maxLength: 60
                                         }
                                     }
@@ -305,6 +308,7 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                     properties: {
                                         id: {
                                             type: SchemaFieldType.string,
+                                            required: true,
                                             maxLength: 60
                                         },
                                         name: {
@@ -331,10 +335,11 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
 
                     const created = await db.collections.demo.create({
                         id: "12345",
+                        name: 'string'
                     });
                     expect(created).to.not.be.undefined;
                     expect(created).to.haveOwnProperty("id");
-                    expect(created).to.not.haveOwnProperty("name");
+                    expect(created).to.haveOwnProperty("name");
 
                     expect(created.id).to.eq("12345")
 
@@ -353,10 +358,12 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                     properties: {
                                         id: {
                                             type: SchemaFieldType.string,
+                                            required: true,
                                             maxLength: 60
                                         },
                                         name: {
                                             type: SchemaFieldType.string,
+                                            required: true,
                                             maxLength: 20
                                         },
                                     }
@@ -369,10 +376,12 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                     properties: {
                                         id: {
                                             type: SchemaFieldType.string,
+                                            required: true,
                                             maxLength: 60
                                         },
                                         name: {
                                             type: SchemaFieldType.string,
+                                            required: true,
                                             maxLength: 20
                                         },
                                     }
@@ -757,10 +766,12 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                     properties: {
                                         id: {
                                             type: SchemaFieldType.string,
+                                            required: true,
                                             maxLength: 60
                                         },
                                         age: {
                                             type: SchemaFieldType.number,
+                                            required: true,
                                             default: 18
                                         }
                                     }
@@ -970,8 +981,8 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                 primaryKey: 'id',
                                 type: SchemaFieldType.object,
                                 properties: {
-                                    id: { type: SchemaFieldType.string },
-                                    status: { type: SchemaFieldType.string, default: 'active' }
+                                    id: { type: SchemaFieldType.string, required: true },
+                                    status: { type: SchemaFieldType.string, default: 'active', required: true }
                                 }
                             }
                         } as const
