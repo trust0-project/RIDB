@@ -1,3 +1,18 @@
+## 1.7.23 (2025-06-22)
+
+### 🩹 Fixes
+
+- lock ([4b79ddc](https://github.com/trust0-project/RIDB/commit/4b79ddc))
+- improve db wrapper + react ([2125f32](https://github.com/trust0-project/RIDB/commit/2125f32))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.13
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.22 (2025-06-21)
 
 ### 🩹 Fixes
