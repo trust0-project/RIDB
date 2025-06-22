@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { render, waitFor } from '@testing-library/react'
-import { SchemaFieldType } from '@trust0/ridb'
+import { SchemaFieldType } from '@trust0/ridb-core'
 import { describe, expect, it } from 'vitest'
 import { RIDBDatabase, useRIDB } from '../..'
 
@@ -28,7 +28,7 @@ const MyComponent: React.FC = () => {
     const [isDbReady, setIsDbReady] = React.useState(false);
     useEffect(() => {
        if (!isDbReady) {
-        db.start()
+        db.start({})
          .then(() => {
           setIsDbReady(true);
          })

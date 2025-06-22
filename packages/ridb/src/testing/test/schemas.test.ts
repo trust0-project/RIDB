@@ -285,9 +285,11 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                                     properties: {
                                         alias: {
                                             type: SchemaFieldType.string,
+                                            required: false
                                         },
                                         index: {
                                             type:SchemaFieldType.number,
+                                            required: false
                                         },
                                         recoveryId: {
                                             type: SchemaFieldType.string,
