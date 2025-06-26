@@ -1,3 +1,13 @@
+## 1.4.5 (2025-06-26)
+
+### 🩹 Fixes
+
+- react startup options ([132707f](https://github.com/trust0-project/RIDB/commit/132707f))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.4.4 (2025-06-26)
 
 ### 🩹 Fixes

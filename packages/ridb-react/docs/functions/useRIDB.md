@@ -8,7 +8,7 @@
 
 > **useRIDB**\<`T`\>(): `object`
 
-Defined in: [index.tsx:16](https://github.com/trust0-project/RIDB/blob/dadb7562efa81f891f1f7cc24d5ad8f9fb46af94/packages/ridb-react/src/index.tsx#L16)
+Defined in: [index.tsx:17](https://github.com/trust0-project/RIDB/blob/132707f2a67423a7d9b542db2e8d36b2c6b917ad/packages/ridb-react/src/index.tsx#L17)
 
 ## Type Parameters
 
@@ -24,13 +24,27 @@ Defined in: [index.tsx:16](https://github.com/trust0-project/RIDB/blob/dadb7562e
 
 > **db**: `RIDB`\<`T`\>
 
-### start()
+### setStartOptions()
 
-> **start**: (`options`) => `Promise`\<`void`\>
+> **setStartOptions**: (`options?`) => `void`
 
 #### Parameters
 
-##### options
+##### options?
+
+`StartOptions`\<`T`\>
+
+#### Returns
+
+`void`
+
+### start()
+
+> **start**: (`options?`) => `Promise`\<`void`\>
+
+#### Parameters
+
+##### options?
 
 `StartOptions`\<`T`\>
 
