@@ -37,9 +37,10 @@ export function RIDBDatabase<T extends SchemaTypeRecord>({ children, startOption
       console.error('No start options provided');
       return;
     }
-    
+
     setState('loading');
     await db.start(startOptions);
+    setStartOptions(undefined);
     setState('loaded');
   }, [db]);
 
