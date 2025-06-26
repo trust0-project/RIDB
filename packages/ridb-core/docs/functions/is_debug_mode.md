@@ -8,7 +8,7 @@
 
 > **is\_debug\_mode**(): `boolean`
 
-Defined in: ridb\_core.js:325
+Defined in: ridb\_core.js:343
 
 ## Returns
 

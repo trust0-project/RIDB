@@ -6,7 +6,7 @@
 
 # Class: BaseStorage
 
-Defined in: ridb\_core.js:532
+Defined in: ridb\_core.js:533
 
 Represents the base storage with a name and schema.
 
@@ -16,7 +16,7 @@ Represents the base storage with a name and schema.
 
 > **new BaseStorage**(`name`, `schemas_js`, `options?`): `BaseStorage`
 
-Defined in: ridb\_core.js:560
+Defined in: ridb\_core.js:561
 
 Creates a new `BaseStorage` instance with the provided name and schema type.
 
@@ -53,7 +53,7 @@ Creates a new `BaseStorage` instance with the provided name and schema type.
 
 > **\_\_wbg\_ptr**: `number`
 
-Defined in: ridb\_core.js:536
+Defined in: ridb\_core.js:537
 
 ## Accessors
 
@@ -63,7 +63,7 @@ Defined in: ridb\_core.js:536
 
 > **get** **core**(): [`CoreStorage`](CoreStorage.md)
 
-Defined in: ridb\_core.js:641
+Defined in: ridb\_core.js:642
 
 ##### Returns
 
@@ -75,7 +75,7 @@ Defined in: ridb\_core.js:641
 
 > **\_\_destroy\_into\_raw**(): `number`
 
-Defined in: ridb\_core.js:534
+Defined in: ridb\_core.js:535
 
 #### Returns
 
@@ -87,7 +87,7 @@ Defined in: ridb\_core.js:534
 
 > **addIndexSchemas**(): `any`
 
-Defined in: ridb\_core.js:581
+Defined in: ridb\_core.js:582
 
 #### Returns
 
@@ -99,7 +99,7 @@ Defined in: ridb\_core.js:581
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:541
+Defined in: ridb\_core.js:542
 
 #### Returns
 
@@ -111,7 +111,7 @@ Defined in: ridb\_core.js:541
 
 > **getOption**(`name`): `any`
 
-Defined in: ridb\_core.js:600
+Defined in: ridb\_core.js:601
 
 #### Parameters
 
@@ -129,7 +129,7 @@ Defined in: ridb\_core.js:600
 
 > **getSchema**(`name`): [`Schema`](Schema.md)
 
-Defined in: ridb\_core.js:621
+Defined in: ridb\_core.js:622
 
 #### Parameters
 

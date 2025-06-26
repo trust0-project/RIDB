@@ -6,7 +6,7 @@
 
 # Class: Database
 
-Defined in: ridb\_core.js:937
+Defined in: ridb\_core.js:938
 
 Represents a database with collections of documents.
 
@@ -26,7 +26,7 @@ Represents a database with collections of documents.
 
 > **\_\_wbg\_ptr**: `undefined` \| `number`
 
-Defined in: ridb\_core.js:949
+Defined in: ridb\_core.js:950
 
 ## Accessors
 
@@ -36,7 +36,7 @@ Defined in: ridb\_core.js:949
 
 > **get** **collections**(): `object`
 
-Defined in: ridb\_core.js:1000
+Defined in: ridb\_core.js:1001
 
 Retrieves the collections in the database.
 
@@ -58,7 +58,7 @@ This function returns an `Object` containing the collections.
 
 > **get** **started**(): `boolean`
 
-Defined in: ridb\_core.js:976
+Defined in: ridb\_core.js:977
 
 ##### Returns
 
@@ -70,7 +70,7 @@ Defined in: ridb\_core.js:976
 
 > **\_\_destroy\_into\_raw**(): `undefined` \| `number`
 
-Defined in: ridb\_core.js:947
+Defined in: ridb\_core.js:948
 
 #### Returns
 
@@ -82,7 +82,7 @@ Defined in: ridb\_core.js:947
 
 > **authenticate**(`password`): `Promise`\<`boolean`\>
 
-Defined in: ridb\_core.js:984
+Defined in: ridb\_core.js:985
 
 #### Parameters
 
@@ -100,7 +100,7 @@ Defined in: ridb\_core.js:984
 
 > **close**(): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:968
+Defined in: ridb\_core.js:969
 
 #### Returns
 
@@ -112,7 +112,7 @@ Defined in: ridb\_core.js:968
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:954
+Defined in: ridb\_core.js:955
 
 #### Returns
 
@@ -124,7 +124,7 @@ Defined in: ridb\_core.js:954
 
 > **start**(): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:961
+Defined in: ridb\_core.js:962
 
 #### Returns
 
@@ -136,7 +136,7 @@ Defined in: ridb\_core.js:961
 
 > `static` **\_\_wrap**(`ptr`): `any`
 
-Defined in: ridb\_core.js:939
+Defined in: ridb\_core.js:940
 
 #### Parameters
 
@@ -154,7 +154,7 @@ Defined in: ridb\_core.js:939
 
 > `static` **create**(`db_name`, `schemas_js`, `migrations_js`, `plugins`, `module`, `password?`, `storage?`): `Promise`\<`Database`\>
 
-Defined in: ridb\_core.js:1025
+Defined in: ridb\_core.js:1026
 
 #### Parameters
 

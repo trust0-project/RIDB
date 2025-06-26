@@ -6,7 +6,7 @@
 
 # Class: WasmBindgenTestContext
 
-Defined in: ridb\_core.js:2214
+Defined in: ridb\_core.js:2215
 
 Runtime test harness support instantiated in JS.
 
@@ -19,7 +19,7 @@ drive test execution.
 
 > **new WasmBindgenTestContext**(): `WasmBindgenTestContext`
 
-Defined in: ridb\_core.js:2234
+Defined in: ridb\_core.js:2235
 
 Creates a new context ready to run tests.
 
@@ -37,7 +37,7 @@ tests.
 
 > **\_\_wbg\_ptr**: `number`
 
-Defined in: ridb\_core.js:2218
+Defined in: ridb\_core.js:2219
 
 ## Methods
 
@@ -45,7 +45,7 @@ Defined in: ridb\_core.js:2218
 
 > **\_\_destroy\_into\_raw**(): `number`
 
-Defined in: ridb\_core.js:2216
+Defined in: ridb\_core.js:2217
 
 #### Returns
 
@@ -57,7 +57,7 @@ Defined in: ridb\_core.js:2216
 
 > **args**(`args`): `void`
 
-Defined in: ridb\_core.js:2244
+Defined in: ridb\_core.js:2245
 
 Inform this context about runtime arguments passed to the test
 harness.
@@ -78,7 +78,7 @@ harness.
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:2223
+Defined in: ridb\_core.js:2224
 
 #### Returns
 
@@ -90,7 +90,7 @@ Defined in: ridb\_core.js:2223
 
 > **run**(`tests`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:2262
+Defined in: ridb\_core.js:2263
 
 Executes a list of tests, returning a promise representing their
 eventual completion.

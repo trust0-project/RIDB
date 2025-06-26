@@ -6,7 +6,7 @@
 
 # Class: BasePlugin
 
-Defined in: ridb\_core.js:457
+Defined in: ridb\_core.js:458
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: ridb\_core.js:457
 
 > **new BasePlugin**(`name`): `BasePlugin`
 
-Defined in: ridb\_core.js:473
+Defined in: ridb\_core.js:474
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: ridb\_core.js:473
 
 > **\_\_wbg\_ptr**: `number`
 
-Defined in: ridb\_core.js:461
+Defined in: ridb\_core.js:462
 
 ## Accessors
 
@@ -42,7 +42,7 @@ Defined in: ridb\_core.js:461
 
 > **get** **docCreateHook**(): `any`
 
-Defined in: ridb\_core.js:501
+Defined in: ridb\_core.js:502
 
 ##### Returns
 
@@ -52,7 +52,7 @@ Defined in: ridb\_core.js:501
 
 > **set** **docCreateHook**(`hook`): `void`
 
-Defined in: ridb\_core.js:515
+Defined in: ridb\_core.js:516
 
 ##### Parameters
 
@@ -72,7 +72,7 @@ Defined in: ridb\_core.js:515
 
 > **get** **docRecoverHook**(): `any`
 
-Defined in: ridb\_core.js:508
+Defined in: ridb\_core.js:509
 
 ##### Returns
 
@@ -82,7 +82,7 @@ Defined in: ridb\_core.js:508
 
 > **set** **docRecoverHook**(`hook`): `void`
 
-Defined in: ridb\_core.js:521
+Defined in: ridb\_core.js:522
 
 ##### Parameters
 
@@ -102,7 +102,7 @@ Defined in: ridb\_core.js:521
 
 > **get** **name**(): `any`
 
-Defined in: ridb\_core.js:494
+Defined in: ridb\_core.js:495
 
 ##### Returns
 
@@ -114,7 +114,7 @@ Defined in: ridb\_core.js:494
 
 > **\_\_destroy\_into\_raw**(): `number`
 
-Defined in: ridb\_core.js:459
+Defined in: ridb\_core.js:460
 
 #### Returns
 
@@ -126,7 +126,7 @@ Defined in: ridb\_core.js:459
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:466
+Defined in: ridb\_core.js:467
 
 #### Returns
 

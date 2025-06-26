@@ -8,7 +8,7 @@
 
 > **initSync**(`module`): `any`
 
-Defined in: ridb\_core.js:3125
+Defined in: ridb\_core.js:3126
 
 ## Parameters
 

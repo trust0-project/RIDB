@@ -6,7 +6,7 @@
 
 # Class: InMemory
 
-Defined in: ridb\_core.js:1040
+Defined in: ridb\_core.js:1041
 
 ## Constructors
 
@@ -24,7 +24,7 @@ Defined in: ridb\_core.js:1040
 
 > **\_\_wbg\_ptr**: `undefined` \| `number`
 
-Defined in: ridb\_core.js:1052
+Defined in: ridb\_core.js:1053
 
 ## Methods
 
@@ -32,7 +32,7 @@ Defined in: ridb\_core.js:1052
 
 > **\_\_destroy\_into\_raw**(): `undefined` \| `number`
 
-Defined in: ridb\_core.js:1050
+Defined in: ridb\_core.js:1051
 
 #### Returns
 
@@ -44,7 +44,7 @@ Defined in: ridb\_core.js:1050
 
 > **close**(): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1124
+Defined in: ridb\_core.js:1125
 
 #### Returns
 
@@ -56,7 +56,7 @@ Defined in: ridb\_core.js:1124
 
 > **count**(`collection_name`, `query_js`, `options`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1113
+Defined in: ridb\_core.js:1114
 
 #### Parameters
 
@@ -82,7 +82,7 @@ Defined in: ridb\_core.js:1113
 
 > **find**(`collection_name`, `query_js`, `options`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1088
+Defined in: ridb\_core.js:1089
 
 #### Parameters
 
@@ -108,7 +108,7 @@ Defined in: ridb\_core.js:1088
 
 > **findDocumentById**(`collection_name`, `primary_key`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1101
+Defined in: ridb\_core.js:1102
 
 #### Parameters
 
@@ -130,7 +130,7 @@ Defined in: ridb\_core.js:1101
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:1057
+Defined in: ridb\_core.js:1058
 
 #### Returns
 
@@ -142,7 +142,7 @@ Defined in: ridb\_core.js:1057
 
 > **start**(): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1131
+Defined in: ridb\_core.js:1132
 
 #### Returns
 
@@ -154,7 +154,7 @@ Defined in: ridb\_core.js:1131
 
 > **write**(`op`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1076
+Defined in: ridb\_core.js:1077
 
 #### Parameters
 
@@ -172,7 +172,7 @@ Defined in: ridb\_core.js:1076
 
 > `static` **\_\_wrap**(`ptr`): `any`
 
-Defined in: ridb\_core.js:1042
+Defined in: ridb\_core.js:1043
 
 #### Parameters
 
@@ -190,7 +190,7 @@ Defined in: ridb\_core.js:1042
 
 > `static` **create**(`name`, `schemas_js`): `Promise`\<`InMemory`\>
 
-Defined in: ridb\_core.js:1066
+Defined in: ridb\_core.js:1067
 
 #### Parameters
 

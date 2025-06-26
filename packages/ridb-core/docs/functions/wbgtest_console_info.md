@@ -8,7 +8,7 @@
 
 > **\_\_wbgtest\_console\_info**(`args`): `void`
 
-Defined in: ridb\_core.js:380
+Defined in: ridb\_core.js:381
 
 Handler for `console.info` invocations. See above.
 

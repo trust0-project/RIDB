@@ -6,7 +6,7 @@
 
 # Class: CoreStorage
 
-Defined in: ridb\_core.js:825
+Defined in: ridb\_core.js:826
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: ridb\_core.js:825
 
 > **new CoreStorage**(): `CoreStorage`
 
-Defined in: ridb\_core.js:848
+Defined in: ridb\_core.js:849
 
 #### Returns
 
@@ -26,7 +26,7 @@ Defined in: ridb\_core.js:848
 
 > **\_\_wbg\_ptr**: `number`
 
-Defined in: ridb\_core.js:837
+Defined in: ridb\_core.js:838
 
 ## Methods
 
@@ -34,7 +34,7 @@ Defined in: ridb\_core.js:837
 
 > **\_\_destroy\_into\_raw**(): `number`
 
-Defined in: ridb\_core.js:835
+Defined in: ridb\_core.js:836
 
 #### Returns
 
@@ -46,7 +46,7 @@ Defined in: ridb\_core.js:835
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:842
+Defined in: ridb\_core.js:843
 
 #### Returns
 
@@ -58,7 +58,7 @@ Defined in: ridb\_core.js:842
 
 > **getIndexes**(`schema`, `op`): `string`[]
 
-Defined in: ridb\_core.js:886
+Defined in: ridb\_core.js:887
 
 #### Parameters
 
@@ -80,7 +80,7 @@ Defined in: ridb\_core.js:886
 
 > **getPrimaryKeyTyped**(`value`): `string`
 
-Defined in: ridb\_core.js:857
+Defined in: ridb\_core.js:858
 
 #### Parameters
 
@@ -98,7 +98,7 @@ Defined in: ridb\_core.js:857
 
 > **matchesQuery**(`document`, `query`): `boolean`
 
-Defined in: ridb\_core.js:911
+Defined in: ridb\_core.js:912
 
 #### Parameters
 
@@ -120,7 +120,7 @@ Defined in: ridb\_core.js:911
 
 > `static` **\_\_wrap**(`ptr`): `any`
 
-Defined in: ridb\_core.js:827
+Defined in: ridb\_core.js:828
 
 #### Parameters
 

@@ -6,7 +6,7 @@
 
 # Class: Property
 
-Defined in: ridb\_core.js:1412
+Defined in: ridb\_core.js:1413
 
 Represents a property within a schema, including type, items, length constraints, and other attributes.
 
@@ -26,7 +26,7 @@ Represents a property within a schema, including type, items, length constraints
 
 > **\_\_wbg\_ptr**: `undefined` \| `number`
 
-Defined in: ridb\_core.js:1416
+Defined in: ridb\_core.js:1417
 
 ## Accessors
 
@@ -36,7 +36,7 @@ Defined in: ridb\_core.js:1416
 
 > **get** **items**(): `any`
 
-Defined in: ridb\_core.js:1468
+Defined in: ridb\_core.js:1469
 
 Retrieves the items of the property.
 
@@ -56,7 +56,7 @@ Retrieves the items of the property.
 
 > **get** **maxItems**(): `any`
 
-Defined in: ridb\_core.js:1491
+Defined in: ridb\_core.js:1492
 
 Retrieves the maximum number of items of the property.
 
@@ -76,7 +76,7 @@ Retrieves the maximum number of items of the property.
 
 > **get** **maxLength**(): `any`
 
-Defined in: ridb\_core.js:1537
+Defined in: ridb\_core.js:1538
 
 Retrieves the maximum length of the property.
 
@@ -96,7 +96,7 @@ Retrieves the maximum length of the property.
 
 > **get** **minItems**(): `any`
 
-Defined in: ridb\_core.js:1514
+Defined in: ridb\_core.js:1515
 
 Retrieves the minimum number of items of the property.
 
@@ -116,7 +116,7 @@ Retrieves the minimum number of items of the property.
 
 > **get** **minLength**(): `any`
 
-Defined in: ridb\_core.js:1560
+Defined in: ridb\_core.js:1561
 
 Retrieves the minimum length of the property.
 
@@ -136,7 +136,7 @@ Retrieves the minimum length of the property.
 
 > **get** **properties**(): `any`
 
-Defined in: ridb\_core.js:1583
+Defined in: ridb\_core.js:1584
 
 Retrieves the nested properties of the property.
 
@@ -156,7 +156,7 @@ Retrieves the nested properties of the property.
 
 > **get** **type**(): `any`
 
-Defined in: ridb\_core.js:1456
+Defined in: ridb\_core.js:1457
 
 Retrieves the type of the property.
 
@@ -174,7 +174,7 @@ Retrieves the type of the property.
 
 > **\_\_destroy\_into\_raw**(): `undefined` \| `number`
 
-Defined in: ridb\_core.js:1414
+Defined in: ridb\_core.js:1415
 
 #### Returns
 
@@ -186,7 +186,7 @@ Defined in: ridb\_core.js:1414
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:1421
+Defined in: ridb\_core.js:1422
 
 #### Returns
 
@@ -198,7 +198,7 @@ Defined in: ridb\_core.js:1421
 
 > **is\_valid**(): `boolean`
 
-Defined in: ridb\_core.js:1433
+Defined in: ridb\_core.js:1434
 
 Checks is the schema is valid.
 

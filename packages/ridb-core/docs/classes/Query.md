@@ -6,7 +6,7 @@
 
 # Class: Query
 
-Defined in: ridb\_core.js:1605
+Defined in: ridb\_core.js:1606
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: ridb\_core.js:1605
 
 > **new Query**(`query`, `schema`): `Query`
 
-Defined in: ridb\_core.js:1622
+Defined in: ridb\_core.js:1623
 
 #### Parameters
 
@@ -36,7 +36,7 @@ Defined in: ridb\_core.js:1622
 
 > **\_\_wbg\_ptr**: `number`
 
-Defined in: ridb\_core.js:1609
+Defined in: ridb\_core.js:1610
 
 ## Accessors
 
@@ -46,7 +46,7 @@ Defined in: ridb\_core.js:1609
 
 > **get** **query**(): `any`
 
-Defined in: ridb\_core.js:1643
+Defined in: ridb\_core.js:1644
 
 ##### Returns
 
@@ -58,7 +58,7 @@ Defined in: ridb\_core.js:1643
 
 > **\_\_destroy\_into\_raw**(): `number`
 
-Defined in: ridb\_core.js:1607
+Defined in: ridb\_core.js:1608
 
 #### Returns
 
@@ -70,7 +70,7 @@ Defined in: ridb\_core.js:1607
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:1614
+Defined in: ridb\_core.js:1615
 
 #### Returns
 
@@ -82,7 +82,7 @@ Defined in: ridb\_core.js:1614
 
 > **get**(`property_name`): `any`
 
-Defined in: ridb\_core.js:1732
+Defined in: ridb\_core.js:1733
 
 Returns the value of a property from the (normalized) query by its name.
 This will scan the normalized query structure (including arrays, $and/$or blocks, etc.)
@@ -110,7 +110,7 @@ Example:
 
 > **get\_properties**(): `string`[]
 
-Defined in: ridb\_core.js:1663
+Defined in: ridb\_core.js:1664
 
 Returns the schema properties (fields) that are used in the query.
 The query may contain operators like $and, $or, $gt, $lt, etc.
@@ -125,7 +125,7 @@ The query may contain operators like $and, $or, $gt, $lt, etc.
 
 > **parse**(): `any`
 
-Defined in: ridb\_core.js:1684
+Defined in: ridb\_core.js:1685
 
 #### Returns
 
@@ -137,7 +137,7 @@ Defined in: ridb\_core.js:1684
 
 > **process\_query**(`query`): `any`
 
-Defined in: ridb\_core.js:1703
+Defined in: ridb\_core.js:1704
 
 #### Parameters
 

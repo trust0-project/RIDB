@@ -6,7 +6,7 @@
 
 # Class: QueryOptions
 
-Defined in: ridb\_core.js:1756
+Defined in: ridb\_core.js:1757
 
 ## Constructors
 
@@ -24,7 +24,7 @@ Defined in: ridb\_core.js:1756
 
 > **\_\_wbg\_ptr**: `undefined` \| `number`
 
-Defined in: ridb\_core.js:1768
+Defined in: ridb\_core.js:1769
 
 ## Accessors
 
@@ -34,7 +34,7 @@ Defined in: ridb\_core.js:1768
 
 > **get** **limit**(): `any`
 
-Defined in: ridb\_core.js:1780
+Defined in: ridb\_core.js:1781
 
 ##### Returns
 
@@ -48,7 +48,7 @@ Defined in: ridb\_core.js:1780
 
 > **get** **offset**(): `any`
 
-Defined in: ridb\_core.js:1798
+Defined in: ridb\_core.js:1799
 
 ##### Returns
 
@@ -60,7 +60,7 @@ Defined in: ridb\_core.js:1798
 
 > **\_\_destroy\_into\_raw**(): `undefined` \| `number`
 
-Defined in: ridb\_core.js:1766
+Defined in: ridb\_core.js:1767
 
 #### Returns
 
@@ -72,7 +72,7 @@ Defined in: ridb\_core.js:1766
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:1773
+Defined in: ridb\_core.js:1774
 
 #### Returns
 
@@ -84,7 +84,7 @@ Defined in: ridb\_core.js:1773
 
 > `static` **\_\_wrap**(`ptr`): `any`
 
-Defined in: ridb\_core.js:1758
+Defined in: ridb\_core.js:1759
 
 #### Parameters
 

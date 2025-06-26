@@ -8,7 +8,7 @@
 
 > **\_\_wbgtest\_console\_log**(`args`): `void`
 
-Defined in: ridb\_core.js:356
+Defined in: ridb\_core.js:357
 
 Handler for `console.log` invocations.
 

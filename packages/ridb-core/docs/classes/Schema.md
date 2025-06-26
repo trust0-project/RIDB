@@ -6,7 +6,7 @@
 
 # Class: Schema
 
-Defined in: ridb\_core.js:1994
+Defined in: ridb\_core.js:1995
 
 Represents the schema of a collection, including version, primary key, type, required fields, properties, and indexes.
 
@@ -26,7 +26,7 @@ Represents the schema of a collection, including version, primary key, type, req
 
 > **\_\_wbg\_ptr**: `undefined` \| `number`
 
-Defined in: ridb\_core.js:2006
+Defined in: ridb\_core.js:2007
 
 ## Accessors
 
@@ -36,7 +36,7 @@ Defined in: ridb\_core.js:2006
 
 > **get** **encrypted**(): `undefined` \| `string`[]
 
-Defined in: ridb\_core.js:2164
+Defined in: ridb\_core.js:2165
 
 ##### Returns
 
@@ -50,7 +50,7 @@ Defined in: ridb\_core.js:2164
 
 > **get** **indexes**(): `undefined` \| `string`[]
 
-Defined in: ridb\_core.js:2145
+Defined in: ridb\_core.js:2146
 
 Retrieves the indexes of the schema, if any.
 
@@ -70,7 +70,7 @@ Retrieves the indexes of the schema, if any.
 
 > **get** **primaryKey**(): `string`
 
-Defined in: ridb\_core.js:2097
+Defined in: ridb\_core.js:2098
 
 Retrieves the primary key of the schema.
 
@@ -90,7 +90,7 @@ Retrieves the primary key of the schema.
 
 > **get** **properties**(): `any`
 
-Defined in: ridb\_core.js:2188
+Defined in: ridb\_core.js:2189
 
 Retrieves the properties of the schema.
 
@@ -110,7 +110,7 @@ Retrieves the properties of the schema.
 
 > **get** **type**(): `string`
 
-Defined in: ridb\_core.js:2121
+Defined in: ridb\_core.js:2122
 
 Retrieves the type of the schema.
 
@@ -130,7 +130,7 @@ Retrieves the type of the schema.
 
 > **get** **version**(): `number`
 
-Defined in: ridb\_core.js:2085
+Defined in: ridb\_core.js:2086
 
 Retrieves the version of the schema.
 
@@ -148,7 +148,7 @@ Retrieves the version of the schema.
 
 > **\_\_destroy\_into\_raw**(): `undefined` \| `number`
 
-Defined in: ridb\_core.js:2004
+Defined in: ridb\_core.js:2005
 
 #### Returns
 
@@ -160,7 +160,7 @@ Defined in: ridb\_core.js:2004
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:2011
+Defined in: ridb\_core.js:2012
 
 #### Returns
 
@@ -172,7 +172,7 @@ Defined in: ridb\_core.js:2011
 
 > **is\_valid**(): `boolean`
 
-Defined in: ridb\_core.js:2034
+Defined in: ridb\_core.js:2035
 
 #### Returns
 
@@ -184,7 +184,7 @@ Defined in: ridb\_core.js:2034
 
 > **validate**(`document`): `void`
 
-Defined in: ridb\_core.js:2018
+Defined in: ridb\_core.js:2019
 
 #### Parameters
 
@@ -202,7 +202,7 @@ Defined in: ridb\_core.js:2018
 
 > `static` **\_\_wrap**(`ptr`): `any`
 
-Defined in: ridb\_core.js:1996
+Defined in: ridb\_core.js:1997
 
 #### Parameters
 
@@ -220,7 +220,7 @@ Defined in: ridb\_core.js:1996
 
 > `static` **create**(`schema`): `Schema`
 
-Defined in: ridb\_core.js:2062
+Defined in: ridb\_core.js:2063
 
 Creates a new `Schema` instance from a given `JsValue`.
 

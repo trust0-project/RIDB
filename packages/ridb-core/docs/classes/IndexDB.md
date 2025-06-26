@@ -6,7 +6,7 @@
 
 # Class: IndexDB
 
-Defined in: ridb\_core.js:1142
+Defined in: ridb\_core.js:1143
 
 ## Constructors
 
@@ -24,7 +24,7 @@ Defined in: ridb\_core.js:1142
 
 > **\_\_wbg\_ptr**: `undefined` \| `number`
 
-Defined in: ridb\_core.js:1154
+Defined in: ridb\_core.js:1155
 
 ## Methods
 
@@ -32,7 +32,7 @@ Defined in: ridb\_core.js:1154
 
 > **\_\_destroy\_into\_raw**(): `undefined` \| `number`
 
-Defined in: ridb\_core.js:1152
+Defined in: ridb\_core.js:1153
 
 #### Returns
 
@@ -44,7 +44,7 @@ Defined in: ridb\_core.js:1152
 
 > **close**(): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1265
+Defined in: ridb\_core.js:1266
 
 #### Returns
 
@@ -56,7 +56,7 @@ Defined in: ridb\_core.js:1265
 
 > **count**(`collection_name`, `query`, `options`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1254
+Defined in: ridb\_core.js:1255
 
 #### Parameters
 
@@ -82,7 +82,7 @@ Defined in: ridb\_core.js:1254
 
 > **find**(`collection_name`, `query`, `options`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1229
+Defined in: ridb\_core.js:1230
 
 #### Parameters
 
@@ -108,7 +108,7 @@ Defined in: ridb\_core.js:1229
 
 > **findDocumentById**(`collection_name`, `primary_key`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1242
+Defined in: ridb\_core.js:1243
 
 #### Parameters
 
@@ -130,7 +130,7 @@ Defined in: ridb\_core.js:1242
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:1159
+Defined in: ridb\_core.js:1160
 
 #### Returns
 
@@ -142,7 +142,7 @@ Defined in: ridb\_core.js:1159
 
 > **get\_store**(`store_name`): `IDBObjectStore`
 
-Defined in: ridb\_core.js:1185
+Defined in: ridb\_core.js:1186
 
 #### Parameters
 
@@ -160,7 +160,7 @@ Defined in: ridb\_core.js:1185
 
 > **get\_stores**(): `string`[]
 
-Defined in: ridb\_core.js:1168
+Defined in: ridb\_core.js:1169
 
 Fetch documents by opening an IndexedDB cursor (on an index or store),
 then apply inline filtering and offset/limit constraints.
@@ -175,7 +175,7 @@ then apply inline filtering and offset/limit constraints.
 
 > **start**(): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1272
+Defined in: ridb\_core.js:1273
 
 #### Returns
 
@@ -187,7 +187,7 @@ Defined in: ridb\_core.js:1272
 
 > **write**(`op`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:1217
+Defined in: ridb\_core.js:1218
 
 #### Parameters
 
@@ -205,7 +205,7 @@ Defined in: ridb\_core.js:1217
 
 > `static` **\_\_wrap**(`ptr`): `any`
 
-Defined in: ridb\_core.js:1144
+Defined in: ridb\_core.js:1145
 
 #### Parameters
 
@@ -223,7 +223,7 @@ Defined in: ridb\_core.js:1144
 
 > `static` **create**(`name`, `schemas_js`): `Promise`\<`IndexDB`\>
 
-Defined in: ridb\_core.js:1207
+Defined in: ridb\_core.js:1208
 
 #### Parameters
 

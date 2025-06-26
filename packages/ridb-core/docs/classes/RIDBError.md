@@ -6,7 +6,7 @@
 
 # Class: RIDBError
 
-Defined in: ridb\_core.js:1820
+Defined in: ridb\_core.js:1821
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: ridb\_core.js:1820
 
 > **new RIDBError**(`err_type`, `message`, `code`): `RIDBError`
 
-Defined in: ridb\_core.js:1858
+Defined in: ridb\_core.js:1859
 
 #### Parameters
 
@@ -40,7 +40,7 @@ Defined in: ridb\_core.js:1858
 
 > **\_\_wbg\_ptr**: `number`
 
-Defined in: ridb\_core.js:1844
+Defined in: ridb\_core.js:1845
 
 ## Accessors
 
@@ -50,7 +50,7 @@ Defined in: ridb\_core.js:1844
 
 > **get** **code**(): `any`
 
-Defined in: ridb\_core.js:1889
+Defined in: ridb\_core.js:1890
 
 ##### Returns
 
@@ -64,7 +64,7 @@ Defined in: ridb\_core.js:1889
 
 > **get** **message**(): `string`
 
-Defined in: ridb\_core.js:1896
+Defined in: ridb\_core.js:1897
 
 ##### Returns
 
@@ -78,7 +78,7 @@ Defined in: ridb\_core.js:1896
 
 > **get** **type**(): `string`
 
-Defined in: ridb\_core.js:1870
+Defined in: ridb\_core.js:1871
 
 ##### Returns
 
@@ -90,7 +90,7 @@ Defined in: ridb\_core.js:1870
 
 > **\_\_destroy\_into\_raw**(): `number`
 
-Defined in: ridb\_core.js:1842
+Defined in: ridb\_core.js:1843
 
 #### Returns
 
@@ -102,7 +102,7 @@ Defined in: ridb\_core.js:1842
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:1849
+Defined in: ridb\_core.js:1850
 
 #### Returns
 
@@ -114,7 +114,7 @@ Defined in: ridb\_core.js:1849
 
 > **toJSON**(): `object`
 
-Defined in: ridb\_core.js:1830
+Defined in: ridb\_core.js:1831
 
 #### Returns
 
@@ -138,7 +138,7 @@ Defined in: ridb\_core.js:1830
 
 > **toString**(): `string`
 
-Defined in: ridb\_core.js:1838
+Defined in: ridb\_core.js:1839
 
 #### Returns
 
@@ -150,7 +150,7 @@ Defined in: ridb\_core.js:1838
 
 > `static` **\_\_wrap**(`ptr`): `any`
 
-Defined in: ridb\_core.js:1822
+Defined in: ridb\_core.js:1823
 
 #### Parameters
 
@@ -168,7 +168,7 @@ Defined in: ridb\_core.js:1822
 
 > `static` **authentication**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.js:1947
+Defined in: ridb\_core.js:1948
 
 #### Parameters
 
@@ -190,7 +190,7 @@ Defined in: ridb\_core.js:1947
 
 > `static` **error**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.js:1925
+Defined in: ridb\_core.js:1926
 
 #### Parameters
 
@@ -212,7 +212,7 @@ Defined in: ridb\_core.js:1925
 
 > `static` **from**(`err`): `RIDBError`
 
-Defined in: ridb\_core.js:1916
+Defined in: ridb\_core.js:1917
 
 #### Parameters
 
@@ -230,7 +230,7 @@ Defined in: ridb\_core.js:1916
 
 > `static` **hook**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.js:1980
+Defined in: ridb\_core.js:1981
 
 #### Parameters
 
@@ -252,7 +252,7 @@ Defined in: ridb\_core.js:1980
 
 > `static` **query**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.js:1936
+Defined in: ridb\_core.js:1937
 
 #### Parameters
 
@@ -274,7 +274,7 @@ Defined in: ridb\_core.js:1936
 
 > `static` **serialisation**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.js:1958
+Defined in: ridb\_core.js:1959
 
 #### Parameters
 
@@ -296,7 +296,7 @@ Defined in: ridb\_core.js:1958
 
 > `static` **validation**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.js:1969
+Defined in: ridb\_core.js:1970
 
 #### Parameters
 

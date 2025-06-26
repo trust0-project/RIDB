@@ -8,7 +8,7 @@
 
 > **\_\_wbgtest\_console\_error**(`args`): `void`
 
-Defined in: ridb\_core.js:404
+Defined in: ridb\_core.js:405
 
 Handler for `console.error` invocations. See above.
 

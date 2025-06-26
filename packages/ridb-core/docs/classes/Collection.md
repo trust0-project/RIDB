@@ -6,7 +6,7 @@
 
 # Class: Collection
 
-Defined in: ridb\_core.js:663
+Defined in: ridb\_core.js:664
 
 ## Constructors
 
@@ -24,7 +24,7 @@ Defined in: ridb\_core.js:663
 
 > **\_\_wbg\_ptr**: `undefined` \| `number`
 
-Defined in: ridb\_core.js:675
+Defined in: ridb\_core.js:676
 
 ## Accessors
 
@@ -34,7 +34,7 @@ Defined in: ridb\_core.js:675
 
 > **get** **name**(): `string`
 
-Defined in: ridb\_core.js:687
+Defined in: ridb\_core.js:688
 
 ##### Returns
 
@@ -48,7 +48,7 @@ Defined in: ridb\_core.js:687
 
 > **get** **schema**(): [`Schema`](Schema.md)
 
-Defined in: ridb\_core.js:706
+Defined in: ridb\_core.js:707
 
 ##### Returns
 
@@ -60,7 +60,7 @@ Defined in: ridb\_core.js:706
 
 > **\_\_destroy\_into\_raw**(): `undefined` \| `number`
 
-Defined in: ridb\_core.js:673
+Defined in: ridb\_core.js:674
 
 #### Returns
 
@@ -72,7 +72,7 @@ Defined in: ridb\_core.js:673
 
 > **count**(`query_js`, `options_js`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:762
+Defined in: ridb\_core.js:763
 
 counts and returns all documents in the collection.
 
@@ -99,7 +99,7 @@ the documents found in the collection.
 
 > **create**(`document`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:803
+Defined in: ridb\_core.js:804
 
 Creates a new document in the collection.
 
@@ -125,7 +125,7 @@ This function is asynchronous and returns a `Result` indicating success or failu
 
 > **delete**(`primary_key`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:814
+Defined in: ridb\_core.js:815
 
 Deletes a document from the collection by its ID.
 
@@ -147,7 +147,7 @@ This function is asynchronous.
 
 > **find**(`query_js`, `options_js`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:730
+Defined in: ridb\_core.js:731
 
 Finds and returns all documents in the collection.
 
@@ -174,7 +174,7 @@ the documents found in the collection.
 
 > **findById**(`primary_key`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:773
+Defined in: ridb\_core.js:774
 
 Finds and returns a single document in the collection by its ID.
 
@@ -196,7 +196,7 @@ This function is asynchronous.
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:680
+Defined in: ridb\_core.js:681
 
 #### Returns
 
@@ -208,7 +208,7 @@ Defined in: ridb\_core.js:680
 
 > **parse\_query\_options**(`options`): [`QueryOptions`](QueryOptions.md)
 
-Defined in: ridb\_core.js:738
+Defined in: ridb\_core.js:739
 
 #### Parameters
 
@@ -226,7 +226,7 @@ Defined in: ridb\_core.js:738
 
 > **update**(`document`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.js:788
+Defined in: ridb\_core.js:789
 
 Updates a document in the collection with the given data.
 
@@ -252,7 +252,7 @@ This function is asynchronous and returns a `Result` indicating success or failu
 
 > `static` **\_\_wrap**(`ptr`): `any`
 
-Defined in: ridb\_core.js:665
+Defined in: ridb\_core.js:666
 
 #### Parameters
 

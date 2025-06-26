@@ -8,7 +8,7 @@
 
 > **main\_js**(): `void`
 
-Defined in: ridb\_core.js:318
+Defined in: ridb\_core.js:336
 
 ## Returns
 

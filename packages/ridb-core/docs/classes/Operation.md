@@ -6,7 +6,7 @@
 
 # Class: Operation
 
-Defined in: ridb\_core.js:1284
+Defined in: ridb\_core.js:1285
 
 Represents an operation to be performed on a collection.
 
@@ -26,7 +26,7 @@ Represents an operation to be performed on a collection.
 
 > **\_\_wbg\_ptr**: `undefined` \| `number`
 
-Defined in: ridb\_core.js:1296
+Defined in: ridb\_core.js:1297
 
 ## Accessors
 
@@ -36,7 +36,7 @@ Defined in: ridb\_core.js:1296
 
 > **get** **collection**(): `string`
 
-Defined in: ridb\_core.js:1313
+Defined in: ridb\_core.js:1314
 
 Retrieves the name of the collection.
 
@@ -56,7 +56,7 @@ Retrieves the name of the collection.
 
 > **get** **data**(): `any`
 
-Defined in: ridb\_core.js:1349
+Defined in: ridb\_core.js:1350
 
 Retrieves the data involved in the operation.
 
@@ -76,7 +76,7 @@ Retrieves the data involved in the operation.
 
 > **get** **opType**(): `Readonly`\<\{ `0`: `"CREATE"`; `1`: `"UPDATE"`; `2`: `"DELETE"`; `3`: `"QUERY"`; `4`: `"COUNT"`; `COUNT`: `4`; `CREATE`: `0`; `DELETE`: `2`; `QUERY`: `3`; `UPDATE`: `1`; \}\>
 
-Defined in: ridb\_core.js:1337
+Defined in: ridb\_core.js:1338
 
 Retrieves the type of operation.
 
@@ -96,7 +96,7 @@ Retrieves the type of operation.
 
 > **get** **primaryKey**(): `any`
 
-Defined in: ridb\_core.js:1373
+Defined in: ridb\_core.js:1374
 
 Retrieves the primary key value of the current data.
 
@@ -116,7 +116,7 @@ Retrieves the primary key value of the current data.
 
 > **get** **primaryKeyField**(): `any`
 
-Defined in: ridb\_core.js:1361
+Defined in: ridb\_core.js:1362
 
 Retrieves the primary key field of the current collection.
 
@@ -136,7 +136,7 @@ Retrieves the primary key field of the current collection.
 
 > **get** **primaryKeyIndex**(): `string`
 
-Defined in: ridb\_core.js:1380
+Defined in: ridb\_core.js:1381
 
 ##### Returns
 
@@ -148,7 +148,7 @@ Defined in: ridb\_core.js:1380
 
 > **\_\_destroy\_into\_raw**(): `undefined` \| `number`
 
-Defined in: ridb\_core.js:1294
+Defined in: ridb\_core.js:1295
 
 #### Returns
 
@@ -160,7 +160,7 @@ Defined in: ridb\_core.js:1294
 
 > **free**(): `void`
 
-Defined in: ridb\_core.js:1301
+Defined in: ridb\_core.js:1302
 
 #### Returns
 
@@ -172,7 +172,7 @@ Defined in: ridb\_core.js:1301
 
 > `static` **\_\_wrap**(`ptr`): `any`
 
-Defined in: ridb\_core.js:1286
+Defined in: ridb\_core.js:1287
 
 #### Parameters
 

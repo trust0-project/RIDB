@@ -1,3 +1,13 @@
+## 1.4.4 (2025-06-26)
+
+### 🩹 Fixes
+
+- ridb react component startup ([dadb756](https://github.com/trust0-project/RIDB/commit/dadb756))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.4.3 (2025-06-22)
 
 ### 🩹 Fixes
