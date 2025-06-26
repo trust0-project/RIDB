@@ -6,8 +6,8 @@ export type DatabaseState = 'disconnected' | 'loading' | 'loaded' | 'error';
 type Context<T extends SchemaTypeRecord> = {
   db: RIDB<T>;
   state: DatabaseState;
-  start: (options?: StartOptions<T>) => Promise<void>;
-  setStartOptions: (options?: StartOptions<T>) => void;
+  start: () => Promise<void>;
+  setStartOptions: (options: StartOptions<T>) => void;
   stop: () => Promise<void>;
 } | null
 
@@ -29,11 +29,18 @@ export function RIDBDatabase<T extends SchemaTypeRecord>({ children, startOption
   const dbInit = props as DBOptions<T>;
   const [startOptions, setStartOptions] = useState<StartOptions<T> | undefined>(initialStartOptions);
   const db = useMemo(() => new RIDB<T>(dbInit), []);
+  const [state, setState] = useState<DatabaseState>('disconnected');
 
   const start = useCallback(async () => {
-      setState('loading');
-      await db.start(startOptions);
-      setState('loaded');
+    if (startOptions === undefined) {
+      setState('error')
+      console.error('No start options provided');
+      return;
+    }
+    
+    setState('loading');
+    await db.start(startOptions);
+    setState('loaded');
   }, [db]);
 
   const stop = useCallback(async () => {
@@ -41,10 +48,13 @@ export function RIDBDatabase<T extends SchemaTypeRecord>({ children, startOption
     await db.close();
   }, [db]);
 
-  const [state, setState] = useState<DatabaseState>('disconnected');
+
+  const setStartOptionsFn = useCallback((options: StartOptions<T>) => {
+    setStartOptions(options);
+  }, [setStartOptions]);
   
   return (
-    <RIDBContext.Provider value={{db, state, start, stop, setStartOptions}}>
+    <RIDBContext.Provider value={{db, state, start, stop, setStartOptions: setStartOptionsFn}}>
       {children}
     </RIDBContext.Provider>
   );
