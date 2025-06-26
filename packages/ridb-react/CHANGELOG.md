@@ -1,3 +1,13 @@
+## 1.4.7 (2025-06-26)
+
+### 🩹 Fixes
+
+- improve setStartOptions cleaning after starting successfully ([3acbe8c](https://github.com/trust0-project/RIDB/commit/3acbe8c))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.4.6 (2025-06-26)
 
 ### 🩹 Fixes
