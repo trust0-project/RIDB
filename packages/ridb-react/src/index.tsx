@@ -6,7 +6,8 @@ export type DatabaseState = 'disconnected' | 'loading' | 'loaded' | 'error';
 type Context<T extends SchemaTypeRecord> = {
   db: RIDB<T>;
   state: DatabaseState;
-  start: (options: StartOptions<T>) => Promise<void>;
+  start: (options?: StartOptions<T>) => Promise<void>;
+  setStartOptions: (options?: StartOptions<T>) => void;
   stop: () => Promise<void>;
 } | null
 
@@ -21,23 +22,29 @@ export function useRIDB<T extends SchemaTypeRecord>() {
   return context
 }
 
-export function RIDBDatabase<T extends SchemaTypeRecord>({ children, ...props }:  DBOptions<T> & {startOptions?: StartOptions<T>}  & {
+export function RIDBDatabase<T extends SchemaTypeRecord>({ children, startOptions: initialStartOptions, ...props }:  {startOptions?: StartOptions<T>}  & {
   children?: React.ReactNode;
-}) {
+} & DBOptions<T>) {
+
   const dbInit = props as DBOptions<T>;
+  const [startOptions, setStartOptions] = useState<StartOptions<T> | undefined>(initialStartOptions);
   const db = useMemo(() => new RIDB<T>(dbInit), []);
+
   const start = useCallback(async () => {
       setState('loading');
-      await db.start();
+      await db.start(startOptions);
       setState('loaded');
   }, [db]);
+
   const stop = useCallback(async () => {
     setState('disconnected');
     await db.close();
   }, [db]);
+
   const [state, setState] = useState<DatabaseState>('disconnected');
+  
   return (
-    <RIDBContext.Provider value={{db, state, start, stop}}>
+    <RIDBContext.Provider value={{db, state, start, stop, setStartOptions}}>
       {children}
     </RIDBContext.Provider>
   );
