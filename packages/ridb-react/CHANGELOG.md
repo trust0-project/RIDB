@@ -1,3 +1,13 @@
+## 1.4.6 (2025-06-26)
+
+### 🩹 Fixes
+
+- improve start options ([4f18ca4](https://github.com/trust0-project/RIDB/commit/4f18ca4))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.4.5 (2025-06-26)
 
 ### 🩹 Fixes

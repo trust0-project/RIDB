@@ -1,7 +1,7 @@
 {
   "name": "@trust0/ridb-react",
   "description": "React bindings for RIDB.",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "author": "elribonazo@gmail.com",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
