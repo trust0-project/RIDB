@@ -26,9 +26,9 @@ export function RIDBDatabase<T extends SchemaTypeRecord>({ children, ...props }:
 }) {
   const dbInit = props as DBOptions<T>;
   const db = useMemo(() => new RIDB<T>(dbInit), []);
-  const start = useCallback(async (options: StartOptions<T>) => {
+  const start = useCallback(async () => {
       setState('loading');
-      await db.start(options);
+      await db.start();
       setState('loaded');
   }, [db]);
   const stop = useCallback(async () => {
