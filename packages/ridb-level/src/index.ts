@@ -13,6 +13,7 @@
  *   <a href="https://raw.githubusercontent.com/trust0-project/RIDB/refs/heads/main/LICENSE"><img src="https://img.shields.io/github/license/trust0-project/ridb?style=flat-square"></a>
  *   <a href="https://www.npmjs.com/package/@trust0/ridb"><img src="https://img.shields.io/npm/dm/@trust0/ridb?color=c63a3b&style=flat-square"></a>   
  * </p>
+ * 
  * # Features
  * Will create a levelDB folder in the current working directory with the db name.
  * Specifying a different path is not yet supported.

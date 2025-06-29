@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "clean": "npx nx run-many --target=clean --verbose && rm -rf node_modules",
-    "docs": "npx nx run-many -p @trust0/ridb-build @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react --target=docs",
+    "docs": "npx typedoc",
     "build": "npx nx run-many --verbose -p @trust0/ridb-build @trust0/ridb-core @trust0/ridb @trust0/ridb-level @trust0/ridb-react --target=build",
     "test": "npx nx run-many --target=test --verbose",
     "lint": "npx nx run-many --target=lint"
@@ -24,6 +24,7 @@
     "@nx/react-native": "20.8.1",
     "@nx/vite": "20.8.1",
     "@nx/web": "20.8.1",
+    "@shipgirl/typedoc-plugin-versions": "^0.3.1",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
@@ -52,7 +53,9 @@
     "prettier": "^3.5.3",
     "tsup": "^8.4.0",
     "typedoc": "^0.28.4",
+    "typedoc-plugin-coverage": "^4.0.1",
     "typedoc-plugin-markdown": "^4.6.3",
+    "typedoc-plugin-merge-modules": "^7.0.0",
     "typedoc-plugin-rename-defaults": "^0.7.3",
     "typedoc-theme-hierarchy": "^6.0.0",
     "typescript": "^5.8.3",

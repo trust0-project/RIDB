@@ -1,16 +1,18 @@
 {
     "$schema": "https://typedoc-plugin-markdown.org/schema.json",
+    "entryPointStrategy": "packages",
     "entryPoints": [
-        "./pkg/ridb_core.d.ts"
+        "packages/ridb",
+        "packages/ridb-core",
+        "packages/ridb-level",
+        "packages/ridb-react"
     ],
-    "basePath": "./pkg",
-    "readme": "none",
+    "basePath":   "./src",
     "out": "docs",
     "plugin": [
         "typedoc-plugin-markdown",
         "typedoc-plugin-rename-defaults",
-        "typedoc-plugin-coverage",
-        "@shipgirl/typedoc-plugin-versions"
+        "typedoc-plugin-merge-modules"
     ],
     "navigationLinks": {
         "Docs": "https://github.com/trust0/RIDB.git",
@@ -31,12 +33,13 @@
     },
     "useTsLinkResolution": true,
     "hideGenerator": true,
-    "entryPointStrategy": "resolve",
     "excludeReferences": false,
     "excludeProtected": false,
     "excludeInternal": false,
     "excludeNotDocumented": false,
     "theme": "markdown",
     "excludeExternals": false,
-    "excludePrivate": true
+    "excludePrivate": false,
+    "mergeModulesRenameDefaults": true,
+    "mergeModulesMergeMode": "module"
 }

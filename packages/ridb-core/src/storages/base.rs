@@ -12,6 +12,7 @@ use crate::query::options::QueryOptions;
 const TS_APPEND_CONTENT: &'static str = r#"
 /**
  * Represents a record of schema types, where each key is a string and the value is a `SchemaType`.
+ * @internal
  */
 export type SchemaTypeRecord = {
     [name: string]: SchemaType

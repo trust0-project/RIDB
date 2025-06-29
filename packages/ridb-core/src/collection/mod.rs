@@ -128,7 +128,6 @@ export class Collection<T extends SchemaType> {
 	/**
 	 * Updates a document in the collection by its ID.
 	 *
-	 * @param id - The ID of the document to update.
 	 * @param document - A partial document containing the fields to update.
 	 * @returns A promise that resolves when the update is complete.
 	 */

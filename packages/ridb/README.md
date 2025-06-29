@@ -12,7 +12,7 @@
 </p>
 
 ## RIDB Documentation
-For detailed API documentation, please visit the [RIDB Documentation](https://github.com/trust0-project/RIDB/blob/main/packages/ridb/docs/README.md).
+For detailed API documentation, please visit the [RIDB Documentation](https://github.com/trust0-project/RIDB/blob/main/docs/README.md).
 
 ## Installling
 In order to install simply run the following command
@@ -93,7 +93,7 @@ Default is false.
 ## Specification
 
 ### Storage
-A valid storage must extend [BaseStorage class](https://github.com/trust0-project/RIDB/blob/main/docs/namespaces/RIDBTypes/classes/BaseStorage.md)
+A valid storage must extend [BaseStorage class](https://github.com/trust0-project/RIDB/blob/main/docs/@trust0/ridb/classes/BaseStorage.md)
 here's some example:
 
 ```typescript

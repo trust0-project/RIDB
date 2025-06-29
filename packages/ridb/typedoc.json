@@ -8,21 +8,34 @@
     "out": "docs",
     "plugin": [
         "typedoc-plugin-markdown",
-        "typedoc-plugin-rename-defaults"
+        "typedoc-plugin-rename-defaults",
+        "typedoc-plugin-coverage"
     ],
     "navigationLinks": {
         "Docs": "https://github.com/trust0/RIDB.git",
         "GitHub": "https://github.com/trust0/RIDB.git"
     },
+    "externalSymbolLinkMappings": {
+        "@trust0/ridb-core": {
+            "collection": "https://github.com/trust0-project/RIDB/docs/@trust0/ridb-core/classes/Collection.md",
+            "SchemaTypeRecord": "https://github.com/trust0-project/RIDB/docs/@trust0/ridb-core/type-aliases/SchemaTypeRecord.md"
+        },
+        "@hyperledger/identus-sdk": {
+            "SDK": "https://github.com/hyperledger/identus-sdk"
+        }
+    },
+    "validation": {
+        "invalidLink": false,
+        "notDocumented": false
+    },
     "useTsLinkResolution": true,
     "hideGenerator": true,
     "entryPointStrategy": "resolve",
-    "excludePrivate": false,
     "excludeReferences": false,
     "excludeProtected": false,
     "excludeInternal": false,
     "excludeNotDocumented": false,
     "theme": "markdown",
     "excludeExternals": false,
-    "exclude": ["node_modules", "build", "./src/testing/**/*"]
+    "excludePrivate": true
 }

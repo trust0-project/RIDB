@@ -8,7 +8,8 @@
     "out": "docs",
     "plugin": [
         "typedoc-plugin-markdown",
-        "typedoc-plugin-rename-defaults"
+        "typedoc-plugin-rename-defaults",
+        "typedoc-plugin-coverage"
     ],
     "navigationLinks": {
         "Docs": "https://github.com/trust0/RIDB.git",

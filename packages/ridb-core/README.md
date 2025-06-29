@@ -16,7 +16,7 @@ RIDB secure database wrapper for the web with multiple storage engines, written 
 This package serves as wasm wrapper for the [RIDB](https://github.com/trust0-project/RIDB) project, providing a secure and lightweight database solution for the web.
 
 ## Documentation
-Complete type structure and sdk docs can be found [here](./docs/README.md)
+Complete type structure and sdk docs can be found [here](../../docs/README.md)
 
 ### Building the source code
 Building the source code will compile the rust code into wasm and then bundle the Javascript code using esbuild, the output will be located in ./ts/build.

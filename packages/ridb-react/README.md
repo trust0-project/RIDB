@@ -87,4 +87,4 @@ Wrap your component with the `RIDBDatabase` component to provide the database in
 </RIDBDatabase>
 ```
 
-All the database methods and operations from RIDB are supported, for more details check the [RIDB documentation](https://github.com/trust0-project/RIDB/blob/main/packages/ridb/README.md)
+All the database methods and operations from RIDB are supported, for more details check the [RIDB documentation](https://github.com/trust0-project/RIDB/blob/main/docs/@trust0/ridb/README.md)
