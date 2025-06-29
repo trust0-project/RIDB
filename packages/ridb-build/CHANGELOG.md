@@ -1,3 +1,13 @@
+## 0.0.14 (2025-06-29)
+
+### 🩹 Fixes
+
+- relocate docs ([6314f0f](https://github.com/trust0-project/RIDB/commit/6314f0f))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.13 (2025-06-22)
 
 ### 🩹 Fixes

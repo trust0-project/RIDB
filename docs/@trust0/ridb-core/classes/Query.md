@@ -1,0 +1,45 @@
+[**Documentation**](../../../README.md)
+
+***
+
+[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / Query
+
+# Class: Query\<T\>
+
+Defined in: ridb\_core.d.ts:405
+
+## Type Parameters
+
+### T
+
+`T` *extends* [`SchemaType`](../type-aliases/SchemaType.md)
+
+## Constructors
+
+### Constructor
+
+> **new Query**\<`T`\>(`query`, `schema`): `Query`\<`T`\>
+
+Defined in: ridb\_core.d.ts:406
+
+#### Parameters
+
+##### query
+
+[`QueryType`](../type-aliases/QueryType.md)\<`T`\>
+
+##### schema
+
+[`Schema`](Schema.md)\<`T`\>
+
+#### Returns
+
+`Query`\<`T`\>
+
+## Properties
+
+### query
+
+> `readonly` **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
+
+Defined in: ridb\_core.d.ts:407

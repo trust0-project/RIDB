@@ -1,3 +1,19 @@
+## 1.5.29 (2025-06-29)
+
+### 🩹 Fixes
+
+- relocate docs ([6314f0f](https://github.com/trust0-project/RIDB/commit/6314f0f))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.14
+- Updated @trust0/ridb-core to 1.7.24
+- Updated @trust0/ridb-core to 1.7.24
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.28 (2025-06-22)
 
 ### 🩹 Fixes
