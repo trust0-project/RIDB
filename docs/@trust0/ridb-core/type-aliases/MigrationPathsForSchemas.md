@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / MigrationPathsForSchemas
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / MigrationPathsForSchemas
 
 # Type Alias: MigrationPathsForSchemas\<T\>
 
 > **MigrationPathsForSchemas**\<`T`\> = `{ [K in keyof T]: MigrationPathsForSchema<T[K]> }`
 
-Defined in: ridb\_core.d.ts:550
+Defined in: ridb\_core.d.ts:742
 
 ## Type Parameters
 

@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / CreateStorage
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / CreateStorage
 
 # Type Alias: CreateStorage()
 
 > **CreateStorage** = \<`T`\>(`records`) => `Promise`\<[`BaseStorage`](../classes/BaseStorage.md)\<`T`\>\>
 
-Defined in: ridb\_core.d.ts:176
+Defined in: ridb\_core.d.ts:695
 
 Represents a function type for creating storage with the provided schema type records.
 

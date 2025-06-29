@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / EnumerateUpTo
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / EnumerateUpTo
 
 # Type Alias: EnumerateUpTo\<N, Acc\>
 
 > **EnumerateUpTo**\<`N`, `Acc`\> = `Acc`\[`"length"`\] *extends* `N` ? `Acc`\[`number`\] : `EnumerateUpTo`\<`N`, \[`...Acc`, `Acc`\[`"length"`\]\]\>
 
-Defined in: ridb\_core.d.ts:520
+Defined in: ridb\_core.d.ts:712
 
 ## Type Parameters
 

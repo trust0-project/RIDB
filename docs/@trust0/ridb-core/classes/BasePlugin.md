@@ -2,11 +2,11 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / BasePlugin
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / BasePlugin
 
 # Class: BasePlugin
 
-Defined in: ridb\_core.d.ts:579
+Defined in: ridb\_core.d.ts:394
 
 ## Implements
 
@@ -28,7 +28,7 @@ Defined in: ridb\_core.d.ts:579
 
 > `optional` **docCreateHook**: [`Hook`](../type-aliases/Hook.md)
 
-Defined in: ridb\_core.d.ts:580
+Defined in: ridb\_core.d.ts:395
 
 #### Implementation of
 
@@ -40,7 +40,7 @@ Defined in: ridb\_core.d.ts:580
 
 > `optional` **docRecoverHook**: [`Hook`](../type-aliases/Hook.md)
 
-Defined in: ridb\_core.d.ts:581
+Defined in: ridb\_core.d.ts:396
 
 #### Implementation of
 

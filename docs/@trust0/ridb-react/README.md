@@ -2,7 +2,7 @@
 
 ***
 
-[Documentation](../../packages.md) / @trust0/ridb-react
+[Documentation](../../README.md) / @trust0/ridb-react
 
 # @trust0/ridb-react
 

@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / SchemaTypeRecord
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / SchemaTypeRecord
 
 # Type Alias: SchemaTypeRecord
 
 > **SchemaTypeRecord** = `object`
 
-Defined in: ridb\_core.d.ts:642
+Defined in: ridb\_core.d.ts:469
 
 **`Internal`**
 

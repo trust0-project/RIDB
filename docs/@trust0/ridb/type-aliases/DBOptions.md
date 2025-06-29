@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb](../README.md) / DBOptions
+[Documentation](../../../README.md) / [@trust0/ridb](../README.md) / DBOptions
 
 # Type Alias: DBOptions\<T\>
 
 > **DBOptions**\<`T`\> = `object` & `MigrationsParameter`\<`T`\>
 
-Defined in: [types.ts:71](https://github.com/trust0-project/RIDB/blob/6314f0fef283a2bcbde0f866e1bb25efb84be66f/packages/ridb/src/types.ts#L71)
+Defined in: [types.ts:71](https://github.com/trust0-project/RIDB/blob/3305fbba832297c7c9cd86d5d666516d921be44e/packages/ridb/src/types.ts#L71)
 
 Options for initializing the RIDB database.
 

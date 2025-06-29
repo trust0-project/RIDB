@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / MigrationFunction
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / MigrationFunction
 
 # Type Alias: MigrationFunction()\<T\>
 
 > **MigrationFunction**\<`T`\> = (`doc`) => [`Doc`](Doc.md)\<`T`\>
 
-Defined in: ridb\_core.d.ts:541
+Defined in: ridb\_core.d.ts:733
 
 ## Type Parameters
 

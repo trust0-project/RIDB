@@ -2,7 +2,7 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / is\_debug\_mode
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / is\_debug\_mode
 
 # Function: is\_debug\_mode()
 

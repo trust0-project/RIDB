@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-react](../README.md) / RIDBDatabase
+[Documentation](../../../README.md) / [@trust0/ridb-react](../README.md) / RIDBDatabase
 
 # Function: RIDBDatabase()
 
 > **RIDBDatabase**\<`T`\>(`__namedParameters`): `Element`
 
-Defined in: [index.tsx:25](https://github.com/trust0-project/RIDB/blob/6314f0fef283a2bcbde0f866e1bb25efb84be66f/packages/ridb-react/src/index.tsx#L25)
+Defined in: [index.tsx:25](https://github.com/trust0-project/RIDB/blob/3305fbba832297c7c9cd86d5d666516d921be44e/packages/ridb-react/src/index.tsx#L25)
 
 ## Type Parameters
 

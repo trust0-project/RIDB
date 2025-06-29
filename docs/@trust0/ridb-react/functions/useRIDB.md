@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-react](../README.md) / useRIDB
+[Documentation](../../../README.md) / [@trust0/ridb-react](../README.md) / useRIDB
 
 # Function: useRIDB()
 
 > **useRIDB**\<`T`\>(): `object`
 
-Defined in: [index.tsx:17](https://github.com/trust0-project/RIDB/blob/6314f0fef283a2bcbde0f866e1bb25efb84be66f/packages/ridb-react/src/index.tsx#L17)
+Defined in: [index.tsx:17](https://github.com/trust0-project/RIDB/blob/3305fbba832297c7c9cd86d5d666516d921be44e/packages/ridb-react/src/index.tsx#L17)
 
 ## Type Parameters
 

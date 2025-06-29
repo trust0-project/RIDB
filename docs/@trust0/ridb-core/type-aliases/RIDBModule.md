@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / RIDBModule
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / RIDBModule
 
 # Type Alias: RIDBModule
 
 > **RIDBModule** = `object`
 
-Defined in: ridb\_core.d.ts:183
+Defined in: ridb\_core.d.ts:702
 
 Represents a storage module with a method for creating storage.
 
@@ -18,7 +18,7 @@ Represents a storage module with a method for creating storage.
 
 > **apply**: (`plugins`) => [`BasePlugin`](../classes/BasePlugin.md)[]
 
-Defined in: ridb\_core.d.ts:188
+Defined in: ridb\_core.d.ts:707
 
 Plugin constructors array
 

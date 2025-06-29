@@ -2,11 +2,11 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / Database
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / Database
 
 # Class: Database\<T\>
 
-Defined in: ridb\_core.d.ts:118
+Defined in: ridb\_core.d.ts:637
 
 Represents a database containing collections of documents.
 RIDB extends from this class and is used to expose collections.
@@ -58,7 +58,7 @@ A record of schema types.
 
 > `readonly` **collections**: \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
 
-Defined in: ridb\_core.d.ts:148
+Defined in: ridb\_core.d.ts:667
 
 The collections in the database.
 
@@ -70,7 +70,7 @@ This is a read-only property where the key is the name of the collection and the
 
 > `readonly` **started**: `boolean`
 
-Defined in: ridb\_core.d.ts:152
+Defined in: ridb\_core.d.ts:671
 
 ## Methods
 
@@ -78,7 +78,7 @@ Defined in: ridb\_core.d.ts:152
 
 > **authenticate**(`password`): `Promise`\<`boolean`\>
 
-Defined in: ridb\_core.d.ts:141
+Defined in: ridb\_core.d.ts:660
 
 #### Parameters
 
@@ -96,7 +96,7 @@ Defined in: ridb\_core.d.ts:141
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:166
+Defined in: ridb\_core.d.ts:685
 
 Closes the database.
 
@@ -112,7 +112,7 @@ A promise that resolves when the database is closed.
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:159
+Defined in: ridb\_core.d.ts:678
 
 Starts the database.
 
@@ -128,7 +128,7 @@ A promise that resolves when the database is started.
 
 > `static` **create**\<`TS`\>(`db_name`, `schemas`, `migrations`, `plugins`, `options`, `password?`, `storage?`): `Promise`\<`Database`\<`TS`\>\>
 
-Defined in: ridb\_core.d.ts:131
+Defined in: ridb\_core.d.ts:650
 
 Creates a new `Database` instance with the provided schemas and storage module.
 

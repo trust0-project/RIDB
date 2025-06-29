@@ -2,7 +2,7 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / main\_js
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / main\_js
 
 # Function: main\_js()
 

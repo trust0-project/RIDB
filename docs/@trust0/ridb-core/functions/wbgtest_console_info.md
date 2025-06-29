@@ -2,7 +2,7 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / \_\_wbgtest\_console\_info
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / \_\_wbgtest\_console\_info
 
 # Function: \_\_wbgtest\_console\_info()
 

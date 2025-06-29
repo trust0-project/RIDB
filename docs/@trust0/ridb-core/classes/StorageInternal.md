@@ -2,11 +2,11 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / StorageInternal
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / StorageInternal
 
 # Class: `abstract` StorageInternal\<Schemas\>
 
-Defined in: ridb\_core.d.ts:646
+Defined in: ridb\_core.d.ts:473
 
 ## Extended by
 
@@ -24,7 +24,7 @@ Defined in: ridb\_core.d.ts:646
 
 > **new StorageInternal**\<`Schemas`\>(`name`, `schemas`): `StorageInternal`\<`Schemas`\>
 
-Defined in: ridb\_core.d.ts:647
+Defined in: ridb\_core.d.ts:474
 
 #### Parameters
 
@@ -46,7 +46,7 @@ Defined in: ridb\_core.d.ts:647
 
 > `abstract` **close**(): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:652
+Defined in: ridb\_core.d.ts:479
 
 #### Returns
 
@@ -58,7 +58,7 @@ Defined in: ridb\_core.d.ts:652
 
 > `abstract` **count**(`colectionName`, `query`, `options?`): `Promise`\<`number`\>
 
-Defined in: ridb\_core.d.ts:653
+Defined in: ridb\_core.d.ts:480
 
 #### Parameters
 
@@ -84,7 +84,7 @@ keyof `Schemas`
 
 > `abstract` **find**(`collectionName`, `query`, `options?`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>[]\>
 
-Defined in: ridb\_core.d.ts:662
+Defined in: ridb\_core.d.ts:489
 
 #### Parameters
 
@@ -110,7 +110,7 @@ keyof `Schemas`
 
 > `abstract` **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb\_core.d.ts:658
+Defined in: ridb\_core.d.ts:485
 
 #### Parameters
 
@@ -132,7 +132,7 @@ keyof `Schemas`
 
 > `abstract` **start**(): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:651
+Defined in: ridb\_core.d.ts:478
 
 #### Returns
 
@@ -144,7 +144,7 @@ Defined in: ridb\_core.d.ts:651
 
 > `abstract` **write**(`op`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb\_core.d.ts:667
+Defined in: ridb\_core.d.ts:494
 
 #### Parameters
 

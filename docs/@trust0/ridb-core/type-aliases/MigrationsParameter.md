@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / MigrationsParameter
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / MigrationsParameter
 
 # Type Alias: MigrationsParameter\<T\>
 
 > **MigrationsParameter**\<`T`\> = [`AnyVersionGreaterThan1`](AnyVersionGreaterThan1.md)\<`T`\> *extends* `true` ? `object` : `object`
 
-Defined in: ridb\_core.d.ts:556
+Defined in: ridb\_core.d.ts:748
 
 ## Type Parameters
 

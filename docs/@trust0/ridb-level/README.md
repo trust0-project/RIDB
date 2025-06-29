@@ -2,7 +2,7 @@
 
 ***
 
-[Documentation](../../packages.md) / @trust0/ridb-level
+[Documentation](../../README.md) / @trust0/ridb-level
 
 # @trust0/ridb-level
 

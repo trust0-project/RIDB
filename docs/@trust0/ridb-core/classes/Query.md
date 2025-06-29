@@ -2,11 +2,11 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / Query
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / Query
 
 # Class: Query\<T\>
 
-Defined in: ridb\_core.d.ts:405
+Defined in: ridb\_core.d.ts:287
 
 ## Type Parameters
 
@@ -20,7 +20,7 @@ Defined in: ridb\_core.d.ts:405
 
 > **new Query**\<`T`\>(`query`, `schema`): `Query`\<`T`\>
 
-Defined in: ridb\_core.d.ts:406
+Defined in: ridb\_core.d.ts:288
 
 #### Parameters
 
@@ -42,4 +42,4 @@ Defined in: ridb\_core.d.ts:406
 
 > `readonly` **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
 
-Defined in: ridb\_core.d.ts:407
+Defined in: ridb\_core.d.ts:289

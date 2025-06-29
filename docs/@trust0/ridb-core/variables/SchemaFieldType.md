@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / SchemaFieldType
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / SchemaFieldType
 
 # Variable: SchemaFieldType
 
 > `const` **SchemaFieldType**: `object`
 
-Defined in: ridb\_core.d.ts:586
+Defined in: ridb\_core.d.ts:294
 
 ## Type declaration
 

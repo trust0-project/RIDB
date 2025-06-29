@@ -2,7 +2,7 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / WasmBindgenTestContext
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / WasmBindgenTestContext
 
 # Class: WasmBindgenTestContext
 

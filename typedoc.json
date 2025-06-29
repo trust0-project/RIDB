@@ -7,6 +7,7 @@
         "packages/ridb-level",
         "packages/ridb-react"
     ],
+    "readme": "none",
     "basePath":   "./src",
     "out": "docs",
     "plugin": [

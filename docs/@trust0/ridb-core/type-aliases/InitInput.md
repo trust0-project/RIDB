@@ -2,7 +2,7 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / InitInput
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / InitInput
 
 # Type Alias: InitInput
 

@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / InternalsRecord
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / InternalsRecord
 
 # Type Alias: InternalsRecord
 
 > **InternalsRecord** = `object`
 
-Defined in: ridb\_core.d.ts:220
+Defined in: ridb\_core.d.ts:89
 
 ## Index Signature
 

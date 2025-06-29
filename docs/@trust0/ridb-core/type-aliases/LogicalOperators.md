@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / LogicalOperators
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / LogicalOperators
 
 # Type Alias: LogicalOperators\<T\>
 
 > **LogicalOperators**\<`T`\> = `object`
 
-Defined in: ridb\_core.d.ts:392
+Defined in: ridb\_core.d.ts:274
 
 ## Type Parameters
 
@@ -22,7 +22,7 @@ Defined in: ridb\_core.d.ts:392
 
 > `optional` **$and**: `Partial`\<[`QueryType`](QueryType.md)\<`T`\>\>[]
 
-Defined in: ridb\_core.d.ts:393
+Defined in: ridb\_core.d.ts:275
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: ridb\_core.d.ts:393
 
 > `optional` **$or**: `Partial`\<[`QueryType`](QueryType.md)\<`T`\>\>[]
 
-Defined in: ridb\_core.d.ts:394
+Defined in: ridb\_core.d.ts:276

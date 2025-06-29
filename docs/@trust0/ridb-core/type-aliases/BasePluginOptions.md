@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / BasePluginOptions
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / BasePluginOptions
 
 # Type Alias: BasePluginOptions
 
 > **BasePluginOptions** = `object`
 
-Defined in: ridb\_core.d.ts:574
+Defined in: ridb\_core.d.ts:389
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: ridb\_core.d.ts:574
 
 > `optional` **docCreateHook**: [`Hook`](Hook.md)
 
-Defined in: ridb\_core.d.ts:575
+Defined in: ridb\_core.d.ts:390
 
 ***
 
@@ -24,4 +24,4 @@ Defined in: ridb\_core.d.ts:575
 
 > `optional` **docRecoverHook**: [`Hook`](Hook.md)
 
-Defined in: ridb\_core.d.ts:576
+Defined in: ridb\_core.d.ts:391

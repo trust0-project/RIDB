@@ -2,13 +2,13 @@
 
 ***
 
-[Documentation](../../../packages.md) / [@trust0/ridb-core](../README.md) / Hook
+[Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / Hook
 
 # Type Alias: Hook()
 
 > **Hook** = (`schema`, `migration`, `doc`) => [`Doc`](Doc.md)\<[`SchemaType`](SchemaType.md)\>
 
-Defined in: ridb\_core.d.ts:568
+Defined in: ridb\_core.d.ts:383
 
 ## Parameters
 
