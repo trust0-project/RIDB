@@ -8,7 +8,7 @@
 
 > **StorageClass**\<`T`\> = `object`
 
-Defined in: [types.ts:8](https://github.com/trust0-project/RIDB/blob/3305fbba832297c7c9cd86d5d666516d921be44e/packages/ridb/src/types.ts#L8)
+Defined in: [types.ts:8](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb/src/types.ts#L8)
 
 Represents a factory class for creating storage instances.
 
@@ -16,7 +16,7 @@ Represents a factory class for creating storage instances.
 
 ### T
 
-`T` *extends* [`SchemaTypeRecord`](https://github.com/trust0-project/RIDB/docs/@trust0/ridb-core/type-aliases/SchemaTypeRecord.md)
+`T` *extends* [`SchemaTypeRecord`](https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/type-aliases/SchemaTypeRecord.md)
 
 The schema type record defining the database structure
 
@@ -26,7 +26,7 @@ The schema type record defining the database structure
 
 > **create**: (`name`, `schemas`, `options`) => `Promise`\<`BaseStorage`\<`T`\>\>
 
-Defined in: [types.ts:17](https://github.com/trust0-project/RIDB/blob/3305fbba832297c7c9cd86d5d666516d921be44e/packages/ridb/src/types.ts#L17)
+Defined in: [types.ts:17](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb/src/types.ts#L17)
 
 Creates a storage instance with the specified parameters.
 
