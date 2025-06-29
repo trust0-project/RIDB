@@ -15,13 +15,18 @@
         "Docs": "https://github.com/trust0/RIDB.git",
         "GitHub": "https://github.com/trust0/RIDB.git"
     },
-    "externalSymbolLinkMappings": {
-        "@trust0/ridb-core": {
-            "collection": "https://github.com/trust0-project/RIDB/docs/@trust0/ridb-core/classes/Collection.md",
-            "SchemaTypeRecord": "https://github.com/trust0-project/RIDB/docs/@trust0/ridb-core/type-aliases/SchemaTypeRecord.md"
+   "externalSymbolLinkMappings": {
+    "@trust0/ridb-core": {
+        "Collection": "https://github.com/trust0-project/RIDB/docs/@trust0/ridb-core/classes/Collection.md",
+        "SchemaTypeRecord": "https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/type-aliases/SchemaTypeRecord.md",
+        "BaseStorage": "https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/classes/BaseStorage.md",
+        "MigrationsParameter": "https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/type-aliases/MigrationsParameter.md"
+    },
+        "@trust0/ridb": {
+            "StartOptions": "https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb/type-aliases/StartOptions.md"
         },
         "@hyperledger/identus-sdk": {
-            "SDK": "https://github.com/hyperledger/identus-sdk"
+            "*":"https://github.com/hyperledger-identus/sdk-ts/blob/main/docs/sdk/modules.md"
         }
     },
     "validation": {

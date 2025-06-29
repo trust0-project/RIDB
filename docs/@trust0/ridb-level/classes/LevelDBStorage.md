@@ -6,13 +6,13 @@
 
 # Class: LevelDBStorage\<T\>
 
-Defined in: [index.ts:47](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L47)
+Defined in: [index.ts:47](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L47)
 
 LevelDB storage implementation class
 
 ## Extends
 
-- `BaseStorage`\<`T`\>
+- [`BaseStorage`](https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/classes/BaseStorage.md)\<`T`\>
 
 ## Type Parameters
 
@@ -26,7 +26,7 @@ LevelDB storage implementation class
 
 > **new LevelDBStorage**\<`T`\>(`level`, `name`, `schemas`, `options`): `LevelDBStorage`\<`T`\>
 
-Defined in: [index.ts:48](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L48)
+Defined in: [index.ts:48](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L48)
 
 #### Parameters
 
@@ -52,7 +52,7 @@ Defined in: [index.ts:48](https://github.com/trust0-project/RIDB/blob/2a07066072
 
 #### Overrides
 
-`BaseStorageType<T>.constructor`
+`BaseStorage<T>.constructor`
 
 ## Properties
 
@@ -64,7 +64,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:368
 
 #### Inherited from
 
-`BaseStorageType.core`
+`BaseStorage.core`
 
 ***
 
@@ -76,7 +76,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:365
 
 #### Inherited from
 
-`BaseStorageType.dbName`
+`BaseStorage.dbName`
 
 ***
 
@@ -84,7 +84,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:365
 
 > **level**: [`Level`](../type-aliases/Level.md)
 
-Defined in: [index.ts:48](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L48)
+Defined in: [index.ts:48](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L48)
 
 ***
 
@@ -96,7 +96,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:367
 
 #### Inherited from
 
-`BaseStorageType.options`
+`BaseStorage.options`
 
 ***
 
@@ -108,7 +108,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:366
 
 #### Inherited from
 
-`BaseStorageType.schemas`
+`BaseStorage.schemas`
 
 ## Methods
 
@@ -124,7 +124,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:378
 
 #### Inherited from
 
-`BaseStorageType.addIndexSchemas`
+`BaseStorage.addIndexSchemas`
 
 ***
 
@@ -132,7 +132,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:378
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [index.ts:77](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L77)
+Defined in: [index.ts:77](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L77)
 
 Close the database
 
@@ -142,7 +142,7 @@ Close the database
 
 #### Overrides
 
-`BaseStorageType.close`
+`BaseStorage.close`
 
 ***
 
@@ -150,7 +150,7 @@ Close the database
 
 > **count**(`collectionName`, `query`, `options?`): `Promise`\<`number`\>
 
-Defined in: [index.ts:148](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L148)
+Defined in: [index.ts:148](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L148)
 
 Count documents matching a query (supports offset & limit)
 
@@ -174,7 +174,7 @@ keyof `T`
 
 #### Overrides
 
-`BaseStorageType.count`
+`BaseStorage.count`
 
 ***
 
@@ -182,7 +182,7 @@ keyof `T`
 
 > **find**(`collectionName`, `query`, `options?`): `Promise`\<`Doc`\<`T`\[keyof `T`\]\>[]\>
 
-Defined in: [index.ts:197](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L197)
+Defined in: [index.ts:197](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L197)
 
 Find documents matching a query with pagination
 
@@ -206,7 +206,7 @@ keyof `T`
 
 #### Overrides
 
-`BaseStorageType.find`
+`BaseStorage.find`
 
 ***
 
@@ -214,7 +214,7 @@ keyof `T`
 
 > **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| `Doc`\<`T`\[keyof `T`\]\>\>
 
-Defined in: [index.ts:82](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L82)
+Defined in: [index.ts:82](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L82)
 
 Find a document by its ID
 
@@ -234,7 +234,7 @@ keyof `T`
 
 #### Overrides
 
-`BaseStorageType.findDocumentById`
+`BaseStorage.findDocumentById`
 
 ***
 
@@ -256,7 +256,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:375
 
 #### Inherited from
 
-`BaseStorageType.getOption`
+`BaseStorage.getOption`
 
 ***
 
@@ -278,7 +278,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:376
 
 #### Inherited from
 
-`BaseStorageType.getSchema`
+`BaseStorage.getSchema`
 
 ***
 
@@ -286,7 +286,7 @@ Defined in: ../../ridb-core/build/ridb\_core.d.ts:376
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: [index.ts:72](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L72)
+Defined in: [index.ts:72](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L72)
 
 Start the database
 
@@ -296,7 +296,7 @@ Start the database
 
 #### Overrides
 
-`BaseStorageType.start`
+`BaseStorage.start`
 
 ***
 
@@ -304,7 +304,7 @@ Start the database
 
 > **write**(`op`): `Promise`\<`Doc`\<`T`\[keyof `T`\]\>\>
 
-Defined in: [index.ts:104](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L104)
+Defined in: [index.ts:104](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L104)
 
 Write an operation (insert, update, delete)
 
@@ -320,7 +320,7 @@ Write an operation (insert, update, delete)
 
 #### Overrides
 
-`BaseStorageType.write`
+`BaseStorage.write`
 
 ***
 
@@ -328,7 +328,7 @@ Write an operation (insert, update, delete)
 
 > `static` **create**\<`SchemasCreate`\>(`name`, `schemas`, `options?`): `Promise`\<`LevelDBStorage`\<`SchemasCreate`\>\>
 
-Defined in: [index.ts:60](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L60)
+Defined in: [index.ts:60](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L60)
 
 Create a new LevelDB storage instance
 
@@ -366,4 +366,4 @@ A new Instance of LevelDB storage
 
 #### Overrides
 
-`BaseStorageType.create`
+`BaseStorage.create`

@@ -8,4 +8,4 @@
 
 > **Level** = `ClassicLevel`\<`string`, `string`\>
 
-Defined in: [index.ts:41](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L41)
+Defined in: [index.ts:41](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L41)

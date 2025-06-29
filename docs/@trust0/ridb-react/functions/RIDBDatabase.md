@@ -8,7 +8,7 @@
 
 > **RIDBDatabase**\<`T`\>(`__namedParameters`): `Element`
 
-Defined in: [index.tsx:25](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-react/src/index.tsx#L25)
+Defined in: [index.tsx:25](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-react/src/index.tsx#L25)
 
 ## Type Parameters
 
@@ -20,7 +20,7 @@ Defined in: [index.tsx:25](https://github.com/trust0-project/RIDB/blob/2a0706607
 
 ### \_\_namedParameters
 
-`object` & `object` & `object` & `MigrationsParameter`\<`T`\>
+`object` & `object` & `object` & [`MigrationsParameter`](https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/type-aliases/MigrationsParameter.md)\<`T`\>
 
 ## Returns
 

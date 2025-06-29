@@ -29,7 +29,7 @@ import {
     Doc, 
     Operation,
     QueryType,  
-    BaseStorage as BaseStorageType,
+    BaseStorage,
     BaseStorageOptions
  } from "@trust0/ridb-core"
 import {
@@ -44,7 +44,7 @@ export type Level = ClassicLevel<string, string>;
  * LevelDB storage implementation class
  * @public
  */
-export class LevelDBStorage<T extends SchemaTypeRecord> extends BaseStorageType<T> {
+export class LevelDBStorage<T extends SchemaTypeRecord> extends BaseStorage<T> {
     constructor(public level: Level, name: string, schemas: T, options: any) {
         super(name, schemas, options);
     }
@@ -247,12 +247,12 @@ export class LevelDBStorage<T extends SchemaTypeRecord> extends BaseStorageType<
  * @public
  * @returns A factory function that creates LevelDB storage instances
  */
-export default async function createLevelDB<T extends SchemaTypeRecord>(): Promise<typeof BaseStorageType<T>> {
-    const {BaseStorage} = await WasmInternal();
+export default async function createLevelDB<T extends SchemaTypeRecord>(): Promise<typeof BaseStorage<T>> {
+    const {BaseStorage: base} = await WasmInternal();
     
     // We need to extend the actual BaseStorage from WasmInternal
-    Object.setPrototypeOf(LevelDBStorage.prototype, BaseStorage.prototype);
+    Object.setPrototypeOf(LevelDBStorage.prototype, base.prototype);
     
     // Return the static create method as the constructor
-    return LevelDBStorage.create as unknown as typeof BaseStorageType<T>;
+    return LevelDBStorage.create as unknown as typeof BaseStorage<T>
 }

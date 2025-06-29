@@ -6,9 +6,9 @@
 
 # Function: createLevelDB()
 
-> **createLevelDB**\<`T`\>(): `Promise`\<*typeof* `BaseStorage`\>
+> **createLevelDB**\<`T`\>(): `Promise`\<*typeof* [`BaseStorage`](https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/classes/BaseStorage.md)\>
 
-Defined in: [index.ts:250](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb-level/src/index.ts#L250)
+Defined in: [index.ts:250](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb-level/src/index.ts#L250)
 
 Create a LevelDB storage instance
 
@@ -20,6 +20,6 @@ Create a LevelDB storage instance
 
 ## Returns
 
-`Promise`\<*typeof* `BaseStorage`\>
+`Promise`\<*typeof* [`BaseStorage`](https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/classes/BaseStorage.md)\>
 
 A factory function that creates LevelDB storage instances

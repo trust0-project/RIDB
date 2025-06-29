@@ -8,7 +8,7 @@
 
 > **StorageClass**\<`T`\> = `object`
 
-Defined in: [types.ts:8](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb/src/types.ts#L8)
+Defined in: [types.ts:8](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb/src/types.ts#L8)
 
 Represents a factory class for creating storage instances.
 
@@ -24,9 +24,9 @@ The schema type record defining the database structure
 
 ### create()
 
-> **create**: (`name`, `schemas`, `options`) => `Promise`\<`BaseStorage`\<`T`\>\>
+> **create**: (`name`, `schemas`, `options`) => `Promise`\<[`BaseStorage`](https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/classes/BaseStorage.md)\<`T`\>\>
 
-Defined in: [types.ts:17](https://github.com/trust0-project/RIDB/blob/2a07066072231c925f10d0ad0c5af414f1bfe85b/packages/ridb/src/types.ts#L17)
+Defined in: [types.ts:17](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb/src/types.ts#L17)
 
 Creates a storage instance with the specified parameters.
 
@@ -52,6 +52,6 @@ Additional options for the storage implementation
 
 #### Returns
 
-`Promise`\<`BaseStorage`\<`T`\>\>
+`Promise`\<[`BaseStorage`](https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/classes/BaseStorage.md)\<`T`\>\>
 
 A Promise resolving to the created storage instance
