@@ -12,7 +12,7 @@ type Context<T extends SchemaTypeRecord> = {
 } | null
 
 
-const RIDBContext = createContext<Context<any>>(null);
+export const RIDBContext = createContext<Context<any>>(null);
 
 export function useRIDB<T extends SchemaTypeRecord>() {
   const context = useContext<Context<T>>(RIDBContext);
