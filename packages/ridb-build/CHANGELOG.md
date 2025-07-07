@@ -1,3 +1,15 @@
+## 0.0.15 (2025-07-07)
+
+### 🩹 Fixes
+
+- improve docs [skip ci] ([3a2c8bf](https://github.com/trust0-project/RIDB/commit/3a2c8bf))
+- package docs [skip ci] ([f07e763](https://github.com/trust0-project/RIDB/commit/f07e763))
+- add docs [skip ci] ([2a07066](https://github.com/trust0-project/RIDB/commit/2a07066))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.14 (2025-06-29)
 
 ### 🩹 Fixes

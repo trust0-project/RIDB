@@ -8,7 +8,7 @@
 
 > **DBOptions**\<`T`\> = `object` & [`MigrationsParameter`](https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/type-aliases/MigrationsParameter.md)\<`T`\>
 
-Defined in: [types.ts:71](https://github.com/trust0-project/RIDB/blob/f07e7639b6bde6f9d4fe13662211e920715e22ed/packages/ridb/src/types.ts#L71)
+Defined in: [types.ts:71](https://github.com/trust0-project/RIDB/blob/b633444aa2afd574f08e2eb8f83bf4cd8470d731/packages/ridb/src/types.ts#L71)
 
 Options for initializing the RIDB database.
 

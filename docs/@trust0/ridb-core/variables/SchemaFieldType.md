@@ -8,7 +8,7 @@
 
 > `const` **SchemaFieldType**: `object`
 
-Defined in: ridb\_core.d.ts:294
+Defined in: ridb\_core.d.ts:586
 
 ## Type declaration
 

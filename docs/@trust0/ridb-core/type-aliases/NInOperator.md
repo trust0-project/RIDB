@@ -8,7 +8,7 @@
 
 > **NInOperator**\<`T`\> = `object`
 
-Defined in: ridb\_core.d.ts:268
+Defined in: ridb\_core.d.ts:386
 
 ## Type Parameters
 
@@ -22,4 +22,4 @@ Defined in: ridb\_core.d.ts:268
 
 > `optional` **$nin**: `T`[]
 
-Defined in: ridb\_core.d.ts:268
+Defined in: ridb\_core.d.ts:386

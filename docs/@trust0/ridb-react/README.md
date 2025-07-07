@@ -10,6 +10,10 @@
 
 - [DatabaseState](type-aliases/DatabaseState.md)
 
+## Variables
+
+- [RIDBContext](variables/RIDBContext.md)
+
 ## Functions
 
 - [RIDBDatabase](functions/RIDBDatabase.md)
