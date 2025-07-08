@@ -1,8 +1,8 @@
-use js_sys::{Array, Object, Promise, Reflect};
+use js_sys::{Array, Object, Reflect};
 use pool::POOL;
 use utils::{can_use_single_index_lookup, create_database, cursor_fetch_and_filter, idb_request_result};
 use crate::utils::Logger;
-use wasm_bindgen::{JsCast, JsValue};
+use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::{wasm_bindgen, Closure};
 use crate::query::Query;
 use crate::storage::internals::base_storage::BaseStorage;
@@ -474,21 +474,9 @@ impl IndexDB {
             }
         };
 
-        // Set up abort and complete handlers to improve transaction management
-        Logger::debug("IndexDB-GetStore", &JsValue::from_str("Setting up transaction complete handler"));
-        let complete_promise = Promise::new(&mut |resolve, _| {
-            let oncomplete = Closure::once(Box::new(move |_: web_sys::Event| {
-                resolve.call0(&JsValue::undefined()).unwrap();
-            }));
-            
-            transaction.set_oncomplete(Some(oncomplete.as_ref().unchecked_ref()));
-            oncomplete.forget();
-        });
-        
-        // Create a future from the promise, but don't await it
-        // This ensures we track the transaction but don't block
-        Logger::debug("IndexDB-GetStore", &JsValue::from_str("Creating future from transaction complete promise"));
-        let _future = wasm_bindgen_futures::JsFuture::from(complete_promise);
+        // Simplified transaction handling - no need for complex promise setup
+        // The transaction will complete automatically when the object store operations are done
+        Logger::debug("IndexDB-GetStore", &JsValue::from_str("Transaction created, proceeding with object store access"));
 
         // Get object store from transaction
         Logger::debug("IndexDB-GetStore", &JsValue::from_str(&format!("Getting object store: {}", store_name)));
