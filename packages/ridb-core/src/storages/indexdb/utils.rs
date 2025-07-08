@@ -27,6 +27,8 @@ pub async fn cursor_fetch_and_filter(
     // Use Rc<RefCell<>> for shared state between closures
     let all_docs = Rc::new(RefCell::new(Vec::new()));
     let cursor_finished = Rc::new(RefCell::new(false));
+    let matched_count = Rc::new(RefCell::new(0u32));
+    let skipped_count = Rc::new(RefCell::new(0u32));
     
     // Clone these for the async processing
     let core_cloned = core.clone();
@@ -35,12 +37,14 @@ pub async fn cursor_fetch_and_filter(
     let promise = Promise::new(&mut |resolve, reject| {
         let all_docs_ref = all_docs.clone();
         let cursor_finished_ref = cursor_finished.clone();
+        let matched_count_ref = matched_count.clone();
+        let skipped_count_ref = skipped_count.clone();
         let resolve_ref = resolve.clone();
         let reject_ref = reject.clone();
         let value_query_for_closure = value_query_cloned.clone();
         let core_for_closure = core_cloned.clone();
 
-        // Create a lightweight success handler that just collects documents
+        // Create a lightweight success handler that collects documents with early termination
         let on_success = Closure::wrap(Box::new(move |evt: web_sys::Event| {
             let target: web_sys::IdbRequest = match evt.target().and_then(|t| t.dyn_into().ok()) {
                 Some(req) => req,
@@ -55,7 +59,7 @@ pub async fn cursor_fetch_and_filter(
 
             let cursor_value = target.result();
             
-            // If cursor is done, mark as finished and start async processing
+            // If cursor is done, start async processing
             if cursor_value.is_err()
                 || cursor_value.as_ref().unwrap().is_null()
                 || cursor_value.as_ref().unwrap().is_undefined()
@@ -85,13 +89,55 @@ pub async fn cursor_fetch_and_filter(
                 }
             };
 
-            // Lightweight work: just collect the document
+            // Check if we've already collected enough documents
+            let current_matched = *matched_count_ref.borrow();
+            if current_matched >= limit {
+                // We have enough matches, stop cursor iteration
+                *cursor_finished_ref.borrow_mut() = true;
+                schedule_async_processing(
+                    all_docs_ref.clone(),
+                    core_for_closure.clone(),
+                    value_query_for_closure.clone(),
+                    offset,
+                    limit,
+                    resolve_ref.clone(),
+                    reject_ref.clone(),
+                );
+                return;
+            }
+
+            // Lightweight work: collect the document with early termination logic
             match cursor.value() {
                 Ok(doc) => {
-                    // Just add to collection - no heavy processing here
-                    all_docs_ref.borrow_mut().push(doc);
+                    // Quick check for query match to enable early termination
+                    if core_for_closure.document_matches_query(&doc, value_query_for_closure.clone()).unwrap_or(false) {
+                        let mut skipped = skipped_count_ref.borrow_mut();
+                        let mut matched = matched_count_ref.borrow_mut();
+                        
+                        if *skipped < offset {
+                            *skipped += 1;
+                        } else if *matched < limit {
+                            all_docs_ref.borrow_mut().push(doc);
+                            *matched += 1;
+                        }
+                        
+                        // If we've reached the limit, stop processing
+                        if *matched >= limit {
+                            *cursor_finished_ref.borrow_mut() = true;
+                            schedule_async_processing(
+                                all_docs_ref.clone(),
+                                core_for_closure.clone(),
+                                value_query_for_closure.clone(),
+                                offset,
+                                limit,
+                                resolve_ref.clone(),
+                                reject_ref.clone(),
+                            );
+                            return;
+                        }
+                    }
                     
-                    // Continue cursor immediately
+                    // Continue cursor to next record
                     if let Err(err) = cursor.continue_() {
                         let _ = reject_ref.call1(&JsValue::NULL, &err);
                     }
@@ -149,6 +195,7 @@ pub async fn cursor_fetch_and_filter(
 }
 
 // Schedule async processing using setTimeout to avoid blocking the event loop
+// Fixed to work in both Window and Worker contexts
 fn schedule_async_processing(
     all_docs: std::rc::Rc<std::cell::RefCell<Vec<JsValue>>>,
     core: CoreStorage,
@@ -169,65 +216,45 @@ fn schedule_async_processing(
         }
     }));
 
-    // Use setTimeout to schedule processing on the next event loop tick
-    let window = web_sys::window().unwrap();
-    let _ = window.set_timeout_with_callback_and_timeout_and_arguments_0(
-        timeout_callback.as_ref().unchecked_ref(),
-        0, // Next tick
-    );
+    // Use setTimeout in both Window and Worker contexts
+    if let Ok(window) = js_sys::global().dyn_into::<web_sys::Window>() {
+        // Window context
+        let _ = window.set_timeout_with_callback_and_timeout_and_arguments_0(
+            timeout_callback.as_ref().unchecked_ref(),
+            0, // Next tick
+        );
+    } else if let Ok(worker) = js_sys::global().dyn_into::<web_sys::WorkerGlobalScope>() {
+        // Worker context
+        let _ = worker.set_timeout_with_callback_and_timeout_and_arguments_0(
+            timeout_callback.as_ref().unchecked_ref(),
+            0, // Next tick
+        );
+    } else {
+        // Fallback: execute immediately if neither context is available
+        // This shouldn't happen in normal web environments, but provides a safety net
+        let callback_fn = timeout_callback.as_ref().unchecked_ref::<js_sys::Function>();
+        let _ = callback_fn.call0(&JsValue::undefined());
+    }
     
     timeout_callback.forget();
 }
 
-// Process documents asynchronously with yielding to avoid blocking
+// Process documents asynchronously - now mainly for final array construction
+// since filtering and limits are already applied during cursor iteration
 fn process_documents_async(
     all_docs: std::rc::Rc<std::cell::RefCell<Vec<JsValue>>>,
-    core: CoreStorage,
-    query: Query,
-    offset: u32,
-    limit: u32,
+    _core: CoreStorage,
+    _query: Query,
+    _offset: u32,
+    _limit: u32,
 ) -> Result<Array, JsValue> {
     let docs = all_docs.borrow();
     let result_array = Array::new();
-    let mut skipped = 0u32;
-    let mut matched = 0u32;
     
-    // Process documents in smaller chunks to avoid blocking
-    const CHUNK_SIZE: usize = 10; // Even smaller chunks to minimize blocking
-    const MAX_SYNC_OPERATIONS: usize = 100; // Max operations before yielding
-    
-    let mut operations_count = 0;
-    
-    for chunk in docs.chunks(CHUNK_SIZE) {
-        for doc in chunk {
-            if matched >= limit {
-                break;
-            }
-            
-            // Quick check to avoid expensive operations when possible
-            if operations_count >= MAX_SYNC_OPERATIONS {
-                // We've done enough work, let the event loop breathe
-                // In a real async environment we'd yield here, but for now we'll just continue
-                operations_count = 0;
-            }
-            
-            // This is still synchronous but now it's not in the success handler
-            // and we process in very small chunks
-            if core.document_matches_query(doc, query.clone()).unwrap_or(false) {
-                if skipped < offset {
-                    skipped += 1;
-                } else {
-                    result_array.push(doc);
-                    matched += 1;
-                }
-            }
-            
-            operations_count += 1;
-        }
-        
-        if matched >= limit {
-            break;
-        }
+    // Since filtering and limits are already applied during cursor iteration,
+    // we just need to convert the collected documents to an Array
+    for doc in docs.iter() {
+        result_array.push(doc);
     }
     
     Ok(result_array)
