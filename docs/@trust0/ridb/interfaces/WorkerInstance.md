@@ -6,7 +6,7 @@
 
 # Interface: WorkerInstance
 
-Defined in: [types.ts:146](https://github.com/trust0-project/RIDB/blob/b633444aa2afd574f08e2eb8f83bf4cd8470d731/packages/ridb/src/types.ts#L146)
+Defined in: [types.ts:146](https://github.com/trust0-project/RIDB/blob/b267d581748a68c847ca97ed463e3d471b6e67d7/packages/ridb/src/types.ts#L146)
 
 Interface representing a shared worker instance and its session ID.
 
@@ -16,7 +16,7 @@ Interface representing a shared worker instance and its session ID.
 
 > **sessionId**: `string`
 
-Defined in: [types.ts:155](https://github.com/trust0-project/RIDB/blob/b633444aa2afd574f08e2eb8f83bf4cd8470d731/packages/ridb/src/types.ts#L155)
+Defined in: [types.ts:155](https://github.com/trust0-project/RIDB/blob/b267d581748a68c847ca97ed463e3d471b6e67d7/packages/ridb/src/types.ts#L155)
 
 Unique session ID for this worker connection
 
@@ -26,6 +26,6 @@ Unique session ID for this worker connection
 
 > **worker**: `SharedWorker`
 
-Defined in: [types.ts:150](https://github.com/trust0-project/RIDB/blob/b633444aa2afd574f08e2eb8f83bf4cd8470d731/packages/ridb/src/types.ts#L150)
+Defined in: [types.ts:150](https://github.com/trust0-project/RIDB/blob/b267d581748a68c847ca97ed463e3d471b6e67d7/packages/ridb/src/types.ts#L150)
 
 The SharedWorker instance

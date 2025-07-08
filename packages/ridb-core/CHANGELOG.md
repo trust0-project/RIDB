@@ -1,3 +1,18 @@
+## 1.7.26 (2025-07-08)
+
+### 🩹 Fixes
+
+- testing ([4389970](https://github.com/trust0-project/RIDB/commit/4389970))
+- automatically paginate results to avoid making queries that are expensive if not explicitly requested by the user by entering very high limit ([7181ca1](https://github.com/trust0-project/RIDB/commit/7181ca1))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.16
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.25 (2025-07-07)
 
 ### 🩹 Fixes

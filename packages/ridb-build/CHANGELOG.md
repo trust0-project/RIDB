@@ -1,3 +1,13 @@
+## 0.0.16 (2025-07-08)
+
+### 🩹 Fixes
+
+- testing ([4389970](https://github.com/trust0-project/RIDB/commit/4389970))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.15 (2025-07-07)
 
 ### 🩹 Fixes
