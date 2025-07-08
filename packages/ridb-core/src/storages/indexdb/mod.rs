@@ -4,7 +4,6 @@ use utils::{can_use_single_index_lookup, create_database, cursor_fetch_and_filte
 use crate::utils::Logger;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::{wasm_bindgen, Closure};
-use wasm_bindgen_futures::JsFuture;
 use crate::query::Query;
 use crate::storage::internals::base_storage::BaseStorage;
 use crate::storage::internals::core::CoreStorage;
