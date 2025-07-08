@@ -29,7 +29,7 @@ impl IndexDBPool {
 
     /// Retrieves a connection from the pool, recreating it if it's closed
     pub fn get_connection(&self, name: &str) -> Option<Arc<IdbDatabase>> {
-        let mut connections = self.connections.lock();
+        let connections = self.connections.lock();
         if let Some(db) = connections.get(name) {
             // Check if the database connection is still valid
             // We need to clone before checking to prevent deadlocks

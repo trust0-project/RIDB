@@ -65,7 +65,6 @@ impl TimestampPlugin {
 mod tests {
     use super::*;
     use js_sys::JSON;
-    use wasm_bindgen::JsCast;
     use wasm_bindgen_test::*;
 
     #[wasm_bindgen_test]

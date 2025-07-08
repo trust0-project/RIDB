@@ -1,7 +1,6 @@
 use std::fmt;
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use serde::de::{Error, Visitor};
-use serde::ser::Error as SerError;
 use wasm_bindgen::prelude::*;
 
 

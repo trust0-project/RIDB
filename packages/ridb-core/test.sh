@@ -8,11 +8,6 @@ test_node() {
 
 # Function to test browser environment
 test_browser() {
-    # Check if chromedriver is installed
-    if ! which chromedriver > /dev/null; then
-        echo "Error: chromedriver is not installed. Please install chromedriver to continue."
-        exit 1
-    fi
     wasm-pack --log-level info test --headless --chrome -- --lib --features browser || { echo "wasm-pack test for browser failed"; exit 1; }
 }
 

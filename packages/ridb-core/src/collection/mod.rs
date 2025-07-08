@@ -216,7 +216,12 @@ impl Collection {
     pub async fn find(&self, query_js: JsValue, options_js:JsValue) -> Result<JsValue, RIDBError> {
         let options = self.parse_query_options(options_js)?;
 
-        // No index available, perform a regular find
+        // Check if both limit and offset are None - if so, use default pagination
+        if options.limit.is_none() && options.offset.is_none() {
+            return self.load_paginated_results(query_js).await;
+        }
+
+        // Use existing logic when limit and/or offset are specified
         let docs = self.storage.find(
             &self.name,
             query_js,
@@ -239,6 +244,52 @@ impl Collection {
                 processed_array
             )
         )
+    }
+
+    /// Loads paginated results when no limit/offset is specified.
+    /// This implements default pagination with batch size of 20.
+    async fn load_paginated_results(&self, query_js: JsValue) -> Result<JsValue, RIDBError> {
+        let all_results = js_sys::Array::new();
+        let mut current_offset = 0;
+        const BATCH_SIZE: u32 = 20;
+
+        loop {
+            // Create pagination options for this batch
+            let batch_options = QueryOptions {
+                limit: Some(BATCH_SIZE),
+                offset: Some(current_offset)
+            };
+
+            // Fetch the current batch
+            let batch_docs = self.storage.find(
+                &self.name,
+                query_js.clone(),
+                batch_options
+            ).await?;
+
+            let batch_array = js_sys::Array::from(&batch_docs);
+            
+            // If the batch is empty, we're done
+            if batch_array.length() == 0 {
+                break;
+            }
+
+            // Process each document in the batch
+            for item in batch_array.iter() {
+                let processed_item = self.storage.call(&self.name, HookType::Recover, item.clone()).await?;
+                all_results.push(&processed_item);
+            }
+
+            // Update offset for next batch
+            current_offset += batch_array.length();
+
+            // If we got fewer results than the batch size, we're done
+            if batch_array.length() < BATCH_SIZE {
+                break;
+            }
+        }
+
+        Ok(JsValue::from(all_results))
     }
 
     pub fn parse_query_options(&self, options: JsValue) -> Result<QueryOptions, RIDBError> {
