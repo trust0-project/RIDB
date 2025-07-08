@@ -29,6 +29,7 @@ pub async fn cursor_fetch_and_filter(
     let cursor_finished = Rc::new(RefCell::new(false));
     let matched_count = Rc::new(RefCell::new(0u32));
     let skipped_count = Rc::new(RefCell::new(0u32));
+    let processing_scheduled = Rc::new(RefCell::new(false));
     
     // Clone these for the async processing
     let core_cloned = core.clone();
@@ -39,6 +40,7 @@ pub async fn cursor_fetch_and_filter(
         let cursor_finished_ref = cursor_finished.clone();
         let matched_count_ref = matched_count.clone();
         let skipped_count_ref = skipped_count.clone();
+        let processing_scheduled_ref = processing_scheduled.clone();
         let resolve_ref = resolve.clone();
         let reject_ref = reject.clone();
         let value_query_for_closure = value_query_cloned.clone();
@@ -65,16 +67,20 @@ pub async fn cursor_fetch_and_filter(
                 || cursor_value.as_ref().unwrap().is_undefined()
             {
                 *cursor_finished_ref.borrow_mut() = true;
-                // Defer the heavy processing to avoid blocking the success handler
-                schedule_async_processing(
-                    all_docs_ref.clone(),
-                    core_for_closure.clone(),
-                    value_query_for_closure.clone(),
-                    offset,
-                    limit,
-                    resolve_ref.clone(),
-                    reject_ref.clone(),
-                );
+                // Only schedule async processing if it hasn't been scheduled yet
+                if !*processing_scheduled_ref.borrow() {
+                    *processing_scheduled_ref.borrow_mut() = true;
+                    // Defer the heavy processing to avoid blocking the success handler
+                    schedule_async_processing(
+                        all_docs_ref.clone(),
+                        core_for_closure.clone(),
+                        value_query_for_closure.clone(),
+                        offset,
+                        limit,
+                        resolve_ref.clone(),
+                        reject_ref.clone(),
+                    );
+                }
                 return;
             }
 
@@ -94,15 +100,19 @@ pub async fn cursor_fetch_and_filter(
             if current_matched >= limit {
                 // We have enough matches, stop cursor iteration
                 *cursor_finished_ref.borrow_mut() = true;
-                schedule_async_processing(
-                    all_docs_ref.clone(),
-                    core_for_closure.clone(),
-                    value_query_for_closure.clone(),
-                    offset,
-                    limit,
-                    resolve_ref.clone(),
-                    reject_ref.clone(),
-                );
+                // Only schedule async processing if it hasn't been scheduled yet
+                if !*processing_scheduled_ref.borrow() {
+                    *processing_scheduled_ref.borrow_mut() = true;
+                    schedule_async_processing(
+                        all_docs_ref.clone(),
+                        core_for_closure.clone(),
+                        value_query_for_closure.clone(),
+                        offset,
+                        limit,
+                        resolve_ref.clone(),
+                        reject_ref.clone(),
+                    );
+                }
                 return;
             }
 
@@ -124,15 +134,19 @@ pub async fn cursor_fetch_and_filter(
                         // If we've reached the limit, stop processing
                         if *matched >= limit {
                             *cursor_finished_ref.borrow_mut() = true;
-                            schedule_async_processing(
-                                all_docs_ref.clone(),
-                                core_for_closure.clone(),
-                                value_query_for_closure.clone(),
-                                offset,
-                                limit,
-                                resolve_ref.clone(),
-                                reject_ref.clone(),
-                            );
+                            // Only schedule async processing if it hasn't been scheduled yet
+                            if !*processing_scheduled_ref.borrow() {
+                                *processing_scheduled_ref.borrow_mut() = true;
+                                schedule_async_processing(
+                                    all_docs_ref.clone(),
+                                    core_for_closure.clone(),
+                                    value_query_for_closure.clone(),
+                                    offset,
+                                    limit,
+                                    resolve_ref.clone(),
+                                    reject_ref.clone(),
+                                );
+                            }
                             return;
                         }
                     }
