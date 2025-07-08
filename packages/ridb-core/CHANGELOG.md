@@ -1,3 +1,15 @@
+## 1.7.27 (2025-07-08)
+
+### 🩹 Fixes
+
+- improve code ([eebd952](https://github.com/trust0-project/RIDB/commit/eebd952))
+- improve  cursor_fetch_and_filter for better performance too ([6b075cb](https://github.com/trust0-project/RIDB/commit/6b075cb))
+- warning improvement ([44acad1](https://github.com/trust0-project/RIDB/commit/44acad1))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.26 (2025-07-08)
 
 ### 🩹 Fixes

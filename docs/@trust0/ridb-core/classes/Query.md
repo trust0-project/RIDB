@@ -6,7 +6,7 @@
 
 # Class: Query\<T\>
 
-Defined in: ridb\_core.d.ts:405
+Defined in: ridb\_core.d.ts:233
 
 ## Type Parameters
 
@@ -20,7 +20,7 @@ Defined in: ridb\_core.d.ts:405
 
 > **new Query**\<`T`\>(`query`, `schema`): `Query`\<`T`\>
 
-Defined in: ridb\_core.d.ts:406
+Defined in: ridb\_core.d.ts:234
 
 #### Parameters
 
@@ -42,4 +42,4 @@ Defined in: ridb\_core.d.ts:406
 
 > `readonly` **query**: [`QueryType`](../type-aliases/QueryType.md)\<`T`\>
 
-Defined in: ridb\_core.d.ts:407
+Defined in: ridb\_core.d.ts:235

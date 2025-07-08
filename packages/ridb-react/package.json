@@ -1,7 +1,7 @@
 {
   "name": "@trust0/ridb-react",
   "description": "React bindings for RIDB.",
-  "version": "1.4.10",
+  "version": "1.4.11",
   "author": "elribonazo@gmail.com",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -31,7 +31,7 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
-    "@trust0/ridb": "^1.5.31",
+    "@trust0/ridb": "^1.5.32",
     "@trust0/ridb-build": "^0.0.16",
     "@types/react": "^18",
     "@types/react-dom": "^18",
