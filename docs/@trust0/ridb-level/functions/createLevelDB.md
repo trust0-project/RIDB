@@ -8,7 +8,7 @@
 
 > **createLevelDB**\<`T`\>(): `Promise`\<*typeof* [`BaseStorage`](https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/classes/BaseStorage.md)\>
 
-Defined in: [index.ts:250](https://github.com/trust0-project/RIDB/blob/b267d581748a68c847ca97ed463e3d471b6e67d7/packages/ridb-level/src/index.ts#L250)
+Defined in: [index.ts:250](https://github.com/trust0-project/RIDB/blob/89dbd9f9380a1091a79cb83771ff6129cbcebbdf/packages/ridb-level/src/index.ts#L250)
 
 Create a LevelDB storage instance
 
