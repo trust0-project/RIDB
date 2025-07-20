@@ -1,3 +1,17 @@
+## 1.7.28 (2025-07-20)
+
+### 🩹 Fixes
+
+- add logos and docs ([96fd519](https://github.com/trust0-project/RIDB/commit/96fd519))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.17
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.27 (2025-07-08)
 
 ### 🩹 Fixes

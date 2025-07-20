@@ -1,3 +1,13 @@
+## 0.0.17 (2025-07-20)
+
+### 🩹 Fixes
+
+- add logos and docs ([96fd519](https://github.com/trust0-project/RIDB/commit/96fd519))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.16 (2025-07-08)
 
 ### 🩹 Fixes
