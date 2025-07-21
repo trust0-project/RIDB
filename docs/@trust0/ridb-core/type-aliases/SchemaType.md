@@ -8,7 +8,7 @@
 
 > **SchemaType** = `object`
 
-Defined in: ridb\_core.d.ts:607
+Defined in: ridb\_core.d.ts:143
 
 Represents the type definition for a schema.
 
@@ -18,7 +18,7 @@ Represents the type definition for a schema.
 
 > `optional` **encrypted**: `string`[]
 
-Defined in: ridb\_core.d.ts:623
+Defined in: ridb\_core.d.ts:159
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: ridb\_core.d.ts:623
 
 > `optional` **indexes**: `string`[]
 
-Defined in: ridb\_core.d.ts:622
+Defined in: ridb\_core.d.ts:158
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: ridb\_core.d.ts:622
 
 > **primaryKey**: `string`
 
-Defined in: ridb\_core.d.ts:616
+Defined in: ridb\_core.d.ts:152
 
 The primary key of the schema.
 
@@ -44,7 +44,7 @@ The primary key of the schema.
 
 > **properties**: `object`
 
-Defined in: ridb\_core.d.ts:627
+Defined in: ridb\_core.d.ts:163
 
 The properties defined in the schema.
 
@@ -58,7 +58,7 @@ The properties defined in the schema.
 
 > **type**: `SchemaFieldType`
 
-Defined in: ridb\_core.d.ts:621
+Defined in: ridb\_core.d.ts:157
 
 The type of the schema.
 
@@ -68,6 +68,6 @@ The type of the schema.
 
 > **version**: `number`
 
-Defined in: ridb\_core.d.ts:611
+Defined in: ridb\_core.d.ts:147
 
 The version of the schema.

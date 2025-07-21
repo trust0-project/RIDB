@@ -8,7 +8,7 @@
 
 > **InternalsRecord** = `object`
 
-Defined in: ridb\_core.d.ts:269
+Defined in: ridb\_core.d.ts:396
 
 ## Index Signature
 

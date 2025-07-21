@@ -1,3 +1,22 @@
+## 1.5.34 (2025-07-21)
+
+### 🩹 Fixes
+
+- lock ([665e3db](https://github.com/trust0-project/RIDB/commit/665e3db))
+- improve lock ([8da88a8](https://github.com/trust0-project/RIDB/commit/8da88a8))
+- lock ([b149ab8](https://github.com/trust0-project/RIDB/commit/b149ab8))
+- fix testing and implementation for leveldb and bring up mongodb ([5ddd0f0](https://github.com/trust0-project/RIDB/commit/5ddd0f0))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.18
+- Updated @trust0/ridb-core to 1.7.29
+- Updated @trust0/ridb-core to 1.7.29
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.33 (2025-07-20)
 
 ### 🩹 Fixes
