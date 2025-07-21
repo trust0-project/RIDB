@@ -32,20 +32,26 @@ fn get_debug_mode() -> bool {
     use wasm_bindgen::prelude::*;
     use js_sys::Reflect;
 
-    if let Some(win) = web_sys::window() {
-        // Browser environment
-        win.local_storage()
-            .ok()
-            .flatten()
-            .and_then(|storage| storage.get_item("DEBUG").ok().flatten())
-            .map(|debug_str| {
-                debug_str
-                    .split(',')
-                    .any(|s| s == "ridb" || s.starts_with("ridb:*"))
-            })
-            .unwrap_or(false)
-    } else {
-        // Node.js environment
+    #[cfg(feature = "browser")]
+    {
+        if let Some(win) = web_sys::window() {
+            // Browser environment
+            return win.local_storage()
+                .ok()
+                .flatten()
+                .and_then(|storage| storage.get_item("DEBUG").ok().flatten())
+                .map(|debug_str| {
+                    debug_str
+                        .split(',')
+                        .any(|s| s == "ridb" || s.starts_with("ridb:*"))
+                })
+                .unwrap_or(false);
+        }
+    }
+
+    #[cfg(any(feature = "node", not(feature = "browser")))]
+    {
+        // Node.js environment or fallback
         // Access process.env.DEBUG directly
         let global = js_sys::global();
 
@@ -59,15 +65,13 @@ fn get_debug_mode() -> bool {
 
         if let Some(debug_js_value) = debug_var {
             if let Some(debug_str) = debug_js_value.as_string() {
-                debug_str
+                return debug_str
                     .split(',')
-                    .any(|s| s == "ridb" || s.starts_with("ridb:*"))
-            } else {
-                false
+                    .any(|s| s == "ridb" || s.starts_with("ridb:*"));
             }
-        } else {
-            false
         }
     }
+
+    false
 }
 

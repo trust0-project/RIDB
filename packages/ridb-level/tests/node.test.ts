@@ -1,24 +1,20 @@
-import { describe, afterAll, beforeAll } from 'vitest';
+import { describe, afterAll } from 'vitest';
 
-import { runTests, TestPlatform } from '@trust0/ridb/testing';
+import { runTestsNodeOnly } from '@trust0/ridb/testing';
 import createLevelDB from '../src';
 
 
-
+let LevelDB = await createLevelDB();
 describe('LevelDB', async () => {
-    let LevelDB;
+    
     afterAll(async () => {
         const fs = await import('fs');
         const path = await import('path');
         fs.rmSync(path.resolve(process.cwd(), `./.db`), { recursive: true, force: true });
     });
 
-    beforeAll(async () => {
-        LevelDB ??= await createLevelDB();
-    })
-
-    runTests(
-        [TestPlatform.NODE], 
+    runTestsNodeOnly(
         [{name: "LevelDB", storage: LevelDB}]
     );
+
 });
