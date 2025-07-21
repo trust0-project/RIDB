@@ -30,10 +30,12 @@ export async function runTests(platforms:TestPlatform[], storages:StoragesType[]
             suite(platform, storages)
         })
     })
-    // TODO: Fix browser tests
-    // suites.forEach(suite => {
-    //     suite(TestPlatform.BROWSER, storages, true)
-    // })
+}
+
+export async function runTestsNodeOnly(  storages:StoragesType[] ): Promise<void> {
+    suites.forEach(suite => {
+        suite(TestPlatform.NODE, storages)
+    })
 }
 
 export async function runBenchTests(platforms:TestPlatform[], storages:StoragesType[] ): Promise<void> {
@@ -44,9 +46,16 @@ export async function runBenchTests(platforms:TestPlatform[], storages:StoragesT
     })
 }
 
+export async function runBenchTestsNodeOnly(  storages:StoragesType[] ): Promise<void> {
+    benchSuites.forEach(suite => {
+        suite(TestPlatform.NODE, storages)
+    })
+}
 
 export default {
     TestPlatform,
     runTests,
-    runBenchTests
+    runBenchTests,
+    runTestsNodeOnly,
+    runBenchTestsNodeOnly
 }
