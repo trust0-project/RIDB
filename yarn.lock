@@ -4836,6 +4836,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@trust0/ridb-build@npm:^0.0.16":
+  version: 0.0.16
+  resolution: "@trust0/ridb-build@npm:0.0.16"
+  checksum: 10c0/1d19afb2967d91145619fa7bbabc0e2b16d53368aec1f16d7973d68bfb5194441b08dfcce0b86502324dcb86ea972eaf4672f8e5def09efd5c3aa47829bee640
+  languageName: node
+  linkType: hard
+
 "@trust0/ridb-build@npm:^0.0.17, @trust0/ridb-build@workspace:packages/ridb-build":
   version: 0.0.0-use.local
   resolution: "@trust0/ridb-build@workspace:packages/ridb-build"
@@ -4904,7 +4911,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@trust0/ridb@npm:^1.5.33, @trust0/ridb@workspace:packages/ridb":
+"@trust0/ridb@npm:^1.5.32, @trust0/ridb@npm:^1.5.33, @trust0/ridb@workspace:packages/ridb":
   version: 0.0.0-use.local
   resolution: "@trust0/ridb@workspace:packages/ridb"
   dependencies:
