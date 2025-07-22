@@ -7,6 +7,7 @@
     "@trust0/ridb-core": "^1.7.30",
     "@trust0/ridb-mongodb": "^0.0.2"
   },
+  "private": true,
   "version": "1.0.0",
   "description": "yarn or npm install node index.js",
   "main": "index.js",
