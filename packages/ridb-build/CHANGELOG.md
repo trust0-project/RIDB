@@ -1,3 +1,13 @@
+## 0.0.19 (2025-07-22)
+
+### 🩹 Fixes
+
+- change exports ([70cabaa](https://github.com/trust0-project/RIDB/commit/70cabaa))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.18 (2025-07-21)
 
 ### 🩹 Fixes

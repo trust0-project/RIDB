@@ -1,3 +1,17 @@
+## 0.0.2 (2025-07-22)
+
+### 🩹 Fixes
+
+- change exports ([70cabaa](https://github.com/trust0-project/RIDB/commit/70cabaa))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb to 1.5.35
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.1 (2025-07-21)
 
 ### 🩹 Fixes
