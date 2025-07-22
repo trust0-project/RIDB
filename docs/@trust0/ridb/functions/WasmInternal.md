@@ -8,7 +8,7 @@
 
 > **WasmInternal**(): `Promise`\<`__module`\>
 
-Defined in: [wasm.ts:6](https://github.com/trust0-project/RIDB/blob/a9ae138c86dce36ceea700589b21b11f3e60fc7b/packages/ridb/src/wasm.ts#L6)
+Defined in: [wasm.ts:6](https://github.com/trust0-project/RIDB/blob/bcb8934543fc732545664233aa8443da39141d02/packages/ridb/src/wasm.ts#L6)
 
 ## Returns
 

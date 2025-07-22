@@ -6,7 +6,7 @@
 
 # Class: CoreStorage
 
-Defined in: ridb\_core.d.ts:747
+Defined in: ridb\_core.d.ts:515
 
 ## Constructors
 
@@ -24,7 +24,7 @@ Defined in: ridb\_core.d.ts:747
 
 > **getIndexes**(`schema`, `op`): `string`[]
 
-Defined in: ridb\_core.d.ts:755
+Defined in: ridb\_core.d.ts:523
 
 #### Parameters
 
@@ -46,7 +46,7 @@ Defined in: ridb\_core.d.ts:755
 
 > **getPrimaryKeyTyped**(`value`): `string` \| `number`
 
-Defined in: ridb\_core.d.ts:754
+Defined in: ridb\_core.d.ts:522
 
 #### Parameters
 
@@ -64,7 +64,7 @@ Defined in: ridb\_core.d.ts:754
 
 > **matchesQuery**(`document`, `query`): `boolean`
 
-Defined in: ridb\_core.d.ts:753
+Defined in: ridb\_core.d.ts:521
 
 #### Parameters
 

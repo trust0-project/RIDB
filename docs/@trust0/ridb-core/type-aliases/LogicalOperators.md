@@ -8,7 +8,7 @@
 
 > **LogicalOperators**\<`T`\> = `object`
 
-Defined in: ridb\_core.d.ts:457
+Defined in: ridb\_core.d.ts:312
 
 ## Type Parameters
 
@@ -22,7 +22,7 @@ Defined in: ridb\_core.d.ts:457
 
 > `optional` **$and**: `Partial`\<[`QueryType`](QueryType.md)\<`T`\>\>[]
 
-Defined in: ridb\_core.d.ts:458
+Defined in: ridb\_core.d.ts:313
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: ridb\_core.d.ts:458
 
 > `optional` **$or**: `Partial`\<[`QueryType`](QueryType.md)\<`T`\>\>[]
 
-Defined in: ridb\_core.d.ts:459
+Defined in: ridb\_core.d.ts:314

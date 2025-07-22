@@ -8,7 +8,7 @@
 
 > **QueryOptions** = `object`
 
-Defined in: ridb\_core.d.ts:665
+Defined in: ridb\_core.d.ts:460
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: ridb\_core.d.ts:665
 
 > `optional` **limit**: `number`
 
-Defined in: ridb\_core.d.ts:666
+Defined in: ridb\_core.d.ts:461
 
 ***
 
@@ -24,4 +24,4 @@ Defined in: ridb\_core.d.ts:666
 
 > `optional` **offset**: `number`
 
-Defined in: ridb\_core.d.ts:667
+Defined in: ridb\_core.d.ts:462

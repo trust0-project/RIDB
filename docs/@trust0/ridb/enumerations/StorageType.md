@@ -6,7 +6,7 @@
 
 # Enumeration: StorageType
 
-Defined in: [types.ts:27](https://github.com/trust0-project/RIDB/blob/a9ae138c86dce36ceea700589b21b11f3e60fc7b/packages/ridb/src/types.ts#L27)
+Defined in: [types.ts:27](https://github.com/trust0-project/RIDB/blob/bcb8934543fc732545664233aa8443da39141d02/packages/ridb/src/types.ts#L27)
 
 Enumeration of built-in storage types supported by RIDB.
 
@@ -16,7 +16,7 @@ Enumeration of built-in storage types supported by RIDB.
 
 > **IndexDB**: `"IndexDB"`
 
-Defined in: [types.ts:36](https://github.com/trust0-project/RIDB/blob/a9ae138c86dce36ceea700589b21b11f3e60fc7b/packages/ridb/src/types.ts#L36)
+Defined in: [types.ts:36](https://github.com/trust0-project/RIDB/blob/bcb8934543fc732545664233aa8443da39141d02/packages/ridb/src/types.ts#L36)
 
 IndexedDB-based storage for persistent data in the browser
 
@@ -26,6 +26,6 @@ IndexedDB-based storage for persistent data in the browser
 
 > **InMemory**: `"InMemory"`
 
-Defined in: [types.ts:31](https://github.com/trust0-project/RIDB/blob/a9ae138c86dce36ceea700589b21b11f3e60fc7b/packages/ridb/src/types.ts#L31)
+Defined in: [types.ts:31](https://github.com/trust0-project/RIDB/blob/bcb8934543fc732545664233aa8443da39141d02/packages/ridb/src/types.ts#L31)
 
 In-memory storage that doesn't persist data across page reloads

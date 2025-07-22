@@ -8,7 +8,7 @@
 
 > **InOperator**\<`T`\> = `object`
 
-Defined in: ridb\_core.d.ts:450
+Defined in: ridb\_core.d.ts:305
 
 ## Type Parameters
 
@@ -22,4 +22,4 @@ Defined in: ridb\_core.d.ts:450
 
 > `optional` **$in**: `T`[]
 
-Defined in: ridb\_core.d.ts:450
+Defined in: ridb\_core.d.ts:305

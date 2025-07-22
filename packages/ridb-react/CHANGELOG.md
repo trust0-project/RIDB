@@ -1,3 +1,20 @@
+## 1.4.15 (2025-07-22)
+
+### 🩹 Fixes
+
+- current structure doesn't manage examples very well will figure out later ([bcb8934](https://github.com/trust0-project/RIDB/commit/bcb8934))
+- specify packages ([b49617b](https://github.com/trust0-project/RIDB/commit/b49617b))
+- mongodb improvement ([3f89e54](https://github.com/trust0-project/RIDB/commit/3f89e54))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.20
+- Updated @trust0/ridb to 1.5.36
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.4.14 (2025-07-22)
 
 ### 🩹 Fixes
