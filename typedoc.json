@@ -5,7 +5,8 @@
         "packages/ridb",
         "packages/ridb-core",
         "packages/ridb-level",
-        "packages/ridb-react"
+        "packages/ridb-react",
+        "packages/ridb-mongodb"
     ],
     "readme": "none",
     "basePath":   "./src",

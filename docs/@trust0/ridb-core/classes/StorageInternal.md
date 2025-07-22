@@ -6,7 +6,7 @@
 
 # Class: `abstract` StorageInternal\<Schemas\>
 
-Defined in: ridb\_core.d.ts:696
+Defined in: ridb\_core.d.ts:574
 
 ## Extended by
 
@@ -24,7 +24,7 @@ Defined in: ridb\_core.d.ts:696
 
 > **new StorageInternal**\<`Schemas`\>(`name`, `schemas`): `StorageInternal`\<`Schemas`\>
 
-Defined in: ridb\_core.d.ts:697
+Defined in: ridb\_core.d.ts:575
 
 #### Parameters
 
@@ -46,7 +46,7 @@ Defined in: ridb\_core.d.ts:697
 
 > `abstract` **close**(): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:702
+Defined in: ridb\_core.d.ts:580
 
 #### Returns
 
@@ -58,7 +58,7 @@ Defined in: ridb\_core.d.ts:702
 
 > `abstract` **count**(`colectionName`, `query`, `options?`): `Promise`\<`number`\>
 
-Defined in: ridb\_core.d.ts:703
+Defined in: ridb\_core.d.ts:581
 
 #### Parameters
 
@@ -84,7 +84,7 @@ keyof `Schemas`
 
 > `abstract` **find**(`collectionName`, `query`, `options?`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>[]\>
 
-Defined in: ridb\_core.d.ts:712
+Defined in: ridb\_core.d.ts:590
 
 #### Parameters
 
@@ -110,7 +110,7 @@ keyof `Schemas`
 
 > `abstract` **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb\_core.d.ts:708
+Defined in: ridb\_core.d.ts:586
 
 #### Parameters
 
@@ -132,7 +132,7 @@ keyof `Schemas`
 
 > `abstract` **start**(): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:701
+Defined in: ridb\_core.d.ts:579
 
 #### Returns
 
@@ -144,7 +144,7 @@ Defined in: ridb\_core.d.ts:701
 
 > `abstract` **write**(`op`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb\_core.d.ts:717
+Defined in: ridb\_core.d.ts:595
 
 #### Parameters
 

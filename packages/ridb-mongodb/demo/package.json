@@ -1,0 +1,10 @@
+{
+  "name": "example",
+  "type": "module",
+  "packageManager": "yarn@4.9.1",
+  "dependencies": {
+    "@trust0/ridb": "^1.5.35",
+    "@trust0/ridb-core": "^1.7.30",
+    "@trust0/ridb-mongodb": "file:.."
+  }
+}

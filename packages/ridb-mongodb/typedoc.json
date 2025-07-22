@@ -38,5 +38,5 @@
     "excludeInternal": false,
     "excludeNotDocumented": false,
     "theme": "markdown",
-    "excludeExternals": false,
+    "excludeExternals": false
 }

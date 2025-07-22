@@ -8,6 +8,6 @@
 
 > **PendingRequests** = `Map`\<`string`, \{ `reject`: (`err`) => `void`; `resolve`: (`resp`) => `void`; \}\>
 
-Defined in: [types.ts:99](https://github.com/trust0-project/RIDB/blob/70cabaab8a52ce353834e6452f1b8551289c17d5/packages/ridb/src/types.ts#L99)
+Defined in: [types.ts:99](https://github.com/trust0-project/RIDB/blob/fd017f2e0578962e0d9df7c0cd44b9caf140ad3b/packages/ridb/src/types.ts#L99)
 
 Map of pending requests used for worker communication.
