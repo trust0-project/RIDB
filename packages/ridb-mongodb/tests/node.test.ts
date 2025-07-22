@@ -1,6 +1,6 @@
 import { describe, beforeAll, afterEach, vi } from 'vitest';
 import { runTestsNodeOnly } from '@trust0/ridb/testing';
-import createMongoDB from '../src';
+import {createMongoDB} from '../src';
 import { MockMongoClient, resetMockDatabases } from './mock-mongodb';
 
 

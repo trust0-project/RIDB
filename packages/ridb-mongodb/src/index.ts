@@ -355,7 +355,7 @@ export class MongoDBStorage<T extends SchemaTypeRecord> extends BaseStorage<T> {
  * @public
  * @returns A factory function that creates MongoDB storage instances
  */
-export default async function createMongoDB<T extends SchemaTypeRecord>(): Promise<typeof BaseStorage<T>> {
+export async function createMongoDB<T extends SchemaTypeRecord>(): Promise<typeof BaseStorage<T>> {
     
 
         const {BaseStorage: base} = await WasmInternal();

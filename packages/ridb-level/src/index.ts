@@ -46,7 +46,7 @@ export type Level = ClassicLevel<string, string>;
  * @public
  * @returns A factory function that creates LevelDB storage instances
  */
-export default async function createLevelDB<T extends SchemaTypeRecord>(): Promise<typeof BaseStorage<T>> {
+export async function createLevelDB<T extends SchemaTypeRecord>(): Promise<typeof BaseStorage<T>> {
     const { BaseStorage: base } = await WasmInternal();
 
     class LevelDBStorage<T extends SchemaTypeRecord> extends base<T> {

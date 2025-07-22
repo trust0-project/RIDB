@@ -1,7 +1,7 @@
 import { describe, afterAll } from 'vitest';
 
 import { runTestsNodeOnly } from '@trust0/ridb/testing';
-import createLevelDB from '../src';
+import {createLevelDB} from '../src';
 
 
 let LevelDB = await createLevelDB();
