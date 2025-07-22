@@ -1,78 +1,75 @@
-import React, { useEffect } from 'react'
-import { render, waitFor } from '@testing-library/react'
-import { SchemaFieldType } from '@trust0/ridb-core'
-import { describe, expect, it } from 'vitest'
-import { RIDBDatabase, useRIDB } from '../..'
+import { render, waitFor } from "@testing-library/react";
+import { SchemaFieldType } from "@trust0/ridb-core";
+import React, { useEffect } from "react";
+import { describe, expect, it } from "vitest";
+import { RIDBDatabase, useRIDB } from "../..";
 
 const users = {
   version: 0 as const,
-  primaryKey: 'id',
+  primaryKey: "id",
   type: SchemaFieldType.object,
   properties: {
-      id: {
-          type: SchemaFieldType.string,
-          maxLength: 60
-      }
-  }
-} as const
+    id: {
+      type: SchemaFieldType.string,
+      maxLength: 60,
+    },
+  },
+} as const;
 
 const schemas = {
-  users: users
-}
-  
-type DatabaseSchemas = typeof schemas;
-
-
-const MyComponent: React.FC = () => {
-    const db = useRIDB<DatabaseSchemas>();
-    const [isDbReady, setIsDbReady] = React.useState(false);
-    useEffect(() => {
-       if (!isDbReady) {
-        db.start({})
-         .then(() => {
-          setIsDbReady(true);
-         })
-         .catch((err) => {
-          console.error(err);
-          debugger;
-         });
-       }
-    }, [isDbReady]);
-    if (!db) {
-        return <div>No database available</div>;
-    }
-    if (!isDbReady) {
-        return <div>Loading...</div>;
-    }
-    return (
-        <div> <h1>My Component</h1> </div>
-    );
+  users: users,
 };
 
-describe('MyComponent', () => {
+type DatabaseSchemas = typeof schemas;
 
-  it('renders correctly while db is loading', async () => {
+const MyComponent: React.FC = () => {
+  const db = useRIDB<DatabaseSchemas>();
+  const [isDbReady, setIsDbReady] = React.useState(false);
+  useEffect(() => {
+    if (!isDbReady) {
+      db.start()
+        .then(() => {
+          setIsDbReady(true);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  }, [isDbReady]);
+  if (!db) {
+    return <div>No database available</div>;
+  }
+  if (!isDbReady) {
+    return <div>Loading...</div>;
+  }
+  return (
+    <div>
+      {" "}
+      <h1>My Component</h1>{" "}
+    </div>
+  );
+};
+
+describe("MyComponent", () => {
+  it("renders correctly while db is loading", async () => {
     const { asFragment, getByText } = render(
       <RIDBDatabase dbName="testDB" schemas={schemas}>
         <MyComponent />
-      </RIDBDatabase>
+      </RIDBDatabase>,
     );
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it('renders correctly when db is ready', async () => {
+  it("renders correctly when db is ready", async () => {
     const { asFragment, getByText } = render(
       <RIDBDatabase dbName="testDB" schemas={schemas}>
         <MyComponent />
-      </RIDBDatabase>
+      </RIDBDatabase>,
     );
     await waitFor(() => {
-      const element = getByText('My Component');
+      const element = getByText("My Component");
       expect(element).toBeTruthy();
     });
     expect(asFragment()).toMatchSnapshot();
-  }); 
-
- 
-})
-
+  });
+});

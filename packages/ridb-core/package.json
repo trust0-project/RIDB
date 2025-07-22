@@ -25,7 +25,6 @@
     "clean": "rm -rf build node_modules",
     "test": "sh test.sh",
     "build": "rm -rf build && sh build.sh",
-    "lint": "npx eslint .",
     "docs": "npx typedoc"
   },
   "devDependencies": {

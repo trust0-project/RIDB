@@ -17,8 +17,7 @@
     "clean": "rm -rf build node_modules",
     "docs": "npx typedoc",
     "build": "sh build.sh",
-    "testw": "npx nx vite:test --run",
-    "lint": "npx eslint .",
+    "disabled-tests": "npx nx vite:test --run",
     "types": "npm run types:default",
     "types:default": "npx tsc",
     "prepublishOnly": "npm run build"
@@ -28,6 +27,7 @@
     "build/**/*"
   ],
   "devDependencies": {
+    "@biomejs/biome": "2.0.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",

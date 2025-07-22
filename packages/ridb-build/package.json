@@ -31,10 +31,10 @@
   "scripts": {
     "clean": "rm -rf build node_modules",
     "build": "rm -rf build && npx tsup --config tsup.config.ts --dts",
-    "lint": "npx eslint .",
     "test": "echo 'No tests for this package'"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.0.0",
     "typescript": "^5.8.3"
   }
 }
