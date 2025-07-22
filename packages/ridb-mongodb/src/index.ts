@@ -27,7 +27,7 @@ import {
     Doc, 
     Operation,
     QueryType,  
-    BaseStorage,
+    BaseStorage as BaseStorageType,
     BaseStorageOptions
  } from "@trust0/ridb-core"
 import {
@@ -54,17 +54,17 @@ export type MongoDBStorageOptions = BaseStorageOptions & MongoDBConfig;
  * @public
  * @returns A factory function that creates MongoDB storage instances
  */
-export async function createMongoDB<T extends SchemaTypeRecord>(): Promise<typeof BaseStorage<T>> {
+export async function createMongoDB<T extends SchemaTypeRecord>(): Promise<typeof BaseStorageType<T>> {
     
 
-        const {BaseStorage: base} = await WasmInternal();
+        const {BaseStorage} = await WasmInternal();
         
         // We need to extend the actual BaseStorage from WasmInternal
         /**
          * MongoDB storage implementation class
          * @public
          */
-        class MongoDBStorage<T extends SchemaTypeRecord> extends base<T> {
+        class MongoDBStorage<T extends SchemaTypeRecord> extends BaseStorage<T> {
             private client?: MongoClient;
             private db?: Db;
             private mongoConfig: MongoDBConfig;

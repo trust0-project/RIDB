@@ -7,7 +7,12 @@
   "type": "module",
   "packageManager": "yarn@4.9.1",
   "workspaces": [
-    "packages/*"
+    "packages/ridb-build",
+    "packages/ridb-core",
+    "packages/ridb",
+    "packages/ridb-level",
+    "packages/ridb-mongodb",
+    "packages/ridb-react"
   ],
   "scripts": {
     "clean": "npx nx run-many --target=clean --verbose && rm -rf node_modules",
