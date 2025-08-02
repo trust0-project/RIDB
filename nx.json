@@ -14,10 +14,7 @@
     "version": {
       "preVersionCommand": "sh release.sh",
       "conventionalCommits": true,
-      "generatorOptions": {
-        "preserveLocalDependencyProtocols": true,
-        "fallbackCurrentVersionResolver": "disk"
-      }
+      "fallbackCurrentVersionResolver": "disk"
     },
     "changelog": {
       "projectChangelogs": {
