@@ -1,3 +1,13 @@
+## 0.0.21 (2025-09-06)
+
+### 🩹 Fixes
+
+- editor configuration auto save [skip ci] ([7cb2249](https://github.com/trust0-project/RIDB/commit/7cb2249))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.20 (2025-07-22)
 
 ### 🩹 Fixes

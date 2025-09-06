@@ -6,7 +6,7 @@
 
 # Interface: RIDBAbstract\<T\>
 
-Defined in: [types.ts:112](https://github.com/trust0-project/RIDB/blob/bcb8934543fc732545664233aa8443da39141d02/packages/ridb/src/types.ts#L112)
+Defined in: [types.ts:104](https://github.com/trust0-project/RIDB/blob/766b641e98fdfe930e51e9b247247a842eab26d8/packages/ridb/src/types.ts#L104)
 
 Abstract interface for RIDB implementations.
 
@@ -26,7 +26,7 @@ The schema type record defining the database structure
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [types.ts:126](https://github.com/trust0-project/RIDB/blob/bcb8934543fc732545664233aa8443da39141d02/packages/ridb/src/types.ts#L126)
+Defined in: [types.ts:118](https://github.com/trust0-project/RIDB/blob/766b641e98fdfe930e51e9b247247a842eab26d8/packages/ridb/src/types.ts#L118)
 
 Close the database connection.
 
@@ -42,7 +42,7 @@ A promise that resolves when the database has been successfully closed
 
 > **getCollections**(): \{ \[name in string \| number \| symbol\]: Collection\<Schema\<T\[name\]\>\> \}
 
-Defined in: [types.ts:133](https://github.com/trust0-project/RIDB/blob/bcb8934543fc732545664233aa8443da39141d02/packages/ridb/src/types.ts#L133)
+Defined in: [types.ts:125](https://github.com/trust0-project/RIDB/blob/766b641e98fdfe930e51e9b247247a842eab26d8/packages/ridb/src/types.ts#L125)
 
 Get the collections for this database.
 
@@ -58,7 +58,7 @@ An object containing all collections defined in the schema
 
 > **isStarted**(): `boolean`
 
-Defined in: [types.ts:140](https://github.com/trust0-project/RIDB/blob/bcb8934543fc732545664233aa8443da39141d02/packages/ridb/src/types.ts#L140)
+Defined in: [types.ts:132](https://github.com/trust0-project/RIDB/blob/766b641e98fdfe930e51e9b247247a842eab26d8/packages/ridb/src/types.ts#L132)
 
 Check if the database has been started.
 
@@ -74,7 +74,7 @@ True if the database is started, false otherwise
 
 > **start**(`options?`): `Promise`\<`void`\>
 
-Defined in: [types.ts:119](https://github.com/trust0-project/RIDB/blob/bcb8934543fc732545664233aa8443da39141d02/packages/ridb/src/types.ts#L119)
+Defined in: [types.ts:111](https://github.com/trust0-project/RIDB/blob/766b641e98fdfe930e51e9b247247a842eab26d8/packages/ridb/src/types.ts#L111)
 
 Start the database with the given options.
 

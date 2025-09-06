@@ -8,7 +8,7 @@
 
 > **EnumerateUpTo**\<`N`, `Acc`\> = `Acc`\[`"length"`\] *extends* `N` ? `Acc`\[`number`\] : `EnumerateUpTo`\<`N`, \[`...Acc`, `Acc`\[`"length"`\]\]\>
 
-Defined in: ridb\_core.d.ts:248
+Defined in: ridb\_core.d.ts:184
 
 ## Type Parameters
 

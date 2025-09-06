@@ -8,7 +8,7 @@
 
 > **ExtractType**\<`T`\> = `T` *extends* `"string"` ? `string` : `T` *extends* `"number"` ? `number` : `T` *extends* `"boolean"` ? `boolean` : `T` *extends* `"object"` ? `object` : `T` *extends* `"array"` ? `any`[] : `undefined`
 
-Defined in: ridb\_core.d.ts:411
+Defined in: ridb\_core.d.ts:294
 
 ExtractType is a utility type that maps a string representing a basic data type to the actual TypeScript type.
 

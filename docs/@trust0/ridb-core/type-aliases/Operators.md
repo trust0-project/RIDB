@@ -8,7 +8,7 @@
 
 > **Operators**\<`T`\> = `object`
 
-Defined in: ridb\_core.d.ts:296
+Defined in: ridb\_core.d.ts:458
 
 ## Type Parameters
 
@@ -22,7 +22,7 @@ Defined in: ridb\_core.d.ts:296
 
 > `optional` **$eq**: `T`
 
-Defined in: ridb\_core.d.ts:301
+Defined in: ridb\_core.d.ts:463
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: ridb\_core.d.ts:301
 
 > `optional` **$gt**: `number`
 
-Defined in: ridb\_core.d.ts:298
+Defined in: ridb\_core.d.ts:460
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: ridb\_core.d.ts:298
 
 > `optional` **$gte**: `number`
 
-Defined in: ridb\_core.d.ts:297
+Defined in: ridb\_core.d.ts:459
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: ridb\_core.d.ts:297
 
 > `optional` **$lt**: `number`
 
-Defined in: ridb\_core.d.ts:299
+Defined in: ridb\_core.d.ts:461
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: ridb\_core.d.ts:299
 
 > `optional` **$lte**: `number`
 
-Defined in: ridb\_core.d.ts:300
+Defined in: ridb\_core.d.ts:462
 
 ***
 
@@ -62,4 +62,4 @@ Defined in: ridb\_core.d.ts:300
 
 > `optional` **$ne**: `T`
 
-Defined in: ridb\_core.d.ts:302
+Defined in: ridb\_core.d.ts:464

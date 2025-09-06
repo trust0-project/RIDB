@@ -8,4 +8,4 @@
 
 > `const` **RIDBContext**: `Context`\<`Context`\<`any`\>\>
 
-Defined in: [index.tsx:15](https://github.com/trust0-project/RIDB/blob/bcb8934543fc732545664233aa8443da39141d02/packages/ridb-react/src/index.tsx#L15)
+Defined in: [index.tsx:16](https://github.com/trust0-project/RIDB/blob/766b641e98fdfe930e51e9b247247a842eab26d8/packages/ridb-react/src/index.tsx#L16)

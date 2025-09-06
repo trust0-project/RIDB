@@ -1,3 +1,19 @@
+## 1.7.32 (2025-09-06)
+
+### 🩹 Fixes
+
+- improve indexdb ([feaf632](https://github.com/trust0-project/RIDB/commit/feaf632))
+- indexdb improvement ([9285ce1](https://github.com/trust0-project/RIDB/commit/9285ce1))
+- editor configuration auto save [skip ci] ([7cb2249](https://github.com/trust0-project/RIDB/commit/7cb2249))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-build to 0.0.21
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.31 (2025-07-22)
 
 ### 🩹 Fixes

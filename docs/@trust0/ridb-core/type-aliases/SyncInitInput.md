@@ -8,4 +8,4 @@
 
 > **SyncInitInput** = `BufferSource` \| `WebAssembly.Module`
 
-Defined in: ridb\_core.d.ts:1033
+Defined in: ridb\_core.d.ts:1032
