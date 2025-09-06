@@ -8,7 +8,7 @@
 
 > **RIDBModule** = `object`
 
-Defined in: ridb\_core.d.ts:723
+Defined in: ridb\_core.d.ts:366
 
 Represents a storage module with a method for creating storage.
 
@@ -18,7 +18,7 @@ Represents a storage module with a method for creating storage.
 
 > **apply**: (`plugins`) => [`BasePlugin`](../classes/BasePlugin.md)[]
 
-Defined in: ridb\_core.d.ts:728
+Defined in: ridb\_core.d.ts:371
 
 Plugin constructors array
 

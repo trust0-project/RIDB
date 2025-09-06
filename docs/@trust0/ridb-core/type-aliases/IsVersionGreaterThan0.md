@@ -8,7 +8,7 @@
 
 > **IsVersionGreaterThan0**\<`V`\> = `V` *extends* `0` ? `false` : `true`
 
-Defined in: ridb\_core.d.ts:474
+Defined in: ridb\_core.d.ts:464
 
 ## Type Parameters
 

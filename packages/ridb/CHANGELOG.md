@@ -1,3 +1,17 @@
+## 1.5.39 (2025-09-06)
+
+### 🩹 Fixes
+
+- refactor ridb for better performance ([1178ca4](https://github.com/trust0-project/RIDB/commit/1178ca4))
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.34
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.5.38 (2025-09-06)
 
 ### 🧱 Updated Dependencies

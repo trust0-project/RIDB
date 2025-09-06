@@ -8,7 +8,7 @@
 
 > **QueryType**\<`T`\> = `{ [K in keyof T["properties"] as ExtractType<T["properties"][K]["type"]> extends undefined ? never : K]?: OperatorOrType<ExtractType<T["properties"][K]["type"]>> }` & [`LogicalOperators`](LogicalOperators.md)\<`T`\> \| [`LogicalOperators`](LogicalOperators.md)\<`T`\>[]
 
-Defined in: ridb\_core.d.ts:276
+Defined in: ridb\_core.d.ts:415
 
 ## Type Parameters
 

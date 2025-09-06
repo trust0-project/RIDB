@@ -6,7 +6,7 @@
 
 # Interface: MongoDBConfig
 
-Defined in: [index.ts:39](https://github.com/trust0-project/RIDB/blob/03ec8397ac4b0e587e94b0dd24d9e2743c4513f0/packages/ridb-mongodb/src/index.ts#L39)
+Defined in: [index.ts:39](https://github.com/trust0-project/RIDB/blob/1178ca486da4caadbba0b876f695393e5ef3243c/packages/ridb-mongodb/src/index.ts#L39)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [index.ts:39](https://github.com/trust0-project/RIDB/blob/03ec8397ac
 
 > `optional` **dbName**: `string`
 
-Defined in: [index.ts:43](https://github.com/trust0-project/RIDB/blob/03ec8397ac4b0e587e94b0dd24d9e2743c4513f0/packages/ridb-mongodb/src/index.ts#L43)
+Defined in: [index.ts:43](https://github.com/trust0-project/RIDB/blob/1178ca486da4caadbba0b876f695393e5ef3243c/packages/ridb-mongodb/src/index.ts#L43)
 
 Database name in MongoDB
 
@@ -24,7 +24,7 @@ Database name in MongoDB
 
 > `optional` **mongoOptions**: `Record`\<`string`, `any`\>
 
-Defined in: [index.ts:45](https://github.com/trust0-project/RIDB/blob/03ec8397ac4b0e587e94b0dd24d9e2743c4513f0/packages/ridb-mongodb/src/index.ts#L45)
+Defined in: [index.ts:45](https://github.com/trust0-project/RIDB/blob/1178ca486da4caadbba0b876f695393e5ef3243c/packages/ridb-mongodb/src/index.ts#L45)
 
 MongoDB client options
 
@@ -34,6 +34,6 @@ MongoDB client options
 
 > `optional` **url**: `string`
 
-Defined in: [index.ts:41](https://github.com/trust0-project/RIDB/blob/03ec8397ac4b0e587e94b0dd24d9e2743c4513f0/packages/ridb-mongodb/src/index.ts#L41)
+Defined in: [index.ts:41](https://github.com/trust0-project/RIDB/blob/1178ca486da4caadbba0b876f695393e5ef3243c/packages/ridb-mongodb/src/index.ts#L41)
 
 MongoDB connection URL

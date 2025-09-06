@@ -1,3 +1,13 @@
+## 1.7.34 (2025-09-06)
+
+### 🩹 Fixes
+
+- refactor ridb for better performance ([1178ca4](https://github.com/trust0-project/RIDB/commit/1178ca4))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.33 (2025-09-06)
 
 ### 🩹 Fixes
