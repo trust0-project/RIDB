@@ -8,7 +8,7 @@
 
 > **Operation**\<`T`\> = `object`
 
-Defined in: ridb\_core.d.ts:213
+Defined in: ridb\_core.d.ts:329
 
 Represents an operation to be performed on a collection.
 
@@ -26,7 +26,7 @@ The schema type of the collection.
 
 > **collection**: `string`
 
-Defined in: ridb\_core.d.ts:217
+Defined in: ridb\_core.d.ts:333
 
 The name of the collection on which the operation will be performed.
 
@@ -36,7 +36,7 @@ The name of the collection on which the operation will be performed.
 
 > **data**: [`Doc`](Doc.md)\<`T`\>
 
-Defined in: ridb\_core.d.ts:227
+Defined in: ridb\_core.d.ts:343
 
 The data involved in the operation, conforming to the schema type.
 
@@ -46,7 +46,7 @@ The data involved in the operation, conforming to the schema type.
 
 > **opType**: [`OpType`](../enumerations/OpType.md)
 
-Defined in: ridb\_core.d.ts:222
+Defined in: ridb\_core.d.ts:338
 
 The type of operation to be performed (e.g., CREATE, UPDATE, DELETE).
 
@@ -56,7 +56,7 @@ The type of operation to be performed (e.g., CREATE, UPDATE, DELETE).
 
 > `optional` **primaryKey**: `string`
 
-Defined in: ridb\_core.d.ts:230
+Defined in: ridb\_core.d.ts:346
 
 ***
 
@@ -64,4 +64,4 @@ Defined in: ridb\_core.d.ts:230
 
 > `optional` **primaryKeyField**: `string`
 
-Defined in: ridb\_core.d.ts:229
+Defined in: ridb\_core.d.ts:345

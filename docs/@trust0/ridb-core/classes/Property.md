@@ -6,7 +6,7 @@
 
 # Class: Property
 
-Defined in: ridb\_core.d.ts:612
+Defined in: ridb\_core.d.ts:79
 
 Represents a property within a schema, including various constraints and nested properties.
 
@@ -26,7 +26,7 @@ Represents a property within a schema, including various constraints and nested 
 
 > `readonly` `optional` **default**: `any`
 
-Defined in: ridb\_core.d.ts:661
+Defined in: ridb\_core.d.ts:128
 
 An optional default value for the property.
 
@@ -36,7 +36,7 @@ An optional default value for the property.
 
 > `readonly` `optional` **items**: `Property`
 
-Defined in: ridb\_core.d.ts:631
+Defined in: ridb\_core.d.ts:98
 
 An optional array of nested properties for array-type properties.
 
@@ -46,7 +46,7 @@ An optional array of nested properties for array-type properties.
 
 > `readonly` `optional` **maxItems**: `number`
 
-Defined in: ridb\_core.d.ts:636
+Defined in: ridb\_core.d.ts:103
 
 The maximum number of items for array-type properties, if applicable.
 
@@ -56,7 +56,7 @@ The maximum number of items for array-type properties, if applicable.
 
 > `readonly` `optional` **maxLength**: `number`
 
-Defined in: ridb\_core.d.ts:646
+Defined in: ridb\_core.d.ts:113
 
 The maximum length for string-type properties, if applicable.
 
@@ -66,7 +66,7 @@ The maximum length for string-type properties, if applicable.
 
 > `readonly` `optional` **minItems**: `number`
 
-Defined in: ridb\_core.d.ts:641
+Defined in: ridb\_core.d.ts:108
 
 The minimum number of items for array-type properties, if applicable.
 
@@ -76,7 +76,7 @@ The minimum number of items for array-type properties, if applicable.
 
 > `readonly` `optional` **minLength**: `number`
 
-Defined in: ridb\_core.d.ts:651
+Defined in: ridb\_core.d.ts:118
 
 The minimum length for string-type properties, if applicable.
 
@@ -86,7 +86,7 @@ The minimum length for string-type properties, if applicable.
 
 > `readonly` `optional` **primaryKey**: `string`
 
-Defined in: ridb\_core.d.ts:626
+Defined in: ridb\_core.d.ts:93
 
 The primary key of the property, if applicable.
 
@@ -96,7 +96,7 @@ The primary key of the property, if applicable.
 
 > `readonly` `optional` **properties**: `object`
 
-Defined in: ridb\_core.d.ts:666
+Defined in: ridb\_core.d.ts:133
 
 An optional map of nested properties for object-type properties.
 
@@ -110,7 +110,7 @@ An optional map of nested properties for object-type properties.
 
 > `readonly` `optional` **required**: `boolean`
 
-Defined in: ridb\_core.d.ts:656
+Defined in: ridb\_core.d.ts:123
 
 An optional array of required fields for object-type properties.
 
@@ -120,7 +120,7 @@ An optional array of required fields for object-type properties.
 
 > `readonly` **type**: `SchemaFieldType`
 
-Defined in: ridb\_core.d.ts:616
+Defined in: ridb\_core.d.ts:83
 
 The type of the property.
 
@@ -130,6 +130,6 @@ The type of the property.
 
 > `readonly` `optional` **version**: `number`
 
-Defined in: ridb\_core.d.ts:621
+Defined in: ridb\_core.d.ts:88
 
 The version of the property, if applicable.

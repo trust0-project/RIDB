@@ -1,3 +1,13 @@
+## 1.7.35 (2025-09-06)
+
+### 🩹 Fixes
+
+- manage indexdb  onsuccess onerror handlers efficiently ([9786676](https://github.com/trust0-project/RIDB/commit/9786676))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.34 (2025-09-06)
 
 ### 🩹 Fixes

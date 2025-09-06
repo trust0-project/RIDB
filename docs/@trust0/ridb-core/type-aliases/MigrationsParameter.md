@@ -8,7 +8,7 @@
 
 > **MigrationsParameter**\<`T`\> = [`AnyVersionGreaterThan1`](AnyVersionGreaterThan1.md)\<`T`\> *extends* `true` ? `object` : `object`
 
-Defined in: ridb\_core.d.ts:489
+Defined in: ridb\_core.d.ts:423
 
 ## Type Parameters
 
