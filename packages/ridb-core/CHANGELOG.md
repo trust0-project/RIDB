@@ -1,3 +1,13 @@
+## 1.7.36 (2025-09-06)
+
+### 🩹 Fixes
+
+- improve indexdb ([03bccbe](https://github.com/trust0-project/RIDB/commit/03bccbe))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.35 (2025-09-06)
 
 ### 🩹 Fixes

@@ -8,7 +8,7 @@
 
 > **BasePluginOptions** = `object`
 
-Defined in: ridb\_core.d.ts:640
+Defined in: ridb\_core.d.ts:383
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: ridb\_core.d.ts:640
 
 > `optional` **docCreateHook**: [`Hook`](Hook.md)
 
-Defined in: ridb\_core.d.ts:641
+Defined in: ridb\_core.d.ts:384
 
 ***
 
@@ -24,4 +24,4 @@ Defined in: ridb\_core.d.ts:641
 
 > `optional` **docRecoverHook**: [`Hook`](Hook.md)
 
-Defined in: ridb\_core.d.ts:642
+Defined in: ridb\_core.d.ts:385

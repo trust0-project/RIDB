@@ -8,7 +8,7 @@
 
 > **\_\_wbg\_init**(`module_or_path?`): `Promise`\<[`InitOutput`](../interfaces/InitOutput.md)\>
 
-Defined in: ridb\_core.d.ts:1052
+Defined in: ridb\_core.d.ts:1053
 
 If `module_or_path` is {RequestInfo} or {URL}, makes a request and
 for everything else, calls `WebAssembly.instantiate` directly.

@@ -6,7 +6,7 @@
 
 # Class: BaseStorage\<Schemas\>
 
-Defined in: ridb\_core.d.ts:497
+Defined in: ridb\_core.d.ts:240
 
 ## Extends
 
@@ -14,8 +14,8 @@ Defined in: ridb\_core.d.ts:497
 
 ## Extended by
 
-- [`IndexDB`](IndexDB.md)
 - [`InMemory`](InMemory.md)
+- [`IndexDB`](IndexDB.md)
 
 ## Type Parameters
 
@@ -29,7 +29,7 @@ Defined in: ridb\_core.d.ts:497
 
 > **new BaseStorage**\<`Schemas`\>(`dbName`, `schemas`, `options?`): `BaseStorage`\<`Schemas`\>
 
-Defined in: ridb\_core.d.ts:507
+Defined in: ridb\_core.d.ts:250
 
 #### Parameters
 
@@ -59,7 +59,7 @@ Defined in: ridb\_core.d.ts:507
 
 > `readonly` **core**: [`CoreStorage`](CoreStorage.md)
 
-Defined in: ridb\_core.d.ts:515
+Defined in: ridb\_core.d.ts:258
 
 ***
 
@@ -67,7 +67,7 @@ Defined in: ridb\_core.d.ts:515
 
 > `readonly` **dbName**: `string`
 
-Defined in: ridb\_core.d.ts:512
+Defined in: ridb\_core.d.ts:255
 
 ***
 
@@ -75,7 +75,7 @@ Defined in: ridb\_core.d.ts:512
 
 > `readonly` **options**: [`BaseStorageOptions`](../type-aliases/BaseStorageOptions.md)
 
-Defined in: ridb\_core.d.ts:514
+Defined in: ridb\_core.d.ts:257
 
 ***
 
@@ -83,7 +83,7 @@ Defined in: ridb\_core.d.ts:514
 
 > `readonly` **schemas**: `Record`\<keyof `Schemas`, [`Schema`](Schema.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb\_core.d.ts:513
+Defined in: ridb\_core.d.ts:256
 
 ## Methods
 
@@ -91,7 +91,7 @@ Defined in: ridb\_core.d.ts:513
 
 > **addIndexSchemas**(): `null`
 
-Defined in: ridb\_core.d.ts:525
+Defined in: ridb\_core.d.ts:268
 
 #### Returns
 
@@ -103,7 +103,7 @@ Defined in: ridb\_core.d.ts:525
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:517
+Defined in: ridb\_core.d.ts:260
 
 #### Returns
 
@@ -119,7 +119,7 @@ Defined in: ridb\_core.d.ts:517
 
 > **count**(`colectionName`, `query`, `options?`): `Promise`\<`number`\>
 
-Defined in: ridb\_core.d.ts:518
+Defined in: ridb\_core.d.ts:261
 
 #### Parameters
 
@@ -149,7 +149,7 @@ keyof `Schemas`
 
 > **find**(`collectionName`, `query`, `options?`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>[]\>
 
-Defined in: ridb\_core.d.ts:520
+Defined in: ridb\_core.d.ts:263
 
 #### Parameters
 
@@ -179,7 +179,7 @@ keyof `Schemas`
 
 > **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb\_core.d.ts:519
+Defined in: ridb\_core.d.ts:262
 
 #### Parameters
 
@@ -205,7 +205,7 @@ keyof `Schemas`
 
 > **getOption**(`name`): `undefined` \| `string` \| `number` \| `boolean`
 
-Defined in: ridb\_core.d.ts:522
+Defined in: ridb\_core.d.ts:265
 
 #### Parameters
 
@@ -223,7 +223,7 @@ Defined in: ridb\_core.d.ts:522
 
 > **getSchema**(`name`): [`Schema`](Schema.md)\<`any`\>
 
-Defined in: ridb\_core.d.ts:523
+Defined in: ridb\_core.d.ts:266
 
 #### Parameters
 
@@ -241,7 +241,7 @@ Defined in: ridb\_core.d.ts:523
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:516
+Defined in: ridb\_core.d.ts:259
 
 #### Returns
 
@@ -257,7 +257,7 @@ Defined in: ridb\_core.d.ts:516
 
 > **write**(`op`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb\_core.d.ts:521
+Defined in: ridb\_core.d.ts:264
 
 #### Parameters
 
@@ -279,7 +279,7 @@ Defined in: ridb\_core.d.ts:521
 
 > `static` **create**\<`SchemasCreate`\>(`dbName`, `schemas`, `options?`): `Promise`\<`BaseStorage`\<`SchemasCreate`\>\>
 
-Defined in: ridb\_core.d.ts:498
+Defined in: ridb\_core.d.ts:241
 
 #### Type Parameters
 

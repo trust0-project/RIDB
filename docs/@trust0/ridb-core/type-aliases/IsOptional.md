@@ -8,7 +8,7 @@
 
 > **IsOptional**\<`T`\> = `T` *extends* `object` ? `T` *extends* `object` ? `false` : `true` : `true`
 
-Defined in: ridb\_core.d.ts:215
+Defined in: ridb\_core.d.ts:454
 
 ## Type Parameters
 

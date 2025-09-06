@@ -6,7 +6,7 @@
 
 # Class: Collection\<T\>
 
-Defined in: ridb\_core.d.ts:265
+Defined in: ridb\_core.d.ts:504
 
 Collection is a class that represents a collection of documents in a database.
 
@@ -34,7 +34,7 @@ A schema type defining the structure of the documents in the collection.
 
 > **count**(`query`, `options?`): `Promise`\<`number`\>
 
-Defined in: ridb\_core.d.ts:277
+Defined in: ridb\_core.d.ts:516
 
 count all documents in the collection.
 
@@ -60,7 +60,7 @@ A promise that resolves to an array of documents.
 
 > **create**(`document`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>\>
 
-Defined in: ridb\_core.d.ts:298
+Defined in: ridb\_core.d.ts:537
 
 Creates a new document in the collection.
 
@@ -84,7 +84,7 @@ A promise that resolves to the created document.
 
 > **delete**(`id`): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:305
+Defined in: ridb\_core.d.ts:544
 
 Deletes a document in the collection by its ID.
 
@@ -108,7 +108,7 @@ A promise that resolves when the deletion is complete.
 
 > **find**(`query`, `options?`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>[]\>
 
-Defined in: ridb\_core.d.ts:271
+Defined in: ridb\_core.d.ts:510
 
 Finds all documents in the collection.
 
@@ -134,7 +134,7 @@ A promise that resolves to an array of documents.
 
 > **findById**(`id`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\>\>
 
-Defined in: ridb\_core.d.ts:284
+Defined in: ridb\_core.d.ts:523
 
 Finds a single document in the collection by its ID.
 
@@ -158,7 +158,7 @@ A promise that resolves to the found document.
 
 > **update**(`document`): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:291
+Defined in: ridb\_core.d.ts:530
 
 Updates a document in the collection by its ID.
 
