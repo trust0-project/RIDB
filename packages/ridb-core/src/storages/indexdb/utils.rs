@@ -26,21 +26,16 @@ pub async fn cursor_fetch_and_filter(
 
     // Use Rc<RefCell<>> for shared state between closures
     let all_docs = Rc::new(RefCell::new(Vec::new()));
-    let cursor_finished = Rc::new(RefCell::new(false));
-    let processing_scheduled = Rc::new(RefCell::new(false));
+    let matched_count = Rc::new(RefCell::new(0u32));
+    let skipped_count = Rc::new(RefCell::new(0u32));
     
-    // Clone these for the async processing
-    let core_cloned = core.clone();
-    let value_query_cloned = value_query.clone();
-
     let promise = Promise::new(&mut |resolve, reject| {
         let all_docs_ref = all_docs.clone();
-        let cursor_finished_ref = cursor_finished.clone();
-        let processing_scheduled_ref = processing_scheduled.clone();
+        let matched_count_ref = matched_count.clone();
+        let skipped_count_ref = skipped_count.clone();
         let resolve_ref = resolve.clone();
         let reject_ref = reject.clone();
-        let value_query_for_closure = value_query_cloned.clone();
-        let core_for_closure = core_cloned.clone();
+        let value_query_clone = value_query.clone();
 
         // Create a lightweight success handler that collects documents with early termination
         let on_success = Closure::wrap(Box::new(move |evt: web_sys::Event| {
@@ -57,26 +52,15 @@ pub async fn cursor_fetch_and_filter(
 
             let cursor_value = target.result();
             
-            // If cursor is done, start async processing
             if cursor_value.is_err()
                 || cursor_value.as_ref().unwrap().is_null()
                 || cursor_value.as_ref().unwrap().is_undefined()
             {
-                *cursor_finished_ref.borrow_mut() = true;
-                // Only schedule async processing if it hasn't been scheduled yet
-                if !*processing_scheduled_ref.borrow() {
-                    *processing_scheduled_ref.borrow_mut() = true;
-                    // Defer the heavy processing to avoid blocking the success handler
-                    schedule_async_processing(
-                        all_docs_ref.clone(),
-                        core_for_closure.clone(),
-                        value_query_for_closure.clone(),
-                        offset,
-                        limit,
-                        resolve_ref.clone(),
-                        reject_ref.clone(),
-                    );
+                let result_array = Array::new();
+                for doc in all_docs_ref.borrow().iter() {
+                    result_array.push(doc);
                 }
+                let _ = resolve_ref.call1(&JsValue::NULL, &result_array);
                 return;
             }
 
@@ -91,11 +75,38 @@ pub async fn cursor_fetch_and_filter(
                 }
             };
 
+            if *matched_count_ref.borrow() >= limit {
+                let result_array = Array::new();
+                for doc in all_docs_ref.borrow().iter() {
+                    result_array.push(doc);
+                }
+                let _ = resolve_ref.call1(&JsValue::NULL, &result_array);
+                return;
+            }
+
             match cursor.value() {
                 Ok(doc) => {
-                    all_docs_ref.borrow_mut().push(doc);
+                    if core.document_matches_query(&doc, &value_query_clone).unwrap_or(false) {
+                        let mut skipped = skipped_count_ref.borrow_mut();
+                        let mut matched = matched_count_ref.borrow_mut();
+                        
+                        if *skipped < offset {
+                            *skipped += 1;
+                        } else if *matched < limit {
+                            all_docs_ref.borrow_mut().push(doc);
+                            *matched += 1;
+                        }
+                        
+                        if *matched >= limit {
+                             let result_array = Array::new();
+                            for doc_item in all_docs_ref.borrow().iter() {
+                                result_array.push(doc_item);
+                            }
+                            let _ = resolve_ref.call1(&JsValue::NULL, &result_array);
+                            return;
+                        }
+                    }
                     
-                    // Continue cursor to next record
                     if let Err(err) = cursor.continue_() {
                         let _ = reject_ref.call1(&JsValue::NULL, &err);
                     }
@@ -111,7 +122,6 @@ pub async fn cursor_fetch_and_filter(
             let _ = reject_err.call1(&JsValue::NULL, &evt);
         }) as Box<dyn FnMut(_)>);
 
-        // Open cursor logic remains the same
         let request_result = if let Some(idx) = index {
             if !key_value.is_null() && !key_value.is_undefined() {
                 match IdbKeyRange::only(key_value) {
@@ -150,86 +160,6 @@ pub async fn cursor_fetch_and_filter(
 
     let js_result = wasm_bindgen_futures::JsFuture::from(promise).await?;
     Ok(Array::from(&js_result))
-}
-
-// Schedule async processing using setTimeout to avoid blocking the event loop
-// Fixed to work in both Window and Worker contexts
-fn schedule_async_processing(
-    all_docs: std::rc::Rc<std::cell::RefCell<Vec<JsValue>>>,
-    core: CoreStorage,
-    query: Query,
-    offset: u32,
-    limit: u32,
-    resolve: js_sys::Function,
-    reject: js_sys::Function,
-) {
-    let timeout_callback = Closure::once(Box::new(move || {
-        match process_documents_async(all_docs, core, query, offset, limit) {
-            Ok(result) => {
-                let _ = resolve.call1(&JsValue::NULL, &result);
-            }
-            Err(e) => {
-                let _ = reject.call1(&JsValue::NULL, &e);
-            }
-        }
-    }));
-
-    // Use setTimeout in both Window and Worker contexts
-    if let Ok(window) = js_sys::global().dyn_into::<web_sys::Window>() {
-        // Window context
-        let _ = window.set_timeout_with_callback_and_timeout_and_arguments_0(
-            timeout_callback.as_ref().unchecked_ref(),
-            0, // Next tick
-        );
-    } else if let Ok(worker) = js_sys::global().dyn_into::<web_sys::WorkerGlobalScope>() {
-        // Worker context
-        let _ = worker.set_timeout_with_callback_and_timeout_and_arguments_0(
-            timeout_callback.as_ref().unchecked_ref(),
-            0, // Next tick
-        );
-    } else {
-        // Fallback: execute immediately if neither context is available
-        // This shouldn't happen in normal web environments, but provides a safety net
-        let callback_fn = timeout_callback.as_ref().unchecked_ref::<js_sys::Function>();
-        let _ = callback_fn.call0(&JsValue::undefined());
-    }
-    
-    timeout_callback.forget();
-}
-
-// Process documents asynchronously - now mainly for final array construction
-// since filtering and limits are already applied during cursor iteration
-fn process_documents_async(
-    all_docs: std::rc::Rc<std::cell::RefCell<Vec<JsValue>>>,
-    core: CoreStorage,
-    query: Query,
-    offset: u32,
-    limit: u32,
-) -> Result<Array, JsValue> {
-    let docs = all_docs.borrow();
-    let result_array = Array::new();
-    let mut matched_count = 0;
-    let mut skipped_count = 0;
-
-    for doc in docs.iter() {
-        if core
-            .document_matches_query(doc, query.clone())
-            .unwrap_or(false)
-        {
-            if skipped_count < offset {
-                skipped_count += 1;
-                continue;
-            }
-            if matched_count < limit {
-                result_array.push(doc);
-                matched_count += 1;
-            } else {
-                break; // Limit reached
-            }
-        }
-    }
-
-    Ok(result_array)
 }
 
 pub async fn idb_request_result(request: IdbRequest) -> Result<JsValue, JsValue> {
