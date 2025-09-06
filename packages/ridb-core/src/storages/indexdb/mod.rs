@@ -320,7 +320,11 @@ impl IndexDB {
 
         // Attempt to figure out if we can leverage a single index
         Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Checking for index optimization"));
-        let index_name_option = can_use_single_index_lookup(query.clone(), schema)?;
+        let index_name_option = if query.has_or_operator() {
+            None
+        } else {
+            can_use_single_index_lookup(query.clone(), schema)?
+        };
 
         // Determine offset and limit
         let offset = options.offset.unwrap_or(0);
