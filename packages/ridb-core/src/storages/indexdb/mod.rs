@@ -1,6 +1,6 @@
 use js_sys::{Array, Object, Reflect};
 use pool::POOL;
-use utils::{can_use_single_index_lookup, create_database, cursor_fetch_and_filter, idb_request_result};
+use utils::{can_use_single_index_lookup, create_database, cursor_fetch_and_filter, get_key_range, idb_request_result};
 use crate::utils::Logger;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::{wasm_bindgen, Closure};
@@ -14,6 +14,7 @@ use parking_lot::Mutex;
 use crate::error::RIDBError;
 use crate::query::options::QueryOptions;
 use super::base::Storage;
+use web_sys::IdbKeyRange;
 
 pub mod utils;
 pub mod pool;
@@ -348,10 +349,11 @@ impl IndexDB {
                         let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
                         let key = key_array.get(i);
                         Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Processing array key {}/{}", i+1, key_array.length())));
+                        let range = IdbKeyRange::only(&key)?;
                         let partial_result = cursor_fetch_and_filter(
                             Some(&index),
                             None,
-                            &key,
+                            &range.into(),
                             core,
                             value_query,
                             offset,
@@ -369,10 +371,11 @@ impl IndexDB {
                     Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Using single key index lookup"));
                     let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
                     // Single key fetch from this index
+                    let range = get_key_range(&index_value)?.map(|r| r.into()).unwrap_or(JsValue::undefined());
                     let results = cursor_fetch_and_filter(
                         Some(&index),
                         None,
-                        &index_value,
+                        &range,
                         core,
                         value_query,
                         offset,

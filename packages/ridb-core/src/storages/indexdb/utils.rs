@@ -1,4 +1,4 @@
-use js_sys::{Array, Promise};
+use js_sys::{Array, Promise, Object, Reflect};
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::Closure;
 use wasm_bindgen_futures::JsFuture;
@@ -12,10 +12,64 @@ use crate::error::RIDBError;
 use crate::schema::Schema;
 
 
+pub fn get_key_range(value: &JsValue) -> Result<Option<IdbKeyRange>, RIDBError> {
+    if !value.is_object() || Array::is_array(value) {
+        // This is a direct value, e.g. "age": 30
+        return Ok(Some(IdbKeyRange::only(value)?));
+    }
+
+    let obj = Object::from(value.clone());
+    let keys = Object::keys(&obj);
+
+    if keys.length() == 1 {
+        let key = keys.get(0).as_string().unwrap_or_default();
+        let val = Reflect::get(&obj, &keys.get(0))?;
+        match key.as_str() {
+            "$eq" => return Ok(Some(IdbKeyRange::only(&val)?)),
+            "$gt" => return Ok(Some(IdbKeyRange::lower_bound_with_open(&val, true)?)),
+            "$gte" => return Ok(Some(IdbKeyRange::lower_bound(&val)?)),
+            "$lt" => return Ok(Some(IdbKeyRange::upper_bound_with_open(&val, true)?)),
+            "$lte" => return Ok(Some(IdbKeyRange::upper_bound(&val)?)),
+            "$in" | "$nin" => return Ok(None), // IdbKeyRange doesn't support $in directly, cursor iteration is needed for each value
+            _ => return Ok(None),
+        }
+    }
+
+    if keys.length() == 2 {
+        let key1_js = keys.get(0);
+        let key2_js = keys.get(1);
+        let key1 = key1_js.as_string().unwrap_or_default();
+        let key2 = key2_js.as_string().unwrap_or_default();
+        let val1 = Reflect::get(&obj, &key1_js)?;
+        let val2 = Reflect::get(&obj, &key2_js)?;
+
+        let mut lower: Option<JsValue> = None;
+        let mut upper: Option<JsValue> = None;
+        let mut lower_open = false;
+        let mut upper_open = false;
+
+        for (k, v) in [(key1.as_str(), val1), (key2.as_str(), val2)] {
+            match k {
+                "$gt" => { lower = Some(v); lower_open = true; },
+                "$gte" => { lower = Some(v); lower_open = false; },
+                "$lt" => { upper = Some(v); upper_open = true; },
+                "$lte" => { upper = Some(v); upper_open = false; },
+                _ => return Ok(None),
+            }
+        }
+
+        if let (Some(l), Some(u)) = (lower, upper) {
+            return Ok(Some(IdbKeyRange::bound_with_lower_open_and_upper_open(&l, &u, lower_open, upper_open)?));
+        }
+    }
+    
+    Ok(None)
+}
+
 pub async fn cursor_fetch_and_filter(
     index: Option<&web_sys::IdbIndex>,
     store: Option<&web_sys::IdbObjectStore>,
-    key_value: &JsValue,
+    range: &JsValue,
     core: CoreStorage,
     value_query: Query,
     offset: u32,
@@ -123,22 +177,16 @@ pub async fn cursor_fetch_and_filter(
         }) as Box<dyn FnMut(_)>);
 
         let request_result = if let Some(idx) = index {
-            if !key_value.is_null() && !key_value.is_undefined() {
-                match IdbKeyRange::only(key_value) {
-                    Ok(range) => idx.open_cursor_with_range(&range),
-                    Err(_) => idx.open_cursor(),
-                }
-            } else {
+            if range.is_undefined() || range.is_null() {
                 idx.open_cursor()
+            } else {
+                idx.open_cursor_with_range(range)
             }
         } else if let Some(st) = store {
-            if !key_value.is_null() && !key_value.is_undefined() {
-                match IdbKeyRange::only(key_value) {
-                    Ok(range) => st.open_cursor_with_range(&range),
-                    Err(_) => st.open_cursor(),
-                }
-            } else {
+            if range.is_undefined() || range.is_null() {
                 st.open_cursor()
+            } else {
+                st.open_cursor_with_range(range)
             }
         } else {
             Err(JsValue::from_str("No index or store provided to open cursor."))
