@@ -79,55 +79,35 @@ pub async fn get_pks_from_index(index: &web_sys::IdbIndex, range: &JsValue) -> R
         let reject_clone = reject.clone();
 
         let onsuccess = Closure::wrap(Box::new(move |event: web_sys::Event| {
-            let target = match event.target() {
-                Some(t) => t,
-                None => {
-                    let _ = reject_clone.call1(&JsValue::NULL, &JsValue::from_str("No event target"));
-                    return;
-                }
-            };
-            let request = match target.dyn_ref::<IdbRequest>() {
-                Some(r) => r,
-                None => {
-                    let _ = reject_clone.call1(&JsValue::NULL, &JsValue::from_str("Event target is not an IdbRequest"));
-                    return;
-                }
-            };
-            let result = match request.result() {
-                Ok(r) => r,
+            let result = (|| {
+                let target = event.target().ok_or_else(|| JsValue::from_str("No event target"))?;
+                let request = target.dyn_into::<IdbRequest>().map_err(|_| JsValue::from_str("Event target is not an IdbRequest"))?;
+                request.result()
+            })();
+
+            match result {
+                Ok(cursor_val) if !cursor_val.is_null() => {
+                    if let Ok(cursor) = cursor_val.dyn_into::<web_sys::IdbCursor>() {
+                        if let Ok(pk) = cursor.primary_key() {
+                            if let Some(pk_str) = pk.as_string() {
+                                pks_clone.lock().insert(pk_str);
+                            } else if let Some(pk_num) = pk.as_f64() {
+                                pks_clone.lock().insert(pk_num.to_string());
+                            }
+                        }
+                        if let Err(e) = cursor.continue_() {
+                            let _ = reject_clone.call1(&JsValue::NULL, &e);
+                        }
+                    } else {
+                        let _ = reject_clone.call1(&JsValue::NULL, &JsValue::from_str("Result is not a cursor"));
+                    }
+                },
+                Ok(_) => { // cursor_val is null
+                    let _ = resolve.call1(&JsValue::NULL, &JsValue::NULL);
+                },
                 Err(e) => {
                     let _ = reject_clone.call1(&JsValue::NULL, &e);
-                    return;
                 }
-            };
-
-            if !result.is_null() {
-                let cursor = match result.dyn_ref::<web_sys::IdbCursor>() {
-                    Some(c) => c,
-                    None => {
-                        let _ = reject_clone.call1(&JsValue::NULL, &JsValue::from_str("Result is not a cursor"));
-                        return;
-                    }
-                };
-                let pk = match cursor.primary_key() {
-                    Ok(p) => p,
-                    Err(e) => {
-                        let _ = reject_clone.call1(&JsValue::NULL, &e);
-                        return;
-                    }
-                };
-
-                if let Some(pk_str) = pk.as_string() {
-                    pks_clone.lock().insert(pk_str);
-                } else if let Some(pk_num) = pk.as_f64() {
-                    pks_clone.lock().insert(pk_num.to_string());
-                }
-                
-                if let Err(e) = cursor.continue_() {
-                    let _ = reject_clone.call1(&JsValue::NULL, &e);
-                }
-            } else {
-                let _ = resolve.call1(&JsValue::NULL, &JsValue::NULL);
             }
         }) as Box<dyn FnMut(_)>);
 
@@ -173,81 +153,58 @@ pub async fn cursor_fetch_and_filter(
 
         // Create a lightweight success handler that collects documents with early termination
         let on_success = Closure::wrap(Box::new(move |evt: web_sys::Event| {
-            let target: web_sys::IdbRequest = match evt.target().and_then(|t| t.dyn_into().ok()) {
-                Some(req) => req,
-                None => {
-                    let _ = reject_ref.call1(
-                        &JsValue::NULL,
-                        &JsValue::from_str("Failed to cast event target to IdbRequest."),
-                    );
-                    return;
-                }
-            };
-
-            let cursor_value = target.result();
+            let target_res = evt.target().and_then(|t| t.dyn_into::<web_sys::IdbRequest>().ok());
+            if target_res.is_none() {
+                let _ = reject_ref.call1(&JsValue::NULL, &JsValue::from_str("Failed to get IdbRequest from event."));
+                return;
+            }
+            let target = target_res.unwrap();
+        
+            let cursor_value_res = target.result();
+            if cursor_value_res.is_err() || cursor_value_res.as_ref().map_or(true, |v| v.is_null() || v.is_undefined()) {
+                let result_array = Array::from_iter(all_docs_ref.borrow().iter());
+                let _ = resolve_ref.call1(&JsValue::NULL, &result_array);
+                return;
+            }
+            let cursor_value = cursor_value_res.unwrap();
             
-            if cursor_value.is_err()
-                || cursor_value.as_ref().unwrap().is_null()
-                || cursor_value.as_ref().unwrap().is_undefined()
-            {
-                let result_array = Array::new();
-                for doc in all_docs_ref.borrow().iter() {
-                    result_array.push(doc);
-                }
-                let _ = resolve_ref.call1(&JsValue::NULL, &result_array);
+            let cursor_res = cursor_value.dyn_into::<web_sys::IdbCursorWithValue>();
+            if cursor_res.is_err() {
+                let _ = reject_ref.call1(&JsValue::NULL, &JsValue::from_str("Failed to cast to IdbCursorWithValue."));
                 return;
             }
-
-            let cursor: web_sys::IdbCursorWithValue = match cursor_value.unwrap().dyn_into() {
-                Ok(c) => c,
-                Err(_) => {
-                    let _ = reject_ref.call1(
-                        &JsValue::NULL,
-                        &JsValue::from_str("Failed to cast cursor to IdbCursorWithValue."),
-                    );
-                    return;
-                }
-            };
-
+            let cursor = cursor_res.unwrap();
+        
             if *matched_count_ref.borrow() >= limit {
-                let result_array = Array::new();
-                for doc in all_docs_ref.borrow().iter() {
-                    result_array.push(doc);
-                }
+                let result_array = Array::from_iter(all_docs_ref.borrow().iter());
                 let _ = resolve_ref.call1(&JsValue::NULL, &result_array);
                 return;
             }
-
-            match cursor.value() {
-                Ok(doc) => {
-                    if core.document_matches_query(&doc, &value_query_clone).unwrap_or(false) {
-                        let mut skipped = skipped_count_ref.borrow_mut();
-                        let mut matched = matched_count_ref.borrow_mut();
-                        
-                        if *skipped < offset {
-                            *skipped += 1;
-                        } else if *matched < limit {
-                            all_docs_ref.borrow_mut().push(doc);
-                            *matched += 1;
-                        }
-                        
-                        if *matched >= limit {
-                             let result_array = Array::new();
-                            for doc_item in all_docs_ref.borrow().iter() {
-                                result_array.push(doc_item);
-                            }
-                            let _ = resolve_ref.call1(&JsValue::NULL, &result_array);
-                            return;
-                        }
+        
+            if let Ok(doc) = cursor.value() {
+                if core.document_matches_query(&doc, &value_query_clone).unwrap_or(false) {
+                    let mut skipped = skipped_count_ref.borrow_mut();
+                    let mut matched = matched_count_ref.borrow_mut();
+                    
+                    if *skipped < offset {
+                        *skipped += 1;
+                    } else if *matched < limit {
+                        all_docs_ref.borrow_mut().push(doc);
+                        *matched += 1;
                     }
                     
-                    if let Err(err) = cursor.continue_() {
-                        let _ = reject_ref.call1(&JsValue::NULL, &err);
+                    if *matched >= limit {
+                        let result_array = Array::from_iter(all_docs_ref.borrow().iter());
+                        let _ = resolve_ref.call1(&JsValue::NULL, &result_array);
+                        return;
                     }
-                },
-                Err(err) => {
+                }
+                
+                if let Err(err) = cursor.continue_() {
                     let _ = reject_ref.call1(&JsValue::NULL, &err);
                 }
+            } else if let Err(err) = cursor.value() {
+                let _ = reject_ref.call1(&JsValue::NULL, &err);
             }
         }) as Box<dyn FnMut(_)>);
 
@@ -292,59 +249,41 @@ pub async fn cursor_fetch_and_filter(
 
 pub async fn idb_request_result(request: IdbRequest) -> Result<JsValue, JsValue> {
     let promise = Promise::new(&mut |resolve, reject| {
-        let reject2 = reject.clone();
-        
-        // Ultra-lightweight success handler that just resolves immediately
-        let success_callback = Closure::once(Box::new(move |event: web_sys::Event| {
-            // Minimize work in success handler - just get the target and resolve
-            if let Some(target) = event.target() {
-                if let Ok(request) = target.dyn_into::<IdbRequest>() {
-                    // Get result and resolve immediately without additional processing
-                    match request.result() {
-                        Ok(result) => {
-                            let _ = resolve.call1(&JsValue::undefined(), &result);
-                        }
-                        Err(e) => {
-                            let _ = reject.call1(&JsValue::undefined(), &e);
-                        }
-                    }
-                } else {
-                    let _ = reject.call1(&JsValue::undefined(), &JsValue::from_str("Invalid request target"));
+        let reject_clone = reject.clone();
+        let onsuccess = Closure::once(Box::new(move |event: web_sys::Event| {
+            let result = event
+                .target()
+                .ok_or_else(|| JsValue::from_str("No event target"))
+                .and_then(|t| {
+                    t.dyn_into::<IdbRequest>()
+                        .map_err(|_| JsValue::from_str("Event target is not an IdbRequest"))
+                })
+                .and_then(|req| req.result());
+
+            match result {
+                Ok(value) => {
+                    let _ = resolve.call1(&JsValue::NULL, &value);
                 }
-            } else {
-                let _ = reject.call1(&JsValue::undefined(), &JsValue::from_str("No event target"));
-            }
-        }));
-
-        // Ultra-lightweight error handler
-        let error_callback = Closure::once(Box::new(move |event: web_sys::Event| {
-            if let Some(target) = event.target() {
-                if let Ok(request) = target.dyn_into::<IdbRequest>() {
-                    // Get error and reject immediately
-                    match request.error() {
-                        Ok(Some(error)) => {
-                            let _ = reject2.call1(&JsValue::undefined(), &error);
-                        }
-                        Ok(None) => {
-                            let _ = reject2.call1(&JsValue::undefined(), &JsValue::from_str("Unknown error"));
-                        }
-                        Err(e) => {
-                            let _ = reject2.call1(&JsValue::undefined(), &e);
-                        }
-                    }
-                } else {
-                    let _ = reject2.call1(&JsValue::undefined(), &JsValue::from_str("Invalid request target"));
+                Err(e) => {
+                    let _ = reject.call1(&JsValue::NULL, &e);
                 }
-            } else {
-                let _ = reject2.call1(&JsValue::undefined(), &JsValue::from_str("No event target"));
             }
-        }));
+        }) as Box<dyn FnMut(_)>);
 
-        request.set_onsuccess(Some(success_callback.as_ref().unchecked_ref()));
-        request.set_onerror(Some(error_callback.as_ref().unchecked_ref()));
+        let onerror = Closure::once(Box::new(move |event: web_sys::Event| {
+            let error = event
+                .target()
+                .and_then(|t| t.dyn_into::<IdbRequest>().ok())
+                .and_then(|req| req.error().ok().flatten())
+                .map(JsValue::from)
+                .unwrap_or_else(|| JsValue::from_str("Unknown error"));
+            let _ = reject_clone.call1(&JsValue::NULL, &error);
+        }) as Box<dyn FnMut(_)>);
 
-        success_callback.forget();
-        error_callback.forget();
+        request.set_onsuccess(Some(onsuccess.as_ref().unchecked_ref()));
+        request.set_onerror(Some(onerror.as_ref().unchecked_ref()));
+        onsuccess.forget();
+        onerror.forget();
     });
 
     JsFuture::from(promise).await
