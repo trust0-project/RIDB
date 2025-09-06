@@ -27,8 +27,6 @@ pub async fn cursor_fetch_and_filter(
     // Use Rc<RefCell<>> for shared state between closures
     let all_docs = Rc::new(RefCell::new(Vec::new()));
     let cursor_finished = Rc::new(RefCell::new(false));
-    let matched_count = Rc::new(RefCell::new(0u32));
-    let skipped_count = Rc::new(RefCell::new(0u32));
     let processing_scheduled = Rc::new(RefCell::new(false));
     
     // Clone these for the async processing
@@ -38,8 +36,6 @@ pub async fn cursor_fetch_and_filter(
     let promise = Promise::new(&mut |resolve, reject| {
         let all_docs_ref = all_docs.clone();
         let cursor_finished_ref = cursor_finished.clone();
-        let matched_count_ref = matched_count.clone();
-        let skipped_count_ref = skipped_count.clone();
         let processing_scheduled_ref = processing_scheduled.clone();
         let resolve_ref = resolve.clone();
         let reject_ref = reject.clone();
@@ -95,61 +91,9 @@ pub async fn cursor_fetch_and_filter(
                 }
             };
 
-            // Check if we've already collected enough documents
-            let current_matched = *matched_count_ref.borrow();
-            if current_matched >= limit {
-                // We have enough matches, stop cursor iteration
-                *cursor_finished_ref.borrow_mut() = true;
-                // Only schedule async processing if it hasn't been scheduled yet
-                if !*processing_scheduled_ref.borrow() {
-                    *processing_scheduled_ref.borrow_mut() = true;
-                    schedule_async_processing(
-                        all_docs_ref.clone(),
-                        core_for_closure.clone(),
-                        value_query_for_closure.clone(),
-                        offset,
-                        limit,
-                        resolve_ref.clone(),
-                        reject_ref.clone(),
-                    );
-                }
-                return;
-            }
-
-            // Lightweight work: collect the document with early termination logic
             match cursor.value() {
                 Ok(doc) => {
-                    // Quick check for query match to enable early termination
-                    if core_for_closure.document_matches_query(&doc, value_query_for_closure.clone()).unwrap_or(false) {
-                        let mut skipped = skipped_count_ref.borrow_mut();
-                        let mut matched = matched_count_ref.borrow_mut();
-                        
-                        if *skipped < offset {
-                            *skipped += 1;
-                        } else if *matched < limit {
-                            all_docs_ref.borrow_mut().push(doc);
-                            *matched += 1;
-                        }
-                        
-                        // If we've reached the limit, stop processing
-                        if *matched >= limit {
-                            *cursor_finished_ref.borrow_mut() = true;
-                            // Only schedule async processing if it hasn't been scheduled yet
-                            if !*processing_scheduled_ref.borrow() {
-                                *processing_scheduled_ref.borrow_mut() = true;
-                                schedule_async_processing(
-                                    all_docs_ref.clone(),
-                                    core_for_closure.clone(),
-                                    value_query_for_closure.clone(),
-                                    offset,
-                                    limit,
-                                    resolve_ref.clone(),
-                                    reject_ref.clone(),
-                                );
-                            }
-                            return;
-                        }
-                    }
+                    all_docs_ref.borrow_mut().push(doc);
                     
                     // Continue cursor to next record
                     if let Err(err) = cursor.continue_() {
@@ -257,20 +201,34 @@ fn schedule_async_processing(
 // since filtering and limits are already applied during cursor iteration
 fn process_documents_async(
     all_docs: std::rc::Rc<std::cell::RefCell<Vec<JsValue>>>,
-    _core: CoreStorage,
-    _query: Query,
-    _offset: u32,
-    _limit: u32,
+    core: CoreStorage,
+    query: Query,
+    offset: u32,
+    limit: u32,
 ) -> Result<Array, JsValue> {
     let docs = all_docs.borrow();
     let result_array = Array::new();
-    
-    // Since filtering and limits are already applied during cursor iteration,
-    // we just need to convert the collected documents to an Array
+    let mut matched_count = 0;
+    let mut skipped_count = 0;
+
     for doc in docs.iter() {
-        result_array.push(doc);
+        if core
+            .document_matches_query(doc, query.clone())
+            .unwrap_or(false)
+        {
+            if skipped_count < offset {
+                skipped_count += 1;
+                continue;
+            }
+            if matched_count < limit {
+                result_array.push(doc);
+                matched_count += 1;
+            } else {
+                break; // Limit reached
+            }
+        }
     }
-    
+
     Ok(result_array)
 }
 
