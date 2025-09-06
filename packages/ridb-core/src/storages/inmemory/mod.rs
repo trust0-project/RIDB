@@ -497,7 +497,7 @@ impl InMemory {
             let table_name = format!("pk_{}_{}", collection_name, primary_key);
             if let Some(documents) = read_lock.get(&table_name) {
                 for (_, document) in documents.iter() {
-                    let matches = self.core.document_matches_query(document, query.clone())?;
+                    let matches = self.core.document_matches_query(document, &query)?;
                     if matches {
                         matched_docs.push(document.clone());
                     }
@@ -550,7 +550,7 @@ impl InMemory {
             if let Some(pk_map) = read_lock.get(&table_name) {
                 for doc_id in intersection_ids {
                     if let Some(doc) = pk_map.get(&doc_id) {
-                        if self.core.document_matches_query(doc, query.clone())? {
+                        if self.core.document_matches_query(doc, &query)? {
                             matched_docs.push(doc.clone());
                         }
                     }
