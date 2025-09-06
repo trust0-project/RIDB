@@ -1,8 +1,9 @@
+use std::collections::HashMap;
 use js_sys::{Array, Object, Reflect};
 use pool::POOL;
-use utils::{can_use_single_index_lookup, create_database, cursor_fetch_and_filter, get_key_range, idb_request_result};
+use utils::{create_database, cursor_fetch_and_filter, get_indexed_fields_in_query, get_key_range, get_pks_from_index, idb_request_result};
 use crate::utils::Logger;
-use wasm_bindgen::JsValue;
+use wasm_bindgen::{JsValue, JsCast};
 use wasm_bindgen::prelude::{wasm_bindgen, Closure};
 use crate::query::Query;
 use crate::storage::internals::base_storage::BaseStorage;
@@ -14,7 +15,7 @@ use parking_lot::Mutex;
 use crate::error::RIDBError;
 use crate::query::options::QueryOptions;
 use super::base::Storage;
-use web_sys::IdbKeyRange;
+use std::collections::HashSet;
 
 pub mod utils;
 pub mod pool;
@@ -65,7 +66,7 @@ impl Storage for IndexDB {
         let primary_key_value;
         
         {
-            let schemas = self.base.schemas.borrow();
+            let schemas = self.base.schemas.read();
             let schema = schemas.get(op.collection.as_str())
                 .ok_or_else(|| RIDBError::from("Collection not found"))?;
             
@@ -248,7 +249,7 @@ impl Storage for IndexDB {
             Logger::debug("IndexDB-Start", &JsValue::from_str("Reopening closed database connection"));
             
             // Clone the schemas for create_database
-            let schemas_clone = self.base.schemas.borrow().clone();
+            let schemas_clone = self.base.schemas.read().clone();
             
             // Create a new database connection
             Logger::debug("IndexDB-Start", &JsValue::from_str(&format!("Creating new database: {}", db_name)));
@@ -312,103 +313,103 @@ impl IndexDB {
         
         // Acquire references to the object store and schema
         let store = self.get_store(collection_name)?;
-        let schemas = self.base.schemas.borrow();
+        let schemas = self.base.schemas.read();
         let schema = schemas
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?
             .clone();
 
-        // Attempt to figure out if we can leverage a single index
-        Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Checking for index optimization"));
-        let index_name_option = if query.has_or_operator() {
-            None
-        } else {
-            can_use_single_index_lookup(query.clone(), schema)?
-        };
+        let normalized_query_js = query.get_query()?;
+        let query_obj = Object::from(normalized_query_js.clone());
+        let keys = Object::keys(&query_obj);
 
-        // Determine offset and limit
         let offset = options.offset.unwrap_or(0);
         let limit = options.limit.unwrap_or(u32::MAX);
+        let value_query = Query::new(query.clone().parse()?, query.schema.clone())?;
+
+        if keys.length() == 1 && keys.get(0).as_string() == Some("$or".to_string()) {
+            Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Handling $or query"));
+            
+            let or_clauses = Reflect::get(&query_obj, &keys.get(0))?.dyn_into::<Array>()?;
+            let mut all_docs_map: HashMap<String, JsValue> = HashMap::new();
+            let primary_key_field = schema.primary_key.clone();
+
+            for i in 0..or_clauses.length() {
+                let sub_query_js = or_clauses.get(i);
+                let sub_query = Query::new(sub_query_js, schema.clone())?;
+
+                let sub_query_options = QueryOptions { limit: None, offset: None };
+                let docs_js = Box::pin(self.collect_documents_for_query(collection_name, sub_query, sub_query_options)).await?;
+                let docs_array = Array::from(&docs_js);
+
+                for j in 0..docs_array.length() {
+                    let doc = docs_array.get(j);
+                    let pk = Reflect::get(&doc, &JsValue::from_str(&primary_key_field))?;
+                    let pk_str = self.core.get_primary_key_typed(pk)?;
+                    all_docs_map.entry(pk_str).or_insert(doc);
+                }
+            }
+
+            let docs: Vec<_> = all_docs_map.values().cloned().collect();
+            let final_docs = docs.iter().skip(offset as usize).take(limit as usize).cloned().collect::<Vec<_>>();
+            let results_array = Array::new();
+            for doc in final_docs {
+                results_array.push(&doc);
+            }
+            return Ok(results_array);
+        }
+
+        // Attempt to figure out if we can leverage a single index
+        Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Checking for index optimization"));
+        let indexed_fields = get_indexed_fields_in_query(&query, &schema)?;
+
+
+        // Determine offset and limit
         Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Using offset: {}, limit: {}", offset, limit)));
 
         // Clone the query data for filtering
         let core = self.core.clone();
-        let normalized_query = query.clone().parse()?;
-        // Build a "value_query" for final in-memory filter
 
         // Prepare the final, filtered documents array
         // but efficiently fetch them using a cursor approach.
-        let documents = if let Some(index_name) = index_name_option {
-            Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Using index: {}", index_name)));
-            // There's a single suitable index
-            let index_value = query.get(index_name.as_str())?;
-            if let Ok(index) = store.index(&index_name) {
-                Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Successfully obtained index: {}", index_name)));
-                // If "index_value" is an array of keys, we merge from multiple cursors
-                if Array::is_array(&index_value) {
-                    Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Index value is an array, merging from multiple cursors"));
-                    let key_array = Array::from(&index_value);
-                    let merged_docs = Array::new();
-                    for i in 0..key_array.length() {
-                        let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
-                        let key = key_array.get(i);
-                        Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Processing array key {}/{}", i+1, key_array.length())));
-                        let range = IdbKeyRange::only(&key)?;
-                        let partial_result = cursor_fetch_and_filter(
-                            Some(&index),
-                            None,
-                            &range.into(),
-                            core,
-                            value_query,
-                            offset,
-                            limit,
-                        ).await?;
-                        Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Found {} results for key {}", partial_result.length(), i+1)));
-                        // Merge partial_result into merged_docs
-                        for j in 0..partial_result.length() {
-                            merged_docs.push(&partial_result.get(j));
+        let documents = if !indexed_fields.is_empty() && !query.has_or_operator() {
+             Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Using indexes: {:?}", indexed_fields)));
+
+            let mut intersected_pks: Option<HashSet<String>> = None;
+
+            for field in indexed_fields {
+                let index_name = &field;
+                let index_value = query.get(&field)?;
+                let range = get_key_range(&index_value)?.map(|r| r.into()).unwrap_or(JsValue::undefined());
+
+                if let Ok(index) = store.index(index_name) {
+                    let pks = get_pks_from_index(&index, &range).await?;
+                    if let Some(current_pks) = intersected_pks.as_mut() {
+                        current_pks.retain(|pk| pks.contains(pk));
+                    } else {
+                        intersected_pks = Some(pks);
+                    }
+                }
+            }
+
+            let mut final_docs = Vec::new();
+            if let Some(pks) = intersected_pks {
+                for pk_str in pks.iter().skip(offset as usize).take(limit as usize) {
+                     if let Ok(doc) = self.find_document_by_id(collection_name, JsValue::from_str(pk_str)).await {
+                        if !doc.is_null() && core.document_matches_query(&doc, &value_query)? {
+                            final_docs.push(doc);
                         }
                     }
-                    Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Total merged results: {}", merged_docs.length())));
-                    merged_docs
-                } else {
-                    Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Using single key index lookup"));
-                    let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
-                    // Single key fetch from this index
-                    let range = get_key_range(&index_value)?.map(|r| r.into()).unwrap_or(JsValue::undefined());
-                    let results = cursor_fetch_and_filter(
-                        Some(&index),
-                        None,
-                        &range,
-                        core,
-                        value_query,
-                        offset,
-                        limit,
-                    )
-                    .await?;
-                    Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Found {} results with index", results.length())));
-                    results
                 }
-            } else {
-                Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Failed to get index: {}, falling back to full store scan", index_name)));
-                let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
-                // If we couldn't get the index, do a cursor fetch for the entire store
-                let results = cursor_fetch_and_filter(
-                    None,
-                    Some(&store),
-                    &JsValue::undefined(),
-                    core,
-                    value_query,
-                    offset,
-                    limit,
-                )
-                .await?;
-                Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Found {} results with full store scan", results.length())));
-                results
             }
+            
+            let array = Array::new();
+            for doc in final_docs {
+                array.push(&doc);
+            }
+            array
         } else {
             Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("No suitable index found, using full store scan"));
-            let value_query = Query::new(normalized_query.clone(), query.clone().schema.clone())?;
             // No single index is usable; fetch everything via cursor on the store
             let results = cursor_fetch_and_filter(
                 None,
@@ -510,7 +511,7 @@ impl IndexDB {
         )?;
 
         // Clone the schemas for create_database
-        let schemas_clone = base.schemas.borrow().clone();
+        let schemas_clone = base.schemas.read().clone();
         
         // Try to get an existing connection from the pool
         Logger::debug("IndexDB-Create", &JsValue::from_str("Attempting to get existing connection from pool"));
@@ -553,7 +554,7 @@ impl IndexDB {
 
     #[wasm_bindgen(js_name = "find")]
     pub async fn find_js(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError> {
-        let schemas = self.base.schemas.borrow();
+        let schemas = self.base.schemas.read();
         let schema = schemas
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?;
@@ -570,7 +571,7 @@ impl IndexDB {
     #[wasm_bindgen(js_name = "count")]
     pub async fn count_js(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError> {
         let clone = self.clone();
-        let schemas = clone.base.schemas.borrow();
+        let schemas = clone.base.schemas.read();
         let schema = schemas
             .get(collection_name)
             .ok_or_else(|| JsValue::from_str("Collection not found"))?;

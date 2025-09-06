@@ -7,7 +7,7 @@ use crate::query::Query;
 use crate::storage::internals::core::CoreStorage;
 use web_sys::{IdbDatabase, IdbFactory, IdbIndexParameters, IdbKeyRange, IdbOpenDbRequest, IdbRequest};
 use std::sync::Arc;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use crate::error::RIDBError;
 use crate::schema::Schema;
 
@@ -65,6 +65,86 @@ pub fn get_key_range(value: &JsValue) -> Result<Option<IdbKeyRange>, RIDBError> 
     
     Ok(None)
 }
+
+pub async fn get_pks_from_index(index: &web_sys::IdbIndex, range: &JsValue) -> Result<HashSet<String>, RIDBError> {
+    let pks = Arc::new(parking_lot::Mutex::new(HashSet::new()));
+    let request = if range.is_undefined() || range.is_null() {
+        index.open_key_cursor()
+    } else {
+        index.open_key_cursor_with_range(range)
+    }?;
+
+    let promise = Promise::new(&mut |resolve, reject| {
+        let pks_clone = pks.clone();
+        let reject_clone = reject.clone();
+
+        let onsuccess = Closure::wrap(Box::new(move |event: web_sys::Event| {
+            let target = match event.target() {
+                Some(t) => t,
+                None => {
+                    let _ = reject_clone.call1(&JsValue::NULL, &JsValue::from_str("No event target"));
+                    return;
+                }
+            };
+            let request = match target.dyn_ref::<IdbRequest>() {
+                Some(r) => r,
+                None => {
+                    let _ = reject_clone.call1(&JsValue::NULL, &JsValue::from_str("Event target is not an IdbRequest"));
+                    return;
+                }
+            };
+            let result = match request.result() {
+                Ok(r) => r,
+                Err(e) => {
+                    let _ = reject_clone.call1(&JsValue::NULL, &e);
+                    return;
+                }
+            };
+
+            if !result.is_null() {
+                let cursor = match result.dyn_ref::<web_sys::IdbCursor>() {
+                    Some(c) => c,
+                    None => {
+                        let _ = reject_clone.call1(&JsValue::NULL, &JsValue::from_str("Result is not a cursor"));
+                        return;
+                    }
+                };
+                let pk = match cursor.primary_key() {
+                    Ok(p) => p,
+                    Err(e) => {
+                        let _ = reject_clone.call1(&JsValue::NULL, &e);
+                        return;
+                    }
+                };
+
+                if let Some(pk_str) = pk.as_string() {
+                    pks_clone.lock().insert(pk_str);
+                } else if let Some(pk_num) = pk.as_f64() {
+                    pks_clone.lock().insert(pk_num.to_string());
+                }
+                
+                if let Err(e) = cursor.continue_() {
+                    let _ = reject_clone.call1(&JsValue::NULL, &e);
+                }
+            } else {
+                let _ = resolve.call1(&JsValue::NULL, &JsValue::NULL);
+            }
+        }) as Box<dyn FnMut(_)>);
+
+        let onerror = Closure::once(Box::new(move |event: web_sys::Event| {
+            let _ = reject.call1(&JsValue::NULL, &event);
+        }));
+
+        request.set_onsuccess(Some(onsuccess.as_ref().unchecked_ref()));
+        request.set_onerror(Some(onerror.as_ref().unchecked_ref()));
+        onsuccess.forget();
+    });
+
+    JsFuture::from(promise).await?;
+    let final_pks = pks.lock().clone();
+    Ok(final_pks)
+}
+
 
 pub async fn cursor_fetch_and_filter(
     index: Option<&web_sys::IdbIndex>,
@@ -287,26 +367,21 @@ pub fn get_indexed_db() -> Result<IdbFactory, RIDBError> {
     Err(RIDBError::from("IndexedDB not available in this environment"))
 }
 
-pub fn can_use_single_index_lookup(
-    query: Query,
-    schema: Schema
-) -> Result<Option<String>, RIDBError> {
+pub fn get_indexed_fields_in_query(
+    query: &Query,
+    schema: &Schema
+) -> Result<Vec<String>, RIDBError> {
     let fields = query.get_properties()?;
     let schema_indexes = &schema.indexes;
+    let mut indexed_fields = Vec::new();
     if let Some(indexes) = schema_indexes {
         for index in indexes {
             if fields.contains(index) {
-                return Ok(
-                    Some(
-                        index.clone()
-                    )
-                )
+                indexed_fields.push(index.clone());
             }
         }
     }
-    Ok(
-        None
-    )
+    Ok(indexed_fields)
 }
 
 

@@ -56,7 +56,7 @@ impl Storage for InMemory {
             ))
         );
 
-        let schemas = self.base.schemas.borrow();
+        let schemas = self.base.schemas.read();
         let schema = schemas
             .get(op.collection.as_str())
             .ok_or_else(|| {
@@ -124,7 +124,7 @@ impl Storage for InMemory {
                         }
 
                         let primary_index_name = op.primary_key_index()?;
-                        let indexed_fields = schema.clone().indexes.unwrap_or(Vec::new());
+                        let indexed_fields = schema.indexes.as_deref().unwrap_or(&[]).to_vec();
                         for indexed_field in indexed_fields {
                             let collection_name = format!("idx_{}_{}", op.collection, indexed_field);
                             if collection_name == primary_index_name {
@@ -286,7 +286,7 @@ impl Storage for InMemory {
                 collection_name
             ))
         );
-        let schemas = self.base.schemas.borrow();
+        let schemas = self.base.schemas.read();
         let schema = schemas.get(collection_name).ok_or_else(|| {
             let msg = format!("Collection {} not found in findDocumentById", collection_name);
             Logger::debug(
@@ -451,7 +451,7 @@ impl InMemory {
         let read_lock = self.by_index.read()
             .map_err(|_| JsValue::from_str("Failed to acquire read lock"))?;
 
-        let schemas = self.base.schemas.borrow();
+        let schemas = self.base.schemas.read();
         let schema = schemas
             .get(collection_name)
             .ok_or_else(|| {
@@ -646,7 +646,7 @@ impl InMemory {
                 collection_name
             ))
         );
-        let schemas = self.base.schemas.borrow();
+        let schemas = self.base.schemas.read();
         let schema = schemas.get(collection_name)
             .ok_or_else(|| JsValue::from( format!("Collection {} not found in find", collection_name)))?;
         let query = Query::new(query_js, schema.clone())?;
@@ -678,7 +678,7 @@ impl InMemory {
                 collection_name
             ))
         );
-        let schemas = self.base.schemas.borrow();
+        let schemas = self.base.schemas.read();
         let schema = schemas.get(collection_name).ok_or_else(|| JsValue::from( format!("Collection {} not found in count", collection_name)))?;
         let query = Query::new(query_js, schema.clone())?;
         self.count(collection_name, query, options).await
