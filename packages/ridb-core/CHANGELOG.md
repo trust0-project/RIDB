@@ -1,3 +1,14 @@
+## 1.7.33 (2025-09-06)
+
+### 🩹 Fixes
+
+- query improvements ([03ec839](https://github.com/trust0-project/RIDB/commit/03ec839))
+- indexDB Storage ([0711c62](https://github.com/trust0-project/RIDB/commit/0711c62))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.32 (2025-09-06)
 
 ### 🩹 Fixes

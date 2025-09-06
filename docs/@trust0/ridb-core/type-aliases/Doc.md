@@ -8,7 +8,7 @@
 
 > **Doc**\<`T`\> = `{ [K in keyof T["properties"]]: ExtractType<T["properties"][K]["type"]> }` & `object`
 
-Defined in: ridb\_core.d.ts:316
+Defined in: ridb\_core.d.ts:113
 
 Doc is a utility type that transforms a schema type into a document type where each property is mapped to its extracted type.
 

@@ -8,7 +8,7 @@
 
 > **MigrationPathsForSchemas**\<`T`\> = `{ [K in keyof T]: MigrationPathsForSchema<T[K]> }`
 
-Defined in: ridb\_core.d.ts:214
+Defined in: ridb\_core.d.ts:493
 
 ## Type Parameters
 

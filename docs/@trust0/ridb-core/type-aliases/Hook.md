@@ -8,7 +8,7 @@
 
 > **Hook** = (`schema`, `migration`, `doc`) => [`Doc`](Doc.md)\<[`SchemaType`](SchemaType.md)\>
 
-Defined in: ridb\_core.d.ts:232
+Defined in: ridb\_core.d.ts:511
 
 ## Parameters
 

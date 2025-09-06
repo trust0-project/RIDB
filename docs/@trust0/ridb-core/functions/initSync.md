@@ -8,7 +8,7 @@
 
 > **initSync**(`module`): [`InitOutput`](../interfaces/InitOutput.md)
 
-Defined in: ridb\_core.d.ts:1041
+Defined in: ridb\_core.d.ts:1042
 
 Instantiates the given `module`, which can either be bytes or
 a precompiled `WebAssembly.Module`.

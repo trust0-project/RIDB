@@ -8,7 +8,7 @@
 
 > **SchemaTypeRecord** = `object`
 
-Defined in: ridb\_core.d.ts:729
+Defined in: ridb\_core.d.ts:585
 
 **`Internal`**
 

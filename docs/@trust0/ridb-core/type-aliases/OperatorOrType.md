@@ -8,7 +8,7 @@
 
 > **OperatorOrType**\<`T`\> = `T` *extends* `number` ? `T` \| [`Operators`](Operators.md)\<`T`\> \| [`InOperator`](InOperator.md)\<`T`\> \| [`NInOperator`](NInOperator.md)\<`T`\> : `T` \| [`InOperator`](InOperator.md)\<`T`\> \| [`NInOperator`](NInOperator.md)\<`T`\>
 
-Defined in: ridb\_core.d.ts:470
+Defined in: ridb\_core.d.ts:267
 
 ## Type Parameters
 
