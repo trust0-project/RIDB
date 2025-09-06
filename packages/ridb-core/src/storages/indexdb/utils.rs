@@ -118,6 +118,8 @@ pub async fn get_pks_from_index(index: &web_sys::IdbIndex, range: &JsValue) -> R
         request.set_onsuccess(Some(onsuccess.as_ref().unchecked_ref()));
         request.set_onerror(Some(onerror.as_ref().unchecked_ref()));
         onsuccess.forget();
+        // Ensure the error handler is kept alive for the lifetime of the request as well
+        onerror.forget();
     });
 
     JsFuture::from(promise).await?;

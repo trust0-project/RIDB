@@ -15,7 +15,6 @@ use parking_lot::Mutex;
 use crate::error::RIDBError;
 use crate::query::options::QueryOptions;
 use super::base::Storage;
-use std::collections::HashSet;
 
 pub mod utils;
 pub mod pool;
@@ -312,7 +311,9 @@ impl IndexDB {
         Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Collecting documents for query in {}", collection_name)));
         
         // Acquire references to the object store and schema
-        let store = self.get_store(collection_name)?;
+        let store = self.get_store_readonly(collection_name)?;
+        let store = self.get_store_readonly(collection_name)?;
+        let store = self.get_store_readonly(collection_name)?;
         let schemas = self.base.schemas.read();
         let schema = schemas
             .get(collection_name)
@@ -373,41 +374,115 @@ impl IndexDB {
         // Prepare the final, filtered documents array
         // but efficiently fetch them using a cursor approach.
         let documents = if !indexed_fields.is_empty() && !query.has_or_operator() {
-             Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Using indexes: {:?}", indexed_fields)));
+            Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Using indexes: {:?}", indexed_fields)));
 
-            let mut intersected_pks: Option<HashSet<String>> = None;
+            // Heuristic to pick the most selective index
+            fn estimate_selectivity(value: &JsValue) -> u8 {
+                if !value.is_object() || js_sys::Array::is_array(value) {
+                    return 3; // direct equality value
+                }
+                let obj = Object::from(value.clone());
+                let keys = Object::keys(&obj);
+                if keys.length() == 1 {
+                    let key = keys.get(0).as_string().unwrap_or_default();
+                    match key.as_str() {
+                        "$eq" => 3,
+                        "$gt" | "$gte" | "$lt" | "$lte" => 2,
+                        "$in" | "$nin" => 1,
+                        _ => 0,
+                    }
+                } else if keys.length() == 2 {
+                    3 // bounded range
+                } else {
+                    0
+                }
+            }
 
+            let mut best_index: Option<(String, JsValue, u8)> = None;
             for field in indexed_fields {
-                let index_name = &field;
                 let index_value = query.get(&field)?;
-                let range = get_key_range(&index_value)?.map(|r| r.into()).unwrap_or(JsValue::undefined());
+                let score = estimate_selectivity(&index_value);
+                let range_js = match get_key_range(&index_value)? {
+                    Some(r) => r.into(),
+                    None => JsValue::undefined(),
+                };
 
-                if let Ok(index) = store.index(index_name) {
-                    let pks = get_pks_from_index(&index, &range).await?;
-                    if let Some(current_pks) = intersected_pks.as_mut() {
-                        current_pks.retain(|pk| pks.contains(pk));
+                if best_index.as_ref().map(|(_, _, s)| *s).unwrap_or(0) < score {
+                    best_index = Some((field.clone(), range_js, score));
+                }
+            }
+
+            if let Some((best_field, range_js, score)) = best_index {
+                // Only use the index cursor if we have a meaningful range or high selectivity
+                if score >= 2 && !range_js.is_undefined() && !range_js.is_null() {
+                    if let Ok(index) = store.index(&best_field) {
+                        Logger::debug(
+                            "IndexDB-CollectDocuments",
+                            &JsValue::from_str(&format!("Using best index '{}' with range", best_field)),
+                        );
+                        let results = cursor_fetch_and_filter(
+                            Some(&index),
+                            None,
+                            &range_js,
+                            core,
+                            value_query,
+                            offset,
+                            limit,
+                        )
+                        .await?;
+                        Logger::debug(
+                            "IndexDB-CollectDocuments",
+                            &JsValue::from_str(&format!("Found {} results with index cursor", results.length())),
+                        );
+                        results
                     } else {
-                        intersected_pks = Some(pks);
+                        Logger::debug(
+                            "IndexDB-CollectDocuments",
+                            &JsValue::from_str("Failed to open index, falling back to store scan"),
+                        );
+                        cursor_fetch_and_filter(
+                            None,
+                            Some(&store.clone()),
+                            &JsValue::undefined(),
+                            core,
+                            value_query,
+                            offset,
+                            limit,
+                        )
+                        .await?
                     }
+                } else {
+                    Logger::debug(
+                        "IndexDB-CollectDocuments",
+                        &JsValue::from_str("Index not selective enough or no range; falling back to store scan"),
+                    );
+                    cursor_fetch_and_filter(
+                        None,
+                        Some(&store.clone()),
+                        &JsValue::undefined(),
+                        core,
+                        value_query,
+                        offset,
+                        limit,
+                    )
+                    .await?
                 }
+            } else {
+                Logger::debug(
+                    "IndexDB-CollectDocuments",
+                    &JsValue::from_str("No suitable index found after evaluation; falling back to store scan"),
+                );
+                cursor_fetch_and_filter(
+                    None,
+                    Some(&store.clone()),
+                    &JsValue::undefined(),
+                    core,
+                    value_query,
+                    offset,
+                    limit,
+                )
+                .await?
             }
-
-            let mut final_docs = Vec::new();
-            if let Some(pks) = intersected_pks {
-                for pk_str in pks.iter().skip(offset as usize).take(limit as usize) {
-                     if let Ok(doc) = self.find_document_by_id(collection_name, JsValue::from_str(pk_str)).await {
-                        if !doc.is_null() && core.document_matches_query(&doc, &value_query)? {
-                            final_docs.push(doc);
-                        }
-                    }
-                }
-            }
-            
-            let array = Array::new();
-            for doc in final_docs {
-                array.push(&doc);
-            }
-            array
         } else {
             Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("No suitable index found, using full store scan"));
             // No single index is usable; fetch everything via cursor on the store
@@ -491,6 +566,45 @@ impl IndexDB {
         let store = transaction.object_store(store_name).map_err(|e| RIDBError::from(e))?;
         Logger::debug("IndexDB-GetStore", &JsValue::from_str("Object store obtained successfully"));
         
+        Ok(store)
+    }
+
+    pub fn get_store_readonly(&self, store_name: &str) -> Result<IdbObjectStore, RIDBError> {
+        Logger::debug("IndexDB-GetStoreReadonly", &JsValue::from_str(&format!("Getting readonly store: {}", store_name)));
+
+        let stores = self.get_stores();
+        if !stores.contains(&store_name.to_string()) {
+            Logger::debug("IndexDB-GetStoreReadonly", &JsValue::from_str(&format!("Store '{}' does not exist", store_name)));
+            return Err(RIDBError::from(&format!(
+                "Store '{}' does not exist. Available stores: {:?}",
+                store_name, stores
+            )));
+        }
+
+        let transaction = {
+            Logger::debug("IndexDB-GetStoreReadonly", &JsValue::from_str("Acquiring database lock"));
+            let db = self.db.lock();
+            Logger::debug("IndexDB-GetStoreReadonly", &JsValue::from_str("Creating readonly transaction"));
+            db.transaction_with_str_and_mode(
+                store_name,
+                web_sys::IdbTransactionMode::Readonly,
+            )
+        };
+
+        let transaction = match transaction {
+            Ok(t) => t,
+            Err(_e) => {
+                Logger::debug("IndexDB-GetStoreReadonly", &JsValue::from_str(&format!("Failed to create readonly transaction for store '{}'", store_name)));
+                return Err(RIDBError::from(&format!(
+                    "Failed to create readonly transaction for store '{}'",
+                    store_name
+                )));
+            }
+        };
+
+        Logger::debug("IndexDB-GetStoreReadonly", &JsValue::from_str(&format!("Getting object store: {}", store_name)));
+        let store = transaction.object_store(store_name).map_err(|e| RIDBError::from(e))?;
+        Logger::debug("IndexDB-GetStoreReadonly", &JsValue::from_str("Object store obtained successfully"));
         Ok(store)
     }
 
