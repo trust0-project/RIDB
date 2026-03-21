@@ -1,5 +1,4 @@
-import type { BasePlugin, MigrationPathsForSchemas, SchemaTypeRecord } from "@trust0/ridb-core";
-import { Database } from "@trust0/ridb-core";
+import type { BasePlugin, Database, MigrationPathsForSchemas, SchemaTypeRecord } from "@trust0/ridb-core";
 import type { DBOptions, PendingRequests, StartOptions } from "./types";
 import { StorageType } from "./types";
 
@@ -36,7 +35,7 @@ export class RIDBCore<T extends SchemaTypeRecord = SchemaTypeRecord> {
    *
    * @param options Database configuration options
    */
-  constructor(protected options: DBOptions<T>) {}
+  constructor(protected options: DBOptions<T>) { }
 
   /**
    * Gets the configured database name from options.
@@ -127,7 +126,7 @@ export class RIDBCore<T extends SchemaTypeRecord = SchemaTypeRecord> {
    * @throws Error if the storage class is invalid or if dbName is missing
    */
   protected async createDatabase(options?: StartOptions<T>) {
-    await WasmInternal();
+    const { Database } = await WasmInternal();
     const { storageType, password } = options ?? {};
     const StorageClass = typeof storageType === "string" ? await this.getStorageType(storageType) : (storageType ?? undefined);
     if (StorageClass && !StorageClass.create) {
