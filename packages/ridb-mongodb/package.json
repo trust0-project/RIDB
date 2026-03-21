@@ -30,8 +30,8 @@
     "types:default": "npx tsc"
   },
   "devDependencies": {
-    "@trust0/ridb": "workspace:*",
-    "@trust0/ridb-build": "workspace:*",
+    "@trust0/ridb": "1.5.42",
+    "@trust0/ridb-build": "0.0.22",
     "jsdom": "^24.1.3",
     "mongodb": "^6.0.0",
     "uuid": "^11.0.3",
@@ -39,6 +39,6 @@
     "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "@trust0/ridb": "workspace:*"
+    "@trust0/ridb": "1.5.42"
   }
 }

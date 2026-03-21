@@ -31,15 +31,15 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
-    "@trust0/ridb": "workspace:*",
-    "@trust0/ridb-build": "workspace:*",
+    "@trust0/ridb": "1.5.42",
+    "@trust0/ridb-build": "0.0.22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "jsdom": "^25.0.1",
     "typescript": "^5.7.2"
   },
   "peerDependencies": {
-    "@trust0/ridb": "workspace:*",
+    "@trust0/ridb": "1.5.42",
     "react": "^18",
     "react-dom": "^18"
   }
