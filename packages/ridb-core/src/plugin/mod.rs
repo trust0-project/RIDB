@@ -4,7 +4,8 @@ pub mod integrity;
 pub mod defaults;
 pub mod dates;
 
-use std::cell::RefCell;
+use parking_lot::RwLock;
+use std::sync::Arc;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::*;
 use js_sys::Reflect;
@@ -32,8 +33,8 @@ export class BasePlugin implements BasePluginOptions {
 #[wasm_bindgen(skip_typescript)]
 #[derive(Clone)]
 pub struct BasePlugin {
-    pub(crate) doc_create_hook: RefCell<JsValue>,
-    pub(crate) doc_recover_hook: RefCell<JsValue>,
+    pub(crate) doc_create_hook: Arc<RwLock<JsValue>>,
+    pub(crate) doc_recover_hook: Arc<RwLock<JsValue>>,
     pub(crate) name: String,
 }
 
@@ -44,8 +45,8 @@ impl BasePlugin {
     pub fn new(name: String) -> Result<BasePlugin, RIDBError> {
         Ok(BasePlugin {
             name,
-            doc_create_hook: RefCell::new(JsValue::undefined()),
-            doc_recover_hook: RefCell::new(JsValue::undefined()),
+            doc_create_hook: Arc::new(RwLock::new(JsValue::undefined())),
+            doc_recover_hook: Arc::new(RwLock::new(JsValue::undefined())),
         })
     }
 
@@ -56,22 +57,22 @@ impl BasePlugin {
 
     #[wasm_bindgen( getter = docCreateHook)]
     pub fn get_doc_create_hook(&self) -> JsValue {
-        self.doc_create_hook.borrow().clone()
+        self.doc_create_hook.read().clone()
     }
 
     #[wasm_bindgen( getter = docRecoverHook)]
     pub fn get_doc_recover_hook(&self) -> JsValue {
-        self.doc_recover_hook.borrow().clone()
+        self.doc_recover_hook.read().clone()
     }
 
     #[wasm_bindgen(setter = docCreateHook)]
     pub fn set_doc_create_hook(&self, hook: JsValue)  {
-        *self.doc_create_hook.borrow_mut() = hook;
+        *self.doc_create_hook.write() = hook;
     }
 
     #[wasm_bindgen( setter = docRecoverHook)]
     pub fn set_doc_recover_hook(&self, hook: JsValue) {
-        *self.doc_recover_hook.borrow_mut() = hook;
+        *self.doc_recover_hook.write() = hook;
     }
 
 }
@@ -96,10 +97,10 @@ impl JsCast for BasePlugin {
     fn unchecked_from_js(val: JsValue) -> Self {
         BasePlugin {
             name: "Name".to_string(),
-            doc_create_hook: RefCell::new(Reflect::get(&val, &JsValue::from_str("docCreateHook"))
-                .unwrap_or(JsValue::undefined())),
-            doc_recover_hook: RefCell::new(Reflect::get(&val, &JsValue::from_str("docRecoverHook"))
-                .unwrap_or(JsValue::undefined())),
+            doc_create_hook: Arc::new(RwLock::new(Reflect::get(&val, &JsValue::from_str("docCreateHook"))
+                .unwrap_or(JsValue::undefined()))),
+            doc_recover_hook: Arc::new(RwLock::new(Reflect::get(&val, &JsValue::from_str("docRecoverHook"))
+                .unwrap_or(JsValue::undefined()))),
         }
     }
 

@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 use js_sys::{Reflect};
+use parking_lot::RwLock;
 use serde_wasm_bindgen::to_value;
 use wasm_bindgen::{JsCast, JsValue};
 
@@ -29,15 +30,15 @@ struct StorageInner {
 /// Represents the storage system containing a map of internal storages.
 pub struct Storage {
     /// The inner data wrapped in Arc for thread-safe reference counting
-    inner: Arc<StorageInner>,
+    inner: Arc<RwLock<StorageInner>>,
 }
 
 impl Storage {
-    pub fn get_internal(&self) -> &StorageExternal {
-        &self.inner.internal
+    pub fn get_internal(&self) -> StorageExternal {
+        self.inner.read().internal.clone()
     }
-    pub fn get_schemas(&self) -> &HashMap<String, Schema> {
-        &self.inner.schemas
+    pub fn get_schemas(&self) -> HashMap<String, Schema> {
+        self.inner.read().schemas.clone()
     }
     /// Creates a new `Storage` instance from a JavaScript object.
     ///
@@ -62,40 +63,40 @@ impl Storage {
         };
         
         let storage = Storage {
-            inner: Arc::new(inner)
+            inner: Arc::new(RwLock::new(inner))
         };
         
         Ok(storage)
     }
 
-    pub fn get_schema(&self, collection_name: &str) -> Result<&Schema, RIDBError> {
-        self.inner.schemas.get(collection_name)
+    pub fn get_schema(&self, collection_name: &str) -> Result<Schema, RIDBError> {
+        self.inner.read().schemas.get(collection_name)
             .ok_or(
                 RIDBError::error(
                     &format!("Invalid collection {}, not found", collection_name),
                     0
                 )
             )
-            .map(|schema| schema)
+            .map(|schema| schema.clone())
     }
 
-    pub fn get_migration(&self, collection_name: &str) -> Result<&JsValue, RIDBError> {
-        self.inner.migrations.get(collection_name)
+    pub fn get_migration(&self, collection_name: &str) -> Result<JsValue, RIDBError> {
+        self.inner.read().migrations.get(collection_name)
             .ok_or(
                 RIDBError::error(
                     &format!("Invalid collection {}, not found", collection_name),
                     0
                 )
             )
-            .map(|migration| migration)
+            .map(|migration| migration.clone())
     }
 
     pub(crate) async fn call(&self, collection_name: &str, hook_type: HookType, mut doc: JsValue) -> Result<JsValue, RIDBError> {
         // Determine the order of plugins based on the hook type
         let plugins = match hook_type.clone() {
-            HookType::Create => self.inner.plugins.clone(),
+            HookType::Create => self.inner.read().plugins.clone(),
             HookType::Recover => {
-                let mut reversed_plugins = self.inner.plugins.clone();
+                let mut reversed_plugins = self.inner.read().plugins.clone();
                 reversed_plugins.reverse(); // Reverse the plugins for Recover
                 reversed_plugins
             },
@@ -156,26 +157,22 @@ impl Storage {
     /// * `Result<JsValue, JsValue>` - A result containing the document with the primary key or an error.
     fn ensure_primary_key(&self, collection_name: &str, document: JsValue) -> Result<JsValue, RIDBError> {
         let schema = self.get_schema(collection_name)?;
-        let properties = schema.properties.clone();
         let key = schema.primary_key.clone();
 
         let doc_property = Reflect::get(&document, &JsValue::from(&key))
             .map_err(|e| JsValue::from(RIDBError::from(e)))?;
 
-        let primary_key_property = properties
+        let primary_key_property = schema.properties
             .get(&key)
             .ok_or(RIDBError::validation("Invalid Schema cannot find primaryKey field", 0))?;
 
         let primary_key_type = primary_key_property.property_type();
 
         if doc_property.is_null() || doc_property.is_undefined() {
-            if primary_key_type == SchemaFieldType::String {
-                Reflect::set(&document, &JsValue::from(&key), &JsValue::from("12345"))
-                    .map_err(|e| JsValue::from(RIDBError::from(e)))?;
-            } else {
-                Reflect::set(&document, &JsValue::from(&key), &JsValue::from(12345))
-                    .map_err(|e| JsValue::from(RIDBError::from(e)))?;
-            }
+            return Err(RIDBError::validation(
+                &format!("Primary key '{}' is missing.", key),
+                30
+            ));
         }
 
         let doc_property = Reflect::get(&document, &JsValue::from(&key))
@@ -236,6 +233,7 @@ impl Storage {
 
         let document = self
             .inner
+            .read()
             .internal
             .write(operation)
             .await?;
@@ -250,16 +248,16 @@ impl Storage {
 
     pub(crate) async fn find(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError>{
         //TODO: Use indexes for more efficient document finding
-        self.inner.internal.find(collection_name, query, options).await
+        self.inner.read().internal.find(collection_name, query, options).await
     }
 
     pub(crate) async fn count(&self, collection_name: &str, query: JsValue, options: QueryOptions) -> Result<JsValue, RIDBError>{
         //TODO: Use indexes for more efficient counting
-        self.inner.internal.count(collection_name, query, options).await
+        self.inner.read().internal.count(collection_name, query, options).await
     }
 
     pub(crate) async fn find_document_by_id(&self, collection_name: &str, primary_key: JsValue) -> Result<JsValue, RIDBError>{
-        match self.inner.internal.find_document_by_id( 
+        match self.inner.read().internal.find_document_by_id( 
             collection_name, 
             primary_key
         ).await {
@@ -299,7 +297,7 @@ impl Storage {
                 "DELETE OPERATION {:?} ", op
             )));
             
-            let result = self.inner.internal.write(op).await;
+            let result = self.inner.read().internal.write(op).await;
             
             match &result {
                 Ok(_) => Logger::debug("Storage-Remove",&JsValue::from("Remove operation completed successfully")),

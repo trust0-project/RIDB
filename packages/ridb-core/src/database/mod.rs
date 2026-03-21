@@ -3,6 +3,8 @@ use std::cell::Cell;
 use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
+use parking_lot::RwLock;
+use std::sync::Arc;
 use crate::collection::Collection;
 use crate::error::RIDBError;
 use crate::utils::Logger;
@@ -15,7 +17,6 @@ use crate::schema::Schema;
 use crate::storage::Storage;
 use crate::storages::base::StorageExternal;
 use crate::storages::inmemory::InMemory;
-use std::cell::RefCell;
 use crate::plugin::dates::TimestampPlugin;
 
 #[wasm_bindgen(typescript_custom_section)]
@@ -147,7 +148,7 @@ pub struct Database {
     pub(crate) started: Cell<bool>,
     pub(crate) password: Option<String>,
     /// Cache for collection objects to prevent recursive use
-    pub(crate) cached_collections: RefCell<Option<Object>>
+    pub(crate) cached_collections: Arc<RwLock<Option<Object>>>
 }
 
 
@@ -204,7 +205,7 @@ impl Database {
     #[wasm_bindgen(getter)]
     pub fn collections(&self) -> Result<Object, RIDBError> {
         // Check if we already have cached collections
-        if let Some(cached) = self.cached_collections.borrow().as_ref() {
+        if let Some(cached) = self.cached_collections.read().as_ref() {
             return Ok(cached.clone());
         }
         
@@ -226,7 +227,7 @@ impl Database {
         }
         
         // Cache the collections
-        *self.cached_collections.borrow_mut() = Some(object.clone());
+        *self.cached_collections.write() = Some(object.clone());
         
         Logger::debug("DB",&"Collections retrieved successfully.".into());
         Ok(object)
@@ -321,7 +322,7 @@ impl Database {
                 storage: mounted_storage, 
                 started: Cell::new(false), 
                 password,
-                cached_collections: RefCell::new(None)
+                cached_collections: Arc::new(RwLock::new(None))
             }
         )
     }

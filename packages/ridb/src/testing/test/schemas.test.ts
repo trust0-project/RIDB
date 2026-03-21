@@ -1575,6 +1575,46 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
           });
 
           /**
+           * 6) $or condition on indexed fields
+           */
+          it("should retrieve documents with age < 20 OR status is 'inactive'", async () => {
+            const db = new RIDB({
+              worker,
+              dbName,
+              schemas: {
+                smallIndexTest: {
+                  version: 0 as const,
+                  primaryKey: "id",
+                  type: SchemaFieldType.object,
+                  indexes: ["age", "status"],
+                  properties: {
+                    id: { type: SchemaFieldType.string },
+                    age: { type: SchemaFieldType.number },
+                    status: { type: SchemaFieldType.string },
+                  },
+                },
+              },
+            });
+            await db.start({ storageType: storage, password: "test" });
+
+            for (const doc of docs) {
+              await db.collections.smallIndexTest.create(doc);
+            }
+
+            const found = await db.collections.smallIndexTest.find({
+              $or: [
+                { age: { $lt: 20 } }, // doc1, doc8
+                { status: "inactive" }, // doc2, doc6, doc10
+              ],
+            });
+
+            expect(found.length).to.eq(5);
+            const ids = found.map((doc) => doc.id);
+            expect(ids).to.include.members(["doc1", "doc8", "doc2", "doc6", "doc10"]);
+            await db.close();
+          });
+
+          /**
            * 5) $in condition
            */
           it("should retrieve documents with age in [18, 25, 28]", async () => {
@@ -1652,6 +1692,44 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
             const ids = found.map((doc) => doc.id);
             expect(ids).to.include.members(["doc3", "doc5", "doc7", "doc9"]);
 
+            await db.close();
+          });
+
+          /**
+           * 9) $and query with multiple indexes
+           */
+          it("should retrieve documents using multiple indexes for an $and query", async () => {
+            const db = new RIDB({
+              worker,
+              dbName,
+              schemas: {
+                smallIndexTest: {
+                  version: 0 as const,
+                  primaryKey: "id",
+                  type: SchemaFieldType.object,
+                  indexes: ["age", "status"],
+                  properties: {
+                    id: { type: SchemaFieldType.string },
+                    age: { type: SchemaFieldType.number },
+                    status: { type: SchemaFieldType.string },
+                  },
+                },
+              },
+            });
+            await db.start({ storageType: storage, password: "test" });
+
+            for (const doc of docs) {
+              await db.collections.smallIndexTest.create(doc);
+            }
+
+            const found = await db.collections.smallIndexTest.find({
+              $and: [{ age: { $gte: 25 } }, { status: "active" }],
+            });
+            
+            expect(found.length).to.eq(3);
+            const ids = found.map((doc) => doc.id);
+            expect(ids).to.include.members(["doc3", "doc5", "doc9"]);
+            
             await db.close();
           });
 
@@ -1735,7 +1813,7 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
             });
             expect(found.length).to.eq(5);
             const ids = found.map((doc) => doc.id);
-            expect(ids).to.include.members(["doc1", "doc3", "doc8", "doc9"]);
+            expect(ids).to.include.members(["doc1", "doc3", "doc5", "doc8", "doc9"]);
 
             await db.close();
           });

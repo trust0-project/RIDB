@@ -147,19 +147,16 @@ impl Schema {
 
     #[wasm_bindgen(js_name="validate")]
     pub fn validate_document(&self, document: JsValue) -> Result<(), RIDBError> {
-        let schema_properties = self.properties.clone();
-
         // Collect required fields
-        let required: Vec<String> = schema_properties
+        let required: Vec<String> = self.properties
             .iter()
             .filter(|(_, prop)| prop.required.unwrap_or(true))
             .map(|(key, _)| key.clone())
             .collect();
 
         let encrypted = self.encrypted.clone().unwrap_or(Vec::new());
-        let properties = self.properties.clone();
 
-        for (key, prop) in properties {
+        for (key, prop) in &self.properties {
 
             let value = Reflect::get(&document, &JsValue::from_str(&key))
                 .map_err(|_e| {

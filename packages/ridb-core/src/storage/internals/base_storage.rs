@@ -1,5 +1,6 @@
 use std::collections::HashMap;
-use std::cell::RefCell;
+use parking_lot::RwLock;
+use std::sync::Arc;
 
 use js_sys::{Object, Reflect};
 use wasm_bindgen::JsValue;
@@ -57,7 +58,7 @@ pub struct BaseStorage {
     /// The name of the database.
     pub(crate) name: String,
     /// The schema associated with the storage.
-    pub(crate) schemas: RefCell<HashMap<String, Schema>>,
+    pub(crate) schemas: Arc<RwLock<HashMap<String, Schema>>>,
     pub(crate) options: Option<Object>,
     pub(crate) core: CoreStorage,
 }
@@ -86,7 +87,7 @@ impl BaseStorage {
         }
         let base_storage = BaseStorage {
             name,
-            schemas: RefCell::new(schemas),
+            schemas: Arc::new(RwLock::new(schemas)),
             options,
             core: CoreStorage::new()
         };
@@ -96,7 +97,7 @@ impl BaseStorage {
     // This method creates index schemas based on the current schemas
     fn get_index_schemas(&self) -> Result<HashMap<String, Schema>, RIDBError> {
         // Make a clone of the schemas to avoid borrow checker issues
-        let schemas_clone = self.schemas.borrow().clone();
+        let schemas_clone = self.schemas.read().clone();
         let mut new_schemas: HashMap<String, Schema> = HashMap::new();
         
         for (collection_name, schema) in schemas_clone {
@@ -182,7 +183,7 @@ impl BaseStorage {
         let index_schemas = self.get_index_schemas()?;
         
         // Insert the index schemas into the schemas HashMap
-        let mut schemas = self.schemas.borrow_mut();
+        let mut schemas = self.schemas.write();
         for (collection_name, schema) in index_schemas {
             schemas.insert(collection_name, schema);
         }
@@ -201,7 +202,7 @@ impl BaseStorage {
 
     #[wasm_bindgen(js_name = getSchema)]
     pub fn get_schema(&self, name: String) -> Result<Schema, RIDBError> {
-        let schemas = self.schemas.borrow();
+        let schemas = self.schemas.read();
         let schema = schemas.get(name.as_str())
             .ok_or_else(|| JsValue::from_str("Schema not found"))?;
         Ok(schema.clone())

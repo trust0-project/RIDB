@@ -1,3 +1,44 @@
+## 1.7.36 (2025-09-06)
+
+### 🩹 Fixes
+
+- improve indexdb ([03bccbe](https://github.com/trust0-project/RIDB/commit/03bccbe))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
+## 1.7.35 (2025-09-06)
+
+### 🩹 Fixes
+
+- manage indexdb  onsuccess onerror handlers efficiently ([9786676](https://github.com/trust0-project/RIDB/commit/9786676))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
+## 1.7.34 (2025-09-06)
+
+### 🩹 Fixes
+
+- refactor ridb for better performance ([1178ca4](https://github.com/trust0-project/RIDB/commit/1178ca4))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
+## 1.7.33 (2025-09-06)
+
+### 🩹 Fixes
+
+- query improvements ([03ec839](https://github.com/trust0-project/RIDB/commit/03ec839))
+- indexDB Storage ([0711c62](https://github.com/trust0-project/RIDB/commit/0711c62))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.32 (2025-09-06)
 
 ### 🩹 Fixes

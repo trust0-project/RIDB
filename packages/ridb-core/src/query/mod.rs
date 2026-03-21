@@ -435,6 +435,34 @@ impl Query {
             ),
         }
     }
+
+    pub fn has_or_operator(&self) -> bool {
+        fn check_for_or(value: &JsValue) -> bool {
+            if value.is_object() {
+                let obj = Object::from(value.clone());
+                let keys = Object::keys(&obj);
+                for i in 0..keys.length() {
+                    let key = keys.get(i).as_string().unwrap_or_default();
+                    if key == "$or" {
+                        return true;
+                    }
+                    let val = Reflect::get(&obj, &JsValue::from(&key)).unwrap_or(JsValue::UNDEFINED);
+                    if check_for_or(&val) {
+                        return true;
+                    }
+                }
+            } else if value.is_array() {
+                let arr = Array::from(value);
+                for i in 0..arr.length() {
+                    if check_for_or(&arr.get(i)) {
+                        return true;
+                    }
+                }
+            }
+            false
+        }
+        check_for_or(&self.query)
+    }
 }
 
 impl Query {

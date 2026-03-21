@@ -1,3 +1,31 @@
+## 1.4.20 (2025-09-06)
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.36
+- Updated @trust0/ridb to 1.5.41
+
+## 1.4.19 (2025-09-06)
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.35
+- Updated @trust0/ridb to 1.5.40
+
+## 1.4.18 (2025-09-06)
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.34
+- Updated @trust0/ridb to 1.5.39
+
+## 1.4.17 (2025-09-06)
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.33
+- Updated @trust0/ridb to 1.5.38
+
 ## 1.4.16 (2025-09-06)
 
 ### 🩹 Fixes
