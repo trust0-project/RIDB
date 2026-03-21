@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-core",
-  "description": "RIDB wasm core",
+  "description": "RIDB wasm core package.",
   "repository": {
     "type": "git",
     "url": "https://github.com/trust0-project/RIDB.git"
