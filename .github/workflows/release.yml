@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          token: ${{ secrets.GH_SECRET }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -47,11 +47,7 @@ jobs:
 
       - name: Configure npm authentication
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ./.npmrc
           echo "@trust0:registry=https://registry.npmjs.org/" >> ./.npmrc
-
-        env:
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
       - uses: crazy-max/ghaction-import-gpg@v5
         id: import_gpg
