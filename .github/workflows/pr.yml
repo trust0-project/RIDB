@@ -11,21 +11,19 @@ on:
 jobs:
   test:
     runs-on: macos-latest
-    env:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          token: ${{ secrets.GH_SECRET }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           registry-url: 'https://registry.npmjs.org/'
           scope: '@trust0'
           cache: 'npm'
@@ -43,15 +41,12 @@ jobs:
 
       - name: Configure npm authentication
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ./.npmrc
           echo "@trust0:registry=https://registry.npmjs.org/" >> ./.npmrc
-        env:
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
 
       - name: Install WASM
         env:
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_SECRET }}
+          NPM_CONFIG_PROVENANCE: true
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           yarn install
