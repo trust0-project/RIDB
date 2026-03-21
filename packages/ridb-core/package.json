@@ -8,7 +8,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.7.38",
+  "version": "1.7.39",
   "main": "./build/ridb_core.js",
   "module": "./build/ridb_core.mjs",
   "types": "./build/ridb_core.d.ts",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@esbuild-plugins/node-resolve": "^0.2.2",
-    "@trust0/ridb-build": "0.0.22",
+    "@trust0/ridb-build": "0.0.23",
     "esbuild": "^0.25.4"
   },
   "files": [

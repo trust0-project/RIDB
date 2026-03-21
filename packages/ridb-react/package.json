@@ -1,7 +1,7 @@
 {
   "name": "@trust0/ridb-react",
   "description": "React bindings for RIDB.",
-  "version": "1.4.22",
+  "version": "1.4.23",
   "author": "elribonazo@gmail.com",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -31,15 +31,15 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
-    "@trust0/ridb": "1.5.43",
-    "@trust0/ridb-build": "0.0.22",
+    "@trust0/ridb": "1.5.44",
+    "@trust0/ridb-build": "0.0.23",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "jsdom": "^25.0.1",
     "typescript": "^5.7.2"
   },
   "peerDependencies": {
-    "@trust0/ridb": "1.5.43",
+    "@trust0/ridb": "1.5.44",
     "react": "^18",
     "react-dom": "^18"
   }
