@@ -28,13 +28,14 @@ jobs:
         with:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org/'
-          scope: '@trust0'
-          cache: 'npm'
 
       - name: Enable Corepack and set up Yarn
         run: |
           corepack enable
           yarn --version
+
+      - name: Upgrade npm
+        run: npm install -g npm@^11.5.1
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
