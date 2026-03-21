@@ -8,21 +8,26 @@
   "release": {
     "releaseTagPattern": "{projectName}@{version}",
     "projectsRelationship": "independent",
+    "versionPlans": false,
     "version": {
       "preVersionCommand": "sh release.sh",
       "conventionalCommits": true,
-      "fallbackCurrentVersionResolver": "disk",
+      "preserveLocalDependencyProtocols": true,
+      "fallbackCurrentVersionResolver": "disk"
+    },
+    "changelog": {
+      "workspaceChangelog": {
+        "createRelease": "github"
+      },
       "git": {
         "commit": true,
         "commitMessage": "chore(release): {version} [skip ci]"
-      }
-    },
-    "changelog": {
+      },
       "projectChangelogs": {
         "createRelease": "github"
       },
       "github": {
-        "repo": "trust0/ridb"
+        "repo": "trust0-project/RIDB"
       }
     },
     "projects": [
