@@ -37,7 +37,7 @@ tests.
 
 > **args**(`args`): `void`
 
-Defined in: ridb\_core.d.ts:849
+Defined in: ridb\_core.d.ts:863
 
 Inform this context about runtime arguments passed to the test
 harness.
@@ -70,7 +70,7 @@ Defined in: ridb\_core.d.ts:835
 
 > **run**(`tests`): `Promise`\<`any`\>
 
-Defined in: ridb\_core.d.ts:863
+Defined in: ridb\_core.d.ts:857
 
 Executes a list of tests, returning a promise representing their
 eventual completion.

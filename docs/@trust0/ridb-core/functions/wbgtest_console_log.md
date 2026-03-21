@@ -8,7 +8,7 @@
 
 > **\_\_wbgtest\_console\_log**(`args`): `void`
 
-Defined in: ridb\_core.d.ts:19
+Defined in: ridb\_core.d.ts:34
 
 Handler for `console.log` invocations.
 

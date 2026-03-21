@@ -8,7 +8,7 @@
 
 > **is\_debug\_mode**(): `boolean`
 
-Defined in: ridb\_core.d.ts:9
+Defined in: ridb\_core.d.ts:6
 
 ## Returns
 

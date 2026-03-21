@@ -1,3 +1,13 @@
+## 0.0.22 (2026-03-21)
+
+### 🩹 Fixes
+
+- loading database from wasmInternal not directy import ([b3eb7fd](https://github.com/trust0-project/RIDB/commit/b3eb7fd))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 0.0.21 (2025-09-06)
 
 ### 🩹 Fixes

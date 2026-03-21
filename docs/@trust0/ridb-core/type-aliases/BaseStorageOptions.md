@@ -8,7 +8,7 @@
 
 > **BaseStorageOptions** = `object`
 
-Defined in: ridb\_core.d.ts:236
+Defined in: ridb\_core.d.ts:262
 
 ## Index Signature
 

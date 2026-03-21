@@ -8,7 +8,7 @@
 
 > **StartOptions**\<`T`\> = `object`
 
-Defined in: [types.ts:41](https://github.com/trust0-project/RIDB/blob/03bccbe2ed2bfcff056ffa0dc21ae7b9c17755fa/packages/ridb/src/types.ts#L41)
+Defined in: [types.ts:41](https://github.com/trust0-project/RIDB/blob/4a27d45d619962a20d5491afaf26d6ea72c89076/packages/ridb/src/types.ts#L41)
 
 Options for starting a database instance.
 
@@ -32,7 +32,7 @@ Additional custom options
 
 > `optional` **dbName**: `string`
 
-Defined in: [types.ts:55](https://github.com/trust0-project/RIDB/blob/03bccbe2ed2bfcff056ffa0dc21ae7b9c17755fa/packages/ridb/src/types.ts#L55)
+Defined in: [types.ts:55](https://github.com/trust0-project/RIDB/blob/4a27d45d619962a20d5491afaf26d6ea72c89076/packages/ridb/src/types.ts#L55)
 
 Database name to use (overrides the name provided during initialization)
 
@@ -42,7 +42,7 @@ Database name to use (overrides the name provided during initialization)
 
 > `optional` **password**: `string`
 
-Defined in: [types.ts:50](https://github.com/trust0-project/RIDB/blob/03bccbe2ed2bfcff056ffa0dc21ae7b9c17755fa/packages/ridb/src/types.ts#L50)
+Defined in: [types.ts:50](https://github.com/trust0-project/RIDB/blob/4a27d45d619962a20d5491afaf26d6ea72c89076/packages/ridb/src/types.ts#L50)
 
 Optional password for encrypting the database
 
@@ -52,6 +52,6 @@ Optional password for encrypting the database
 
 > `optional` **storageType**: [`StorageClass`](StorageClass.md)\<`T`\> \| [`StorageType`](../enumerations/StorageType.md)
 
-Defined in: [types.ts:45](https://github.com/trust0-project/RIDB/blob/03bccbe2ed2bfcff056ffa0dc21ae7b9c17755fa/packages/ridb/src/types.ts#L45)
+Defined in: [types.ts:45](https://github.com/trust0-project/RIDB/blob/4a27d45d619962a20d5491afaf26d6ea72c89076/packages/ridb/src/types.ts#L45)
 
 The storage type or custom storage class implementation to use

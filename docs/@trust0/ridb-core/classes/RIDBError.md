@@ -14,7 +14,7 @@ Defined in: ridb\_core.d.ts:761
 
 > **new RIDBError**(`err_type`, `message`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:776
+Defined in: ridb\_core.d.ts:794
 
 #### Parameters
 
@@ -104,7 +104,7 @@ Return stringified version of self.
 
 > `static` **authentication**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:799
+Defined in: ridb\_core.d.ts:788
 
 #### Parameters
 
@@ -126,7 +126,7 @@ Defined in: ridb\_core.d.ts:799
 
 > `static` **error**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:787
+Defined in: ridb\_core.d.ts:806
 
 #### Parameters
 
@@ -148,7 +148,7 @@ Defined in: ridb\_core.d.ts:787
 
 > `static` **from**(`err`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:781
+Defined in: ridb\_core.d.ts:817
 
 #### Parameters
 
@@ -166,7 +166,7 @@ Defined in: ridb\_core.d.ts:781
 
 > `static` **hook**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:817
+Defined in: ridb\_core.d.ts:800
 
 #### Parameters
 
@@ -188,7 +188,7 @@ Defined in: ridb\_core.d.ts:817
 
 > `static` **query**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:793
+Defined in: ridb\_core.d.ts:812
 
 #### Parameters
 
@@ -210,7 +210,7 @@ Defined in: ridb\_core.d.ts:793
 
 > `static` **serialisation**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:805
+Defined in: ridb\_core.d.ts:782
 
 #### Parameters
 
@@ -232,7 +232,7 @@ Defined in: ridb\_core.d.ts:805
 
 > `static` **validation**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:811
+Defined in: ridb\_core.d.ts:776
 
 #### Parameters
 
