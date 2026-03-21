@@ -39,10 +39,6 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Configure npm authentication
-        run: |
-          echo "@trust0:registry=https://registry.npmjs.org/" >> ./.npmrc
-
       - name: Install WASM
         env:
           NPM_CONFIG_PROVENANCE: true

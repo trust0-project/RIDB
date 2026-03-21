@@ -45,10 +45,6 @@ jobs:
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      - name: Configure npm authentication
-        run: |
-          echo "@trust0:registry=https://registry.npmjs.org/" >> ./.npmrc
-
       - uses: crazy-max/ghaction-import-gpg@v5
         id: import_gpg
         with:
