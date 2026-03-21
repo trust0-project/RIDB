@@ -13,16 +13,14 @@
       "preVersionCommand": "sh release.sh",
       "conventionalCommits": true,
       "preserveLocalDependencyProtocols": true,
-      "fallbackCurrentVersionResolver": "disk"
-    },
-    "changelog": {
-      "workspaceChangelog": {
-        "createRelease": "github"
-      },
+      "fallbackCurrentVersionResolver": "disk",
       "git": {
         "commit": true,
-        "commitMessage": "chore(release): {version} [skip ci]"
-      },
+        "commitMessage": "chore(release): {version} [skip ci]",
+        "tag": true
+      }
+    },
+    "changelog": {
       "projectChangelogs": {
         "createRelease": "github"
       },
