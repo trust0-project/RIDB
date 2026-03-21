@@ -1,3 +1,9 @@
+## 1.5.43 (2026-03-21)
+
+### 🧱 Updated Dependencies
+
+- Updated @trust0/ridb-core to 1.7.38
+
 ## 1.5.42 (2026-03-21)
 
 ### 🩹 Fixes

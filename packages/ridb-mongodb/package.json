@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-mongodb",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "MongoDB storage for @trust0/ridb",
   "main": "./build/index.js",
   "module": "./build/index.mjs",
@@ -30,7 +30,7 @@
     "types:default": "npx tsc"
   },
   "devDependencies": {
-    "@trust0/ridb": "1.5.42",
+    "@trust0/ridb": "1.5.43",
     "@trust0/ridb-build": "0.0.22",
     "jsdom": "^24.1.3",
     "mongodb": "^6.0.0",
@@ -39,6 +39,6 @@
     "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "@trust0/ridb": "1.5.42"
+    "@trust0/ridb": "1.5.43"
   }
 }

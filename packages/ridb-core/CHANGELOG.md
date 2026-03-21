@@ -1,3 +1,13 @@
+## 1.7.38 (2026-03-21)
+
+### 🩹 Fixes
+
+- core ([b560c7a](https://github.com/trust0-project/RIDB/commit/b560c7a))
+
+### ❤️ Thank You
+
+- Javier Ribó
+
 ## 1.7.37 (2026-03-21)
 
 ### 🩹 Fixes
