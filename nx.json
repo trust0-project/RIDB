@@ -7,15 +7,15 @@
   },
   "release": {
     "releaseTagPattern": "{projectName}@{version}",
-    "git": {
-      "commit": true,
-      "commitMessage": "chore(release): {version} [skip ci]"
-    },
     "projectsRelationship": "independent",
     "version": {
       "preVersionCommand": "sh release.sh",
       "conventionalCommits": true,
-      "fallbackCurrentVersionResolver": "disk"
+      "fallbackCurrentVersionResolver": "disk",
+      "git": {
+        "commit": true,
+        "commitMessage": "chore(release): {version} [skip ci]"
+      }
     },
     "changelog": {
       "projectChangelogs": {
