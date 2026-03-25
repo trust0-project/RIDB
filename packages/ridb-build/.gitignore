@@ -4,6 +4,8 @@ esm/*
 umd/*
 .idea
 coverage
+./build
+build/*
 build
 node_modules
 .nx

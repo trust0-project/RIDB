@@ -26,6 +26,26 @@ export const wasmPlugin = {
   },
 };
 
+/**
+ * Strips `new URL("*_bg.wasm", import.meta.url)` from wasm-bindgen JS output.
+ * esbuild can't tree-shake the async default export that contains this reference.
+ */
+export const wasmUrlStripPlugin = {
+  name: "strip-wasm-url",
+  setup(build: any) {
+    build.onLoad({ filter: /\.js$/ }, async (args: any) => {
+      if (!args.path.includes("pkg") && !args.path.includes("generated")) return undefined;
+      const source = await fs.promises.readFile(args.path, "utf-8");
+      if (!source.includes("_bg.wasm")) return undefined;
+      const stripped = source.replace(
+        /new URL\(["'][^"']*_bg\.wasm["'],\s*import\.meta\.url\)/g,
+        "undefined"
+      );
+      return { contents: stripped, loader: "js" };
+    });
+  },
+};
+
 export const plugins = [
   NodeResolvePlugin({
     extensions: [".ts", ".js", ".wasm"],
@@ -58,7 +78,7 @@ export default function createConfig({
     target: "esnext",
     minify: false,
     clean: false,
-    esbuildPlugins: [wasmPlugin, ...plugins],
+    esbuildPlugins: [wasmPlugin, wasmUrlStripPlugin, ...plugins],
     banner,
     esbuildOptions: (options, _context) => {
       options.platform = platform || "neutral";
