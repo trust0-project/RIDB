@@ -4,7 +4,7 @@
 
 [Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / CreateStorage
 
-# Type Alias: CreateStorage()
+# Type Alias: CreateStorage
 
 > **CreateStorage** = \<`T`\>(`records`) => `Promise`\<[`BaseStorage`](../classes/BaseStorage.md)\<`T`\>\>
 

@@ -8,15 +8,15 @@
 
 > **DBOptions**\<`T`\> = `object` & [`MigrationsParameter`](https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/type-aliases/MigrationsParameter.md)\<`T`\>
 
-Defined in: [types.ts:68](https://github.com/trust0-project/RIDB/blob/031c9d678868e499e20c20769137265f9674ddc5/packages/ridb/src/types.ts#L68)
+Defined in: [types.ts:68](https://github.com/trust0-project/RIDB/blob/e01355a214f967c78df468ba4ce68fb1112401f4/packages/ridb/src/types.ts#L68)
 
 Options for initializing the RIDB database.
 
-## Type declaration
+## Type Declaration
 
 ### ~~dbName?~~
 
-> `optional` **dbName**: `string`
+> `optional` **dbName?**: `string`
 
 Database name
 
@@ -26,7 +26,7 @@ Use the dbName option in the start method instead.
 
 ### plugins?
 
-> `optional` **plugins**: *typeof* `BasePlugin`[]
+> `optional` **plugins?**: *typeof* `BasePlugin`[]
 
 Optional plugins to extend database functionality
 
@@ -38,7 +38,7 @@ Schema definitions for all collections in the database
 
 ### worker?
 
-> `optional` **worker**: `boolean`
+> `optional` **worker?**: `boolean`
 
 Whether to use a SharedWorker for database operations
 

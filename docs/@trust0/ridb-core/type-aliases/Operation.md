@@ -54,7 +54,7 @@ The type of operation to be performed (e.g., CREATE, UPDATE, DELETE).
 
 ### primaryKey?
 
-> `optional` **primaryKey**: `string`
+> `optional` **primaryKey?**: `string`
 
 Defined in: ridb\_core.d.ts:697
 
@@ -62,6 +62,6 @@ Defined in: ridb\_core.d.ts:697
 
 ### primaryKeyField?
 
-> `optional` **primaryKeyField**: `string`
+> `optional` **primaryKeyField?**: `string`
 
 Defined in: ridb\_core.d.ts:696

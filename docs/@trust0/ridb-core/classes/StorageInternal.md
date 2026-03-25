@@ -4,7 +4,7 @@
 
 [Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / StorageInternal
 
-# Class: `abstract` StorageInternal\<Schemas\>
+# Abstract Class: StorageInternal\<Schemas\>
 
 Defined in: ridb\_core.d.ts:710
 
@@ -108,7 +108,7 @@ keyof `Schemas`
 
 ### findDocumentById()
 
-> `abstract` **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+> `abstract` **findDocumentById**(`collectionName`, `id`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\> \| `null`\>
 
 Defined in: ridb\_core.d.ts:722
 
@@ -124,7 +124,7 @@ keyof `Schemas`
 
 #### Returns
 
-`Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+`Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\> \| `null`\>
 
 ***
 

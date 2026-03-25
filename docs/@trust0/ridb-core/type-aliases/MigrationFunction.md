@@ -4,7 +4,7 @@
 
 [Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / MigrationFunction
 
-# Type Alias: MigrationFunction()\<T\>
+# Type Alias: MigrationFunction\<T\>
 
 > **MigrationFunction**\<`T`\> = (`doc`) => [`Doc`](Doc.md)\<`T`\>
 

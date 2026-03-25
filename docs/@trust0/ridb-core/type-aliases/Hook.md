@@ -4,7 +4,7 @@
 
 [Documentation](../../../README.md) / [@trust0/ridb-core](../README.md) / Hook
 
-# Type Alias: Hook()
+# Type Alias: Hook
 
 > **Hook** = (`schema`, `migration`, `doc`) => [`Doc`](Doc.md)\<[`SchemaType`](SchemaType.md)\>
 

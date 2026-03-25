@@ -14,7 +14,7 @@ Defined in: ridb\_core.d.ts:521
 
 ### docCreateHook?
 
-> `optional` **docCreateHook**: [`Hook`](Hook.md)
+> `optional` **docCreateHook?**: [`Hook`](Hook.md)
 
 Defined in: ridb\_core.d.ts:522
 
@@ -22,6 +22,6 @@ Defined in: ridb\_core.d.ts:522
 
 ### docRecoverHook?
 
-> `optional` **docRecoverHook**: [`Hook`](Hook.md)
+> `optional` **docRecoverHook?**: [`Hook`](Hook.md)
 
 Defined in: ridb\_core.d.ts:523

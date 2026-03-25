@@ -17,7 +17,7 @@ for everything else, calls `WebAssembly.instantiate` directly.
 
 ### module\_or\_path?
 
-[`InitInput`](../type-aliases/InitInput.md) | `Promise`\<[`InitInput`](../type-aliases/InitInput.md)\>
+[`InitInput`](../type-aliases/InitInput.md) \| `Promise`\<[`InitInput`](../type-aliases/InitInput.md)\>
 
 ## Returns
 

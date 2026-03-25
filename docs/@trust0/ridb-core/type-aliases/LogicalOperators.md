@@ -20,7 +20,7 @@ Defined in: ridb\_core.d.ts:92
 
 ### $and?
 
-> `optional` **$and**: `Partial`\<[`QueryType`](QueryType.md)\<`T`\>\>[]
+> `optional` **$and?**: `Partial`\<[`QueryType`](QueryType.md)\<`T`\>\>[]
 
 Defined in: ridb\_core.d.ts:93
 
@@ -28,6 +28,6 @@ Defined in: ridb\_core.d.ts:93
 
 ### $or?
 
-> `optional` **$or**: `Partial`\<[`QueryType`](QueryType.md)\<`T`\>\>[]
+> `optional` **$or?**: `Partial`\<[`QueryType`](QueryType.md)\<`T`\>\>[]
 
 Defined in: ridb\_core.d.ts:94

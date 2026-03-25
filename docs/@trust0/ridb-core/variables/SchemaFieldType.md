@@ -10,7 +10,7 @@
 
 Defined in: ridb\_core.d.ts:112
 
-## Type declaration
+## Type Declaration
 
 ### array
 

@@ -196,7 +196,7 @@ keyof `T`
 
 ### findDocumentById()
 
-> **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
+> **findDocumentById**(`collectionName`, `id`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\> \| `null`\>
 
 Defined in: ridb\_core.d.ts:288
 
@@ -212,7 +212,7 @@ keyof `T`
 
 #### Returns
 
-`Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
+`Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\> \| `null`\>
 
 #### Inherited from
 
@@ -236,7 +236,7 @@ Frees the resources used by the in-memory storage.
 
 ### getOption()
 
-> **getOption**(`name`): `undefined` \| `string` \| `number` \| `boolean`
+> **getOption**(`name`): `string` \| `number` \| `boolean` \| `undefined`
 
 Defined in: ridb\_core.d.ts:291
 
@@ -248,7 +248,7 @@ Defined in: ridb\_core.d.ts:291
 
 #### Returns
 
-`undefined` \| `string` \| `number` \| `boolean`
+`string` \| `number` \| `boolean` \| `undefined`
 
 #### Inherited from
 

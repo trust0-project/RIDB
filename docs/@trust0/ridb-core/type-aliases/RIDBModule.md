@@ -14,7 +14,7 @@ Represents a storage module with a method for creating storage.
 
 ## Properties
 
-### apply()
+### apply
 
 > **apply**: (`plugins`) => [`BasePlugin`](../classes/BasePlugin.md)[]
 

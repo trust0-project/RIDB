@@ -12,19 +12,19 @@ Defined in: ridb\_core.d.ts:570
 
 Doc is a utility type that transforms a schema type into a document type where each property is mapped to its extracted type.
 
-## Type declaration
+## Type Declaration
 
 ### \_\_version?
 
-> `optional` **\_\_version**: `number`
+> `optional` **\_\_version?**: `number`
 
 ### createdAt?
 
-> `optional` **createdAt**: `number`
+> `optional` **createdAt?**: `number`
 
 ### updatedAt?
 
-> `optional` **updatedAt**: `number`
+> `optional` **updatedAt?**: `number`
 
 ## Type Parameters
 

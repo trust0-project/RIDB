@@ -14,7 +14,7 @@ Defined in: ridb\_core.d.ts:597
 
 ### limit?
 
-> `optional` **limit**: `number`
+> `optional` **limit?**: `number`
 
 Defined in: ridb\_core.d.ts:598
 
@@ -22,6 +22,6 @@ Defined in: ridb\_core.d.ts:598
 
 ### offset?
 
-> `optional` **offset**: `number`
+> `optional` **offset?**: `number`
 
 Defined in: ridb\_core.d.ts:599

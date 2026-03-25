@@ -13,19 +13,19 @@ Defined in: ridb\_core.d.ts:585
 CreateDoc is a utility type for document creation that properly handles required vs optional fields
 during the creation process. Fields with default values or required: false become optional.
 
-## Type declaration
+## Type Declaration
 
 ### \_\_version?
 
-> `optional` **\_\_version**: `number`
+> `optional` **\_\_version?**: `number`
 
 ### createdAt?
 
-> `optional` **createdAt**: `number`
+> `optional` **createdAt?**: `number`
 
 ### updatedAt?
 
-> `optional` **updatedAt**: `number`
+> `optional` **updatedAt?**: `number`
 
 ## Type Parameters
 

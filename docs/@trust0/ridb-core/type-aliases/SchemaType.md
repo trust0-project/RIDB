@@ -16,7 +16,7 @@ Represents the type definition for a schema.
 
 ### encrypted?
 
-> `optional` **encrypted**: `string`[]
+> `optional` **encrypted?**: `string`[]
 
 Defined in: ridb\_core.d.ts:160
 
@@ -24,7 +24,7 @@ Defined in: ridb\_core.d.ts:160
 
 ### indexes?
 
-> `optional` **indexes**: `string`[]
+> `optional` **indexes?**: `string`[]
 
 Defined in: ridb\_core.d.ts:159
 

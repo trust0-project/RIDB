@@ -43,7 +43,7 @@ The schema type.
 
 ### encrypted?
 
-> `readonly` `optional` **encrypted**: `Extract`\<keyof `T`, `string`\>[]
+> `readonly` `optional` **encrypted?**: `Extract`\<keyof `T`, `string`\>[]
 
 Defined in: ridb\_core.d.ts:227
 
@@ -53,7 +53,7 @@ An optional array of encrypted fields.
 
 ### indexes?
 
-> `readonly` `optional` **indexes**: `Extract`\<keyof `T`, `string`\>[]
+> `readonly` `optional` **indexes?**: `Extract`\<keyof `T`, `string`\>[]
 
 Defined in: ridb\_core.d.ts:222
 

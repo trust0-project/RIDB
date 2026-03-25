@@ -154,7 +154,7 @@ The schemas to use for the collections.
 
 ##### migrations
 
-[`MigrationPathsForSchemas`](../type-aliases/MigrationPathsForSchemas.md)\<`TS`\> | [`MigrationPathsForSchema`](../type-aliases/MigrationPathsForSchema.md)\<`TS`\[`string`\]\>
+[`MigrationPathsForSchemas`](../type-aliases/MigrationPathsForSchemas.md)\<`TS`\> \| [`MigrationPathsForSchema`](../type-aliases/MigrationPathsForSchema.md)\<`TS`\[`string`\]\>
 
 ##### plugins
 

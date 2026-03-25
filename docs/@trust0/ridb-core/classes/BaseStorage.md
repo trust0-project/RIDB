@@ -177,7 +177,7 @@ keyof `Schemas`
 
 ### findDocumentById()
 
-> **findDocumentById**(`collectionName`, `id`): `Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+> **findDocumentById**(`collectionName`, `id`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\> \| `null`\>
 
 Defined in: ridb\_core.d.ts:288
 
@@ -193,7 +193,7 @@ keyof `Schemas`
 
 #### Returns
 
-`Promise`\<`null` \| [`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\>\>
+`Promise`\<[`Doc`](../type-aliases/Doc.md)\<`Schemas`\[keyof `Schemas`\]\> \| `null`\>
 
 #### Overrides
 
@@ -203,7 +203,7 @@ keyof `Schemas`
 
 ### getOption()
 
-> **getOption**(`name`): `undefined` \| `string` \| `number` \| `boolean`
+> **getOption**(`name`): `string` \| `number` \| `boolean` \| `undefined`
 
 Defined in: ridb\_core.d.ts:291
 
@@ -215,7 +215,7 @@ Defined in: ridb\_core.d.ts:291
 
 #### Returns
 
-`undefined` \| `string` \| `number` \| `boolean`
+`string` \| `number` \| `boolean` \| `undefined`
 
 ***
 

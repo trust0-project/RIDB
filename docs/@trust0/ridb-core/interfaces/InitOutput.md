@@ -10,7 +10,7 @@ Defined in: ridb\_core.d.ts:868
 
 ## Properties
 
-### \_\_wbg\_baseplugin\_free()
+### \_\_wbg\_baseplugin\_free
 
 > `readonly` **\_\_wbg\_baseplugin\_free**: (`a`) => `void`
 
@@ -28,7 +28,7 @@ Defined in: ridb\_core.d.ts:955
 
 ***
 
-### \_\_wbg\_basestorage\_free()
+### \_\_wbg\_basestorage\_free
 
 > `readonly` **\_\_wbg\_basestorage\_free**: (`a`) => `void`
 
@@ -46,7 +46,7 @@ Defined in: ridb\_core.d.ts:928
 
 ***
 
-### \_\_wbg\_collection\_free()
+### \_\_wbg\_collection\_free
 
 > `readonly` **\_\_wbg\_collection\_free**: (`a`) => `void`
 
@@ -64,7 +64,7 @@ Defined in: ridb\_core.d.ts:962
 
 ***
 
-### \_\_wbg\_corestorage\_free()
+### \_\_wbg\_corestorage\_free
 
 > `readonly` **\_\_wbg\_corestorage\_free**: (`a`) => `void`
 
@@ -82,7 +82,7 @@ Defined in: ridb\_core.d.ts:927
 
 ***
 
-### \_\_wbg\_database\_free()
+### \_\_wbg\_database\_free
 
 > `readonly` **\_\_wbg\_database\_free**: (`a`) => `void`
 
@@ -100,7 +100,7 @@ Defined in: ridb\_core.d.ts:929
 
 ***
 
-### \_\_wbg\_indexdb\_free()
+### \_\_wbg\_indexdb\_free
 
 > `readonly` **\_\_wbg\_indexdb\_free**: (`a`) => `void`
 
@@ -118,7 +118,7 @@ Defined in: ridb\_core.d.ts:999
 
 ***
 
-### \_\_wbg\_inmemory\_free()
+### \_\_wbg\_inmemory\_free
 
 > `readonly` **\_\_wbg\_inmemory\_free**: (`a`) => `void`
 
@@ -136,7 +136,7 @@ Defined in: ridb\_core.d.ts:963
 
 ***
 
-### \_\_wbg\_operation\_free()
+### \_\_wbg\_operation\_free
 
 > `readonly` **\_\_wbg\_operation\_free**: (`a`) => `void`
 
@@ -154,7 +154,7 @@ Defined in: ridb\_core.d.ts:964
 
 ***
 
-### \_\_wbg\_property\_free()
+### \_\_wbg\_property\_free
 
 > `readonly` **\_\_wbg\_property\_free**: (`a`) => `void`
 
@@ -172,7 +172,7 @@ Defined in: ridb\_core.d.ts:943
 
 ***
 
-### \_\_wbg\_query\_free()
+### \_\_wbg\_query\_free
 
 > `readonly` **\_\_wbg\_query\_free**: (`a`) => `void`
 
@@ -190,7 +190,7 @@ Defined in: ridb\_core.d.ts:870
 
 ***
 
-### \_\_wbg\_queryoptions\_free()
+### \_\_wbg\_queryoptions\_free
 
 > `readonly` **\_\_wbg\_queryoptions\_free**: (`a`) => `void`
 
@@ -208,7 +208,7 @@ Defined in: ridb\_core.d.ts:907
 
 ***
 
-### \_\_wbg\_ridberror\_free()
+### \_\_wbg\_ridberror\_free
 
 > `readonly` **\_\_wbg\_ridberror\_free**: (`a`) => `void`
 
@@ -226,7 +226,7 @@ Defined in: ridb\_core.d.ts:965
 
 ***
 
-### \_\_wbg\_schema\_free()
+### \_\_wbg\_schema\_free
 
 > `readonly` **\_\_wbg\_schema\_free**: (`a`) => `void`
 
@@ -244,7 +244,7 @@ Defined in: ridb\_core.d.ts:908
 
 ***
 
-### \_\_wbg\_wasmbindgentestcontext\_free()
+### \_\_wbg\_wasmbindgentestcontext\_free
 
 > `readonly` **\_\_wbg\_wasmbindgentestcontext\_free**: (`a`) => `void`
 
@@ -262,7 +262,7 @@ Defined in: ridb\_core.d.ts:1010
 
 ***
 
-### \_\_wbgt\_test\_get\_properties\_array\_values\_10()
+### \_\_wbgt\_test\_get\_properties\_array\_values\_10
 
 > `readonly` **\_\_wbgt\_test\_get\_properties\_array\_values\_10**: (`a`) => `void`
 
@@ -280,7 +280,7 @@ Defined in: ridb\_core.d.ts:871
 
 ***
 
-### \_\_wbgt\_test\_get\_properties\_deeply\_nested\_12()
+### \_\_wbgt\_test\_get\_properties\_deeply\_nested\_12
 
 > `readonly` **\_\_wbgt\_test\_get\_properties\_deeply\_nested\_12**: (`a`) => `void`
 
@@ -298,7 +298,7 @@ Defined in: ridb\_core.d.ts:872
 
 ***
 
-### \_\_wbgt\_test\_get\_properties\_empty\_query\_11()
+### \_\_wbgt\_test\_get\_properties\_empty\_query\_11
 
 > `readonly` **\_\_wbgt\_test\_get\_properties\_empty\_query\_11**: (`a`) => `void`
 
@@ -316,7 +316,7 @@ Defined in: ridb\_core.d.ts:873
 
 ***
 
-### \_\_wbgt\_test\_get\_properties\_nested\_operators\_9()
+### \_\_wbgt\_test\_get\_properties\_nested\_operators\_9
 
 > `readonly` **\_\_wbgt\_test\_get\_properties\_nested\_operators\_9**: (`a`) => `void`
 
@@ -334,7 +334,7 @@ Defined in: ridb\_core.d.ts:874
 
 ***
 
-### \_\_wbgt\_test\_get\_properties\_simple\_fields\_6()
+### \_\_wbgt\_test\_get\_properties\_simple\_fields\_6
 
 > `readonly` **\_\_wbgt\_test\_get\_properties\_simple\_fields\_6**: (`a`) => `void`
 
@@ -352,7 +352,7 @@ Defined in: ridb\_core.d.ts:875
 
 ***
 
-### \_\_wbgt\_test\_get\_properties\_with\_array\_at\_top\_level\_14()
+### \_\_wbgt\_test\_get\_properties\_with\_array\_at\_top\_level\_14
 
 > `readonly` **\_\_wbgt\_test\_get\_properties\_with\_array\_at\_top\_level\_14**: (`a`) => `void`
 
@@ -370,7 +370,7 @@ Defined in: ridb\_core.d.ts:876
 
 ***
 
-### \_\_wbgt\_test\_get\_properties\_with\_logical\_operators\_8()
+### \_\_wbgt\_test\_get\_properties\_with\_logical\_operators\_8
 
 > `readonly` **\_\_wbgt\_test\_get\_properties\_with\_logical\_operators\_8**: (`a`) => `void`
 
@@ -388,7 +388,7 @@ Defined in: ridb\_core.d.ts:877
 
 ***
 
-### \_\_wbgt\_test\_get\_properties\_with\_multiple\_same\_props\_13()
+### \_\_wbgt\_test\_get\_properties\_with\_multiple\_same\_props\_13
 
 > `readonly` **\_\_wbgt\_test\_get\_properties\_with\_multiple\_same\_props\_13**: (`a`) => `void`
 
@@ -406,7 +406,7 @@ Defined in: ridb\_core.d.ts:878
 
 ***
 
-### \_\_wbgt\_test\_get\_properties\_with\_operators\_7()
+### \_\_wbgt\_test\_get\_properties\_with\_operators\_7
 
 > `readonly` **\_\_wbgt\_test\_get\_properties\_with\_operators\_7**: (`a`) => `void`
 
@@ -424,7 +424,7 @@ Defined in: ridb\_core.d.ts:879
 
 ***
 
-### \_\_wbgt\_test\_invalid\_property\_2()
+### \_\_wbgt\_test\_invalid\_property\_2
 
 > `readonly` **\_\_wbgt\_test\_invalid\_property\_2**: (`a`) => `void`
 
@@ -442,7 +442,7 @@ Defined in: ridb\_core.d.ts:944
 
 ***
 
-### \_\_wbgt\_test\_invalid\_schema\_5()
+### \_\_wbgt\_test\_invalid\_schema\_5
 
 > `readonly` **\_\_wbgt\_test\_invalid\_schema\_5**: (`a`) => `void`
 
@@ -460,7 +460,7 @@ Defined in: ridb\_core.d.ts:909
 
 ***
 
-### \_\_wbgt\_test\_property\_creation\_0()
+### \_\_wbgt\_test\_property\_creation\_0
 
 > `readonly` **\_\_wbgt\_test\_property\_creation\_0**: (`a`) => `void`
 
@@ -478,7 +478,7 @@ Defined in: ridb\_core.d.ts:945
 
 ***
 
-### \_\_wbgt\_test\_property\_validation\_1()
+### \_\_wbgt\_test\_property\_validation\_1
 
 > `readonly` **\_\_wbgt\_test\_property\_validation\_1**: (`a`) => `void`
 
@@ -496,7 +496,7 @@ Defined in: ridb\_core.d.ts:946
 
 ***
 
-### \_\_wbgt\_test\_query\_get\_query\_normalization\_complex\_mixed\_22()
+### \_\_wbgt\_test\_query\_get\_query\_normalization\_complex\_mixed\_22
 
 > `readonly` **\_\_wbgt\_test\_query\_get\_query\_normalization\_complex\_mixed\_22**: (`a`) => `void`
 
@@ -514,7 +514,7 @@ Defined in: ridb\_core.d.ts:880
 
 ***
 
-### \_\_wbgt\_test\_query\_get\_query\_normalization\_nested\_logical\_operators\_20()
+### \_\_wbgt\_test\_query\_get\_query\_normalization\_nested\_logical\_operators\_20
 
 > `readonly` **\_\_wbgt\_test\_query\_get\_query\_normalization\_nested\_logical\_operators\_20**: (`a`) => `void`
 
@@ -532,7 +532,7 @@ Defined in: ridb\_core.d.ts:881
 
 ***
 
-### \_\_wbgt\_test\_query\_get\_query\_normalization\_only\_logical\_operator\_21()
+### \_\_wbgt\_test\_query\_get\_query\_normalization\_only\_logical\_operator\_21
 
 > `readonly` **\_\_wbgt\_test\_query\_get\_query\_normalization\_only\_logical\_operator\_21**: (`a`) => `void`
 
@@ -550,7 +550,7 @@ Defined in: ridb\_core.d.ts:882
 
 ***
 
-### \_\_wbgt\_test\_query\_get\_query\_normalization\_simple\_attributes\_18()
+### \_\_wbgt\_test\_query\_get\_query\_normalization\_simple\_attributes\_18
 
 > `readonly` **\_\_wbgt\_test\_query\_get\_query\_normalization\_simple\_attributes\_18**: (`a`) => `void`
 
@@ -568,7 +568,7 @@ Defined in: ridb\_core.d.ts:883
 
 ***
 
-### \_\_wbgt\_test\_query\_get\_query\_normalization\_with\_logical\_operator\_19()
+### \_\_wbgt\_test\_query\_get\_query\_normalization\_with\_logical\_operator\_19
 
 > `readonly` **\_\_wbgt\_test\_query\_get\_query\_normalization\_with\_logical\_operator\_19**: (`a`) => `void`
 
@@ -586,7 +586,7 @@ Defined in: ridb\_core.d.ts:884
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_age\_query\_24()
+### \_\_wbgt\_test\_query\_parse\_age\_query\_24
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_age\_query\_24**: (`a`) => `void`
 
@@ -604,7 +604,7 @@ Defined in: ridb\_core.d.ts:885
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_empty\_logical\_operators\_28()
+### \_\_wbgt\_test\_query\_parse\_empty\_logical\_operators\_28
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_empty\_logical\_operators\_28**: (`a`) => `void`
 
@@ -622,7 +622,7 @@ Defined in: ridb\_core.d.ts:886
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_empty\_query\_23()
+### \_\_wbgt\_test\_query\_parse\_empty\_query\_23
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_empty\_query\_23**: (`a`) => `void`
 
@@ -640,7 +640,7 @@ Defined in: ridb\_core.d.ts:887
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_eq\_operator\_31()
+### \_\_wbgt\_test\_query\_parse\_eq\_operator\_31
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_eq\_operator\_31**: (`a`) => `void`
 
@@ -658,7 +658,7 @@ Defined in: ridb\_core.d.ts:888
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_eq\_operator\_wrong\_type\_32()
+### \_\_wbgt\_test\_query\_parse\_eq\_operator\_wrong\_type\_32
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_eq\_operator\_wrong\_type\_32**: (`a`) => `void`
 
@@ -676,7 +676,7 @@ Defined in: ridb\_core.d.ts:889
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_in\_operator\_16()
+### \_\_wbgt\_test\_query\_parse\_in\_operator\_16
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_in\_operator\_16**: (`a`) => `void`
 
@@ -694,7 +694,7 @@ Defined in: ridb\_core.d.ts:890
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_in\_operator\_wrong\_type\_17()
+### \_\_wbgt\_test\_query\_parse\_in\_operator\_wrong\_type\_17
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_in\_operator\_wrong\_type\_17**: (`a`) => `void`
 
@@ -712,7 +712,7 @@ Defined in: ridb\_core.d.ts:891
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_invalid\_in\_operator\_27()
+### \_\_wbgt\_test\_query\_parse\_invalid\_in\_operator\_27
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_invalid\_in\_operator\_27**: (`a`) => `void`
 
@@ -730,7 +730,7 @@ Defined in: ridb\_core.d.ts:892
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_multiple\_operators\_26()
+### \_\_wbgt\_test\_query\_parse\_multiple\_operators\_26
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_multiple\_operators\_26**: (`a`) => `void`
 
@@ -748,7 +748,7 @@ Defined in: ridb\_core.d.ts:893
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_ne\_operator\_33()
+### \_\_wbgt\_test\_query\_parse\_ne\_operator\_33
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_ne\_operator\_33**: (`a`) => `void`
 
@@ -766,7 +766,7 @@ Defined in: ridb\_core.d.ts:894
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_ne\_operator\_wrong\_type\_34()
+### \_\_wbgt\_test\_query\_parse\_ne\_operator\_wrong\_type\_34
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_ne\_operator\_wrong\_type\_34**: (`a`) => `void`
 
@@ -784,7 +784,7 @@ Defined in: ridb\_core.d.ts:895
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_nin\_operator\_29()
+### \_\_wbgt\_test\_query\_parse\_nin\_operator\_29
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_nin\_operator\_29**: (`a`) => `void`
 
@@ -802,7 +802,7 @@ Defined in: ridb\_core.d.ts:896
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_nin\_operator\_wrong\_type\_30()
+### \_\_wbgt\_test\_query\_parse\_nin\_operator\_wrong\_type\_30
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_nin\_operator\_wrong\_type\_30**: (`a`) => `void`
 
@@ -820,7 +820,7 @@ Defined in: ridb\_core.d.ts:897
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_non\_object\_query\_25()
+### \_\_wbgt\_test\_query\_parse\_non\_object\_query\_25
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_non\_object\_query\_25**: (`a`) => `void`
 
@@ -838,7 +838,7 @@ Defined in: ridb\_core.d.ts:898
 
 ***
 
-### \_\_wbgt\_test\_query\_parse\_operator\_wrong\_type\_15()
+### \_\_wbgt\_test\_query\_parse\_operator\_wrong\_type\_15
 
 > `readonly` **\_\_wbgt\_test\_query\_parse\_operator\_wrong\_type\_15**: (`a`) => `void`
 
@@ -856,7 +856,7 @@ Defined in: ridb\_core.d.ts:899
 
 ***
 
-### \_\_wbgt\_test\_schema\_creation\_3()
+### \_\_wbgt\_test\_schema\_creation\_3
 
 > `readonly` **\_\_wbgt\_test\_schema\_creation\_3**: (`a`) => `void`
 
@@ -874,7 +874,7 @@ Defined in: ridb\_core.d.ts:910
 
 ***
 
-### \_\_wbgt\_test\_schema\_validation\_4()
+### \_\_wbgt\_test\_schema\_validation\_4
 
 > `readonly` **\_\_wbgt\_test\_schema\_validation\_4**: (`a`) => `void`
 
@@ -892,7 +892,7 @@ Defined in: ridb\_core.d.ts:911
 
 ***
 
-### \_\_wbgtest\_console\_debug()
+### \_\_wbgtest\_console\_debug
 
 > `readonly` **\_\_wbgtest\_console\_debug**: (`a`) => `void`
 
@@ -910,7 +910,7 @@ Defined in: ridb\_core.d.ts:1011
 
 ***
 
-### \_\_wbgtest\_console\_error()
+### \_\_wbgtest\_console\_error
 
 > `readonly` **\_\_wbgtest\_console\_error**: (`a`) => `void`
 
@@ -928,7 +928,7 @@ Defined in: ridb\_core.d.ts:1012
 
 ***
 
-### \_\_wbgtest\_console\_info()
+### \_\_wbgtest\_console\_info
 
 > `readonly` **\_\_wbgtest\_console\_info**: (`a`) => `void`
 
@@ -946,7 +946,7 @@ Defined in: ridb\_core.d.ts:1013
 
 ***
 
-### \_\_wbgtest\_console\_log()
+### \_\_wbgtest\_console\_log
 
 > `readonly` **\_\_wbgtest\_console\_log**: (`a`) => `void`
 
@@ -964,7 +964,7 @@ Defined in: ridb\_core.d.ts:1014
 
 ***
 
-### \_\_wbgtest\_console\_warn()
+### \_\_wbgtest\_console\_warn
 
 > `readonly` **\_\_wbgtest\_console\_warn**: (`a`) => `void`
 
@@ -982,7 +982,7 @@ Defined in: ridb\_core.d.ts:1015
 
 ***
 
-### \_\_wbindgen\_add\_to\_stack\_pointer()
+### \_\_wbindgen\_add\_to\_stack\_pointer
 
 > `readonly` **\_\_wbindgen\_add\_to\_stack\_pointer**: (`a`) => `number`
 
@@ -1000,7 +1000,7 @@ Defined in: ridb\_core.d.ts:1023
 
 ***
 
-### \_\_wbindgen\_exn\_store()
+### \_\_wbindgen\_exn\_store
 
 > `readonly` **\_\_wbindgen\_exn\_store**: (`a`) => `void`
 
@@ -1026,7 +1026,7 @@ Defined in: ridb\_core.d.ts:1021
 
 ***
 
-### \_\_wbindgen\_free()
+### \_\_wbindgen\_free
 
 > `readonly` **\_\_wbindgen\_free**: (`a`, `b`, `c`) => `void`
 
@@ -1052,7 +1052,7 @@ Defined in: ridb\_core.d.ts:1026
 
 ***
 
-### \_\_wbindgen\_malloc()
+### \_\_wbindgen\_malloc
 
 > `readonly` **\_\_wbindgen\_malloc**: (`a`, `b`) => `number`
 
@@ -1074,7 +1074,7 @@ Defined in: ridb\_core.d.ts:1019
 
 ***
 
-### \_\_wbindgen\_realloc()
+### \_\_wbindgen\_realloc
 
 > `readonly` **\_\_wbindgen\_realloc**: (`a`, `b`, `c`, `d`) => `number`
 
@@ -1104,7 +1104,7 @@ Defined in: ridb\_core.d.ts:1020
 
 ***
 
-### \_\_wbindgen\_start()
+### \_\_wbindgen\_start
 
 > `readonly` **\_\_wbindgen\_start**: () => `void`
 
@@ -1116,7 +1116,7 @@ Defined in: ridb\_core.d.ts:1031
 
 ***
 
-### \_dyn\_core\_\_ops\_\_function\_\_Fn\_\_A\_B\_C\_\_\_Output\_\_\_R\_as\_wasm\_bindgen\_\_closure\_\_WasmClosure\_\_\_describe\_\_invoke\_\_h804a1f09b692c771()
+### \_dyn\_core\_\_ops\_\_function\_\_Fn\_\_A\_B\_C\_\_\_Output\_\_\_R\_as\_wasm\_bindgen\_\_closure\_\_WasmClosure\_\_\_describe\_\_invoke\_\_h804a1f09b692c771
 
 > `readonly` **\_dyn\_core\_\_ops\_\_function\_\_Fn\_\_A\_B\_C\_\_\_Output\_\_\_R\_as\_wasm\_bindgen\_\_closure\_\_WasmClosure\_\_\_describe\_\_invoke\_\_h804a1f09b692c771**: (`a`, `b`, `c`, `d`, `e`, `f`) => `void`
 
@@ -1154,7 +1154,7 @@ Defined in: ridb\_core.d.ts:1024
 
 ***
 
-### \_dyn\_core\_\_ops\_\_function\_\_FnMut\_\_A\_\_\_\_Output\_\_\_R\_as\_wasm\_bindgen\_\_closure\_\_WasmClosure\_\_\_describe\_\_invoke\_\_ha7bc4bff3dafa2ad()
+### \_dyn\_core\_\_ops\_\_function\_\_FnMut\_\_A\_\_\_\_Output\_\_\_R\_as\_wasm\_bindgen\_\_closure\_\_WasmClosure\_\_\_describe\_\_invoke\_\_ha7bc4bff3dafa2ad
 
 > `readonly` **\_dyn\_core\_\_ops\_\_function\_\_FnMut\_\_A\_\_\_\_Output\_\_\_R\_as\_wasm\_bindgen\_\_closure\_\_WasmClosure\_\_\_describe\_\_invoke\_\_ha7bc4bff3dafa2ad**: (`a`, `b`, `c`) => `void`
 
@@ -1180,7 +1180,7 @@ Defined in: ridb\_core.d.ts:1022
 
 ***
 
-### \_dyn\_core\_\_ops\_\_function\_\_FnMut\_\_A\_\_\_\_Output\_\_\_R\_as\_wasm\_bindgen\_\_closure\_\_WasmClosure\_\_\_describe\_\_invoke\_\_hd4647cb021495324()
+### \_dyn\_core\_\_ops\_\_function\_\_FnMut\_\_A\_\_\_\_Output\_\_\_R\_as\_wasm\_bindgen\_\_closure\_\_WasmClosure\_\_\_describe\_\_invoke\_\_hd4647cb021495324
 
 > `readonly` **\_dyn\_core\_\_ops\_\_function\_\_FnMut\_\_A\_\_\_\_Output\_\_\_R\_as\_wasm\_bindgen\_\_closure\_\_WasmClosure\_\_\_describe\_\_invoke\_\_hd4647cb021495324**: (`a`, `b`, `c`) => `void`
 
@@ -1206,7 +1206,7 @@ Defined in: ridb\_core.d.ts:1025
 
 ***
 
-### baseplugin\_get\_doc\_create\_hook()
+### baseplugin\_get\_doc\_create\_hook
 
 > `readonly` **baseplugin\_get\_doc\_create\_hook**: (`a`) => `number`
 
@@ -1224,7 +1224,7 @@ Defined in: ridb\_core.d.ts:956
 
 ***
 
-### baseplugin\_get\_doc\_recover\_hook()
+### baseplugin\_get\_doc\_recover\_hook
 
 > `readonly` **baseplugin\_get\_doc\_recover\_hook**: (`a`) => `number`
 
@@ -1242,7 +1242,7 @@ Defined in: ridb\_core.d.ts:957
 
 ***
 
-### baseplugin\_name()
+### baseplugin\_name
 
 > `readonly` **baseplugin\_name**: (`a`) => `number`
 
@@ -1260,7 +1260,7 @@ Defined in: ridb\_core.d.ts:958
 
 ***
 
-### baseplugin\_new()
+### baseplugin\_new
 
 > `readonly` **baseplugin\_new**: (`a`, `b`, `c`) => `void`
 
@@ -1286,7 +1286,7 @@ Defined in: ridb\_core.d.ts:959
 
 ***
 
-### baseplugin\_set\_doc\_create\_hook()
+### baseplugin\_set\_doc\_create\_hook
 
 > `readonly` **baseplugin\_set\_doc\_create\_hook**: (`a`, `b`) => `void`
 
@@ -1308,7 +1308,7 @@ Defined in: ridb\_core.d.ts:960
 
 ***
 
-### baseplugin\_set\_doc\_recover\_hook()
+### baseplugin\_set\_doc\_recover\_hook
 
 > `readonly` **baseplugin\_set\_doc\_recover\_hook**: (`a`, `b`) => `void`
 
@@ -1330,7 +1330,7 @@ Defined in: ridb\_core.d.ts:961
 
 ***
 
-### basestorage\_addIndexSchemas()
+### basestorage\_addIndexSchemas
 
 > `readonly` **basestorage\_addIndexSchemas**: (`a`, `b`) => `void`
 
@@ -1352,7 +1352,7 @@ Defined in: ridb\_core.d.ts:930
 
 ***
 
-### basestorage\_core()
+### basestorage\_core
 
 > `readonly` **basestorage\_core**: (`a`, `b`) => `void`
 
@@ -1374,7 +1374,7 @@ Defined in: ridb\_core.d.ts:931
 
 ***
 
-### basestorage\_getOption()
+### basestorage\_getOption
 
 > `readonly` **basestorage\_getOption**: (`a`, `b`, `c`, `d`) => `void`
 
@@ -1404,7 +1404,7 @@ Defined in: ridb\_core.d.ts:932
 
 ***
 
-### basestorage\_getSchema()
+### basestorage\_getSchema
 
 > `readonly` **basestorage\_getSchema**: (`a`, `b`, `c`, `d`) => `void`
 
@@ -1434,7 +1434,7 @@ Defined in: ridb\_core.d.ts:933
 
 ***
 
-### basestorage\_new()
+### basestorage\_new
 
 > `readonly` **basestorage\_new**: (`a`, `b`, `c`, `d`, `e`) => `void`
 
@@ -1468,7 +1468,7 @@ Defined in: ridb\_core.d.ts:934
 
 ***
 
-### collection\_count()
+### collection\_count
 
 > `readonly` **collection\_count**: (`a`, `b`, `c`) => `number`
 
@@ -1494,7 +1494,7 @@ Defined in: ridb\_core.d.ts:966
 
 ***
 
-### collection\_create()
+### collection\_create
 
 > `readonly` **collection\_create**: (`a`, `b`) => `number`
 
@@ -1516,7 +1516,7 @@ Defined in: ridb\_core.d.ts:967
 
 ***
 
-### collection\_delete()
+### collection\_delete
 
 > `readonly` **collection\_delete**: (`a`, `b`) => `number`
 
@@ -1538,7 +1538,7 @@ Defined in: ridb\_core.d.ts:968
 
 ***
 
-### collection\_find()
+### collection\_find
 
 > `readonly` **collection\_find**: (`a`, `b`, `c`) => `number`
 
@@ -1564,7 +1564,7 @@ Defined in: ridb\_core.d.ts:969
 
 ***
 
-### collection\_findById()
+### collection\_findById
 
 > `readonly` **collection\_findById**: (`a`, `b`) => `number`
 
@@ -1586,7 +1586,7 @@ Defined in: ridb\_core.d.ts:970
 
 ***
 
-### collection\_name()
+### collection\_name
 
 > `readonly` **collection\_name**: (`a`, `b`) => `void`
 
@@ -1608,7 +1608,7 @@ Defined in: ridb\_core.d.ts:971
 
 ***
 
-### collection\_parse\_query\_options()
+### collection\_parse\_query\_options
 
 > `readonly` **collection\_parse\_query\_options**: (`a`, `b`, `c`) => `void`
 
@@ -1634,7 +1634,7 @@ Defined in: ridb\_core.d.ts:972
 
 ***
 
-### collection\_schema()
+### collection\_schema
 
 > `readonly` **collection\_schema**: (`a`, `b`) => `void`
 
@@ -1656,7 +1656,7 @@ Defined in: ridb\_core.d.ts:973
 
 ***
 
-### collection\_update()
+### collection\_update
 
 > `readonly` **collection\_update**: (`a`, `b`) => `number`
 
@@ -1678,7 +1678,7 @@ Defined in: ridb\_core.d.ts:974
 
 ***
 
-### corestorage\_getIndexes()
+### corestorage\_getIndexes
 
 > `readonly` **corestorage\_getIndexes**: (`a`, `b`, `c`, `d`) => `void`
 
@@ -1708,7 +1708,7 @@ Defined in: ridb\_core.d.ts:912
 
 ***
 
-### corestorage\_getPrimaryKeyTyped()
+### corestorage\_getPrimaryKeyTyped
 
 > `readonly` **corestorage\_getPrimaryKeyTyped**: (`a`, `b`, `c`) => `void`
 
@@ -1734,7 +1734,7 @@ Defined in: ridb\_core.d.ts:913
 
 ***
 
-### corestorage\_matchesQuery()
+### corestorage\_matchesQuery
 
 > `readonly` **corestorage\_matchesQuery**: (`a`, `b`, `c`, `d`) => `void`
 
@@ -1764,7 +1764,7 @@ Defined in: ridb\_core.d.ts:914
 
 ***
 
-### corestorage\_new()
+### corestorage\_new
 
 > `readonly` **corestorage\_new**: () => `number`
 
@@ -1776,7 +1776,7 @@ Defined in: ridb\_core.d.ts:926
 
 ***
 
-### database\_authenticate()
+### database\_authenticate
 
 > `readonly` **database\_authenticate**: (`a`, `b`, `c`) => `number`
 
@@ -1802,7 +1802,7 @@ Defined in: ridb\_core.d.ts:935
 
 ***
 
-### database\_close()
+### database\_close
 
 > `readonly` **database\_close**: (`a`) => `number`
 
@@ -1820,7 +1820,7 @@ Defined in: ridb\_core.d.ts:936
 
 ***
 
-### database\_collections()
+### database\_collections
 
 > `readonly` **database\_collections**: (`a`, `b`) => `void`
 
@@ -1842,7 +1842,7 @@ Defined in: ridb\_core.d.ts:937
 
 ***
 
-### database\_create()
+### database\_create
 
 > `readonly` **database\_create**: (`a`, `b`, `c`, `d`, `e`, `f`, `g`, `h`, `i`) => `number`
 
@@ -1892,7 +1892,7 @@ Defined in: ridb\_core.d.ts:938
 
 ***
 
-### database\_start()
+### database\_start
 
 > `readonly` **database\_start**: (`a`) => `number`
 
@@ -1910,7 +1910,7 @@ Defined in: ridb\_core.d.ts:939
 
 ***
 
-### database\_started()
+### database\_started
 
 > `readonly` **database\_started**: (`a`) => `number`
 
@@ -1928,7 +1928,7 @@ Defined in: ridb\_core.d.ts:940
 
 ***
 
-### indexdb\_close()
+### indexdb\_close
 
 > `readonly` **indexdb\_close**: (`a`) => `number`
 
@@ -1946,7 +1946,7 @@ Defined in: ridb\_core.d.ts:1000
 
 ***
 
-### indexdb\_count()
+### indexdb\_count
 
 > `readonly` **indexdb\_count**: (`a`, `b`, `c`, `d`, `e`) => `number`
 
@@ -1980,7 +1980,7 @@ Defined in: ridb\_core.d.ts:1001
 
 ***
 
-### indexdb\_create()
+### indexdb\_create
 
 > `readonly` **indexdb\_create**: (`a`, `b`, `c`) => `number`
 
@@ -2006,7 +2006,7 @@ Defined in: ridb\_core.d.ts:1002
 
 ***
 
-### indexdb\_find()
+### indexdb\_find
 
 > `readonly` **indexdb\_find**: (`a`, `b`, `c`, `d`, `e`) => `number`
 
@@ -2040,7 +2040,7 @@ Defined in: ridb\_core.d.ts:1003
 
 ***
 
-### indexdb\_findDocumentById()
+### indexdb\_findDocumentById
 
 > `readonly` **indexdb\_findDocumentById**: (`a`, `b`, `c`, `d`) => `number`
 
@@ -2070,7 +2070,7 @@ Defined in: ridb\_core.d.ts:1004
 
 ***
 
-### indexdb\_get\_store()
+### indexdb\_get\_store
 
 > `readonly` **indexdb\_get\_store**: (`a`, `b`, `c`, `d`) => `void`
 
@@ -2100,7 +2100,7 @@ Defined in: ridb\_core.d.ts:1005
 
 ***
 
-### indexdb\_get\_store\_readonly()
+### indexdb\_get\_store\_readonly
 
 > `readonly` **indexdb\_get\_store\_readonly**: (`a`, `b`, `c`, `d`) => `void`
 
@@ -2130,7 +2130,7 @@ Defined in: ridb\_core.d.ts:1006
 
 ***
 
-### indexdb\_get\_stores()
+### indexdb\_get\_stores
 
 > `readonly` **indexdb\_get\_stores**: (`a`, `b`) => `void`
 
@@ -2152,7 +2152,7 @@ Defined in: ridb\_core.d.ts:1007
 
 ***
 
-### indexdb\_start()
+### indexdb\_start
 
 > `readonly` **indexdb\_start**: (`a`) => `number`
 
@@ -2170,7 +2170,7 @@ Defined in: ridb\_core.d.ts:1008
 
 ***
 
-### indexdb\_write()
+### indexdb\_write
 
 > `readonly` **indexdb\_write**: (`a`, `b`) => `number`
 
@@ -2192,7 +2192,7 @@ Defined in: ridb\_core.d.ts:1009
 
 ***
 
-### inmemory\_close()
+### inmemory\_close
 
 > `readonly` **inmemory\_close**: (`a`) => `number`
 
@@ -2210,7 +2210,7 @@ Defined in: ridb\_core.d.ts:975
 
 ***
 
-### inmemory\_count()
+### inmemory\_count
 
 > `readonly` **inmemory\_count**: (`a`, `b`, `c`, `d`, `e`) => `number`
 
@@ -2244,7 +2244,7 @@ Defined in: ridb\_core.d.ts:976
 
 ***
 
-### inmemory\_create()
+### inmemory\_create
 
 > `readonly` **inmemory\_create**: (`a`, `b`, `c`) => `number`
 
@@ -2270,7 +2270,7 @@ Defined in: ridb\_core.d.ts:977
 
 ***
 
-### inmemory\_find()
+### inmemory\_find
 
 > `readonly` **inmemory\_find**: (`a`, `b`, `c`, `d`, `e`) => `number`
 
@@ -2304,7 +2304,7 @@ Defined in: ridb\_core.d.ts:978
 
 ***
 
-### inmemory\_findDocumentById()
+### inmemory\_findDocumentById
 
 > `readonly` **inmemory\_findDocumentById**: (`a`, `b`, `c`, `d`) => `number`
 
@@ -2334,7 +2334,7 @@ Defined in: ridb\_core.d.ts:979
 
 ***
 
-### inmemory\_start()
+### inmemory\_start
 
 > `readonly` **inmemory\_start**: (`a`) => `number`
 
@@ -2352,7 +2352,7 @@ Defined in: ridb\_core.d.ts:980
 
 ***
 
-### inmemory\_write()
+### inmemory\_write
 
 > `readonly` **inmemory\_write**: (`a`, `b`) => `number`
 
@@ -2374,7 +2374,7 @@ Defined in: ridb\_core.d.ts:981
 
 ***
 
-### is\_debug\_mode()
+### is\_debug\_mode
 
 > `readonly` **is\_debug\_mode**: () => `number`
 
@@ -2386,7 +2386,7 @@ Defined in: ridb\_core.d.ts:941
 
 ***
 
-### main\_js()
+### main\_js
 
 > `readonly` **main\_js**: () => `void`
 
@@ -2406,7 +2406,7 @@ Defined in: ridb\_core.d.ts:869
 
 ***
 
-### operation\_collection()
+### operation\_collection
 
 > `readonly` **operation\_collection**: (`a`, `b`) => `void`
 
@@ -2428,7 +2428,7 @@ Defined in: ridb\_core.d.ts:982
 
 ***
 
-### operation\_data()
+### operation\_data
 
 > `readonly` **operation\_data**: (`a`) => `number`
 
@@ -2446,7 +2446,7 @@ Defined in: ridb\_core.d.ts:983
 
 ***
 
-### operation\_opType()
+### operation\_opType
 
 > `readonly` **operation\_opType**: (`a`) => `number`
 
@@ -2464,7 +2464,7 @@ Defined in: ridb\_core.d.ts:984
 
 ***
 
-### operation\_primaryKey()
+### operation\_primaryKey
 
 > `readonly` **operation\_primaryKey**: (`a`) => `number`
 
@@ -2482,7 +2482,7 @@ Defined in: ridb\_core.d.ts:985
 
 ***
 
-### operation\_primaryKeyField()
+### operation\_primaryKeyField
 
 > `readonly` **operation\_primaryKeyField**: (`a`) => `number`
 
@@ -2500,7 +2500,7 @@ Defined in: ridb\_core.d.ts:986
 
 ***
 
-### operation\_primaryKeyIndex()
+### operation\_primaryKeyIndex
 
 > `readonly` **operation\_primaryKeyIndex**: (`a`, `b`) => `void`
 
@@ -2522,7 +2522,7 @@ Defined in: ridb\_core.d.ts:987
 
 ***
 
-### property\_is\_valid()
+### property\_is\_valid
 
 > `readonly` **property\_is\_valid**: (`a`, `b`) => `void`
 
@@ -2544,7 +2544,7 @@ Defined in: ridb\_core.d.ts:947
 
 ***
 
-### property\_items()
+### property\_items
 
 > `readonly` **property\_items**: (`a`, `b`) => `void`
 
@@ -2566,7 +2566,7 @@ Defined in: ridb\_core.d.ts:948
 
 ***
 
-### property\_maxItems()
+### property\_maxItems
 
 > `readonly` **property\_maxItems**: (`a`, `b`) => `void`
 
@@ -2588,7 +2588,7 @@ Defined in: ridb\_core.d.ts:949
 
 ***
 
-### property\_maxLength()
+### property\_maxLength
 
 > `readonly` **property\_maxLength**: (`a`, `b`) => `void`
 
@@ -2610,7 +2610,7 @@ Defined in: ridb\_core.d.ts:950
 
 ***
 
-### property\_minItems()
+### property\_minItems
 
 > `readonly` **property\_minItems**: (`a`, `b`) => `void`
 
@@ -2632,7 +2632,7 @@ Defined in: ridb\_core.d.ts:951
 
 ***
 
-### property\_minLength()
+### property\_minLength
 
 > `readonly` **property\_minLength**: (`a`, `b`) => `void`
 
@@ -2654,7 +2654,7 @@ Defined in: ridb\_core.d.ts:952
 
 ***
 
-### property\_properties()
+### property\_properties
 
 > `readonly` **property\_properties**: (`a`, `b`) => `void`
 
@@ -2676,7 +2676,7 @@ Defined in: ridb\_core.d.ts:953
 
 ***
 
-### property\_type()
+### property\_type
 
 > `readonly` **property\_type**: (`a`) => `number`
 
@@ -2694,7 +2694,7 @@ Defined in: ridb\_core.d.ts:954
 
 ***
 
-### query\_get()
+### query\_get
 
 > `readonly` **query\_get**: (`a`, `b`, `c`, `d`) => `void`
 
@@ -2724,7 +2724,7 @@ Defined in: ridb\_core.d.ts:900
 
 ***
 
-### query\_get\_properties()
+### query\_get\_properties
 
 > `readonly` **query\_get\_properties**: (`a`, `b`) => `void`
 
@@ -2746,7 +2746,7 @@ Defined in: ridb\_core.d.ts:901
 
 ***
 
-### query\_has\_or\_operator()
+### query\_has\_or\_operator
 
 > `readonly` **query\_has\_or\_operator**: (`a`) => `number`
 
@@ -2764,7 +2764,7 @@ Defined in: ridb\_core.d.ts:902
 
 ***
 
-### query\_new()
+### query\_new
 
 > `readonly` **query\_new**: (`a`, `b`, `c`) => `void`
 
@@ -2790,7 +2790,7 @@ Defined in: ridb\_core.d.ts:903
 
 ***
 
-### query\_parse()
+### query\_parse
 
 > `readonly` **query\_parse**: (`a`, `b`) => `void`
 
@@ -2812,7 +2812,7 @@ Defined in: ridb\_core.d.ts:904
 
 ***
 
-### query\_process\_query()
+### query\_process\_query
 
 > `readonly` **query\_process\_query**: (`a`, `b`, `c`) => `void`
 
@@ -2838,7 +2838,7 @@ Defined in: ridb\_core.d.ts:905
 
 ***
 
-### query\_query()
+### query\_query
 
 > `readonly` **query\_query**: (`a`, `b`) => `void`
 
@@ -2860,7 +2860,7 @@ Defined in: ridb\_core.d.ts:906
 
 ***
 
-### queryoptions\_limit()
+### queryoptions\_limit
 
 > `readonly` **queryoptions\_limit**: (`a`, `b`) => `void`
 
@@ -2882,7 +2882,7 @@ Defined in: ridb\_core.d.ts:915
 
 ***
 
-### queryoptions\_offset()
+### queryoptions\_offset
 
 > `readonly` **queryoptions\_offset**: (`a`, `b`) => `void`
 
@@ -2904,7 +2904,7 @@ Defined in: ridb\_core.d.ts:916
 
 ***
 
-### ridberror\_authentication()
+### ridberror\_authentication
 
 > `readonly` **ridberror\_authentication**: (`a`, `b`, `c`) => `number`
 
@@ -2930,7 +2930,7 @@ Defined in: ridb\_core.d.ts:988
 
 ***
 
-### ridberror\_code()
+### ridberror\_code
 
 > `readonly` **ridberror\_code**: (`a`) => `number`
 
@@ -2948,7 +2948,7 @@ Defined in: ridb\_core.d.ts:989
 
 ***
 
-### ridberror\_error()
+### ridberror\_error
 
 > `readonly` **ridberror\_error**: (`a`, `b`, `c`) => `number`
 
@@ -2974,7 +2974,7 @@ Defined in: ridb\_core.d.ts:990
 
 ***
 
-### ridberror\_from()
+### ridberror\_from
 
 > `readonly` **ridberror\_from**: (`a`) => `number`
 
@@ -2992,7 +2992,7 @@ Defined in: ridb\_core.d.ts:991
 
 ***
 
-### ridberror\_hook()
+### ridberror\_hook
 
 > `readonly` **ridberror\_hook**: (`a`, `b`, `c`) => `number`
 
@@ -3018,7 +3018,7 @@ Defined in: ridb\_core.d.ts:992
 
 ***
 
-### ridberror\_message()
+### ridberror\_message
 
 > `readonly` **ridberror\_message**: (`a`, `b`) => `void`
 
@@ -3040,7 +3040,7 @@ Defined in: ridb\_core.d.ts:993
 
 ***
 
-### ridberror\_new()
+### ridberror\_new
 
 > `readonly` **ridberror\_new**: (`a`, `b`, `c`, `d`, `e`) => `number`
 
@@ -3074,7 +3074,7 @@ Defined in: ridb\_core.d.ts:994
 
 ***
 
-### ridberror\_query()
+### ridberror\_query
 
 > `readonly` **ridberror\_query**: (`a`, `b`, `c`) => `number`
 
@@ -3100,7 +3100,7 @@ Defined in: ridb\_core.d.ts:995
 
 ***
 
-### ridberror\_serialisation()
+### ridberror\_serialisation
 
 > `readonly` **ridberror\_serialisation**: (`a`, `b`, `c`) => `number`
 
@@ -3126,7 +3126,7 @@ Defined in: ridb\_core.d.ts:996
 
 ***
 
-### ridberror\_type()
+### ridberror\_type
 
 > `readonly` **ridberror\_type**: (`a`, `b`) => `void`
 
@@ -3148,7 +3148,7 @@ Defined in: ridb\_core.d.ts:997
 
 ***
 
-### ridberror\_validation()
+### ridberror\_validation
 
 > `readonly` **ridberror\_validation**: (`a`, `b`, `c`) => `number`
 
@@ -3174,7 +3174,7 @@ Defined in: ridb\_core.d.ts:998
 
 ***
 
-### schema\_create()
+### schema\_create
 
 > `readonly` **schema\_create**: (`a`, `b`) => `void`
 
@@ -3196,7 +3196,7 @@ Defined in: ridb\_core.d.ts:917
 
 ***
 
-### schema\_encrypted()
+### schema\_encrypted
 
 > `readonly` **schema\_encrypted**: (`a`, `b`) => `void`
 
@@ -3218,7 +3218,7 @@ Defined in: ridb\_core.d.ts:918
 
 ***
 
-### schema\_indexes()
+### schema\_indexes
 
 > `readonly` **schema\_indexes**: (`a`, `b`) => `void`
 
@@ -3240,7 +3240,7 @@ Defined in: ridb\_core.d.ts:919
 
 ***
 
-### schema\_is\_valid()
+### schema\_is\_valid
 
 > `readonly` **schema\_is\_valid**: (`a`, `b`) => `void`
 
@@ -3262,7 +3262,7 @@ Defined in: ridb\_core.d.ts:920
 
 ***
 
-### schema\_primaryKey()
+### schema\_primaryKey
 
 > `readonly` **schema\_primaryKey**: (`a`, `b`) => `void`
 
@@ -3284,7 +3284,7 @@ Defined in: ridb\_core.d.ts:921
 
 ***
 
-### schema\_properties()
+### schema\_properties
 
 > `readonly` **schema\_properties**: (`a`, `b`) => `void`
 
@@ -3306,7 +3306,7 @@ Defined in: ridb\_core.d.ts:922
 
 ***
 
-### schema\_type()
+### schema\_type
 
 > `readonly` **schema\_type**: (`a`, `b`) => `void`
 
@@ -3328,7 +3328,7 @@ Defined in: ridb\_core.d.ts:923
 
 ***
 
-### schema\_validate()
+### schema\_validate
 
 > `readonly` **schema\_validate**: (`a`, `b`, `c`) => `void`
 
@@ -3354,7 +3354,7 @@ Defined in: ridb\_core.d.ts:924
 
 ***
 
-### schema\_version()
+### schema\_version
 
 > `readonly` **schema\_version**: (`a`) => `number`
 
@@ -3372,7 +3372,7 @@ Defined in: ridb\_core.d.ts:925
 
 ***
 
-### wasm\_bindgen\_\_convert\_\_closures\_\_invoke0\_mut\_\_hc6452fdbb8c4addc()
+### wasm\_bindgen\_\_convert\_\_closures\_\_invoke0\_mut\_\_hc6452fdbb8c4addc
 
 > `readonly` **wasm\_bindgen\_\_convert\_\_closures\_\_invoke0\_mut\_\_hc6452fdbb8c4addc**: (`a`, `b`) => `void`
 
@@ -3394,7 +3394,7 @@ Defined in: ridb\_core.d.ts:1028
 
 ***
 
-### wasm\_bindgen\_\_convert\_\_closures\_\_invoke2\_mut\_\_h42aa995f02b6fdcb()
+### wasm\_bindgen\_\_convert\_\_closures\_\_invoke2\_mut\_\_h42aa995f02b6fdcb
 
 > `readonly` **wasm\_bindgen\_\_convert\_\_closures\_\_invoke2\_mut\_\_h42aa995f02b6fdcb**: (`a`, `b`, `c`, `d`) => `void`
 
@@ -3424,7 +3424,7 @@ Defined in: ridb\_core.d.ts:1030
 
 ***
 
-### wasm\_bindgen\_\_convert\_\_closures\_\_invoke3\_mut\_\_h2f203dbfa61ca113()
+### wasm\_bindgen\_\_convert\_\_closures\_\_invoke3\_mut\_\_h2f203dbfa61ca113
 
 > `readonly` **wasm\_bindgen\_\_convert\_\_closures\_\_invoke3\_mut\_\_h2f203dbfa61ca113**: (`a`, `b`, `c`, `d`, `e`) => `void`
 
@@ -3458,7 +3458,7 @@ Defined in: ridb\_core.d.ts:1029
 
 ***
 
-### wasmbindgentestcontext\_args()
+### wasmbindgentestcontext\_args
 
 > `readonly` **wasmbindgentestcontext\_args**: (`a`, `b`, `c`) => `void`
 
@@ -3484,7 +3484,7 @@ Defined in: ridb\_core.d.ts:1016
 
 ***
 
-### wasmbindgentestcontext\_new()
+### wasmbindgentestcontext\_new
 
 > `readonly` **wasmbindgentestcontext\_new**: () => `number`
 
@@ -3496,7 +3496,7 @@ Defined in: ridb\_core.d.ts:1017
 
 ***
 
-### wasmbindgentestcontext\_run()
+### wasmbindgentestcontext\_run
 
 > `readonly` **wasmbindgentestcontext\_run**: (`a`, `b`, `c`) => `number`
 

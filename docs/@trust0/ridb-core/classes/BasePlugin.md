@@ -26,7 +26,7 @@ Defined in: ridb\_core.d.ts:526
 
 ### docCreateHook?
 
-> `optional` **docCreateHook**: [`Hook`](../type-aliases/Hook.md)
+> `optional` **docCreateHook?**: [`Hook`](../type-aliases/Hook.md)
 
 Defined in: ridb\_core.d.ts:527
 
@@ -38,7 +38,7 @@ Defined in: ridb\_core.d.ts:527
 
 ### docRecoverHook?
 
-> `optional` **docRecoverHook**: [`Hook`](../type-aliases/Hook.md)
+> `optional` **docRecoverHook?**: [`Hook`](../type-aliases/Hook.md)
 
 Defined in: ridb\_core.d.ts:528
 

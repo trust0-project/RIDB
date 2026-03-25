@@ -20,6 +20,6 @@ Defined in: ridb\_core.d.ts:85
 
 ### $in?
 
-> `optional` **$in**: `T`[]
+> `optional` **$in?**: `T`[]
 
 Defined in: ridb\_core.d.ts:85

@@ -20,6 +20,6 @@ Defined in: ridb\_core.d.ts:86
 
 ### $nin?
 
-> `optional` **$nin**: `T`[]
+> `optional` **$nin?**: `T`[]
 
 Defined in: ridb\_core.d.ts:86

@@ -20,7 +20,7 @@ Defined in: ridb\_core.d.ts:76
 
 ### $eq?
 
-> `optional` **$eq**: `T`
+> `optional` **$eq?**: `T`
 
 Defined in: ridb\_core.d.ts:81
 
@@ -28,7 +28,7 @@ Defined in: ridb\_core.d.ts:81
 
 ### $gt?
 
-> `optional` **$gt**: `number`
+> `optional` **$gt?**: `number`
 
 Defined in: ridb\_core.d.ts:78
 
@@ -36,7 +36,7 @@ Defined in: ridb\_core.d.ts:78
 
 ### $gte?
 
-> `optional` **$gte**: `number`
+> `optional` **$gte?**: `number`
 
 Defined in: ridb\_core.d.ts:77
 
@@ -44,7 +44,7 @@ Defined in: ridb\_core.d.ts:77
 
 ### $lt?
 
-> `optional` **$lt**: `number`
+> `optional` **$lt?**: `number`
 
 Defined in: ridb\_core.d.ts:79
 
@@ -52,7 +52,7 @@ Defined in: ridb\_core.d.ts:79
 
 ### $lte?
 
-> `optional` **$lte**: `number`
+> `optional` **$lte?**: `number`
 
 Defined in: ridb\_core.d.ts:80
 
@@ -60,6 +60,6 @@ Defined in: ridb\_core.d.ts:80
 
 ### $ne?
 
-> `optional` **$ne**: `T`
+> `optional` **$ne?**: `T`
 
 Defined in: ridb\_core.d.ts:82
