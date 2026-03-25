@@ -6,7 +6,7 @@
 
 # Enumeration: OpType
 
-Defined in: ridb\_core.d.ts:43
+Defined in: ridb\_core.d.ts:53
 
 Represents the type of operation to be performed on the collection.
 
@@ -16,7 +16,7 @@ Represents the type of operation to be performed on the collection.
 
 > **COUNT**: `4`
 
-Defined in: ridb\_core.d.ts:63
+Defined in: ridb\_core.d.ts:73
 
 Count Operation.
 
@@ -26,7 +26,7 @@ Count Operation.
 
 > **CREATE**: `0`
 
-Defined in: ridb\_core.d.ts:47
+Defined in: ridb\_core.d.ts:57
 
 Create operation.
 
@@ -36,7 +36,7 @@ Create operation.
 
 > **DELETE**: `2`
 
-Defined in: ridb\_core.d.ts:55
+Defined in: ridb\_core.d.ts:65
 
 Delete operation.
 
@@ -46,7 +46,7 @@ Delete operation.
 
 > **QUERY**: `3`
 
-Defined in: ridb\_core.d.ts:59
+Defined in: ridb\_core.d.ts:69
 
 Query Operation.
 
@@ -56,6 +56,6 @@ Query Operation.
 
 > **UPDATE**: `1`
 
-Defined in: ridb\_core.d.ts:51
+Defined in: ridb\_core.d.ts:61
 
 Update operation.

@@ -8,7 +8,7 @@
 
 > **createMongoDB**\<`T`\>(): `Promise`\<*typeof* [`BaseStorage`](https://github.com/trust0-project/RIDB/blob/main/docs/%40trust0/ridb-core/classes/BaseStorage.md)\>
 
-Defined in: [index.ts:55](https://github.com/trust0-project/RIDB/blob/3fcd4994114daa5988e7d8f8e396ed0316a76260/packages/ridb-mongodb/src/index.ts#L55)
+Defined in: [index.ts:55](https://github.com/trust0-project/RIDB/blob/abf0e4ea089e6016650af95b62bbc897a066165a/packages/ridb-mongodb/src/index.ts#L55)
 
 Create a MongoDB storage instance
 
