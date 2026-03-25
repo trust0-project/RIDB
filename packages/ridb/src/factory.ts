@@ -1,8 +1,13 @@
 import type { SchemaTypeRecord } from "@trust0/ridb-core";
 import { DirectDBAdapter } from "./adapters/standalone";
-import { WorkerDBAdapter } from "./adapters/worker";
 import { RIDBCore } from "./core";
-import type { DBOptions, RIDBAbstract } from "./types";
+import type { DBOptions, RIDBAbstract, StartOptions } from "./types";
+
+
+async function load<T extends SchemaTypeRecord>(options: DBOptions<T>) {
+  const { WorkerDBAdapter } = await import("./adapters/worker");
+  return new WorkerDBAdapter<T>(options);
+}
 
 /**
  * Creates a database adapter instance based on the provided options.
@@ -17,9 +22,26 @@ import type { DBOptions, RIDBAbstract } from "./types";
  *          - DirectDBAdapter otherwise
  */
 export function createAdapter<T extends SchemaTypeRecord>(options: DBOptions<T>): RIDBAbstract<T> {
+  let workerAdapter: RIDBAbstract<T> | undefined;
   const useWorker = options.worker && typeof SharedWorker !== "undefined";
   if (useWorker) {
-    return new WorkerDBAdapter<T>(options);
+    const lazyWorker: RIDBAbstract<T> = {
+      async start(startOptions) {
+        workerAdapter ??= await load(options);
+        return workerAdapter.start(startOptions);
+      },
+      async close() {
+        return workerAdapter?.close();
+      },
+      getCollections() {
+        if (!workerAdapter) throw new Error("Start the database first");
+        return workerAdapter.getCollections();
+      },
+      isStarted() {
+        return workerAdapter?.isStarted() ?? false;
+      },
+    };
+    return lazyWorker;
   } else {
     return new DirectDBAdapter<T>(new RIDBCore<T>(options));
   }
