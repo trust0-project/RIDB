@@ -8,4 +8,4 @@
 
 > **DatabaseState** = `"disconnected"` \| `"loading"` \| `"loaded"` \| `"error"`
 
-Defined in: [index.tsx:6](https://github.com/trust0-project/RIDB/blob/abf0e4ea089e6016650af95b62bbc897a066165a/packages/ridb-react/src/index.tsx#L6)
+Defined in: [index.tsx:6](https://github.com/trust0-project/RIDB/blob/031c9d678868e499e20c20769137265f9674ddc5/packages/ridb-react/src/index.tsx#L6)
