@@ -8,7 +8,7 @@
 
 > **\_\_wbgtest\_console\_warn**(`args`): `void`
 
-Defined in: ridb\_core.d.ts:19
+Defined in: ridb\_core.d.ts:29
 
 Handler for `console.warn` invocations. See above.
 

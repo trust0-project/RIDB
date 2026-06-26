@@ -6,7 +6,7 @@
 
 # Class: Schema\<T\>
 
-Defined in: ridb\_core.d.ts:186
+Defined in: ridb\_core.d.ts:246
 
 Represents a schema, including its definition and related methods.
 You may be trying to build a storage, in any other can u won't need access tho this class.
@@ -45,7 +45,7 @@ The schema type.
 
 > `readonly` `optional` **encrypted?**: `Extract`\<keyof `T`, `string`\>[]
 
-Defined in: ridb\_core.d.ts:227
+Defined in: ridb\_core.d.ts:287
 
 An optional array of encrypted fields.
 
@@ -55,7 +55,7 @@ An optional array of encrypted fields.
 
 > `readonly` `optional` **indexes?**: `Extract`\<keyof `T`, `string`\>[]
 
-Defined in: ridb\_core.d.ts:222
+Defined in: ridb\_core.d.ts:282
 
 An optional array of indexes.
 
@@ -65,7 +65,7 @@ An optional array of indexes.
 
 > `readonly` **primaryKey**: `string`
 
-Defined in: ridb\_core.d.ts:209
+Defined in: ridb\_core.d.ts:269
 
 The primary key of the schema.
 
@@ -75,7 +75,7 @@ The primary key of the schema.
 
 > `readonly` **properties**: \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false \| (T\["properties"\]\[K\]\["default"\] extends undefined ? true : false) ? K : never\]?: T\["properties"\]\[K\] \} & \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false ? never : K\]: T\["properties"\]\[K\] \}
 
-Defined in: ridb\_core.d.ts:232
+Defined in: ridb\_core.d.ts:292
 
 The properties defined in the schema.
 
@@ -85,7 +85,7 @@ The properties defined in the schema.
 
 > **schema**: `Schema`\<`T`\>
 
-Defined in: ridb\_core.d.ts:190
+Defined in: ridb\_core.d.ts:250
 
 The schema definition.
 
@@ -95,7 +95,7 @@ The schema definition.
 
 > `readonly` **type**: `SchemaFieldType`
 
-Defined in: ridb\_core.d.ts:214
+Defined in: ridb\_core.d.ts:274
 
 The type of the schema.
 
@@ -105,7 +105,7 @@ The type of the schema.
 
 > `readonly` **version**: `number`
 
-Defined in: ridb\_core.d.ts:204
+Defined in: ridb\_core.d.ts:264
 
 The version of the schema.
 
@@ -115,7 +115,7 @@ The version of the schema.
 
 > **toJSON**(): [`SchemaType`](../type-aliases/SchemaType.md)
 
-Defined in: ridb\_core.d.ts:242
+Defined in: ridb\_core.d.ts:302
 
 Converts the schema to a JSON representation.
 
@@ -131,7 +131,7 @@ The JSON representation of the schema.
 
 > **validate**(`document`): `boolean`
 
-Defined in: ridb\_core.d.ts:244
+Defined in: ridb\_core.d.ts:304
 
 #### Parameters
 
@@ -149,7 +149,7 @@ Defined in: ridb\_core.d.ts:244
 
 > `static` **create**\<`TS`\>(`definition`): `Schema`\<`TS`\>
 
-Defined in: ridb\_core.d.ts:199
+Defined in: ridb\_core.d.ts:259
 
 Creates a new `Schema` instance from the provided definition.
 

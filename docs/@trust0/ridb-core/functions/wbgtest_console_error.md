@@ -8,7 +8,7 @@
 
 > **\_\_wbgtest\_console\_error**(`args`): `void`
 
-Defined in: ridb\_core.d.ts:39
+Defined in: ridb\_core.d.ts:24
 
 Handler for `console.error` invocations. See above.
 
