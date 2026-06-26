@@ -52,7 +52,7 @@ export type MongoDBStorageOptions = BaseStorageOptions & MongoDBConfig;
  * @public
  * @returns A factory function that creates MongoDB storage instances
  */
-export async function createMongoDB<T extends SchemaTypeRecord>(): Promise<typeof BaseStorageType<T>> {
+export async function createMongoDB(): Promise<typeof BaseStorageType> {
   const { BaseStorage } = await WasmInternal();
 
   // We need to extend the actual BaseStorage from WasmInternal
@@ -335,6 +335,8 @@ export async function createMongoDB<T extends SchemaTypeRecord>(): Promise<typeo
     }
   }
 
-  // Return the static create method as the constructor
-  return MongoDBStorage as unknown as typeof BaseStorage<T>;
+  // `MongoDBStorage` is a concrete subclass of the WASM `BaseStorage`, so its
+  // constructor type is assignable to the generic `typeof BaseStorage` that
+  // consumers (e.g. RIDB's `storageType` / the Identus SDK) expect — no cast.
+  return MongoDBStorage;
 }
