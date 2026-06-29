@@ -107,30 +107,57 @@ export async function createMongoDB(): Promise<typeof BaseStorageType> {
     }
 
     /**
-     * Reconstruct a document read from MongoDB so that it contains exactly the
-     * fields RIDB persisted (schema properties plus the internal `__integrity`
-     * field) and nothing else.
+     * Normalize a document into the exact JSON shape that RIDB hashed at write
+     * time, so the integrity plugin's recover-time check matches.
      *
-     * MongoDB injects its own fields (most notably `_id`) and can round-trip
-     * values as different BSON types. The integrity plugin recomputes its hash
-     * over every field except `__integrity`, so any extra field returned by
-     * MongoDB breaks the integrity check. Using a schema-driven whitelist makes
-     * the recovered document deterministic and identical to what was written,
-     * regardless of what MongoDB attaches.
+     * RIDB's integrity plugin computes its hash with `JSON.stringify`, which
+     * serializes values through their `toJSON()` (e.g. `Date` -> ISO string,
+     * `ObjectId` -> hex string). A document read back from MongoDB, however,
+     * contains live BSON wrapper instances (`Date`, `ObjectId`, `Long`,
+     * `Decimal128`, `Binary`, ...). The previous recursion only special-cased
+     * `ObjectId` and treated every other wrapper as a plain object, mangling it
+     * (a `Date` collapsed to `{}`), which diverged from the hashed value and
+     * broke the integrity check.
+     *
+     * Round-tripping through `JSON.stringify`/`JSON.parse` reproduces the
+     * integrity plugin's serialization exactly, and dropping MongoDB's injected
+     * top-level `_id` mirrors what was originally written (RIDB never stores an
+     * `_id`).
      * @private
      */
-    private toStorageDocument(collectionName: string, doc: any): any {
-      const converted = this.convertObjectIdsToStrings(doc);
-      const schema = this.getSchema(collectionName);
-      const allowed = new Set<string>([...Object.keys(schema.properties ?? {}), "__integrity"]);
-
-      const result: any = {};
-      for (const key of Object.keys(converted)) {
-        if (allowed.has(key)) {
-          result[key] = converted[key];
-        }
+    private normalizeDocument(doc: any): any {
+      if (!doc || typeof doc !== "object") {
+        return doc;
       }
-      return result;
+      const { _id,  ...rest } = doc as Record<string, unknown>;
+      return this.stripNullFields(JSON.parse(JSON.stringify(rest)));
+    }
+
+    /**
+     * Recursively remove every `null` field from a document before it is
+     * returned to the application layer. MongoDB can persist explicit `null`
+     * values (e.g. from sparse writes), but RIDB treats an absent field and a
+     * `null` field differently, so we drop them entirely to keep the returned
+     * shape consistent with what was originally written.
+     * @private
+     */
+    private stripNullFields(value: any): any {
+      if (Array.isArray(value)) {
+        return value.map((item) => this.stripNullFields(item));
+      }
+
+      if (value && typeof value === "object") {
+        const result: any = {};
+        for (const [key, val] of Object.entries(value)) {
+          if (val === null) {
+            continue;
+          }
+          result[key] = this.stripNullFields(val);
+        }
+        return result;
+      }
+
+      return value;
     }
 
     /**
@@ -199,7 +226,7 @@ export async function createMongoDB(): Promise<typeof BaseStorageType> {
         return null;
       }
 
-      return this.toStorageDocument(String(collectionName), doc) as Doc<T[keyof T]>;
+      return this.normalizeDocument(doc) as Doc<T[keyof T]>;
     }
 
     /** Write an operation (insert, update, delete) */
@@ -218,7 +245,7 @@ export async function createMongoDB(): Promise<typeof BaseStorageType> {
 
           // Check if document already exists
           const existQuery = { [primaryKey]: id };
-          const existing = await collection.findOne(existQuery);
+          const existing = await collection.findOne(existQuery, { projection: { _id: 0, tenantId: 0 } });
 
           if (existing) {
             throw new Error(`Document with ${primaryKey} '${id}' already exists`);
@@ -229,7 +256,7 @@ export async function createMongoDB(): Promise<typeof BaseStorageType> {
 
           await collection.insertOne(docToInsert);
 
-          const result = this.convertObjectIdsToStrings(op.data);
+          const result = this.normalizeDocument(docToInsert);
           return result;
         }
         case OpType.UPDATE: {
@@ -248,7 +275,7 @@ export async function createMongoDB(): Promise<typeof BaseStorageType> {
             throw new Error("Document ID not found");
           }
 
-          const convertedResult = this.convertObjectIdsToStrings(op.data);
+          const convertedResult = this.normalizeDocument(op.data);
           return convertedResult;
         }
         case OpType.DELETE: {
@@ -354,9 +381,9 @@ export async function createMongoDB(): Promise<typeof BaseStorageType> {
 
       const docs = await findQuery.toArray();
 
-      // Reconstruct each document from schema-owned fields only so the integrity
-      // hash recomputed on recovery matches what was written.
-      const convertedDocs = docs.map((doc) => this.toStorageDocument(String(collectionName), doc)) as Doc<T[keyof T]>[];
+      // Normalize each document back to the exact JSON shape RIDB hashed at
+      // write time so the integrity check matches on recovery.
+      const convertedDocs = docs.map((doc) => this.normalizeDocument(doc)) as Doc<T[keyof T]>[];
 
       return convertedDocs;
     }
