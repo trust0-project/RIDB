@@ -1,6 +1,6 @@
 {
   "name": "@trust0/ridb-mongodb",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "MongoDB storage for @trust0/ridb",
   "main": "./build/index.js",
   "module": "./build/index.mjs",

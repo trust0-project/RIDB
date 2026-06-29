@@ -6,7 +6,7 @@
 
 # Enumeration: Errors
 
-Defined in: ridb\_core.d.ts:42
+Defined in: ridb\_core.d.ts:67
 
 ## Enumeration Members
 
@@ -14,7 +14,7 @@ Defined in: ridb\_core.d.ts:42
 
 > **AuthenticationError**: `5`
 
-Defined in: ridb\_core.d.ts:48
+Defined in: ridb\_core.d.ts:73
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: ridb\_core.d.ts:48
 
 > **Error**: `0`
 
-Defined in: ridb\_core.d.ts:43
+Defined in: ridb\_core.d.ts:68
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: ridb\_core.d.ts:43
 
 > **HookError**: `1`
 
-Defined in: ridb\_core.d.ts:44
+Defined in: ridb\_core.d.ts:69
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: ridb\_core.d.ts:44
 
 > **QueryError**: `2`
 
-Defined in: ridb\_core.d.ts:45
+Defined in: ridb\_core.d.ts:70
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: ridb\_core.d.ts:45
 
 > **SerializationError**: `3`
 
-Defined in: ridb\_core.d.ts:46
+Defined in: ridb\_core.d.ts:71
 
 ***
 
@@ -54,4 +54,4 @@ Defined in: ridb\_core.d.ts:46
 
 > **ValidationError**: `4`
 
-Defined in: ridb\_core.d.ts:47
+Defined in: ridb\_core.d.ts:72
