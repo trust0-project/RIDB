@@ -8,7 +8,7 @@
 
 > **useRIDB**\<`T`\>(): `object`
 
-Defined in: [index.tsx:18](https://github.com/trust0-project/RIDB/blob/adcea5a8e0ca2a9f4529ab773589d792e4b69ed9/packages/ridb-react/src/index.tsx#L18)
+Defined in: [index.tsx:18](https://github.com/trust0-project/RIDB/blob/344d20fd8302e5cb679b4463db15d79240a21321/packages/ridb-react/src/index.tsx#L18)
 
 ## Type Parameters
 
