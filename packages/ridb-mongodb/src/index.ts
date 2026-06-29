@@ -107,6 +107,33 @@ export async function createMongoDB(): Promise<typeof BaseStorageType> {
     }
 
     /**
+     * Reconstruct a document read from MongoDB so that it contains exactly the
+     * fields RIDB persisted (schema properties plus the internal `__integrity`
+     * field) and nothing else.
+     *
+     * MongoDB injects its own fields (most notably `_id`) and can round-trip
+     * values as different BSON types. The integrity plugin recomputes its hash
+     * over every field except `__integrity`, so any extra field returned by
+     * MongoDB breaks the integrity check. Using a schema-driven whitelist makes
+     * the recovered document deterministic and identical to what was written,
+     * regardless of what MongoDB attaches.
+     * @private
+     */
+    private toStorageDocument(collectionName: string, doc: any): any {
+      const converted = this.convertObjectIdsToStrings(doc);
+      const schema = this.getSchema(collectionName);
+      const allowed = new Set<string>([...Object.keys(schema.properties ?? {}), "__integrity"]);
+
+      const result: any = {};
+      for (const key of Object.keys(converted)) {
+        if (allowed.has(key)) {
+          result[key] = converted[key];
+        }
+      }
+      return result;
+    }
+
+    /**
      * Create a new MongoDB storage instance
      * @param name - Database name
      * @param schemas - Collection schemas
@@ -166,14 +193,13 @@ export async function createMongoDB(): Promise<typeof BaseStorageType> {
 
       const query = { [primaryKey]: id };
 
-      const doc = await collection.findOne(query);
+      const doc = await collection.findOne(query, { projection: { _id: 0 } });
 
       if (!doc) {
         return null;
       }
 
-      const converted = this.convertObjectIdsToStrings(doc) as Doc<T[keyof T]>;
-      return converted;
+      return this.toStorageDocument(String(collectionName), doc) as Doc<T[keyof T]>;
     }
 
     /** Write an operation (insert, update, delete) */
@@ -315,7 +341,7 @@ export async function createMongoDB(): Promise<typeof BaseStorageType> {
       // For MongoDB, we use the native query system for better performance
       const filter = this.convertQueryToMongoFilter(query, schema);
 
-      let findQuery = collection.find(filter);
+      let findQuery = collection.find(filter, { projection: { _id: 0 } });
 
       // Apply offset and limit if provided
       if (options?.offset) {
@@ -328,8 +354,9 @@ export async function createMongoDB(): Promise<typeof BaseStorageType> {
 
       const docs = await findQuery.toArray();
 
-      // Convert ObjectIds to strings and remove _id fields from all documents
-      const convertedDocs = docs.map((doc) => this.convertObjectIdsToStrings(doc)) as Doc<T[keyof T]>[];
+      // Reconstruct each document from schema-owned fields only so the integrity
+      // hash recomputed on recovery matches what was written.
+      const convertedDocs = docs.map((doc) => this.toStorageDocument(String(collectionName), doc)) as Doc<T[keyof T]>[];
 
       return convertedDocs;
     }
