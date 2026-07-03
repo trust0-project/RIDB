@@ -943,6 +943,7 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
                 version: 0 as const,
                 primaryKey: "id",
                 type: SchemaFieldType.object,
+                required: ["id", "name"],
                 properties: {
                   id: { type: SchemaFieldType.string },
                   name: { type: SchemaFieldType.string },

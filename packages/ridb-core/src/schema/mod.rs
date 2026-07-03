@@ -9,7 +9,7 @@ use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen_test::{ wasm_bindgen_test};
 use crate::error::RIDBError;
-use crate::schema::property::Property;
+use crate::schema::property::{Property, Required};
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -33,6 +33,11 @@ export type SchemaType = {
      type: SchemaFieldType;
      indexes?:  string[];
      encrypted?:  string[];
+     /**
+      * The names of the required top-level properties. Follows JSON Schema
+      * semantics: only the listed properties are required.
+      */
+     required?: string[];
     /**
      * The properties defined in the schema.
      */
@@ -105,10 +110,13 @@ export class Schema<T extends SchemaType> {
      * The properties defined in the schema.
      */
     readonly properties: {
-        [K in keyof T['properties'] as T['properties'][K]['required'] extends false | (T['properties'][K]['default'] extends undefined ? true: false)  ? K : never]?: T['properties'][K];
-    } & {
-        [K in keyof T['properties'] as T['properties'][K]['required'] extends false ? never : K]: T['properties'][K];
+        [K in keyof T['properties']]: T['properties'][K];
     };
+
+    /**
+     * The names of the required top-level properties.
+     */
+    readonly required?: (Extract<keyof T['properties'], string>)[];
     /**
      * Converts the schema to a JSON representation.
      *
@@ -116,7 +124,13 @@ export class Schema<T extends SchemaType> {
      */
     toJSON(): SchemaType;
 
-    validate(document: Doc<Schema<T>>): boolean;
+    /**
+     * Validates a document against the schema. The runtime applies the same
+     * optional/required rules as creation (only `required` fields, without a `default`,
+     * must be present), so the accepted shape is `CreateDoc<T>` rather than a fully-keyed
+     * `Doc<T>`.
+     */
+    validate(document: CreateDoc<T>): boolean;
 }
 "#;
 
@@ -138,7 +152,11 @@ pub struct Schema {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) indexes: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) encrypted: Option<Vec<String>>
+    pub(crate) encrypted: Option<Vec<String>>,
+    /// The names of the required top-level properties (JSON Schema semantics:
+    /// only listed properties are required).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) required: Option<Vec<String>>
 }
 
 
@@ -147,18 +165,39 @@ impl Schema {
 
     #[wasm_bindgen(js_name="validate")]
     pub fn validate_document(&self, document: JsValue) -> Result<(), RIDBError> {
-        // Collect required fields
-        let required: Vec<String> = self.properties
-            .iter()
-            .filter(|(_, prop)| prop.required.unwrap_or(true))
-            .map(|(key, _)| key.clone())
-            .collect();
+        let encrypted = self.encrypted.clone().unwrap_or_default();
+        self.validate_object(&document, &self.properties, self.required.as_ref(), &encrypted)
+    }
 
-        let encrypted = self.encrypted.clone().unwrap_or(Vec::new());
-
-        for (key, prop) in &self.properties {
-
-            let value = Reflect::get(&document, &JsValue::from_str(&key))
+    /// Validates a JS object value against a set of properties.
+    ///
+    /// Requiredness precedence for each property (mirrors the compile-time
+    /// `IsCreateOptional`/`IsNestedOptional` types; see [`Required`]):
+    ///  1. a declared `default` makes the property optional (it is filled in before
+    ///     persistence, so its absence at validation time is never an error);
+    ///  2. otherwise, a property-level boolean flag wins (`false` -> optional,
+    ///     `true` -> required);
+    ///  3. otherwise, the property is required iff it is listed in the container's
+    ///     `required` array (JSON Schema semantics);
+    ///  4. otherwise (no default, no array, no flag) the property is optional. An omitted
+    ///     `required` array is therefore equivalent to `[]`, matching JSON Schema.
+    ///
+    /// Note that `DefaultsPlugin` only fills top-level defaults; treating a defaulted
+    /// nested field as optional here keeps validation in step with the types even though
+    /// nested defaults are not materialised before validation.
+    ///
+    /// Encrypted fields are exempt from the presence check (they are populated later in
+    /// the pipeline). Nested object properties are validated recursively against their
+    /// own `properties` and (array-form) `required`.
+    fn validate_object(
+        &self,
+        document: &JsValue,
+        properties: &HashMap<String, Property>,
+        container_required: Option<&Vec<String>>,
+        encrypted: &[String],
+    ) -> Result<(), RIDBError> {
+        for (key, prop) in properties {
+            let value = Reflect::get(document, &JsValue::from_str(key))
                 .map_err(|_e| {
                     JsValue::from(
                         RIDBError::validation(
@@ -168,31 +207,53 @@ impl Schema {
                     )
                 })?;
 
-            if value.is_undefined() {
-                // If the property is required and not encrypted, it's an error
-                if required.contains(&key) && !encrypted.contains(&key) {
-                    return Err(
-                            RIDBError::validation(
-                                &format!("Missing required property '{}'", key),
-                                15
-                            )
+            // Determine whether this property is required, applying the precedence above.
+            // A declared `default` takes priority and makes the property optional.
+            let is_required = if prop.default.is_some() {
+                false
+            } else {
+                match &prop.required {
+                    Some(Required::Flag(flag)) => *flag,
+                    _ => container_required.is_some_and(|arr| arr.contains(key)),
+                }
+            };
 
+            // Only an absent (`undefined`) value counts as "missing". A `null` value is
+            // present and must be validated against the declared type, so it falls through
+            // to `is_type_correct` below (which rejects `null` for `string`, `object`,
+            // etc.). This prevents optional fields from silently persisting `null`.
+            if value.is_undefined() {
+                if is_required && !encrypted.contains(key) {
+                    return Err(
+                        RIDBError::validation(
+                            &format!("Missing required property '{}'", key),
+                            15
+                        )
                     );
                 }
             } else {
-                let res = self.is_type_correct(&key, &value, &prop);
-                if let Err(err) = res {
-                    return Err(err);
-                } else if !res.unwrap() {
+                if !self.is_type_correct(key, &value, prop)? {
                     return Err(
-                            RIDBError::validation(
-                                &format!(
-                                    "Field '{}' should be of type '{:?}'",
-                                    key, prop.property_type
-                                ),
-                                15
-                            )
+                        RIDBError::validation(
+                            &format!(
+                                "Field '{}' should be of type '{:?}'",
+                                key, prop.property_type
+                            ),
+                            15
+                        )
                     );
+                }
+
+                // Recurse into nested object properties. Only the array form of
+                // `required` names nested children; a boolean flag does not.
+                if prop.property_type == SchemaFieldType::Object {
+                    if let Some(nested_props) = &prop.properties {
+                        let nested_required = match &prop.required {
+                            Some(Required::Fields(fields)) => Some(fields),
+                            _ => None,
+                        };
+                        self.validate_object(&value, nested_props, nested_required, &[])?;
+                    }
                 }
             }
         }
@@ -281,6 +342,20 @@ impl Schema {
             property.is_valid()?;
         }
 
+        // Every name listed in `required` must be a defined property.
+        if let Some(required) = &self.required {
+            for name in required {
+                if !self.properties.contains_key(name) {
+                    return Err(
+                        RIDBError::validation(
+                            &format!("Required property '{}' is not defined in properties", name),
+                            30
+                        )
+                    );
+                }
+            }
+        }
+
         Ok(true)
     }
 
@@ -347,6 +422,16 @@ impl Schema {
     #[wasm_bindgen(getter, js_name="encrypted")]
     pub fn get_encrypted(&self) -> Option<Vec<String>> {
         self.encrypted.clone()
+    }
+
+    /// Retrieves the required top-level property names, if any.
+    ///
+    /// # Returns
+    ///
+    /// * `Option<Vec<String>>` - The required property names, if any.
+    #[wasm_bindgen(getter, js_name="required")]
+    pub fn get_required(&self) -> Option<Vec<String>> {
+        self.required.clone()
     }
 
     /// Retrieves the properties of the schema.
@@ -451,4 +536,260 @@ fn test_invalid_schema() {
     let result = Schema::create(schema_value);
 
     assert!(result.is_err());
+}
+
+#[wasm_bindgen_test]
+fn test_schema_required_subset_of_properties() {
+    // `required` naming a property that is not defined must fail validation.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "missing"],
+        "properties": {
+            "id": {"type": "string"}
+        }
+    }"#;
+    let schema_value = JSON::parse(schema_js).unwrap();
+    let result = Schema::create(schema_value);
+    assert!(result.is_err());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_required_present() {
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string"},
+            "nickname": {"type": "string"}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    // Required fields present, optional `nickname` omitted -> valid.
+    let doc = r#"{ "id": "1", "name": "Alice" }"#;
+    assert!(schema.validate_document(JSON::parse(doc).unwrap()).is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_required_missing() {
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string"}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    // Required `name` missing -> error.
+    let doc = r#"{ "id": "1" }"#;
+    assert!(schema.validate_document(JSON::parse(doc).unwrap()).is_err());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_no_array_all_optional() {
+    // JSON Schema semantics: with no `required` array and no per-property flags,
+    // every property is optional. An omitted `required` array is equivalent to `[]`,
+    // so a document missing defined properties still validates. This matches the
+    // compile-time `CreateDoc`/`IsCreateOptional` types.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string"}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1" }"#).unwrap()).is_ok());
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1", "name": "A" }"#).unwrap()).is_ok());
+    // A present property must still type-check.
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": 1 }"#).unwrap()).is_err());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_omitted_nested_required_equals_empty() {
+    // Bug 1 regression: an object property with no nested `required` array must behave
+    // identically to an explicit empty `required: []` (nothing required), so a partial
+    // nested object validates instead of demanding every nested key.
+    let omitted = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "profile"],
+        "properties": {
+            "id": {"type": "string"},
+            "profile": {
+                "type": "object",
+                "properties": {
+                    "email": {"type": "string"},
+                    "bio": {"type": "string"}
+                }
+            }
+        }
+    }"#;
+    let empty = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "profile"],
+        "properties": {
+            "id": {"type": "string"},
+            "profile": {
+                "type": "object",
+                "required": [],
+                "properties": {
+                    "email": {"type": "string"},
+                    "bio": {"type": "string"}
+                }
+            }
+        }
+    }"#;
+    let doc = r#"{ "id": "1", "profile": { "bio": "hi" } }"#;
+
+    let schema_omitted = Schema::create(JSON::parse(omitted).unwrap()).unwrap();
+    let schema_empty = Schema::create(JSON::parse(empty).unwrap()).unwrap();
+
+    assert!(schema_omitted.validate_document(JSON::parse(doc).unwrap()).is_ok());
+    assert!(schema_empty.validate_document(JSON::parse(doc).unwrap()).is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_legacy_required_false() {
+    // Legacy per-property `required: false` keeps a field optional with no array present.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string", "required": false}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1" }"#).unwrap()).is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_flag_overrides_array() {
+    // A property-level boolean flag overrides the container `required` array:
+    // `name` is listed as required but flagged optional; `nickname` is unlisted but
+    // flagged required.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string", "required": false},
+            "nickname": {"type": "string", "required": true}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    // `name` omitted (flag false wins over array) but `nickname` present -> ok.
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1", "nickname": "nn" }"#).unwrap()).is_ok());
+    // `nickname` omitted (flag true) -> error even though it is not in the array.
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1", "name": "A" }"#).unwrap()).is_err());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_nested_required() {
+    // Nested object properties are validated against their own `required` list.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "profile"],
+        "properties": {
+            "id": {"type": "string"},
+            "profile": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                    "email": {"type": "string"},
+                    "bio": {"type": "string"}
+                }
+            }
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    let valid = r#"{ "id": "1", "profile": { "email": "a@b.c" } }"#;
+    assert!(schema.validate_document(JSON::parse(valid).unwrap()).is_ok());
+
+    // Nested required `email` missing -> error.
+    let invalid = r#"{ "id": "1", "profile": { "bio": "hi" } }"#;
+    assert!(schema.validate_document(JSON::parse(invalid).unwrap()).is_err());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_null_is_type_checked() {
+    // Bug 2 regression: `null` is a present value, not a missing one. It must be
+    // validated against the declared type and fail for non-nullable types, even for
+    // optional properties. Otherwise an optional field could silently persist `null`.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string"}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    // Optional `name` explicitly set to null -> type error (not silently accepted).
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1", "name": null }"#).unwrap()).is_err());
+    // Required `id` set to null -> still an error.
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": null }"#).unwrap()).is_err());
+    // Omitting the optional `name` entirely remains valid.
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1" }"#).unwrap()).is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_default_makes_required_optional() {
+    // Bug: a field with a declared `default` must be omittable even when it is listed in
+    // a `required` array, matching `IsCreateOptional`/`IsNestedOptional`. `DefaultsPlugin`
+    // only fills top-level defaults, so nested defaulted fields would otherwise fail
+    // validation despite TypeScript allowing them to be omitted.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "profile"],
+        "properties": {
+            "id": {"type": "string"},
+            "profile": {
+                "type": "object",
+                "required": ["email", "role"],
+                "properties": {
+                    "email": {"type": "string"},
+                    "role": {"type": "string", "default": "member"}
+                }
+            }
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    // Nested `role` is listed as required but has a default -> omitting it is valid.
+    let doc = r#"{ "id": "1", "profile": { "email": "a@b.c" } }"#;
+    assert!(schema.validate_document(JSON::parse(doc).unwrap()).is_ok());
+
+    // Nested `email` is required with no default -> omitting it still errors.
+    let invalid = r#"{ "id": "1", "profile": { "role": "admin" } }"#;
+    assert!(schema.validate_document(JSON::parse(invalid).unwrap()).is_err());
 }
