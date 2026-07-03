@@ -124,7 +124,13 @@ export class Schema<T extends SchemaType> {
      */
     toJSON(): SchemaType;
 
-    validate(document: Doc<Schema<T>>): boolean;
+    /**
+     * Validates a document against the schema. The runtime applies the same
+     * optional/required rules as creation (only `required` fields, without a `default`,
+     * must be present), so the accepted shape is `CreateDoc<T>` rather than a fully-keyed
+     * `Doc<T>`.
+     */
+    validate(document: CreateDoc<T>): boolean;
 }
 "#;
 

@@ -83,19 +83,37 @@ export type NestedRequiredNames<P> =
     : never;
 
 /**
+ * FlagRequiredness interprets a property's `required` declaration when it is used as a
+ * legacy boolean flag. Because `Property.required` is typed `boolean | string[]`, a
+ * schema literal written without `as const` widens `true`/`false` to `boolean`; the
+ * tuple-wrapped checks below classify each case:
+ *  - a literal `false` -> `"optional"`;
+ *  - a literal `true`, or a widened `boolean` (whose literal was lost) -> `"required"`.
+ *    Treating the ambiguous `boolean` as required matches the Rust validator and turns a
+ *    would-be runtime "missing required property" error into a compile-time one instead;
+ *  - the array form, or no `required` key -> `"defer"` to the container `required` array.
+ */
+export type FlagRequiredness<P> =
+  P extends { required: infer F }
+    ? ([F] extends [readonly string[]] ? "defer"
+       : [F] extends [false] ? "optional"
+       : [true] extends [F] ? "required"
+       : "defer")
+    : "defer";
+
+/**
  * IsNestedOptional decides whether a nested property `K` (within an object property's
  * `properties` map `PR`, given that object's required-name union `R`) may be omitted.
  * Precedence mirrors the runtime validator and {@link IsCreateOptional}:
  *  1. a declared `default` makes the field optional;
- *  2. a property-level `required: false` forces it optional;
- *  3. a property-level `required: true` forces it required;
- *  4. otherwise it is required iff listed in the object's `required` array;
- *  5. otherwise it is optional.
+ *  2. a boolean `required` flag wins (`false` -> optional, `true`/`boolean` -> required);
+ *  3. otherwise it is required iff listed in the object's `required` array;
+ *  4. otherwise it is optional.
  */
 export type IsNestedOptional<PR, K extends keyof PR, R> =
   PR[K] extends { default: unknown } ? true
-    : PR[K] extends { required: false } ? true
-    : PR[K] extends { required: true } ? false
+    : FlagRequiredness<PR[K]> extends "optional" ? true
+    : FlagRequiredness<PR[K]> extends "required" ? false
     : K extends R ? false
     : true;
 
@@ -127,27 +145,35 @@ export type RequiredFieldNames<T extends SchemaType> =
  * IsCreateOptional decides whether a property may be omitted when creating a document.
  * Precedence (mirrors the runtime validator):
  *  1. a declared `default` makes the field optional;
- *  2. a property-level `required: false` forces it optional;
- *  3. a property-level `required: true` forces it required;
- *  4. otherwise it is required iff listed in the schema-level `required` array;
- *  5. otherwise it is optional.
+ *  2. a boolean `required` flag wins (`false` -> optional, `true`/`boolean` -> required;
+ *     see {@link FlagRequiredness});
+ *  3. otherwise it is required iff listed in the schema-level `required` array;
+ *  4. otherwise it is optional.
  */
 export type IsCreateOptional<T extends SchemaType, K extends keyof T["properties"]> =
   T["properties"][K] extends { default: unknown } ? true
-    : T["properties"][K] extends { required: false } ? true
-    : T["properties"][K] extends { required: true } ? false
+    : FlagRequiredness<T["properties"][K]> extends "optional" ? true
+    : FlagRequiredness<T["properties"][K]> extends "required" ? false
     : K extends RequiredFieldNames<T> ? false
     : true;
 
 /**
- * Doc is a utility type that transforms a schema type into a document type where each property is mapped to its extracted type.
+ * Doc is a utility type that transforms a schema type into a stored-document type. A
+ * property is mandatory only when the validator guarantees its presence; properties that
+ * are optional at creation (not listed in `required`, flagged `required: false`, or
+ * carrying a `default`) may be absent on a stored document, so they are optional here
+ * too. This keeps `find`/`findById`/`create` return types from claiming keys that may not
+ * exist. Optionality uses the same {@link IsCreateOptional} rules as {@link CreateDoc}.
  *
  * @template T - A schema type with a 'properties' field where each property's type is represented as a string.
  *
  * type Document = Doc<Schema>; // Document is { name: string; age: number; }
  */
 export type Doc<T extends SchemaType> = {
-  [K in keyof T["properties"]]:
+  [K in keyof T["properties"] as IsCreateOptional<T, K> extends true ? never : K]:
+    ExtractProperty<T['properties'][K]>
+} & {
+  [K in keyof T["properties"] as IsCreateOptional<T, K> extends true ? K : never]?:
     ExtractProperty<T['properties'][K]>
 } & {
   __version?: number;
