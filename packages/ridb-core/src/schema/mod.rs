@@ -167,10 +167,11 @@ impl Schema {
     ///
     /// Requiredness precedence for each property (see [`Required`]):
     ///  1. a property-level boolean flag wins (`false` -> optional, `true` -> required);
-    ///  2. otherwise, if the container declares a `required` array, the property is
-    ///     required iff it is listed (JSON Schema semantics);
-    ///  3. otherwise (no array, no flag) the property is required (legacy default),
-    ///     preserving the behaviour of schemas written before array support.
+    ///  2. otherwise, the property is required iff it is listed in the container's
+    ///     `required` array (JSON Schema semantics);
+    ///  3. otherwise (no array, no flag) the property is optional. An omitted `required`
+    ///     array is therefore equivalent to `[]`, matching JSON Schema (and the
+    ///     compile-time `CreateDoc`/`IsCreateOptional` types).
     ///
     /// Encrypted fields are exempt from the presence check (they are populated later in
     /// the pipeline). Nested object properties are validated recursively against their
@@ -196,7 +197,7 @@ impl Schema {
             // Determine whether this property is required, applying the precedence above.
             let is_required = match &prop.required {
                 Some(Required::Flag(flag)) => *flag,
-                _ => container_required.map_or(true, |arr| arr.contains(key)),
+                _ => container_required.is_some_and(|arr| arr.contains(key)),
             };
 
             if value.is_undefined() || value.is_null() {
@@ -572,9 +573,11 @@ fn test_validate_document_required_missing() {
 }
 
 #[wasm_bindgen_test]
-fn test_validate_document_legacy_no_array_all_required() {
-    // Backward compatibility: with no `required` array and no per-property flags,
-    // every property is required (legacy default), so a missing field errors.
+fn test_validate_document_no_array_all_optional() {
+    // JSON Schema semantics: with no `required` array and no per-property flags,
+    // every property is optional. An omitted `required` array is equivalent to `[]`,
+    // so a document missing defined properties still validates. This matches the
+    // compile-time `CreateDoc`/`IsCreateOptional` types.
     let schema_js = r#"{
         "version": 1,
         "primaryKey": "id",
@@ -586,8 +589,57 @@ fn test_validate_document_legacy_no_array_all_required() {
     }"#;
     let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
 
-    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1" }"#).unwrap()).is_err());
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1" }"#).unwrap()).is_ok());
     assert!(schema.validate_document(JSON::parse(r#"{ "id": "1", "name": "A" }"#).unwrap()).is_ok());
+    // A present property must still type-check.
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": 1 }"#).unwrap()).is_err());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_omitted_nested_required_equals_empty() {
+    // Bug 1 regression: an object property with no nested `required` array must behave
+    // identically to an explicit empty `required: []` (nothing required), so a partial
+    // nested object validates instead of demanding every nested key.
+    let omitted = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "profile"],
+        "properties": {
+            "id": {"type": "string"},
+            "profile": {
+                "type": "object",
+                "properties": {
+                    "email": {"type": "string"},
+                    "bio": {"type": "string"}
+                }
+            }
+        }
+    }"#;
+    let empty = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "profile"],
+        "properties": {
+            "id": {"type": "string"},
+            "profile": {
+                "type": "object",
+                "required": [],
+                "properties": {
+                    "email": {"type": "string"},
+                    "bio": {"type": "string"}
+                }
+            }
+        }
+    }"#;
+    let doc = r#"{ "id": "1", "profile": { "bio": "hi" } }"#;
+
+    let schema_omitted = Schema::create(JSON::parse(omitted).unwrap()).unwrap();
+    let schema_empty = Schema::create(JSON::parse(empty).unwrap()).unwrap();
+
+    assert!(schema_omitted.validate_document(JSON::parse(doc).unwrap()).is_ok());
+    assert!(schema_empty.validate_document(JSON::parse(doc).unwrap()).is_ok());
 }
 
 #[wasm_bindgen_test]
