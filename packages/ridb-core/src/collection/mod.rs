@@ -83,13 +83,19 @@ export type RequiredFieldNames<T extends SchemaType> =
 
 /**
  * IsCreateOptional decides whether a property may be omitted when creating a document.
- * A field is optional if it declares a default value, or is not listed in the
- * schema-level `required` array.
+ * Precedence (mirrors the runtime validator):
+ *  1. a declared `default` makes the field optional;
+ *  2. a property-level `required: false` forces it optional;
+ *  3. a property-level `required: true` forces it required;
+ *  4. otherwise it is required iff listed in the schema-level `required` array;
+ *  5. otherwise it is optional.
  */
 export type IsCreateOptional<T extends SchemaType, K extends keyof T["properties"]> =
-  T["properties"][K] extends { default: unknown }
-    ? true
-    : K extends RequiredFieldNames<T> ? false : true;
+  T["properties"][K] extends { default: unknown } ? true
+    : T["properties"][K] extends { required: false } ? true
+    : T["properties"][K] extends { required: true } ? false
+    : K extends RequiredFieldNames<T> ? false
+    : true;
 
 /**
  * Doc is a utility type that transforms a schema type into a document type where each property is mapped to its extracted type.

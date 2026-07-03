@@ -9,7 +9,7 @@ use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen_test::{ wasm_bindgen_test};
 use crate::error::RIDBError;
-use crate::schema::property::Property;
+use crate::schema::property::{Property, Required};
 
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
@@ -159,21 +159,27 @@ impl Schema {
 
     #[wasm_bindgen(js_name="validate")]
     pub fn validate_document(&self, document: JsValue) -> Result<(), RIDBError> {
-        let required = self.required.clone().unwrap_or_default();
         let encrypted = self.encrypted.clone().unwrap_or_default();
-        self.validate_object(&document, &self.properties, &required, &encrypted)
+        self.validate_object(&document, &self.properties, self.required.as_ref(), &encrypted)
     }
 
-    /// Validates a JS object value against a set of properties, following JSON Schema
-    /// semantics: only the names listed in `required` must be present. Encrypted fields
-    /// are exempt from the presence check (they are populated later in the pipeline).
-    /// Nested object properties are validated recursively against their own
-    /// `properties`/`required`.
+    /// Validates a JS object value against a set of properties.
+    ///
+    /// Requiredness precedence for each property (see [`Required`]):
+    ///  1. a property-level boolean flag wins (`false` -> optional, `true` -> required);
+    ///  2. otherwise, if the container declares a `required` array, the property is
+    ///     required iff it is listed (JSON Schema semantics);
+    ///  3. otherwise (no array, no flag) the property is required (legacy default),
+    ///     preserving the behaviour of schemas written before array support.
+    ///
+    /// Encrypted fields are exempt from the presence check (they are populated later in
+    /// the pipeline). Nested object properties are validated recursively against their
+    /// own `properties` and (array-form) `required`.
     fn validate_object(
         &self,
         document: &JsValue,
         properties: &HashMap<String, Property>,
-        required: &[String],
+        container_required: Option<&Vec<String>>,
         encrypted: &[String],
     ) -> Result<(), RIDBError> {
         for (key, prop) in properties {
@@ -187,9 +193,14 @@ impl Schema {
                     )
                 })?;
 
+            // Determine whether this property is required, applying the precedence above.
+            let is_required = match &prop.required {
+                Some(Required::Flag(flag)) => *flag,
+                _ => container_required.map_or(true, |arr| arr.contains(key)),
+            };
+
             if value.is_undefined() || value.is_null() {
-                // If the property is required and not encrypted, it's an error
-                if required.contains(key) && !encrypted.contains(key) {
+                if is_required && !encrypted.contains(key) {
                     return Err(
                         RIDBError::validation(
                             &format!("Missing required property '{}'", key),
@@ -210,11 +221,15 @@ impl Schema {
                     );
                 }
 
-                // Recurse into nested object properties.
+                // Recurse into nested object properties. Only the array form of
+                // `required` names nested children; a boolean flag does not.
                 if prop.property_type == SchemaFieldType::Object {
                     if let Some(nested_props) = &prop.properties {
-                        let nested_required = prop.required.clone().unwrap_or_default();
-                        self.validate_object(&value, nested_props, &nested_required, &[])?;
+                        let nested_required = match &prop.required {
+                            Some(Required::Fields(fields)) => Some(fields),
+                            _ => None,
+                        };
+                        self.validate_object(&value, nested_props, nested_required, &[])?;
                     }
                 }
             }
@@ -557,8 +572,9 @@ fn test_validate_document_required_missing() {
 }
 
 #[wasm_bindgen_test]
-fn test_validate_document_no_required_all_optional() {
-    // JSON Schema semantics: no `required` array means every property is optional.
+fn test_validate_document_legacy_no_array_all_required() {
+    // Backward compatibility: with no `required` array and no per-property flags,
+    // every property is required (legacy default), so a missing field errors.
     let schema_js = r#"{
         "version": 1,
         "primaryKey": "id",
@@ -570,8 +586,49 @@ fn test_validate_document_no_required_all_optional() {
     }"#;
     let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
 
-    let doc = r#"{ "id": "1" }"#;
-    assert!(schema.validate_document(JSON::parse(doc).unwrap()).is_ok());
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1" }"#).unwrap()).is_err());
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1", "name": "A" }"#).unwrap()).is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_legacy_required_false() {
+    // Legacy per-property `required: false` keeps a field optional with no array present.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string", "required": false}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1" }"#).unwrap()).is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_flag_overrides_array() {
+    // A property-level boolean flag overrides the container `required` array:
+    // `name` is listed as required but flagged optional; `nickname` is unlisted but
+    // flagged required.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string", "required": false},
+            "nickname": {"type": "string", "required": true}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    // `name` omitted (flag false wins over array) but `nickname` present -> ok.
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1", "nickname": "nn" }"#).unwrap()).is_ok());
+    // `nickname` omitted (flag true) -> error even though it is not in the array.
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1", "name": "A" }"#).unwrap()).is_err());
 }
 
 #[wasm_bindgen_test]

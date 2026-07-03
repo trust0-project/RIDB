@@ -59,10 +59,13 @@ export class Property {
     readonly minLength?: number;
 
     /**
-     * An optional array naming the required nested properties for object-type properties.
-     * Follows JSON Schema semantics: only the listed properties are required.
+     * Controls requiredness. Two forms are supported and interoperate:
+     *  - `boolean`: a per-property flag (legacy). `false` forces the property optional,
+     *    `true` forces it required, overriding any container-level `required` array.
+     *  - `string[]`: for object-type properties, the JSON Schema list of required
+     *    nested properties.
      */
-    readonly required?: string[];
+    readonly required?: boolean | string[];
 
     /**
      * An optional default value for the property.
@@ -78,6 +81,17 @@ export class Property {
 }
 "#;
 
+
+/// Requiredness declaration for a property. Supports both the legacy per-property
+/// boolean flag and the JSON Schema array of required nested property names.
+#[derive(Deserialize, Serialize, Clone, PartialEq, Debug)]
+#[serde(untagged)]
+pub enum Required {
+    /// Legacy per-property flag: whether this property is required within its parent.
+    Flag(bool),
+    /// JSON Schema list of required nested property names (object-type properties).
+    Fields(Vec<String>),
+}
 
 #[wasm_bindgen(skip_typescript)]
 #[derive(Deserialize, Serialize, Clone, PartialEq, Debug)]
@@ -115,10 +129,10 @@ pub struct Property {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) default: Option<Value>,
 
-    /// Optional list naming the required nested properties for object-type properties
-    /// (JSON Schema semantics: only listed properties are required).
+    /// Optional requiredness declaration: either a legacy per-property boolean flag
+    /// or a JSON Schema array of required nested property names.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) required: Option<Vec<String>>,
+    pub(crate) required: Option<Required>,
 }
 
 #[wasm_bindgen]
@@ -179,8 +193,8 @@ impl Property {
             SchemaFieldType::Object => match self.clone().properties {
                 Some(props) => {
                     if props.len() > 0 {
-                        // Every name listed in `required` must be a defined property.
-                        if let Some(required) = &self.required {
+                        // When `required` is an array, every listed name must be a defined property.
+                        if let Some(Required::Fields(required)) = &self.required {
                             for name in required {
                                 if !props.contains_key(name) {
                                     return Err(
@@ -293,7 +307,7 @@ wasm_bindgen_test_configure!(run_in_browser);
 mod tests {
     use std::collections::HashMap;
     use crate::error::RIDBError;
-    use crate::schema::property::Property;
+    use crate::schema::property::{Property, Required};
     use crate::schema::property_type::{SchemaFieldType};
 
     #[test]
@@ -606,7 +620,7 @@ mod tests {
             min_length: None,
             properties: Some(props),
             default: None,
-            required: Some(vec!["email".to_string()]),
+            required: Some(Required::Fields(vec!["email".to_string()])),
         }.is_valid();
         assert!(result.unwrap());
     }
@@ -634,7 +648,7 @@ mod tests {
             min_length: None,
             properties: Some(props),
             default: None,
-            required: Some(vec!["missing".to_string()]),
+            required: Some(Required::Fields(vec!["missing".to_string()])),
         }.is_valid();
         match result {
             Ok(_) => panic!("Expected an error, but got Ok"),
