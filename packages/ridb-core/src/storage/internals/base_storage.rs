@@ -167,6 +167,7 @@ impl BaseStorage {
                         primary_key: "id".to_string(),
                         schema_type: "object".to_string(),
                         properties,
+                        required: None,
                     };
 
                     new_schemas.insert(index_name, index_schema);

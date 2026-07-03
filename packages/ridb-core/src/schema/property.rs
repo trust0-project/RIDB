@@ -59,9 +59,10 @@ export class Property {
     readonly minLength?: number;
 
     /**
-     * An optional array of required fields for object-type properties.
+     * An optional array naming the required nested properties for object-type properties.
+     * Follows JSON Schema semantics: only the listed properties are required.
      */
-    readonly required?: boolean;
+    readonly required?: string[];
 
     /**
      * An optional default value for the property.
@@ -114,9 +115,10 @@ pub struct Property {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) default: Option<Value>,
 
-    /// Optional default value for the property.
+    /// Optional list naming the required nested properties for object-type properties
+    /// (JSON Schema semantics: only listed properties are required).
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) required: Option<bool>,
+    pub(crate) required: Option<Vec<String>>,
 }
 
 #[wasm_bindgen]
@@ -177,6 +179,19 @@ impl Property {
             SchemaFieldType::Object => match self.clone().properties {
                 Some(props) => {
                     if props.len() > 0 {
+                        // Every name listed in `required` must be a defined property.
+                        if let Some(required) = &self.required {
+                            for name in required {
+                                if !props.contains_key(name) {
+                                    return Err(
+                                        RIDBError::validation(
+                                            &format!("Required property '{}' is not defined in properties", name),
+                                            30
+                                        )
+                                    );
+                                }
+                            }
+                        }
                         Ok(true)
                     } else {
                         Err(
@@ -292,7 +307,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
         assert_eq!(default_property.property_type, SchemaFieldType::String);
         assert!(default_property.items.is_none());
@@ -315,7 +330,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
         // Test default values to ensure proper initialization
         assert_eq!(default_property.property_type, SchemaFieldType::Array);
@@ -347,7 +362,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
         let default_property = Property {
             property_type: SchemaFieldType::Array,
@@ -358,7 +373,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
         let result = default_property.is_valid();
         match result {
@@ -383,7 +398,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
 
         let default_property2 = Property {
@@ -395,7 +410,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -423,7 +438,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
 
         let default_property2 = Property {
@@ -435,7 +450,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -462,7 +477,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -483,7 +498,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -504,7 +519,7 @@ mod tests {
             min_length: Some(2),
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -529,7 +544,7 @@ mod tests {
             min_length: Some(-1),
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         };
         let result = default_property2.is_valid();
         // Check the result for an error message
@@ -554,7 +569,7 @@ mod tests {
             min_length: None,
             properties: None,
             default: None,
-            required: Some(true)
+            required: None
         }.is_valid();
         // Check the result for an error message
         match result {
@@ -564,6 +579,68 @@ mod tests {
 
                 assert_eq!(error.message, "Validation Error: Properties empty", "Error: Expected 'Validation Error: Properties empty'")
 
+            }
+        }
+    }
+
+    #[test]
+    fn test_property_object_required_subset_ok() {
+        let mut props = HashMap::new();
+        props.insert("email".to_string(), Property {
+            property_type: SchemaFieldType::String,
+            items: None,
+            max_items: None,
+            min_items: None,
+            max_length: None,
+            min_length: None,
+            properties: None,
+            default: None,
+            required: None,
+        });
+        let result = Property {
+            property_type: SchemaFieldType::Object,
+            items: None,
+            max_items: None,
+            min_items: None,
+            max_length: None,
+            min_length: None,
+            properties: Some(props),
+            default: None,
+            required: Some(vec!["email".to_string()]),
+        }.is_valid();
+        assert!(result.unwrap());
+    }
+
+    #[test]
+    fn test_property_object_required_unknown_err() {
+        let mut props = HashMap::new();
+        props.insert("email".to_string(), Property {
+            property_type: SchemaFieldType::String,
+            items: None,
+            max_items: None,
+            min_items: None,
+            max_length: None,
+            min_length: None,
+            properties: None,
+            default: None,
+            required: None,
+        });
+        let result = Property {
+            property_type: SchemaFieldType::Object,
+            items: None,
+            max_items: None,
+            min_items: None,
+            max_length: None,
+            min_length: None,
+            properties: Some(props),
+            default: None,
+            required: Some(vec!["missing".to_string()]),
+        }.is_valid();
+        match result {
+            Ok(_) => panic!("Expected an error, but got Ok"),
+            Err(js_val) => {
+                let error = RIDBError::from(js_val);
+                assert_eq!(error.message, "Validation Error: Required property 'missing' is not defined in properties");
             }
         }
     }
@@ -579,7 +656,7 @@ mod tests {
             min_length: None,
             properties: Some(HashMap::new()),
             default: None,
-            required: Some(true)
+            required: None
         }.is_valid();
         // Check the result for an error message
         match result {

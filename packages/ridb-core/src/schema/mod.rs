@@ -33,6 +33,11 @@ export type SchemaType = {
      type: SchemaFieldType;
      indexes?:  string[];
      encrypted?:  string[];
+     /**
+      * The names of the required top-level properties. Follows JSON Schema
+      * semantics: only the listed properties are required.
+      */
+     required?: string[];
     /**
      * The properties defined in the schema.
      */
@@ -105,10 +110,13 @@ export class Schema<T extends SchemaType> {
      * The properties defined in the schema.
      */
     readonly properties: {
-        [K in keyof T['properties'] as T['properties'][K]['required'] extends false | (T['properties'][K]['default'] extends undefined ? true: false)  ? K : never]?: T['properties'][K];
-    } & {
-        [K in keyof T['properties'] as T['properties'][K]['required'] extends false ? never : K]: T['properties'][K];
+        [K in keyof T['properties']]: T['properties'][K];
     };
+
+    /**
+     * The names of the required top-level properties.
+     */
+    readonly required?: (Extract<keyof T['properties'], string>)[];
     /**
      * Converts the schema to a JSON representation.
      *
@@ -138,7 +146,11 @@ pub struct Schema {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) indexes: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) encrypted: Option<Vec<String>>
+    pub(crate) encrypted: Option<Vec<String>>,
+    /// The names of the required top-level properties (JSON Schema semantics:
+    /// only listed properties are required).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) required: Option<Vec<String>>
 }
 
 
@@ -147,18 +159,25 @@ impl Schema {
 
     #[wasm_bindgen(js_name="validate")]
     pub fn validate_document(&self, document: JsValue) -> Result<(), RIDBError> {
-        // Collect required fields
-        let required: Vec<String> = self.properties
-            .iter()
-            .filter(|(_, prop)| prop.required.unwrap_or(true))
-            .map(|(key, _)| key.clone())
-            .collect();
+        let required = self.required.clone().unwrap_or_default();
+        let encrypted = self.encrypted.clone().unwrap_or_default();
+        self.validate_object(&document, &self.properties, &required, &encrypted)
+    }
 
-        let encrypted = self.encrypted.clone().unwrap_or(Vec::new());
-
-        for (key, prop) in &self.properties {
-
-            let value = Reflect::get(&document, &JsValue::from_str(&key))
+    /// Validates a JS object value against a set of properties, following JSON Schema
+    /// semantics: only the names listed in `required` must be present. Encrypted fields
+    /// are exempt from the presence check (they are populated later in the pipeline).
+    /// Nested object properties are validated recursively against their own
+    /// `properties`/`required`.
+    fn validate_object(
+        &self,
+        document: &JsValue,
+        properties: &HashMap<String, Property>,
+        required: &[String],
+        encrypted: &[String],
+    ) -> Result<(), RIDBError> {
+        for (key, prop) in properties {
+            let value = Reflect::get(document, &JsValue::from_str(key))
                 .map_err(|_e| {
                     JsValue::from(
                         RIDBError::validation(
@@ -168,31 +187,35 @@ impl Schema {
                     )
                 })?;
 
-            if value.is_undefined() {
+            if value.is_undefined() || value.is_null() {
                 // If the property is required and not encrypted, it's an error
-                if required.contains(&key) && !encrypted.contains(&key) {
+                if required.contains(key) && !encrypted.contains(key) {
                     return Err(
-                            RIDBError::validation(
-                                &format!("Missing required property '{}'", key),
-                                15
-                            )
-
+                        RIDBError::validation(
+                            &format!("Missing required property '{}'", key),
+                            15
+                        )
                     );
                 }
             } else {
-                let res = self.is_type_correct(&key, &value, &prop);
-                if let Err(err) = res {
-                    return Err(err);
-                } else if !res.unwrap() {
+                if !self.is_type_correct(key, &value, prop)? {
                     return Err(
-                            RIDBError::validation(
-                                &format!(
-                                    "Field '{}' should be of type '{:?}'",
-                                    key, prop.property_type
-                                ),
-                                15
-                            )
+                        RIDBError::validation(
+                            &format!(
+                                "Field '{}' should be of type '{:?}'",
+                                key, prop.property_type
+                            ),
+                            15
+                        )
                     );
+                }
+
+                // Recurse into nested object properties.
+                if prop.property_type == SchemaFieldType::Object {
+                    if let Some(nested_props) = &prop.properties {
+                        let nested_required = prop.required.clone().unwrap_or_default();
+                        self.validate_object(&value, nested_props, &nested_required, &[])?;
+                    }
                 }
             }
         }
@@ -281,6 +304,20 @@ impl Schema {
             property.is_valid()?;
         }
 
+        // Every name listed in `required` must be a defined property.
+        if let Some(required) = &self.required {
+            for name in required {
+                if !self.properties.contains_key(name) {
+                    return Err(
+                        RIDBError::validation(
+                            &format!("Required property '{}' is not defined in properties", name),
+                            30
+                        )
+                    );
+                }
+            }
+        }
+
         Ok(true)
     }
 
@@ -347,6 +384,16 @@ impl Schema {
     #[wasm_bindgen(getter, js_name="encrypted")]
     pub fn get_encrypted(&self) -> Option<Vec<String>> {
         self.encrypted.clone()
+    }
+
+    /// Retrieves the required top-level property names, if any.
+    ///
+    /// # Returns
+    ///
+    /// * `Option<Vec<String>>` - The required property names, if any.
+    #[wasm_bindgen(getter, js_name="required")]
+    pub fn get_required(&self) -> Option<Vec<String>> {
+        self.required.clone()
     }
 
     /// Retrieves the properties of the schema.
@@ -451,4 +498,108 @@ fn test_invalid_schema() {
     let result = Schema::create(schema_value);
 
     assert!(result.is_err());
+}
+
+#[wasm_bindgen_test]
+fn test_schema_required_subset_of_properties() {
+    // `required` naming a property that is not defined must fail validation.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "missing"],
+        "properties": {
+            "id": {"type": "string"}
+        }
+    }"#;
+    let schema_value = JSON::parse(schema_js).unwrap();
+    let result = Schema::create(schema_value);
+    assert!(result.is_err());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_required_present() {
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string"},
+            "nickname": {"type": "string"}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    // Required fields present, optional `nickname` omitted -> valid.
+    let doc = r#"{ "id": "1", "name": "Alice" }"#;
+    assert!(schema.validate_document(JSON::parse(doc).unwrap()).is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_required_missing() {
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string"}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    // Required `name` missing -> error.
+    let doc = r#"{ "id": "1" }"#;
+    assert!(schema.validate_document(JSON::parse(doc).unwrap()).is_err());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_no_required_all_optional() {
+    // JSON Schema semantics: no `required` array means every property is optional.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string"}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    let doc = r#"{ "id": "1" }"#;
+    assert!(schema.validate_document(JSON::parse(doc).unwrap()).is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_nested_required() {
+    // Nested object properties are validated against their own `required` list.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "profile"],
+        "properties": {
+            "id": {"type": "string"},
+            "profile": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                    "email": {"type": "string"},
+                    "bio": {"type": "string"}
+                }
+            }
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    let valid = r#"{ "id": "1", "profile": { "email": "a@b.c" } }"#;
+    assert!(schema.validate_document(JSON::parse(valid).unwrap()).is_ok());
+
+    // Nested required `email` missing -> error.
+    let invalid = r#"{ "id": "1", "profile": { "bio": "hi" } }"#;
+    assert!(schema.validate_document(JSON::parse(invalid).unwrap()).is_err());
 }
