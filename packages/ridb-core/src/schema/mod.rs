@@ -165,13 +165,20 @@ impl Schema {
 
     /// Validates a JS object value against a set of properties.
     ///
-    /// Requiredness precedence for each property (see [`Required`]):
-    ///  1. a property-level boolean flag wins (`false` -> optional, `true` -> required);
-    ///  2. otherwise, the property is required iff it is listed in the container's
+    /// Requiredness precedence for each property (mirrors the compile-time
+    /// `IsCreateOptional`/`IsNestedOptional` types; see [`Required`]):
+    ///  1. a declared `default` makes the property optional (it is filled in before
+    ///     persistence, so its absence at validation time is never an error);
+    ///  2. otherwise, a property-level boolean flag wins (`false` -> optional,
+    ///     `true` -> required);
+    ///  3. otherwise, the property is required iff it is listed in the container's
     ///     `required` array (JSON Schema semantics);
-    ///  3. otherwise (no array, no flag) the property is optional. An omitted `required`
-    ///     array is therefore equivalent to `[]`, matching JSON Schema (and the
-    ///     compile-time `CreateDoc`/`IsCreateOptional` types).
+    ///  4. otherwise (no default, no array, no flag) the property is optional. An omitted
+    ///     `required` array is therefore equivalent to `[]`, matching JSON Schema.
+    ///
+    /// Note that `DefaultsPlugin` only fills top-level defaults; treating a defaulted
+    /// nested field as optional here keeps validation in step with the types even though
+    /// nested defaults are not materialised before validation.
     ///
     /// Encrypted fields are exempt from the presence check (they are populated later in
     /// the pipeline). Nested object properties are validated recursively against their
@@ -195,9 +202,14 @@ impl Schema {
                 })?;
 
             // Determine whether this property is required, applying the precedence above.
-            let is_required = match &prop.required {
-                Some(Required::Flag(flag)) => *flag,
-                _ => container_required.is_some_and(|arr| arr.contains(key)),
+            // A declared `default` takes priority and makes the property optional.
+            let is_required = if prop.default.is_some() {
+                false
+            } else {
+                match &prop.required {
+                    Some(Required::Flag(flag)) => *flag,
+                    _ => container_required.is_some_and(|arr| arr.contains(key)),
+                }
             };
 
             // Only an absent (`undefined`) value counts as "missing". A `null` value is
@@ -740,4 +752,38 @@ fn test_validate_document_null_is_type_checked() {
     assert!(schema.validate_document(JSON::parse(r#"{ "id": null }"#).unwrap()).is_err());
     // Omitting the optional `name` entirely remains valid.
     assert!(schema.validate_document(JSON::parse(r#"{ "id": "1" }"#).unwrap()).is_ok());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_default_makes_required_optional() {
+    // Bug: a field with a declared `default` must be omittable even when it is listed in
+    // a `required` array, matching `IsCreateOptional`/`IsNestedOptional`. `DefaultsPlugin`
+    // only fills top-level defaults, so nested defaulted fields would otherwise fail
+    // validation despite TypeScript allowing them to be omitted.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id", "profile"],
+        "properties": {
+            "id": {"type": "string"},
+            "profile": {
+                "type": "object",
+                "required": ["email", "role"],
+                "properties": {
+                    "email": {"type": "string"},
+                    "role": {"type": "string", "default": "member"}
+                }
+            }
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    // Nested `role` is listed as required but has a default -> omitting it is valid.
+    let doc = r#"{ "id": "1", "profile": { "email": "a@b.c" } }"#;
+    assert!(schema.validate_document(JSON::parse(doc).unwrap()).is_ok());
+
+    // Nested `email` is required with no default -> omitting it still errors.
+    let invalid = r#"{ "id": "1", "profile": { "role": "admin" } }"#;
+    assert!(schema.validate_document(JSON::parse(invalid).unwrap()).is_err());
 }
