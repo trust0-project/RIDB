@@ -200,7 +200,11 @@ impl Schema {
                 _ => container_required.is_some_and(|arr| arr.contains(key)),
             };
 
-            if value.is_undefined() || value.is_null() {
+            // Only an absent (`undefined`) value counts as "missing". A `null` value is
+            // present and must be validated against the declared type, so it falls through
+            // to `is_type_correct` below (which rejects `null` for `string`, `object`,
+            // etc.). This prevents optional fields from silently persisting `null`.
+            if value.is_undefined() {
                 if is_required && !encrypted.contains(key) {
                     return Err(
                         RIDBError::validation(
@@ -711,4 +715,29 @@ fn test_validate_document_nested_required() {
     // Nested required `email` missing -> error.
     let invalid = r#"{ "id": "1", "profile": { "bio": "hi" } }"#;
     assert!(schema.validate_document(JSON::parse(invalid).unwrap()).is_err());
+}
+
+#[wasm_bindgen_test]
+fn test_validate_document_null_is_type_checked() {
+    // Bug 2 regression: `null` is a present value, not a missing one. It must be
+    // validated against the declared type and fail for non-nullable types, even for
+    // optional properties. Otherwise an optional field could silently persist `null`.
+    let schema_js = r#"{
+        "version": 1,
+        "primaryKey": "id",
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string"}
+        }
+    }"#;
+    let schema = Schema::create(JSON::parse(schema_js).unwrap()).unwrap();
+
+    // Optional `name` explicitly set to null -> type error (not silently accepted).
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1", "name": null }"#).unwrap()).is_err());
+    // Required `id` set to null -> still an error.
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": null }"#).unwrap()).is_err());
+    // Omitting the optional `name` entirely remains valid.
+    assert!(schema.validate_document(JSON::parse(r#"{ "id": "1" }"#).unwrap()).is_ok());
 }

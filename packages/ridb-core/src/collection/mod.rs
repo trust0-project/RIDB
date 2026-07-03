@@ -69,8 +69,50 @@ export type ExtractProperty<P> =
   P extends { type: "number" } ? number :
   P extends { type: "boolean" } ? boolean :
   P extends { type: "array" } ? (P extends { items: infer I } ? ExtractProperty<I>[] : any[]) :
-  P extends { type: "object" } ? (P extends { properties: infer PR } ? { [K in keyof PR]: ExtractProperty<PR[K]> } : object) :
+  P extends { type: "object" } ? (P extends { properties: infer PR } ? ExtractObject<PR, NestedRequiredNames<P>> : object) :
   unknown;
+
+/**
+ * NestedRequiredNames extracts the union of nested property names listed in an object
+ * property's `required` array (JSON Schema semantics), or `never` when no array is
+ * present. Note it only matches the array form; a boolean `required` flag yields `never`.
+ */
+export type NestedRequiredNames<P> =
+  P extends { required: infer R }
+    ? (R extends readonly string[] ? R[number] : never)
+    : never;
+
+/**
+ * IsNestedOptional decides whether a nested property `K` (within an object property's
+ * `properties` map `PR`, given that object's required-name union `R`) may be omitted.
+ * Precedence mirrors the runtime validator and {@link IsCreateOptional}:
+ *  1. a declared `default` makes the field optional;
+ *  2. a property-level `required: false` forces it optional;
+ *  3. a property-level `required: true` forces it required;
+ *  4. otherwise it is required iff listed in the object's `required` array;
+ *  5. otherwise it is optional.
+ */
+export type IsNestedOptional<PR, K extends keyof PR, R> =
+  PR[K] extends { default: unknown } ? true
+    : PR[K] extends { required: false } ? true
+    : PR[K] extends { required: true } ? false
+    : K extends R ? false
+    : true;
+
+/**
+ * ExtractObject builds an object document type from a `properties` map `PR` and the
+ * owning object's required-name union `R`, applying the correct optional/required
+ * modifier to each nested property (see {@link IsNestedOptional}). This keeps `Doc` and
+ * `CreateDoc` in step with the runtime validator, which only enforces nested keys named
+ * in that object's `required` array.
+ */
+export type ExtractObject<PR, R> = {
+  [K in keyof PR as IsNestedOptional<PR, K, R> extends true ? never : K]:
+    ExtractProperty<PR[K]>
+} & {
+  [K in keyof PR as IsNestedOptional<PR, K, R> extends true ? K : never]?:
+    ExtractProperty<PR[K]>
+};
 
 /**
  * The union of property names marked required at the schema level (JSON Schema
