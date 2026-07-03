@@ -17,7 +17,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          token: ${{ secrets.GH_SECRET }}
+          # Fall back to the built-in token when GH_SECRET is unavailable (e.g. on
+          # Dependabot PRs, where custom Actions secrets are not exposed). This keeps
+          # checkout/submodule fetch working instead of prompting for credentials.
+          token: ${{ secrets.GH_SECRET || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -42,7 +45,7 @@ jobs:
       - name: Install WASM
         env:
           NPM_CONFIG_PROVENANCE: true
-          GH_TOKEN: ${{ secrets.GH_SECRET }}
+          GH_TOKEN: ${{ secrets.GH_SECRET || secrets.GITHUB_TOKEN }}
         run: |
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           yarn install

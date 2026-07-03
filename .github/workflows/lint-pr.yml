@@ -12,7 +12,11 @@ jobs:
   lint_pr:
     name: Validate PR title
     runs-on: macos-latest
+    # Dependabot generates conventional titles already and cannot access custom
+    # Actions secrets, so skip the check there rather than failing on a blank token.
+    if: github.actor != 'dependabot[bot]'
     steps:
       - uses: amannn/action-semantic-pull-request@v5
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_SECRET }}
+          # Fall back to the built-in token when GH_SECRET is unavailable.
+          GITHUB_TOKEN: ${{ secrets.GH_SECRET || secrets.GITHUB_TOKEN }}
