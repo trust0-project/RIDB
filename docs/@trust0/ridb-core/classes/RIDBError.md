@@ -6,7 +6,7 @@
 
 # Class: RIDBError
 
-Defined in: ridb\_core.d.ts:761
+Defined in: ridb\_core.d.ts:883
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: ridb\_core.d.ts:761
 
 > **new RIDBError**(`err_type`, `message`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:794
+Defined in: ridb\_core.d.ts:916
 
 #### Parameters
 
@@ -40,7 +40,7 @@ Defined in: ridb\_core.d.ts:794
 
 > `readonly` **code**: `any`
 
-Defined in: ridb\_core.d.ts:820
+Defined in: ridb\_core.d.ts:942
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: ridb\_core.d.ts:820
 
 > `readonly` **message**: `string`
 
-Defined in: ridb\_core.d.ts:823
+Defined in: ridb\_core.d.ts:945
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: ridb\_core.d.ts:823
 
 > `readonly` **type**: `string`
 
-Defined in: ridb\_core.d.ts:826
+Defined in: ridb\_core.d.ts:948
 
 ## Methods
 
@@ -64,7 +64,7 @@ Defined in: ridb\_core.d.ts:826
 
 > **free**(): `void`
 
-Defined in: ridb\_core.d.ts:770
+Defined in: ridb\_core.d.ts:892
 
 #### Returns
 
@@ -76,7 +76,7 @@ Defined in: ridb\_core.d.ts:770
 
 > **toJSON**(): `Object`
 
-Defined in: ridb\_core.d.ts:765
+Defined in: ridb\_core.d.ts:887
 
 * Return copy of self without private attributes.
 
@@ -90,7 +90,7 @@ Defined in: ridb\_core.d.ts:765
 
 > **toString**(): `string`
 
-Defined in: ridb\_core.d.ts:769
+Defined in: ridb\_core.d.ts:891
 
 Return stringified version of self.
 
@@ -104,7 +104,7 @@ Return stringified version of self.
 
 > `static` **authentication**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:788
+Defined in: ridb\_core.d.ts:910
 
 #### Parameters
 
@@ -126,7 +126,7 @@ Defined in: ridb\_core.d.ts:788
 
 > `static` **error**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:806
+Defined in: ridb\_core.d.ts:928
 
 #### Parameters
 
@@ -148,7 +148,7 @@ Defined in: ridb\_core.d.ts:806
 
 > `static` **from**(`err`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:817
+Defined in: ridb\_core.d.ts:939
 
 #### Parameters
 
@@ -166,7 +166,7 @@ Defined in: ridb\_core.d.ts:817
 
 > `static` **hook**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:800
+Defined in: ridb\_core.d.ts:922
 
 #### Parameters
 
@@ -188,7 +188,7 @@ Defined in: ridb\_core.d.ts:800
 
 > `static` **query**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:812
+Defined in: ridb\_core.d.ts:934
 
 #### Parameters
 
@@ -210,7 +210,7 @@ Defined in: ridb\_core.d.ts:812
 
 > `static` **serialisation**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:782
+Defined in: ridb\_core.d.ts:904
 
 #### Parameters
 
@@ -232,7 +232,7 @@ Defined in: ridb\_core.d.ts:782
 
 > `static` **validation**(`err`, `code`): `RIDBError`
 
-Defined in: ridb\_core.d.ts:776
+Defined in: ridb\_core.d.ts:898
 
 #### Parameters
 

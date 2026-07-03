@@ -6,7 +6,7 @@
 
 # Class: BasePlugin
 
-Defined in: ridb\_core.d.ts:171
+Defined in: ridb\_core.d.ts:389
 
 ## Implements
 
@@ -28,7 +28,7 @@ Defined in: ridb\_core.d.ts:171
 
 > `optional` **docCreateHook?**: [`Hook`](../type-aliases/Hook.md)
 
-Defined in: ridb\_core.d.ts:172
+Defined in: ridb\_core.d.ts:390
 
 #### Implementation of
 
@@ -40,7 +40,7 @@ Defined in: ridb\_core.d.ts:172
 
 > `optional` **docRecoverHook?**: [`Hook`](../type-aliases/Hook.md)
 
-Defined in: ridb\_core.d.ts:173
+Defined in: ridb\_core.d.ts:391
 
 #### Implementation of
 

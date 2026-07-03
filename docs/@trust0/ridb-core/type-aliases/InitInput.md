@@ -8,4 +8,4 @@
 
 > **InitInput** = `RequestInfo` \| `URL` \| `Response` \| `BufferSource` \| `WebAssembly.Module`
 
-Defined in: ridb\_core.d.ts:866
+Defined in: ridb\_core.d.ts:988

@@ -6,12 +6,13 @@
 
 # Type Alias: CreateDoc\<T\>
 
-> **CreateDoc**\<`T`\> = `{ [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends true ? K : never]?: ExtractType<T["properties"][K]["type"]> }` & `{ [K in keyof T["properties"] as IsOptional<T["properties"][K]> extends true ? never : K]: ExtractType<T["properties"][K]["type"]> }` & `object`
+> **CreateDoc**\<`T`\> = `{ [K in keyof T["properties"] as IsCreateOptional<T, K> extends true ? K : never]?: ExtractProperty<T["properties"][K]> }` & `{ [K in keyof T["properties"] as IsCreateOptional<T, K> extends true ? never : K]: ExtractProperty<T["properties"][K]> }` & `object`
 
-Defined in: ridb\_core.d.ts:361
+Defined in: ridb\_core.d.ts:693
 
 CreateDoc is a utility type for document creation that properly handles required vs optional fields
-during the creation process. Fields with default values or required: false become optional.
+during the creation process. Fields with default values, or fields not listed in the schema-level
+`required` array, become optional.
 
 ## Type Declaration
 

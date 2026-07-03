@@ -6,7 +6,7 @@
 
 # Class: InMemory\<T\>
 
-Defined in: ridb\_core.d.ts:183
+Defined in: ridb\_core.d.ts:257
 
 Represents an in-memory storage system extending the base storage functionality.
 
@@ -28,7 +28,7 @@ The schema type.
 
 > **new InMemory**\<`T`\>(`dbName`, `schemas`, `options?`): `InMemory`\<`T`\>
 
-Defined in: ridb\_core.d.ts:598
+Defined in: ridb\_core.d.ts:410
 
 #### Parameters
 
@@ -58,11 +58,11 @@ Defined in: ridb\_core.d.ts:598
 
 > `readonly` **core**: [`CoreStorage`](CoreStorage.md)
 
-Defined in: ridb\_core.d.ts:606
+Defined in: ridb\_core.d.ts:418
 
 #### Inherited from
 
-[`IndexDB`](IndexDB.md).[`core`](IndexDB.md#core)
+[`BaseStorage`](BaseStorage.md).[`core`](BaseStorage.md#core)
 
 ***
 
@@ -70,11 +70,11 @@ Defined in: ridb\_core.d.ts:606
 
 > `readonly` **dbName**: `string`
 
-Defined in: ridb\_core.d.ts:603
+Defined in: ridb\_core.d.ts:415
 
 #### Inherited from
 
-[`IndexDB`](IndexDB.md).[`dbName`](IndexDB.md#dbname)
+[`BaseStorage`](BaseStorage.md).[`dbName`](BaseStorage.md#dbname)
 
 ***
 
@@ -82,11 +82,11 @@ Defined in: ridb\_core.d.ts:603
 
 > `readonly` **options**: [`BaseStorageOptions`](../type-aliases/BaseStorageOptions.md)
 
-Defined in: ridb\_core.d.ts:605
+Defined in: ridb\_core.d.ts:417
 
 #### Inherited from
 
-[`IndexDB`](IndexDB.md).[`options`](IndexDB.md#options)
+[`BaseStorage`](BaseStorage.md).[`options`](BaseStorage.md#options)
 
 ***
 
@@ -94,7 +94,7 @@ Defined in: ridb\_core.d.ts:605
 
 > `readonly` **schemas**: `Record`\<keyof `Schemas`, [`Schema`](Schema.md)\<`Schemas`\[keyof `Schemas`\]\>\>
 
-Defined in: ridb\_core.d.ts:604
+Defined in: ridb\_core.d.ts:416
 
 #### Inherited from
 
@@ -106,7 +106,7 @@ Defined in: ridb\_core.d.ts:604
 
 > **addIndexSchemas**(): `null`
 
-Defined in: ridb\_core.d.ts:616
+Defined in: ridb\_core.d.ts:428
 
 #### Returns
 
@@ -122,7 +122,7 @@ Defined in: ridb\_core.d.ts:616
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:608
+Defined in: ridb\_core.d.ts:420
 
 #### Returns
 
@@ -138,7 +138,7 @@ Defined in: ridb\_core.d.ts:608
 
 > **count**(`colectionName`, `query`, `options?`): `Promise`\<`number`\>
 
-Defined in: ridb\_core.d.ts:609
+Defined in: ridb\_core.d.ts:421
 
 #### Parameters
 
@@ -168,7 +168,7 @@ keyof `T`
 
 > **find**(`collectionName`, `query`, `options?`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>[]\>
 
-Defined in: ridb\_core.d.ts:611
+Defined in: ridb\_core.d.ts:423
 
 #### Parameters
 
@@ -198,7 +198,7 @@ keyof `T`
 
 > **findDocumentById**(`collectionName`, `id`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\> \| `null`\>
 
-Defined in: ridb\_core.d.ts:610
+Defined in: ridb\_core.d.ts:422
 
 #### Parameters
 
@@ -224,7 +224,7 @@ keyof `T`
 
 > **free**(): `void`
 
-Defined in: ridb\_core.d.ts:187
+Defined in: ridb\_core.d.ts:261
 
 Frees the resources used by the in-memory storage.
 
@@ -238,7 +238,7 @@ Frees the resources used by the in-memory storage.
 
 > **getOption**(`name`): `string` \| `number` \| `boolean` \| `undefined`
 
-Defined in: ridb\_core.d.ts:613
+Defined in: ridb\_core.d.ts:425
 
 #### Parameters
 
@@ -260,7 +260,7 @@ Defined in: ridb\_core.d.ts:613
 
 > **getSchema**(`name`): [`Schema`](Schema.md)\<`any`\>
 
-Defined in: ridb\_core.d.ts:614
+Defined in: ridb\_core.d.ts:426
 
 #### Parameters
 
@@ -282,7 +282,7 @@ Defined in: ridb\_core.d.ts:614
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: ridb\_core.d.ts:607
+Defined in: ridb\_core.d.ts:419
 
 #### Returns
 
@@ -298,7 +298,7 @@ Defined in: ridb\_core.d.ts:607
 
 > **write**(`op`): `Promise`\<[`Doc`](../type-aliases/Doc.md)\<`T`\[keyof `T`\]\>\>
 
-Defined in: ridb\_core.d.ts:612
+Defined in: ridb\_core.d.ts:424
 
 #### Parameters
 
@@ -320,7 +320,7 @@ Defined in: ridb\_core.d.ts:612
 
 > `static` **create**\<`SchemasCreate`\>(`dbName`, `schemas`): `Promise`\<`InMemory`\<`SchemasCreate`\>\>
 
-Defined in: ridb\_core.d.ts:189
+Defined in: ridb\_core.d.ts:263
 
 #### Type Parameters
 

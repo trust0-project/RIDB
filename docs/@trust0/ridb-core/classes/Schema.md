@@ -6,7 +6,7 @@
 
 # Class: Schema\<T\>
 
-Defined in: ridb\_core.d.ts:246
+Defined in: ridb\_core.d.ts:810
 
 Represents a schema, including its definition and related methods.
 You may be trying to build a storage, in any other can u won't need access tho this class.
@@ -45,7 +45,7 @@ The schema type.
 
 > `readonly` `optional` **encrypted?**: `Extract`\<keyof `T`, `string`\>[]
 
-Defined in: ridb\_core.d.ts:287
+Defined in: ridb\_core.d.ts:851
 
 An optional array of encrypted fields.
 
@@ -55,7 +55,7 @@ An optional array of encrypted fields.
 
 > `readonly` `optional` **indexes?**: `Extract`\<keyof `T`, `string`\>[]
 
-Defined in: ridb\_core.d.ts:282
+Defined in: ridb\_core.d.ts:846
 
 An optional array of indexes.
 
@@ -65,7 +65,7 @@ An optional array of indexes.
 
 > `readonly` **primaryKey**: `string`
 
-Defined in: ridb\_core.d.ts:269
+Defined in: ridb\_core.d.ts:833
 
 The primary key of the schema.
 
@@ -73,11 +73,21 @@ The primary key of the schema.
 
 ### properties
 
-> `readonly` **properties**: \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false \| (T\["properties"\]\[K\]\["default"\] extends undefined ? true : false) ? K : never\]?: T\["properties"\]\[K\] \} & \{ \[K in string \| number \| symbol as T\["properties"\]\[K\]\["required"\] extends false ? never : K\]: T\["properties"\]\[K\] \}
+> `readonly` **properties**: \{ \[K in string \| number \| symbol\]: T\["properties"\]\[K\] \}
 
-Defined in: ridb\_core.d.ts:292
+Defined in: ridb\_core.d.ts:856
 
 The properties defined in the schema.
+
+***
+
+### required?
+
+> `readonly` `optional` **required?**: `Extract`\<keyof `T`\[`"properties"`\], `string`\>[]
+
+Defined in: ridb\_core.d.ts:863
+
+The names of the required top-level properties.
 
 ***
 
@@ -85,7 +95,7 @@ The properties defined in the schema.
 
 > **schema**: `Schema`\<`T`\>
 
-Defined in: ridb\_core.d.ts:250
+Defined in: ridb\_core.d.ts:814
 
 The schema definition.
 
@@ -95,7 +105,7 @@ The schema definition.
 
 > `readonly` **type**: `SchemaFieldType`
 
-Defined in: ridb\_core.d.ts:274
+Defined in: ridb\_core.d.ts:838
 
 The type of the schema.
 
@@ -105,7 +115,7 @@ The type of the schema.
 
 > `readonly` **version**: `number`
 
-Defined in: ridb\_core.d.ts:264
+Defined in: ridb\_core.d.ts:828
 
 The version of the schema.
 
@@ -115,7 +125,7 @@ The version of the schema.
 
 > **toJSON**(): [`SchemaType`](../type-aliases/SchemaType.md)
 
-Defined in: ridb\_core.d.ts:302
+Defined in: ridb\_core.d.ts:869
 
 Converts the schema to a JSON representation.
 
@@ -131,13 +141,18 @@ The JSON representation of the schema.
 
 > **validate**(`document`): `boolean`
 
-Defined in: ridb\_core.d.ts:304
+Defined in: ridb\_core.d.ts:877
+
+Validates a document against the schema. The runtime applies the same
+optional/required rules as creation (only `required` fields, without a `default`,
+must be present), so the accepted shape is `CreateDoc<T>` rather than a fully-keyed
+`Doc<T>`.
 
 #### Parameters
 
 ##### document
 
-[`Doc`](../type-aliases/Doc.md)\<`Schema`\<`T`\>\>
+[`CreateDoc`](../type-aliases/CreateDoc.md)\<`T`\>
 
 #### Returns
 
@@ -149,7 +164,7 @@ Defined in: ridb\_core.d.ts:304
 
 > `static` **create**\<`TS`\>(`definition`): `Schema`\<`TS`\>
 
-Defined in: ridb\_core.d.ts:259
+Defined in: ridb\_core.d.ts:823
 
 Creates a new `Schema` instance from the provided definition.
 
