@@ -1,8 +1,10 @@
+use std::cmp::Ordering;
 use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 use crate::error::RIDBError;
 use crate::operation::Operation;
 use crate::query::Query;
+use crate::query::options::{SortDirection, SortField};
 use crate::schema::Schema;
 
 #[wasm_bindgen(typescript_custom_section)]
@@ -283,4 +285,61 @@ impl CoreStorage {
         }
     }
 
+}
+
+impl CoreStorage {
+    /// Sorts a list of documents in place according to the provided sort fields.
+    /// Fields are applied in order (the first field is primary, subsequent ones break ties).
+    /// A no-op when `sort` is empty.
+    pub(crate) fn sort_documents(&self, documents: &mut [JsValue], sort: &[SortField]) {
+        if sort.is_empty() {
+            return;
+        }
+        documents.sort_by(|a, b| Self::compare_by_sort(a, b, sort));
+    }
+
+    fn compare_by_sort(a: &JsValue, b: &JsValue, sort: &[SortField]) -> Ordering {
+        for field in sort {
+            let a_value = Reflect::get(a, &JsValue::from_str(&field.field)).unwrap_or(JsValue::UNDEFINED);
+            let b_value = Reflect::get(b, &JsValue::from_str(&field.field)).unwrap_or(JsValue::UNDEFINED);
+            let mut ordering = Self::compare_field_values(&a_value, &b_value);
+            if field.direction == SortDirection::Desc {
+                ordering = ordering.reverse();
+            }
+            if ordering != Ordering::Equal {
+                return ordering;
+            }
+        }
+        Ordering::Equal
+    }
+
+    /// Compares two field values for ordering purposes. Numbers are compared numerically,
+    /// strings lexicographically, and booleans with `false < true`. Missing values
+    /// (`undefined`/`null`) always sort after present values (in ascending order).
+    fn compare_field_values(a: &JsValue, b: &JsValue) -> Ordering {
+        let a_missing = a.is_undefined() || a.is_null();
+        let b_missing = b.is_undefined() || b.is_null();
+        match (a_missing, b_missing) {
+            (true, true) => return Ordering::Equal,
+            (true, false) => return Ordering::Greater,
+            (false, true) => return Ordering::Less,
+            (false, false) => {}
+        }
+
+        if let (Some(a_num), Some(b_num)) = (a.as_f64(), b.as_f64()) {
+            return a_num.partial_cmp(&b_num).unwrap_or(Ordering::Equal);
+        }
+
+        if a.is_string() || b.is_string() {
+            let a_str = a.as_string().unwrap_or_default();
+            let b_str = b.as_string().unwrap_or_default();
+            return a_str.cmp(&b_str);
+        }
+
+        if let (Some(a_bool), Some(b_bool)) = (a.as_bool(), b.as_bool()) {
+            return a_bool.cmp(&b_bool);
+        }
+
+        Ordering::Equal
+    }
 }

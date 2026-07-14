@@ -28,7 +28,7 @@ export abstract class StorageInternal<Schemas extends SchemaTypeRecord> {
     abstract count(
         colectionName: keyof Schemas, 
         query: QueryType<Schemas[keyof Schemas]>,
-        options?: QueryOptions
+        options?: QueryOptions<Schemas[keyof Schemas]>
     ): Promise<number>;
     abstract findDocumentById(
         collectionName: keyof Schemas, 
@@ -37,7 +37,7 @@ export abstract class StorageInternal<Schemas extends SchemaTypeRecord> {
     abstract find(
         collectionName: keyof Schemas, 
         query: QueryType<Schemas[keyof Schemas]>,
-        options?: QueryOptions
+        options?: QueryOptions<Schemas[keyof Schemas]>
     ): Promise<Doc<Schemas[keyof Schemas]>[]>;
     abstract write(
         op: Operation<Schemas[keyof Schemas]>

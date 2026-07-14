@@ -1,8 +1,8 @@
-use js_sys::{Object, Reflect};
+use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 use crate::error::RIDBError;
-use crate::query::options::QueryOptions;
+use crate::query::options::{QueryOptions, SortDirection, SortField};
 use crate::schema::Schema;
 use crate::storage::{HookType, Storage};
 
@@ -28,6 +28,91 @@ fn get_u32_option(options: &JsValue, key: &str) -> Result<Option<u32>, JsValue> 
         "Expected '{}' to be undefined or a number.",
         key
     )))
+}
+
+/// The document fields that are managed internally by RIDB and therefore must never
+/// be provided by the caller on create/update.
+const MANAGED_TIMESTAMP_FIELDS: [&str; 2] = ["createdAt", "updatedAt"];
+
+/// Removes the internally-managed timestamp fields from a caller-provided document so
+/// that users cannot set or override `createdAt`/`updatedAt` themselves. The timestamps
+/// are (re)populated afterwards by the timestamp plugin during the create hook.
+fn strip_managed_timestamps(document: &JsValue) -> Result<(), RIDBError> {
+    if document.is_object() {
+        let obj = Object::from(document.clone());
+        for field in MANAGED_TIMESTAMP_FIELDS {
+            Reflect::delete_property(&obj, &JsValue::from_str(field))?;
+        }
+    }
+    Ok(())
+}
+
+/// Parses a single sort specification object of the shape `{ field: string, direction?: 'asc' | 'desc' }`.
+fn parse_sort_spec(spec: &JsValue) -> Result<SortField, JsValue> {
+    if !spec.is_object() || Array::is_array(spec) {
+        return Err(JsValue::from_str(
+            "Each sort specification must be an object like { field: string, direction?: 'asc' | 'desc' }.",
+        ));
+    }
+
+    let field_value = Reflect::get(spec, &JsValue::from_str("field"))?;
+    let field = field_value.as_string().ok_or_else(|| {
+        JsValue::from_str("Sort specification 'field' must be a non-empty string.")
+    })?;
+    if field.is_empty() {
+        return Err(JsValue::from_str(
+            "Sort specification 'field' must be a non-empty string.",
+        ));
+    }
+
+    let direction_value = Reflect::get(spec, &JsValue::from_str("direction"))?;
+    let direction = if direction_value.is_undefined() || direction_value.is_null() {
+        SortDirection::Asc
+    } else {
+        let raw = direction_value.as_string().ok_or_else(|| {
+            JsValue::from_str("Sort 'direction' must be either 'asc' or 'desc'.")
+        })?;
+        match raw.to_lowercase().as_str() {
+            "asc" => SortDirection::Asc,
+            "desc" => SortDirection::Desc,
+            _ => {
+                return Err(JsValue::from_str(
+                    "Sort 'direction' must be either 'asc' or 'desc'.",
+                ))
+            }
+        }
+    };
+
+    Ok(SortField { field, direction })
+}
+
+/// Extracts the `sort` option, accepting either a single sort specification object
+/// or an array of them. Returns an empty vector when no sorting was requested.
+fn get_sort_option(options: &JsValue) -> Result<Vec<SortField>, JsValue> {
+    if options.is_undefined() || options.is_null() {
+        return Ok(Vec::new());
+    }
+
+    let value = Reflect::get(options, &JsValue::from_str("sort"))?;
+    if value.is_undefined() || value.is_null() {
+        return Ok(Vec::new());
+    }
+
+    let mut result = Vec::new();
+    if Array::is_array(&value) {
+        let arr = Array::from(&value);
+        for i in 0..arr.length() {
+            result.push(parse_sort_spec(&arr.get(i))?);
+        }
+    } else if value.is_object() {
+        result.push(parse_sort_spec(&value)?);
+    } else {
+        return Err(JsValue::from_str(
+            "Expected 'sort' to be a sort specification object or an array of them.",
+        ));
+    }
+
+    Ok(result)
 }
 
 #[wasm_bindgen(typescript_custom_section)]
@@ -177,8 +262,16 @@ export type Doc<T extends SchemaType> = {
     ExtractProperty<T['properties'][K]>
 } & {
   __version?: number;
-  createdAt?: number;
-  updatedAt?: number;
+  /**
+   * Unix timestamp (in seconds) set automatically when the document is created.
+   * Managed internally by RIDB — it cannot be set or changed by the caller.
+   */
+  createdAt: number;
+  /**
+   * Unix timestamp (in seconds) refreshed automatically on every create/update.
+   * Managed internally by RIDB — it cannot be set or changed by the caller.
+   */
+  updatedAt: number;
 };
 
 /**
@@ -196,13 +289,39 @@ export type CreateDoc<T extends SchemaType> = {
     ExtractProperty<T['properties'][K]>
 } &  {
   __version?: number;
-  createdAt?: number;
-  updatedAt?: number;
 };
 
-export type QueryOptions = {
+/**
+ * UpdateDoc is the accepted input shape for `Collection.update`. It is a partial
+ * document keyed by the schema properties. The internally-managed timestamp fields
+ * (`createdAt`/`updatedAt`) are intentionally excluded — they are set and refreshed
+ * by RIDB and cannot be provided by the caller.
+ */
+export type UpdateDoc<T extends SchemaType> = Partial<Omit<Doc<T>, "createdAt" | "updatedAt">>;
+
+/**
+ * The direction used when sorting query results by a given field.
+ */
+export type SortDirection = 'asc' | 'desc';
+
+/**
+ * A single sort instruction: which field to sort by and in which direction.
+ * `field` is constrained to the schema's property names, and `direction`
+ * defaults to `'asc'` when omitted.
+ */
+export type SortSpec<T extends SchemaType = SchemaType> = {
+    field: (keyof T['properties'] & string) | 'createdAt' | 'updatedAt';
+    direction?: SortDirection;
+};
+
+export type QueryOptions<T extends SchemaType = SchemaType> = {
     limit?: number;
     offset?: number;
+    /**
+     * Sorts the results by one or more fields. Accepts a single sort specification
+     * or an array of them (applied in order, the first field being the primary sort key).
+     */
+    sort?: SortSpec<T> | SortSpec<T>[];
 }
 
 /**
@@ -215,13 +334,13 @@ export class Collection<T extends SchemaType> {
 	 *
 	 * @returns A promise that resolves to an array of documents.
 	 */
-	find(query: QueryType<T>, options?: QueryOptions): Promise<Doc<T>[]>;
+	find(query: QueryType<T>, options?: QueryOptions<T>): Promise<Doc<T>[]>;
 	/**
 	 * count all documents in the collection.
 	 *
 	 * @returns A promise that resolves to an array of documents.
 	 */
-	count(query: QueryType<T>, options?: QueryOptions): Promise<number>;
+	count(query: QueryType<T>, options?: QueryOptions<T>): Promise<number>;
 	/**
 	 * Finds a single document in the collection by its ID.
 	 *
@@ -235,7 +354,7 @@ export class Collection<T extends SchemaType> {
 	 * @param document - A partial document containing the fields to update.
 	 * @returns A promise that resolves when the update is complete.
 	 */
-	update(document: Partial<Doc<T>>): Promise<void>;
+	update(document: UpdateDoc<T>): Promise<void>;
 	/**
 	 * Creates a new document in the collection.
 	 *
@@ -322,7 +441,7 @@ impl Collection {
 
         // Check if both limit and offset are None - if so, use default pagination
         if options.limit.is_none() && options.offset.is_none() {
-            return self.load_paginated_results(query_js).await;
+            return self.load_paginated_results(query_js, options.sort.clone()).await;
         }
 
         // Use existing logic when limit and/or offset are specified
@@ -352,16 +471,19 @@ impl Collection {
 
     /// Loads paginated results when no limit/offset is specified.
     /// This implements default pagination with batch size of 20.
-    async fn load_paginated_results(&self, query_js: JsValue) -> Result<JsValue, RIDBError> {
+    async fn load_paginated_results(&self, query_js: JsValue, sort: Vec<SortField>) -> Result<JsValue, RIDBError> {
         let all_results = js_sys::Array::new();
         let mut current_offset = 0;
         const BATCH_SIZE: u32 = 20;
 
         loop {
-            // Create pagination options for this batch
+            // Create pagination options for this batch. The sort is applied on the full
+            // matched set inside the storage layer before slicing, so paging through
+            // sorted batches yields a globally sorted result.
             let batch_options = QueryOptions {
                 limit: Some(BATCH_SIZE),
-                offset: Some(current_offset)
+                offset: Some(current_offset),
+                sort: sort.clone()
             };
 
             // Fetch the current batch
@@ -397,11 +519,12 @@ impl Collection {
     }
 
     pub fn parse_query_options(&self, options: JsValue) -> Result<QueryOptions, RIDBError> {
-        // Use the helper to extract and validate both limit and offset.
+        // Use the helper to extract and validate limit, offset and sort.
         let limit = get_u32_option(&options, "limit")?;
         let offset = get_u32_option(&options, "offset")?;
+        let sort = get_sort_option(&options)?;
 
-        Ok(QueryOptions { limit, offset })
+        Ok(QueryOptions { limit, offset, sort })
     }
 
     /// counts and returns all documents in the collection.
@@ -440,6 +563,9 @@ impl Collection {
     /// * `document` - A `JsValue` representing the partial document to update.
     #[wasm_bindgen]
     pub async fn update(&self, document: JsValue) -> Result<JsValue, RIDBError> {
+        // Timestamps are managed internally; never let the caller override them.
+        strip_managed_timestamps(&document)?;
+
         let primary_key = self.schema()?.primary_key;
         let doc_primary_key = Reflect::get(
             &document,
@@ -478,6 +604,8 @@ impl Collection {
     #[wasm_bindgen]
     pub async fn create(&self, document: JsValue) -> Result<JsValue, RIDBError> {
         let schema = self.schema()?;
+        // Timestamps are managed internally; never let the caller set them.
+        strip_managed_timestamps(&document)?;
         let processed_document = self.storage.call(
             &self.name, 
             HookType::Create,

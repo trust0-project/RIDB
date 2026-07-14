@@ -565,7 +565,10 @@ impl InMemory {
                 matched_docs.len()
             ))
         );
-        
+
+        // Apply sorting (if requested) across the full matched set before pagination.
+        self.core.sort_documents(&mut matched_docs, &options.sort);
+
         // Apply offset/limit:
         let offset = options.offset.unwrap_or(0) as usize;
         let limit = options.limit.unwrap_or(u32::MAX) as usize;
@@ -707,6 +710,7 @@ impl InMemory {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::query::options::{SortDirection, SortField};
     use serde_json::Value;
     use wasm_bindgen_test::*;
     
@@ -885,7 +889,8 @@ mod tests {
 
         let query_options = QueryOptions {
             limit: None,
-            offset: None
+            offset: None,
+            sort: Vec::new()
         };
 
         let result = inmem.find_js("demo", query_value, query_options).await.unwrap();
@@ -946,6 +951,7 @@ mod tests {
         let query_options_1 = QueryOptions {
             limit: Some(2),
             offset: Some(0),
+            sort: Vec::new(),
         };
         let result_1 = inmem.find_js("demo", query_value.clone(), query_options_1).await.unwrap();
         let arr_1 = Array::from(&result_1);
@@ -955,6 +961,7 @@ mod tests {
         let query_options_2 = QueryOptions {
             limit: Some(2),
             offset: Some(2),
+            sort: Vec::new(),
         };
         let result_2 = inmem.find_js("demo", query_value.clone(), query_options_2).await.unwrap();
         let arr_2 = Array::from(&result_2);
@@ -964,10 +971,87 @@ mod tests {
         let query_options_3 = QueryOptions {
             limit: Some(2),
             offset: Some(4),
+            sort: Vec::new(),
         };
         let result_3 = inmem.find_js("demo", query_value, query_options_3).await.unwrap();
         let arr_3 = Array::from(&result_3);
         assert_eq!(arr_3.length(), 1);
+    }
+
+    #[wasm_bindgen_test(async)]
+    async fn test_inmemory_storage_find_with_sort() {
+        // Validates that QueryOptions.sort orders results ascending/descending and
+        // composes correctly with limit/offset pagination.
+        let schemas_obj = Object::new();
+        let schema_str = r#"{
+            "version": 1,
+            "primaryKey": "id",
+            "type": "object",
+            "properties": {
+                "id": { "type": "string" },
+                "age": { "type": "number" }
+            }
+        }"#;
+        let schema = json_str_to_js_value(schema_str).unwrap();
+        Reflect::set(&schemas_obj, &JsValue::from_str("demo"), &schema).unwrap();
+
+        let inmem = InMemory::create("test_db_sort", schemas_obj).await.unwrap();
+
+        // Insert documents out of order.
+        let items = vec![
+            json_str_to_js_value(r#"{"id": "a", "age": 30}"#).unwrap(),
+            json_str_to_js_value(r#"{"id": "b", "age": 10}"#).unwrap(),
+            json_str_to_js_value(r#"{"id": "c", "age": 50}"#).unwrap(),
+            json_str_to_js_value(r#"{"id": "d", "age": 20}"#).unwrap(),
+            json_str_to_js_value(r#"{"id": "e", "age": 40}"#).unwrap(),
+        ];
+        for item in items {
+            let primary_key = Reflect::get(&item, &JsValue::from_str("id")).unwrap();
+            let op = Operation {
+                collection: "demo".to_string(),
+                op_type: OpType::CREATE,
+                data: item,
+                primary_key_field: Some("id".to_string()),
+                primary_key: Some(primary_key)
+            };
+            inmem.write(op).await.unwrap();
+        }
+
+        let query_value = json_str_to_js_value("{}").unwrap();
+
+        let ages = |result: &JsValue| -> Vec<f64> {
+            let arr = Array::from(result);
+            (0..arr.length())
+                .map(|i| Reflect::get(&arr.get(i), &JsValue::from_str("age")).unwrap().as_f64().unwrap())
+                .collect()
+        };
+
+        // Ascending sort by age.
+        let asc_options = QueryOptions {
+            limit: Some(10),
+            offset: Some(0),
+            sort: vec![SortField { field: "age".to_string(), direction: SortDirection::Asc }],
+        };
+        let asc_result = inmem.find_js("demo", query_value.clone(), asc_options).await.unwrap();
+        assert_eq!(ages(&asc_result), vec![10.0, 20.0, 30.0, 40.0, 50.0]);
+
+        // Descending sort by age.
+        let desc_options = QueryOptions {
+            limit: Some(10),
+            offset: Some(0),
+            sort: vec![SortField { field: "age".to_string(), direction: SortDirection::Desc }],
+        };
+        let desc_result = inmem.find_js("demo", query_value.clone(), desc_options).await.unwrap();
+        assert_eq!(ages(&desc_result), vec![50.0, 40.0, 30.0, 20.0, 10.0]);
+
+        // Sort + pagination: ascending, skip 1, take 2.
+        let paged_options = QueryOptions {
+            limit: Some(2),
+            offset: Some(1),
+            sort: vec![SortField { field: "age".to_string(), direction: SortDirection::Asc }],
+        };
+        let paged_result = inmem.find_js("demo", query_value, paged_options).await.unwrap();
+        assert_eq!(ages(&paged_result), vec![20.0, 30.0]);
     }
 
     #[wasm_bindgen_test(async)]
@@ -1022,7 +1106,8 @@ mod tests {
         }"#).unwrap();
         let query_options = QueryOptions {
             limit: None,
-            offset: None
+            offset: None,
+            sort: Vec::new()
         };
         let result = inmem.count_js("demo", query_value, query_options).await.unwrap();
         assert_eq!(result.as_f64().unwrap(), 2.0);
@@ -1082,10 +1167,11 @@ mod tests {
         let empty_query = json_str_to_js_value("{}").unwrap();
         let query_options = QueryOptions {
             limit: None,
-            offset: None
+            offset: None,
+            sort: Vec::new()
         };
         // Test find on empty collection
-        let posts_result = inmem.find_js("posts", empty_query.clone(), query_options).await.unwrap();
+        let posts_result = inmem.find_js("posts", empty_query.clone(), query_options.clone()).await.unwrap();
         let posts_array = Array::from(&posts_result);
         assert_eq!(posts_array.length(), 0);
         
@@ -1137,7 +1223,8 @@ mod tests {
         let query_value = json_str_to_js_value("{}").unwrap();
         let query_options = QueryOptions {
             limit: None,
-            offset: None
+            offset: None,
+            sort: Vec::new()
         };
         let result = inmem.find_js("demo", query_value, query_options).await.unwrap();
         let result_array = Array::from(&result);
