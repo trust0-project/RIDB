@@ -32,13 +32,22 @@ export type LogicalOperators<T extends SchemaType> = {
     $or?: Partial<QueryType<T>>[];
 };
 
+/**
+ * The internally-managed timestamp fields available for querying on every collection.
+ * They cannot be written by the caller but can be filtered (and sorted) like numbers.
+ */
+export type ManagedTimestampsQuery = {
+    createdAt?: OperatorOrType<number>;
+    updatedAt?: OperatorOrType<number>;
+};
+
 export type QueryType<T extends SchemaType> = ({
     [K in keyof T['properties']as ExtractType<T['properties'][K]['type']> extends undefined ? never : K]?: OperatorOrType<
         ExtractType<
             T['properties'][K]['type']
         >
     >
-} & LogicalOperators<T>) | LogicalOperators<T>[];
+} & ManagedTimestampsQuery & LogicalOperators<T>) | LogicalOperators<T>[];
 
 export class Query<T extends SchemaType> {
     constructor(query: QueryType<T>, schema:Schema<T>);
@@ -255,6 +264,12 @@ impl Query {
             } else {
                 if let Some(property_type) = properties.get(&key) {
                     let processed_value = self.process_value(&value, property_type)?;
+                    Reflect::set(&result, &JsValue::from_str(&key), &processed_value)?;
+                } else if key == "createdAt" || key == "updatedAt" {
+                    // Internally-managed timestamp fields are not declared in the schema
+                    // properties but are always present on stored documents as numbers,
+                    // so allow querying them like any numeric field.
+                    let processed_value = self.process_value(&value, "number")?;
                     Reflect::set(&result, &JsValue::from_str(&key), &processed_value)?;
                 } else if properties.get("id").is_some() && self.schema.clone().indexes.is_some() {
                     if let Some(property_type) = properties.get("id") {

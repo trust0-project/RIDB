@@ -1175,6 +1175,327 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
           expect(results[0].id).to.equal("u3");
         });
 
+        describe("managed timestamps", () => {
+          const tsSchema = {
+            users: {
+              version: 0 as const,
+              primaryKey: "id",
+              type: SchemaFieldType.object,
+              properties: {
+                id: { type: SchemaFieldType.string },
+                name: { type: SchemaFieldType.string },
+              },
+            },
+          } as const;
+
+          const startTsDb = async () => {
+            const db = new RIDB({ worker, dbName, schemas: tsSchema });
+            await db.start({ storageType: storage, password: "test" });
+            return db;
+          };
+
+          it("Should automatically set createdAt and updatedAt on create", async () => {
+            const db = await startTsDb();
+            const created = await db.collections.users.create({ id: "u1", name: "Alice" });
+            expect(created.createdAt).to.be.a("number");
+            expect(created.updatedAt).to.be.a("number");
+            // Timestamps are recent (Unix seconds, well past year 2001).
+            expect(created.createdAt).to.be.greaterThan(1_000_000_000);
+            expect(created.updatedAt).to.be.greaterThan(1_000_000_000);
+            // On creation both timestamps are set to the same instant.
+            expect(created.updatedAt).to.equal(created.createdAt);
+
+            // The persisted document exposes the same values when read back.
+            const fetched = await db.collections.users.findById("u1");
+            expect(fetched.createdAt).to.equal(created.createdAt);
+            expect(fetched.updatedAt).to.equal(created.updatedAt);
+            await db.close();
+          });
+
+          it("Should refresh updatedAt but preserve createdAt on update", async () => {
+            const db = await startTsDb();
+            const created = await db.collections.users.create({ id: "u1", name: "Alice" });
+            // Snapshot the primitive values: storage may hand back the same object reference,
+            // which gets mutated in place on update.
+            const createdAtSnapshot = created.createdAt;
+            const updatedAtSnapshot = created.updatedAt;
+
+            // Ensure enough time elapses to observe a change (timestamps keep sub-second precision).
+            await new Promise((resolve) => setTimeout(resolve, 10));
+
+            await db.collections.users.update({ id: "u1", name: "Alice B" });
+            const updated = await db.collections.users.findById("u1");
+            expect(updated.name).to.equal("Alice B");
+            expect(updated.createdAt).to.equal(createdAtSnapshot);
+            expect(updated.updatedAt).to.be.greaterThan(updatedAtSnapshot);
+            await db.close();
+          });
+
+          it("Should ignore caller-supplied timestamps on create", async () => {
+            const db = await startTsDb();
+            // Bypass the type system to simulate a raw JS caller trying to set them.
+            const created = await db.collections.users.create({
+              id: "u1",
+              name: "Alice",
+              createdAt: 1,
+              updatedAt: 2,
+            } as any);
+            // The bogus values must have been discarded and replaced with real timestamps.
+            expect(created.createdAt).to.be.greaterThan(1_000_000_000);
+            expect(created.updatedAt).to.be.greaterThan(1_000_000_000);
+            await db.close();
+          });
+
+          it("Should ignore caller-supplied timestamps on update", async () => {
+            const db = await startTsDb();
+            const created = await db.collections.users.create({ id: "u1", name: "Alice" });
+            const createdAtSnapshot = created.createdAt;
+            const updatedAtSnapshot = created.updatedAt;
+
+            await new Promise((resolve) => setTimeout(resolve, 10));
+
+            await db.collections.users.update({
+              id: "u1",
+              name: "Alice B",
+              createdAt: 1,
+              updatedAt: 2,
+            } as any);
+            const updated = await db.collections.users.findById("u1");
+            // createdAt stays as originally set; updatedAt is refreshed, not the supplied value.
+            expect(updated.createdAt).to.equal(createdAtSnapshot);
+            expect(updated.updatedAt).to.not.equal(2);
+            expect(updated.updatedAt).to.be.greaterThan(updatedAtSnapshot);
+            await db.close();
+          });
+
+          it("Should support querying by the managed timestamp fields", async () => {
+            const db = await startTsDb();
+            await db.collections.users.create({ id: "u1", name: "Alice" });
+            await db.collections.users.create({ id: "u2", name: "Bob" });
+
+            // All documents have timestamps >= 0.
+            const all = await db.collections.users.find({ createdAt: { $gte: 0 } });
+            expect(all.length).to.equal(2);
+
+            // Nothing is created in the future.
+            const future = Date.now() / 1000 + 1000;
+            const none = await db.collections.users.find({ updatedAt: { $gt: future } });
+            expect(none.length).to.equal(0);
+
+            // Operators on updatedAt are type-safe and combine with other options.
+            const recent = await db.collections.users.find(
+              { updatedAt: { $gte: 0 } },
+              { limit: 10, sort: [{ field: "updatedAt", direction: "asc" }] },
+            );
+            expect(recent.length).to.equal(2);
+            await db.close();
+          });
+
+          it("Should support sorting by the managed timestamp fields", async () => {
+            const db = await startTsDb();
+            // Insert with gaps so the timestamps are strictly increasing.
+            await db.collections.users.create({ id: "u1", name: "Alice" });
+            await new Promise((resolve) => setTimeout(resolve, 15));
+            await db.collections.users.create({ id: "u2", name: "Bob" });
+            await new Promise((resolve) => setTimeout(resolve, 15));
+            await db.collections.users.create({ id: "u3", name: "Carol" });
+
+            const asc = await db.collections.users.find(
+              {},
+              { sort: [{ field: "createdAt", direction: "asc" }] },
+            );
+            expect(asc.map((r) => r.id)).to.deep.equal(["u1", "u2", "u3"]);
+
+            const desc = await db.collections.users.find(
+              {},
+              { sort: [{ field: "updatedAt", direction: "desc" }] },
+            );
+            expect(desc.map((r) => r.id)).to.deep.equal(["u3", "u2", "u1"]);
+            await db.close();
+          });
+
+          it("Should combine sorting by a managed timestamp with limit", async () => {
+            const db = await startTsDb();
+            // Insert with gaps so the timestamps are strictly increasing.
+            await db.collections.users.create({ id: "u1", name: "Alice" });
+            await new Promise((resolve) => setTimeout(resolve, 15));
+            await db.collections.users.create({ id: "u2", name: "Bob" });
+            await new Promise((resolve) => setTimeout(resolve, 15));
+            await db.collections.users.create({ id: "u3", name: "Carol" });
+
+            // The two most recently created records, newest first.
+            const latest = await db.collections.users.find(
+              {},
+              { sort: [{ field: "createdAt", direction: "desc" }], limit: 2 },
+            );
+            expect(latest.map((r) => r.id)).to.deep.equal(["u3", "u2"]);
+            await db.close();
+          });
+        });
+
+        describe("sorting", () => {
+          const sortingSchema = {
+            users: {
+              version: 0 as const,
+              primaryKey: "id",
+              type: SchemaFieldType.object,
+              properties: {
+                id: { type: SchemaFieldType.string },
+                age: { type: SchemaFieldType.number },
+                name: { type: SchemaFieldType.string },
+              },
+            },
+          } as const;
+
+          // Documents are inserted out of order so that any correct ordering
+          // must come from the sort configuration rather than insertion order.
+          const seed = async (db: RIDB<typeof sortingSchema>) => {
+            await db.collections.users.create({ id: "u1", age: 30, name: "Charlie" });
+            await db.collections.users.create({ id: "u2", age: 10, name: "Alice" });
+            await db.collections.users.create({ id: "u3", age: 50, name: "Eve" });
+            await db.collections.users.create({ id: "u4", age: 20, name: "Bob" });
+            await db.collections.users.create({ id: "u5", age: 40, name: "Dave" });
+          };
+
+          const startDb = async () => {
+            const db = new RIDB({ worker, dbName, schemas: sortingSchema });
+            await db.start({ storageType: storage, password: "test" });
+            await seed(db);
+            return db;
+          };
+
+          it("Should sort results ascending by a numeric field", async () => {
+            const db = await startDb();
+            const results = await db.collections.users.find(
+              {},
+              { sort: [{ field: "age", direction: "asc" }] },
+            );
+            expect(results.map((r) => r.age)).to.deep.equal([10, 20, 30, 40, 50]);
+            expect(results.map((r) => r.id)).to.deep.equal(["u2", "u4", "u1", "u5", "u3"]);
+            await db.close();
+          });
+
+          it("Should sort results descending by a numeric field", async () => {
+            const db = await startDb();
+            const results = await db.collections.users.find(
+              {},
+              { sort: [{ field: "age", direction: "desc" }] },
+            );
+            expect(results.map((r) => r.age)).to.deep.equal([50, 40, 30, 20, 10]);
+            expect(results.map((r) => r.id)).to.deep.equal(["u3", "u5", "u1", "u4", "u2"]);
+            await db.close();
+          });
+
+          it("Should default the sort direction to ascending when omitted", async () => {
+            const db = await startDb();
+            const results = await db.collections.users.find({}, { sort: [{ field: "age" }] });
+            expect(results.map((r) => r.age)).to.deep.equal([10, 20, 30, 40, 50]);
+            await db.close();
+          });
+
+          it("Should accept a single sort specification object", async () => {
+            const db = await startDb();
+            const results = await db.collections.users.find(
+              {},
+              { sort: { field: "age", direction: "desc" } },
+            );
+            expect(results.map((r) => r.age)).to.deep.equal([50, 40, 30, 20, 10]);
+            await db.close();
+          });
+
+          it("Should sort results by a string field", async () => {
+            const db = await startDb();
+            const results = await db.collections.users.find(
+              {},
+              { sort: [{ field: "name", direction: "asc" }] },
+            );
+            expect(results.map((r) => r.name)).to.deep.equal([
+              "Alice",
+              "Bob",
+              "Charlie",
+              "Dave",
+              "Eve",
+            ]);
+            await db.close();
+          });
+
+          it("Should combine sorting with limit and offset", async () => {
+            const db = await startDb();
+            const results = await db.collections.users.find(
+              {},
+              { sort: [{ field: "age", direction: "asc" }], limit: 2, offset: 1 },
+            );
+            expect(results.map((r) => r.age)).to.deep.equal([20, 30]);
+            expect(results.map((r) => r.id)).to.deep.equal(["u4", "u1"]);
+            await db.close();
+          });
+
+          it("Should apply sorting to a filtered result set", async () => {
+            const db = await startDb();
+            const results = await db.collections.users.find(
+              { age: { $gte: 20 } },
+              { sort: [{ field: "age", direction: "desc" }] },
+            );
+            expect(results.map((r) => r.age)).to.deep.equal([50, 40, 30, 20]);
+            await db.close();
+          });
+
+          it("Should break ties using a secondary sort field", async () => {
+            const db = new RIDB({
+              worker,
+              dbName,
+              schemas: {
+                users: {
+                  version: 0 as const,
+                  primaryKey: "id",
+                  type: SchemaFieldType.object,
+                  properties: {
+                    id: { type: SchemaFieldType.string },
+                    age: { type: SchemaFieldType.number },
+                    name: { type: SchemaFieldType.string },
+                  },
+                },
+              } as const,
+            });
+            await db.start({ storageType: storage, password: "test" });
+            await db.collections.users.create({ id: "a", age: 30, name: "Bob" });
+            await db.collections.users.create({ id: "b", age: 30, name: "Alice" });
+            await db.collections.users.create({ id: "c", age: 20, name: "Zed" });
+
+            const results = await db.collections.users.find(
+              {},
+              {
+                sort: [
+                  { field: "age", direction: "asc" },
+                  { field: "name", direction: "asc" },
+                ],
+              },
+            );
+            expect(results.map((r) => r.id)).to.deep.equal(["c", "b", "a"]);
+            await db.close();
+          });
+
+          it("Should return globally sorted results with default pagination", async () => {
+            const db = new RIDB({ worker, dbName, schemas: sortingSchema });
+            await db.start({ storageType: storage, password: "test" });
+            // Insert more than the default pagination batch size (20) to ensure
+            // sorting is applied across the whole result set, not per batch.
+            const total = 45;
+            for (let i = total; i >= 1; i--) {
+              await db.collections.users.create({ id: `u${i}`, age: i, name: `n${i}` });
+            }
+            const results = await db.collections.users.find(
+              {},
+              { sort: [{ field: "age", direction: "asc" }] },
+            );
+            expect(results.length).to.equal(total);
+            const ages = results.map((r) => r.age);
+            const expected = Array.from({ length: total }, (_, i) => i + 1);
+            expect(ages).to.deep.equal(expected);
+            await db.close();
+          });
+        });
+
         it("Should create and verify index collections", async () => {
           const usersSchema = {
             version: 0 as const,

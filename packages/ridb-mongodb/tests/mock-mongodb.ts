@@ -7,9 +7,15 @@ class MockCursor {
   private results: any[];
   private skipCount = 0;
   private limitCount = 0;
+  private sortSpec: Record<string, 1 | -1> | null = null;
 
   constructor(results: any[]) {
     this.results = results;
+  }
+
+  sort(spec: Record<string, 1 | -1>) {
+    this.sortSpec = spec;
+    return this;
   }
 
   skip(count: number) {
@@ -24,7 +30,34 @@ class MockCursor {
 
   async toArray() {
     let results = [...this.results];
-    
+
+    // Sorting is applied before pagination, mirroring real MongoDB semantics.
+    if (this.sortSpec) {
+      const entries = Object.entries(this.sortSpec);
+      results.sort((a, b) => {
+        for (const [field, dir] of entries) {
+          const av = a[field];
+          const bv = b[field];
+          let cmp = 0;
+          if (av === bv) {
+            cmp = 0;
+          } else if (av === undefined || av === null) {
+            cmp = 1; // missing values sort last (ascending)
+          } else if (bv === undefined || bv === null) {
+            cmp = -1;
+          } else if (av < bv) {
+            cmp = -1;
+          } else if (av > bv) {
+            cmp = 1;
+          }
+          if (cmp !== 0) {
+            return dir === -1 ? -cmp : cmp;
+          }
+        }
+        return 0;
+      });
+    }
+
     if (this.skipCount > 0) {
       results = results.slice(this.skipCount);
     }

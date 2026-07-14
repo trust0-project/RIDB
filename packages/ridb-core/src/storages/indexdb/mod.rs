@@ -326,6 +326,11 @@ impl IndexDB {
 
         let offset = options.offset.unwrap_or(0);
         let limit = options.limit.unwrap_or(u32::MAX);
+        let sort = options.sort.clone();
+        let has_sort = !sort.is_empty();
+        // When sorting is requested we cannot rely on the natural cursor order for
+        // pagination, so we must fetch the full matched set, sort it, then slice.
+        let (fetch_offset, fetch_limit) = if has_sort { (0u32, u32::MAX) } else { (offset, limit) };
         let value_query = Query::new(query.clone().parse()?, query.schema.clone())?;
 
         if keys.length() == 1 && keys.get(0).as_string() == Some("$or".to_string()) {
@@ -339,7 +344,7 @@ impl IndexDB {
                 let sub_query_js = or_clauses.get(i);
                 let sub_query = Query::new(sub_query_js, schema.clone())?;
 
-                let sub_query_options = QueryOptions { limit: None, offset: None };
+                let sub_query_options = QueryOptions { limit: None, offset: None, sort: Vec::new() };
                 let docs_js = Box::pin(self.collect_documents_for_query(collection_name, sub_query, sub_query_options)).await?;
                 let docs_array = Array::from(&docs_js);
 
@@ -351,7 +356,8 @@ impl IndexDB {
                 }
             }
 
-            let docs: Vec<_> = all_docs_map.values().cloned().collect();
+            let mut docs: Vec<_> = all_docs_map.values().cloned().collect();
+            self.core.sort_documents(&mut docs, &sort);
             let final_docs = docs.iter().skip(offset as usize).take(limit as usize).cloned().collect::<Vec<_>>();
             let results_array = Array::new();
             for doc in final_docs {
@@ -426,8 +432,8 @@ impl IndexDB {
                             &range_js,
                             core,
                             value_query,
-                            offset,
-                            limit,
+                            fetch_offset,
+                            fetch_limit,
                         )
                         .await?;
                         Logger::debug(
@@ -446,8 +452,8 @@ impl IndexDB {
                             &JsValue::undefined(),
                             core,
                             value_query,
-                            offset,
-                            limit,
+                            fetch_offset,
+                            fetch_limit,
                         )
                         .await?
                     }
@@ -462,8 +468,8 @@ impl IndexDB {
                         &JsValue::undefined(),
                         core,
                         value_query,
-                        offset,
-                        limit,
+                        fetch_offset,
+                        fetch_limit,
                     )
                     .await?
                 }
@@ -478,8 +484,8 @@ impl IndexDB {
                     &JsValue::undefined(),
                     core,
                     value_query,
-                    offset,
-                    limit,
+                    fetch_offset,
+                    fetch_limit,
                 )
                 .await?
             }
@@ -492,13 +498,26 @@ impl IndexDB {
                 &JsValue::undefined(),
                 core,
                 value_query,
-                offset,
-                limit,
+                fetch_offset,
+                fetch_limit,
             )
             .await?;
             Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str(&format!("Found {} results with full store scan", results.length())));
             results
         };
+
+        // If sorting was requested, the cursor fetched the full matched set (fetch_offset=0,
+        // fetch_limit=MAX). Sort it, then apply the real offset/limit.
+        if has_sort {
+            let mut docs_vec: Vec<JsValue> = documents.iter().collect();
+            self.core.sort_documents(&mut docs_vec, &sort);
+            let results_array = Array::new();
+            for doc in docs_vec.into_iter().skip(offset as usize).take(limit as usize) {
+                results_array.push(&doc);
+            }
+            Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Document collection completed (sorted)"));
+            return Ok(results_array);
+        }
 
         Logger::debug("IndexDB-CollectDocuments", &JsValue::from_str("Document collection completed"));
         Ok(documents)
@@ -871,7 +890,8 @@ mod tests {
         }"#).unwrap();
         let query_options = QueryOptions {
             limit: None,
-            offset: None
+            offset: None,
+            sort: Vec::new()
         };
         let result = db.find_js("demo", query_value, query_options).await.unwrap();
         let result_array = Array::from(&result);
@@ -939,7 +959,8 @@ mod tests {
         }"#).unwrap();
         let query_options = QueryOptions {
             limit: None,
-            offset: None
+            offset: None,
+            sort: Vec::new()
         };
         let result = &db.count_js("demo", query_value, query_options).await.unwrap();
         assert_eq!(result.as_f64().unwrap(), 2.0);
@@ -1003,10 +1024,11 @@ mod tests {
         let empty_query = json_str_to_js_value("{}").unwrap();
         let query_options = QueryOptions {
             limit: None,
-            offset: None
+            offset: None,
+            sort: Vec::new()
         };
         // Find all products (should be empty)
-        let products_result = db.find_js("products", empty_query.clone(), query_options).await.unwrap();
+        let products_result = db.find_js("products", empty_query.clone(), query_options.clone()).await.unwrap();
         let products_array = Array::from(&products_result);
         assert_eq!(products_array.length(), 0);
 
