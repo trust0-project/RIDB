@@ -18,6 +18,12 @@ export class CoreStorage {
     matchesQuery(document: any, query: Query<any>): boolean;
     getPrimaryKeyTyped(value: any): string | number;
     getIndexes(schema: Schema<any>, op: Operation): string[];
+    /**
+    * Sorts a list of documents according to the provided sort specification, using the
+    * same comparison semantics as the built-in storages. Intended for custom storage
+    * adapters that cannot rely on a native sort. Returns a new sorted array.
+    */
+    sortDocuments(documents: any[], sort: SortSpec[]): any[];
 }
 "#;
 
@@ -78,6 +84,22 @@ impl CoreStorage {
 
     }
 
+
+    /// JS-facing helper to sort an array of documents by a sort specification
+    /// (`[{ field, direction }]`). Used by external storage adapters to reuse the
+    /// exact ordering semantics of the built-in storages.
+    #[wasm_bindgen(js_name = sortDocuments)]
+    pub fn sort_documents_js(&self, documents: JsValue, sort: JsValue) -> Result<JsValue, RIDBError> {
+        let sort_fields = parse_sort_fields(&sort)?;
+        let docs_array = Array::from(&documents);
+        let mut docs: Vec<JsValue> = docs_array.iter().collect();
+        self.sort_documents(&mut docs, &sort_fields);
+        let out = Array::new();
+        for doc in docs {
+            out.push(&doc);
+        }
+        Ok(out.into())
+    }
 
     #[wasm_bindgen(js_name = matchesQuery)]
     pub fn document_matches_query(
@@ -285,6 +307,35 @@ impl CoreStorage {
         }
     }
 
+}
+
+/// Parses a JS sort specification (`[{ field: string, direction?: 'asc' | 'desc' }]`)
+/// into the internal `Vec<SortField>` representation. Accepts `undefined`/`null` as
+/// "no sorting" and defaults an omitted/unknown direction to ascending.
+fn parse_sort_fields(sort: &JsValue) -> Result<Vec<SortField>, RIDBError> {
+    let mut result = Vec::new();
+    if sort.is_undefined() || sort.is_null() {
+        return Ok(result);
+    }
+    if !Array::is_array(sort) {
+        return Err(RIDBError::validation("sort must be an array of sort specifications", 0));
+    }
+    let arr = Array::from(sort);
+    for i in 0..arr.length() {
+        let item = arr.get(i);
+        let field = Reflect::get(&item, &JsValue::from_str("field"))?
+            .as_string()
+            .ok_or_else(|| RIDBError::validation("sort 'field' must be a string", 0))?;
+        let direction = Reflect::get(&item, &JsValue::from_str("direction"))?
+            .as_string()
+            .map(|d| match d.to_lowercase().as_str() {
+                "desc" => SortDirection::Desc,
+                _ => SortDirection::Asc,
+            })
+            .unwrap_or(SortDirection::Asc);
+        result.push(SortField { field, direction });
+    }
+    Ok(result)
 }
 
 impl CoreStorage {

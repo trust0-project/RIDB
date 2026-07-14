@@ -370,6 +370,18 @@ export async function createMongoDB(): Promise<typeof BaseStorageType> {
 
       let findQuery = collection.find(filter, { projection: { _id: 0 } });
 
+      // Apply sorting (before skip/limit) when requested. `sort` may be a single
+      // spec or an array of them; normalize to an array.
+      const rawSort = options?.sort;
+      const sortSpecs = rawSort ? (Array.isArray(rawSort) ? rawSort : [rawSort]) : [];
+      if (sortSpecs.length > 0) {
+        const mongoSort: Record<string, 1 | -1> = {};
+        for (const spec of sortSpecs) {
+          mongoSort[spec.field as string] = spec.direction === "desc" ? -1 : 1;
+        }
+        findQuery = findQuery.sort(mongoSort);
+      }
+
       // Apply offset and limit if provided
       if (options?.offset) {
         findQuery = findQuery.skip(options.offset);

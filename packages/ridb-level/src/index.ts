@@ -187,6 +187,34 @@ export async function createLevelDB<T extends SchemaTypeRecord>(): Promise<typeo
       const limit = options?.limit ?? -1; // -1 indicates "no limit" for classic-level
       const offset = options?.offset ?? 0; // default to 0 (no offset)
 
+      // Normalize the sort option (may be a single spec or an array of them).
+      const rawSort = options?.sort;
+      const sortSpecs = rawSort ? (Array.isArray(rawSort) ? rawSort : [rawSort]) : [];
+      const hasSort = sortSpecs.length > 0;
+
+      const schema = this.getSchema(String(collectionName));
+      const queryInstance = new Query(query, schema);
+
+      // When sorting is requested we cannot rely on LevelDB's natural key order for
+      // pagination, so read the full matched set first, sort it, then slice.
+      if (hasSort) {
+        const matched: Doc<T[keyof T]>[] = [];
+        for await (const [_key, value] of this.level.iterator({
+          gte: collectionPrefix,
+          lt: `${collectionPrefix}\xFF`,
+        })) {
+          const doc = JSON.parse(value);
+          if (!this.core.matchesQuery(doc, queryInstance)) {
+            continue;
+          }
+          matched.push(doc);
+        }
+
+        const sorted = this.core.sortDocuments(matched, sortSpecs) as Doc<T[keyof T]>[];
+        const end = limit > 0 ? offset + limit : sorted.length;
+        return sorted.slice(offset, end);
+      }
+
       const docs: Doc<T[keyof T]>[] = [];
       let skipCount = offset;
 
@@ -200,8 +228,6 @@ export async function createLevelDB<T extends SchemaTypeRecord>(): Promise<typeo
         limit: maxRead,
       })) {
         const doc = JSON.parse(value);
-        const schema = this.getSchema(String(collectionName));
-        const queryInstance = new Query(query, schema);
         if (!this.core.matchesQuery(doc, queryInstance)) {
           continue;
         }

@@ -1367,8 +1367,8 @@ export const UnitTests = (platform: string, storages: StoragesType[], worker = f
           it("Should sort results ascending by a numeric field", async () => {
             const db = await startDb();
             const results = await db.collections.users.find(
-              { age: { $gte: 10 } },
-              { limit: 1, sort: [{ field: "age", direction: "asc" }] },
+              {},
+              { sort: [{ field: "age", direction: "asc" }] },
             );
             expect(results.map((r) => r.age)).to.deep.equal([10, 20, 30, 40, 50]);
             expect(results.map((r) => r.id)).to.deep.equal(["u2", "u4", "u1", "u5", "u3"]);
